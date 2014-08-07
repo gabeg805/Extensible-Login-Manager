@@ -1,0 +1,31 @@
+#!/bin/bash
+
+## X server log and authentication file
+xslog='/etc/X11/glm/log/xserver.log'
+xsauth='/etc/X11/glm/log/glm.auth'
+
+
+## Environment variables passed in by GLM
+display="$1"
+tty=`echo "$2" | sed 's/tty//'`
+
+
+## Start the X server
+/usr/bin/X -nolisten tcp "$display" -auth "$xsauth" "vt$tty" &> "$xslog" &
+
+## Start the X compositing manager (for transparency)
+while true; do
+    scheck=`grep -c 'Loading' "$xslog"`
+    if [ $scheck -eq 1 ]; then
+        /usr/bin/xcompmgr &
+        break
+    fi
+done
+
+
+## Set background 
+/usr/bin/hsetroot -fill /etc/X11/glm/pics/background/blue_magic.jpg
+
+## Cursor and background attributes
+/usr/bin/xsetroot -cursor_name left_ptr
+# /usr/bin/xdotool mousemove --sync 790 250
