@@ -1,11 +1,11 @@
 
-X.Org X Server 1.15.2
-Release Date: 2014-06-27
+X.Org X Server 1.16.0
+Release Date: 2014-07-16
 X Protocol Version 11, Revision 0
-Build Operating System: Linux 3.15.1-1-ARCH x86_64 
-Current Operating System: Linux archy 3.14.4-1-ARCH #1 SMP PREEMPT Tue May 13 16:41:39 CEST 2014 x86_64
+Build Operating System: Linux 3.15.5-2-ARCH x86_64 
+Current Operating System: Linux archy 3.15.8-1-ARCH #1 SMP PREEMPT Fri Aug 1 08:51:42 CEST 2014 x86_64
 Kernel command line: BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=74426f6c-67d5-4bad-8b57-8d908dd34e29 rw pcie_aspm=force resume=/dev/sda6 resume_offset=479232 quiet rw init=/usr/lib/systemd/systemd
-Build Date: 27 June 2014  07:32:26PM
+Build Date: 31 July 2014  11:53:19AM
  
 Current version of pixman: 0.32.6
 	Before reporting problems, check http://wiki.x.org
@@ -13,36 +13,6 @@ Current version of pixman: 0.32.6
 Markers: (--) probed, (**) from config file, (==) default setting,
 	(++) from command line, (!!) notice, (II) informational,
 	(WW) warning, (EE) error, (NI) not implemented, (??) unknown.
-(==) Log file: "/var/log/Xorg.0.log", Time: Thu Aug  7 12:06:32 2014
+(==) Log file: "/var/log/Xorg.0.log", Time: Thu Aug  7 15:27:16 2014
 (==) Using config directory: "/etc/X11/xorg.conf.d"
 (==) Using system config directory "/usr/share/X11/xorg.conf.d"
-Initializing built-in extension Generic Event Extension
-Initializing built-in extension SHAPE
-Initializing built-in extension MIT-SHM
-Initializing built-in extension XInputExtension
-Initializing built-in extension XTEST
-Initializing built-in extension BIG-REQUESTS
-Initializing built-in extension SYNC
-Initializing built-in extension XKEYBOARD
-Initializing built-in extension XC-MISC
-Initializing built-in extension SECURITY
-Initializing built-in extension XINERAMA
-Initializing built-in extension XFIXES
-Initializing built-in extension RENDER
-Initializing built-in extension RANDR
-Initializing built-in extension COMPOSITE
-Initializing built-in extension DAMAGE
-Initializing built-in extension MIT-SCREEN-SAVER
-Initializing built-in extension DOUBLE-BUFFER
-Initializing built-in extension RECORD
-Initializing built-in extension DPMS
-Initializing built-in extension Present
-Initializing built-in extension DRI3
-Initializing built-in extension X-Resource
-Initializing built-in extension XVideo
-Initializing built-in extension XVideo-MotionCompensation
-Initializing built-in extension XFree86-VidModeExtension
-Initializing built-in extension XFree86-DGA
-Initializing built-in extension XFree86-DRI
-Initializing built-in extension DRI2
-Loading extension GLX

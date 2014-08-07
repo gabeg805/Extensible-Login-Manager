@@ -5,15 +5,16 @@ README
 What is it?
 -----------
 
-A login manager I created for my Arch Linux system. I made it because I thought it'd
-be a fun project to do and indeed it was super fun! But along the way I realized that 
-there isn't that much information out there for being able to do this sort of thing. 
-To me, for all that, from what I understand, Linux stands for, that's just wrong. A 
-lot of the stuff I found was nearly ten years old; suffice it to say that it took
-some doing to figure out how things worked. After I figured out how little 
-information there was for this, my new goal was that this login manager would help 
-someone out that was trying to do something similar. I hope this project helps that
-persone out there!
+This is a login manager I created for my Arch Linux system. I made it because I  
+thought it'd be a fun project to do and indeed it was super fun! Along the way though
+it became clear to me that there was a serious lack of information out there for 
+creating a login manager. The real hard part, and consequently the content of the 
+missing information, was in authenticating the user session. A lot of the stuff I 
+found was nearly ten years old; suffice it to say that it took some doing to figure 
+out how things worked. From what I gather Linux systems stand for, to me this lack of
+information was a serious dissapointment. After I made this discovery, my new goal 
+with this project was to help someone out that was trying to do something similar. 
+I hope this project reaches that person and helps them out!
 
 
 
@@ -71,6 +72,15 @@ the comments in the files themselves.
 
 Installation
 ------------
+
+There are a couple of dependencies that need to be fulfilled before the login 
+manager works, here's how to get them: 
+
+    # sudo pacman -S xcompmgr
+    # sudo pacman -S hsetroot
+    # sudo pacman -S xorg-xsetroot
+    # sudo pacman -S xdotool
+    # sudo pacman -S xorg-xwininfo
 
 To install the login manager you want to do the following:
     

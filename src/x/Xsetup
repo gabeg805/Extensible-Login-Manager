@@ -15,7 +15,7 @@ tty=`echo "$2" | sed 's/tty//'`
 
 ## Start the X compositing manager (for transparency)
 while true; do
-    scheck=`grep -c 'Loading' "$xslog"`
+    scheck=`grep -c 'Using system config' "$xslog"`
     if [ $scheck -eq 1 ]; then
         /usr/bin/xcompmgr &
         break
