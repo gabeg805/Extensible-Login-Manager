@@ -1,0 +1,9 @@
+[Unit]
+Description=Gabe Login Manager
+After=systemd-user-sessions.service
+
+[Service]
+ExecStart=/etc/X11/glm/src/login/glm
+
+[Install]
+Alias=display-manager.service
