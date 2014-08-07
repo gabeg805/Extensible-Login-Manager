@@ -40,14 +40,14 @@ entered. The way the login manager works is as follows:
         - Cursor is changed from the cross to the regular cursor
         - Clock is displayed
         - Frame is displayed (the container with the password entry box)
-        - "Password:" text image is displayed
+        - 'Password:' text image is displayed
         - Window manager dropdown menu button is displayed
         - Password entry box is displayed
-        - Username default is "gabeg"
+        - Username default is 'gabeg'
         - Once password is entered, the username/password combination is sent to PAM
         - Pluggable Authentication Module (PAM):
-                * Initiate the PAM conversation (with the "conv" function)
-                * Starts the designated PAM service ("shart")
+                * Initiate the PAM conversation (with the 'conv' function)
+                * Starts the designated PAM service ('shart')
                 * Sets the PAM user
                 * Sets the PAM tty
                 * Authenticates the username/password combination
@@ -71,8 +71,44 @@ Installation
 ------------
 
 To install the login manager you want to do the following:
-    # 
+    
+    # unzip Gabes-Login-Manager-master.zip
+    # mv Gabes-Login-Manager-master /etc/X11/glm
+    # cp /etc/X11/glm/src/systemd/glm.service /usr/lib/systemd/system/
+    # systemctl enable glm.service
+    # cd /etc/X11/glm/src/login/
+    # make
 
+With the last command, the binary generated is the one needed in order to execute the
+login manager on startup. If you want to:
+    
+    - Change variables (not function parameters) inside the '.c' source files
+            * See below.
+    
+    - Add/remove a function from any of the '.c' files. 
+            * Be sure to add/remove the function in the declaration at the top of the
+              '.c' file, as well as in the '.h' header file. 
+    
+    - Rename a file.
+            * Be sure to change the names of source, header, and object files (they 
+              all depend on one another). 
+            
+            * Change the '#include' statement at the top of the files that depend on 
+              the one you changed. A simple way to check is to look at all the source
+              files (.c) for the filename:
+                    # grep -i "FILENAME" *.c
+            
+            * Change the header guard in the header file. This means that if you want
+              to rename, say, 'Clock', to 'Timepiece', then in the header file where 
+              it says:
+                    #ifndef CLOCK_H
+                    #define CLOCK_H
+               you change it to:
+                    #ifndef TIMEPIECE_H
+                    #define TIMEPIECE_H
+               
+After you have done everything you needed to, run the 'make' command. 
+Note: Being in the location where the 'Makefile' is, is crucial when running 'make'
 
 
 Contacts
@@ -91,7 +127,7 @@ Executing this program on startup can have some pretty adverse effects, but fear
               mount the root partition so execute: 
                     # mount /dev/sdX# /mnt
               
-              where X is "a, b, c, ..." and # is a number. Then you want to change 
+              where X is 'a, b, c, ...' and # is a number. Then you want to change 
               root so that you're essentially logged into your system, execute:
                     # arch-chroot /mnt /bin/bash
               
@@ -108,7 +144,7 @@ Executing this program on startup can have some pretty adverse effects, but fear
     
     - On bootup, the login manager shows, but once I enter my password, the screen 
       remains black.
-            * To fix this check the exec command in "Authentication.c" and make sure 
+            * To fix this check the exec command in 'Authentication.c' and make sure 
               it's doing what you want. Also, check the logs! 
     
     - Transparency is not working.
