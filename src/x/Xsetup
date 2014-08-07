@@ -11,7 +11,7 @@ tty=`echo "$2" | sed 's/tty//'`
 
 
 ## Start the X server
-/usr/bin/X -nolisten tcp "$display" -auth "$xsauth" "vt$tty" &> "$xslog" &
+/usr/bin/Xorg -nolisten tcp "$display" -auth "$xsauth" "vt$tty" &> "$xslog" &
 
 ## Start the X compositing manager (for transparency)
 while true; do
@@ -24,7 +24,7 @@ done
 
 
 ## Set background 
-/usr/bin/hsetroot -fill /etc/X11/glm/pics/background/blue_magic.jpg
+/usr/bin/hsetroot -fill /etc/X11/glm/pics/wallpapers/smooth.jpg
 
 ## Cursor and background attributes
 /usr/bin/xsetroot -cursor_name left_ptr

@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define SERVICE_NAME   "shart"
+#define SERVICE_NAME   "glm"
 #define XTTY           "tty7"
 
 
