@@ -16,15 +16,16 @@ someone out that was trying to do something similar. I hope this project helps t
 persone out there!
 
 
+
 Documentation
 -------------
 
-Onto the details of the login manager, I wanted to try to make everything as 
-transparent as possible so I included all my source files and separated them by what
-their function is. The bulk of this project is mainly C, but there's some Bash mixed 
-in for initializing the X server and session. The C portion is for displaying all the
-graphical goodies and for authenticating the username/password combination that is
-entered. The way the login manager works is as follows:
+I wanted to try to make everything as transparent as possible so I included all my
+source files and separated them by what their function is. The bulk of this project
+is C, but there's some Bash mixed in for initializing the X server and session. The 
+C portion is for displaying all the graphical goodies and for authenticating the 
+username/password combination that is entered. The way the login manager works is 
+as follows:
     
     SYSTEM
     ------
@@ -67,6 +68,7 @@ To find out specifically what each source file does, check out their headers, an
 the comments in the files themselves.
 
 
+
 Installation
 ------------
 
@@ -87,7 +89,7 @@ login manager on startup. If you want to:
     
     - Add/remove a function from any of the '.c' files. 
             * Be sure to add/remove the function in the declaration at the top of the
-              '.c' file, as well as in the '.h' header file. 
+              '.c' file, as well as in the '.h' header file. After that, see below.
     
     - Rename a file.
             * Be sure to change the names of source, header, and object files (they 
@@ -101,20 +103,28 @@ login manager on startup. If you want to:
             * Change the header guard in the header file. This means that if you want
               to rename, say, 'Clock', to 'Timepiece', then in the header file where 
               it says:
+
                     #ifndef CLOCK_H
                     #define CLOCK_H
+
                you change it to:
+
                     #ifndef TIMEPIECE_H
                     #define TIMEPIECE_H
+
+               Once you're done with the final step, see below.
+
                
 After you have done everything you needed to, run the 'make' command. 
-Note: Being in the location where the 'Makefile' is, is crucial when running 'make'
+Note: Being in the location where the 'Makefile' is, is crucial when running 'make'.
+
 
 
 Contacts
 --------
 
 If you have any problems, feel free to email me at 'gabeg@bu.edu'.
+
 
 
 Potential Problems
@@ -125,13 +135,16 @@ Executing this program on startup can have some pretty adverse effects, but fear
     - On bootup, your screen remains black and nothing shows up
             * To fix this you want to have a bootable USB at hand, then you want to 
               mount the root partition so execute: 
+
                     # mount /dev/sdX# /mnt
-              
+
               where X is 'a, b, c, ...' and # is a number. Then you want to change 
               root so that you're essentially logged into your system, execute:
+
                     # arch-chroot /mnt /bin/bash
-              
+
               Now you're in your system, execute:
+
                     # systemctl disable glm.service
                     # exit
                     # reboot
@@ -154,10 +167,12 @@ Executing this program on startup can have some pretty adverse effects, but fear
               it's a constant battle I've had with the compositing manager... *Sigh*
               To MAYBE fix this, make sure you are using the readahead daemon when 
               you bootup, no promises though! To enable the readahead daemon execute:
+
                     # systemctl enable systemd-readahead-collect.service systemd-readahead-replay.service
-              
+
               It has to learn your boot process so give it a couple reboots to work. 
               If this doesn't work then hopefully at the very least your bootup time 
               will be faster! 
     
+
 Who knows what gems the logs may hold!
