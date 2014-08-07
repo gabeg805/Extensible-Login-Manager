@@ -85,6 +85,7 @@ Potential Problems
 ------------------
 
 Executing this program on startup can have some pretty adverse effects, but fear not! 
+    
     - On bootup, your screen remains black and nothing shows up
             * To fix this you want to have a bootable USB at hand, then you want to 
               mount the root partition so execute: 
