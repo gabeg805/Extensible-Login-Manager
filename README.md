@@ -1,9 +1,6 @@
-======
-README
-======
-
+===========
 What is it?
------------
+===========
 
 This is a login manager I created for my Arch Linux system. I made it because I  
 thought it'd be a fun project to do and indeed it was super fun! Along the way though
@@ -18,8 +15,9 @@ I hope this project reaches that person and helps them out!
 
 
 
+=============
 Documentation
--------------
+=============
 
 I wanted to try to make everything as transparent as possible so I included all my
 source files and separated them by what their function is. The bulk of this project
@@ -70,13 +68,14 @@ the comments in the files themselves.
 
 
 
+============
 Installation
-------------
+============
 
 There are a couple of dependencies that need to be fulfilled before the login 
 manager works, here's how to get them: 
 
-    # sudo pacman -S ttf-dejavu
+    # sudo pacman -S ttf-inconsolata
     # sudo pacman -S xcompmgr
     # sudo pacman -S hsetroot
     # sudo pacman -S xorg-xsetroot
@@ -87,6 +86,7 @@ To install the login manager you want to do the following:
     
     # unzip Gabes-Login-Manager-master.zip
     # mv Gabes-Login-Manager-master /etc/X11/glm
+    # cp /etc/X11/glm/src/pam/glm /etc/pam.d/
     # cp /etc/X11/glm/src/systemd/glm.service /usr/lib/systemd/system/
     # systemctl enable glm.service
     # cd /etc/X11/glm/src/login/
@@ -131,15 +131,17 @@ Note: Being in the location where the 'Makefile' is, is crucial when running 'ma
 
 
 
+========
 Contacts
---------
+========
 
 If you have any problems, feel free to email me at 'gabeg@bu.edu'.
 
 
 
+==================
 Potential Problems
-------------------
+==================
 
 Executing this program on startup can have some pretty adverse effects, but fear not! 
     
