@@ -58,10 +58,10 @@
 #include <string.h>
 
 #define   XPOS    570
-#define   YPOS    320
+#define   YPOS    330
 #define   NAME    "Password"
-#define   FONT    "dejavu serif"
-#define   FSIZE   12
+#define   FONT    "DejaVu Sans"
+#define   FSIZE   10
 
 
 // Declares
