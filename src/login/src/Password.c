@@ -67,7 +67,6 @@
 #define   HEIGHT      30
 #define   FONT        "Inconsolata"
 #define   FSIZE       10*1024
-#define   DISPTEXT   "Password"
 #define   INVISCHAR   '*'
 #define   MAXCHARS    30
 
@@ -91,7 +90,6 @@ char output[1024];
 void init_entry_root(GtkWidget *window, GtkWidget *entry) {
     
     // Set window attributes
-    gtk_window_set_title(GTK_WINDOW(window), "Password Entry");
     gtk_window_move(GTK_WINDOW(window), XPOS, YPOS);
     gtk_window_set_default_size(GTK_WINDOW(window), WIDTH, HEIGHT);
     
@@ -115,7 +113,6 @@ void init_entry_root(GtkWidget *window, GtkWidget *entry) {
 void init_entry(GtkWidget *entry) {
 
     // Set entry box attributes
-    gtk_entry_set_placeholder_text(GTK_ENTRY(entry), DISPTEXT);    
     gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
     gtk_entry_set_invisible_char(GTK_ENTRY(entry), INVISCHAR);
     

@@ -60,7 +60,7 @@
 #define   XPOS    570
 #define   YPOS    330
 #define   NAME    "Password"
-#define   FONT    "DejaVu Sans"
+#define   FONT    "Inconsolata"
 #define   FSIZE   10
 
 
