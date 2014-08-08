@@ -61,7 +61,7 @@
 #define   YPOS    330
 #define   NAME    "Password"
 #define   FONT    "Inconsolata"
-#define   FSIZE   10
+#define   FSIZE   12
 
 
 // Declares

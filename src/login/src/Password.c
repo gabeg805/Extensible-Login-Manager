@@ -125,11 +125,14 @@ void init_entry(GtkWidget *entry) {
     PangoAttrList *attrList = pango_attr_list_new();
     PangoAttribute *attrFont = pango_attr_family_new(FONT);
     PangoAttribute *attrSize = pango_attr_size_new(FSIZE);
+    PangoAttribute *attrColor = pango_attr_foreground_new(0, 0, 0);
     
     // Add attributes to the list (and increase the reference counter)
     attrList = pango_attr_list_ref(attrList);
-    pango_attr_list_insert(attrList, attrSize); 
+    attrList = pango_attr_list_ref(attrList);
     pango_attr_list_insert(attrList, attrFont);
+    pango_attr_list_insert(attrList, attrSize); 
+    pango_attr_list_insert(attrList, attrColor);
     
     // Set the attributes
     gtk_entry_set_attributes(GTK_ENTRY(entry), attrList);   
