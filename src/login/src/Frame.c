@@ -109,7 +109,7 @@ gboolean draw_frame_window(GtkWidget *widget) {
     // Check for window transparency
     if (supports_alpha) 
         // Window transparent 
-        cairo_set_source_rgba(cr, 0.5, 1.0, 0.50, 0); 
+        cairo_set_source_rgba(cr, 0, 0, 0, 0); 
     else 
         // Window opaque white 
         cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); 
@@ -151,7 +151,7 @@ void draw_frame(cairo_t *cr) {
     // Check for window transparency
     if (supports_alpha) 
         // Window transparent
-        cairo_set_source_rgba(cr, 0.5, 0.5, 1, 0.5);
+        cairo_set_source_rgba(cr, 1, 1, 1, 0.5);
     else 
         // Window opaque white
         cairo_set_source_rgb(cr, 1, 1, 1); 
