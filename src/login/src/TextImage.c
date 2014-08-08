@@ -111,7 +111,7 @@ void draw_text(cairo_t *cr) {
     // Create the display box
     cairo_select_font_face (cr, FONT, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
     cairo_set_font_size (cr, FSIZE);
-    cairo_set_source_rgb (cr, 1, 1, 1);
+    cairo_set_source_rgb (cr, 0, 0, 0);
     cairo_move_to (cr, 0, FSIZE);
     cairo_show_text (cr, text);
 }
