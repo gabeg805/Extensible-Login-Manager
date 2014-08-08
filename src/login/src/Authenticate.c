@@ -97,12 +97,12 @@ int login(const char *username, const char *password) {
     pid_t child_pid = fork();
     if (child_pid == 0) {
         chdir(pw->pw_dir);
-        
+                
         system("xwininfo -root -children | grep '  0x' | cut -d' ' -f6 | xargs -n1 xkill -id");
-        
+                
         char cmd[100];
         char *session = command_line("tail -1 /etc/X11/glm/log/session.log");
-        snprintf(cmd, sizeof(cmd), "%s %s %s", "su gabeg -c 'exec /bin/bash -login /etc/X11/glm/src/x/xinitrc", session, "'");
+        snprintf(cmd, sizeof(cmd), "%s %s %s", "su gabeg -c 'exec /bin/bash -login /home/gabeg/.xinitrc", session, "'");
         execl(pw->pw_shell, pw->pw_shell, "-c", cmd, NULL);
     }
     

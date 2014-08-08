@@ -74,43 +74,51 @@ void login_interface(int argc, char *argv[]) {
     // Initialize GTK toolkit
     gtk_init(&argc, &argv);
     
-    // Define clock 
-    GtkWidget *clock_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *clock = gtk_label_new("");
-        
+    // Define clock date
+    GtkWidget *clock_date_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *clock_date = gtk_label_new("");
+    
+    // Define clock time
+    GtkWidget *clock_time_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *clock_time = gtk_label_new("");
+    
     // Define frame  
     GtkWidget *frame_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *frame = gtk_drawing_area_new();
-        
+    
     // Define text image
     GtkWidget *text_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *text = gtk_drawing_area_new();
-        
+    
     // Define window manager
     GtkWidget *wm_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *wm_dropmenu = gtk_menu_button_new();
     GtkWidget *wm_menu = gtk_menu_new();    
-        
+    
     // Initialize the root window with all its objects
-    init_clock_root(clock_window, clock);
+    init_date_clock_root(clock_date_window, clock_date);
+    init_time_clock_root(clock_time_window, clock_time);
     init_frame_root(frame_window, frame);
     init_text_root(text_window, text);
     init_wm_root(wm_window, wm_dropmenu, wm_menu);    
-        
-        
-    // Display the clock
-    gtk_widget_show(clock);
-    gtk_widget_show(clock_window);
-    g_timeout_add_seconds(1, clock_update, clock);
-        
+    
+    
+    // Display the clock date
+    gtk_widget_show(clock_date);
+    gtk_widget_show(clock_date_window);
+    
+    // Display the clock time
+    gtk_widget_show(clock_time);
+    gtk_widget_show(clock_time_window);
+    
     // Display the login frame
     gtk_widget_show(frame);
     gtk_widget_show(frame_window);
-        
+    
     // Display the password text image
     gtk_widget_show(text);
     gtk_widget_show(text_window);
-        
+    
     // Display the dropdown menu
     set_wm_entries(wm_menu);
     gtk_widget_show(wm_dropmenu);
