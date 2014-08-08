@@ -76,6 +76,7 @@ Installation
 There are a couple of dependencies that need to be fulfilled before the login 
 manager works, here's how to get them: 
 
+    # sudo pacman -S ttf-dejavu
     # sudo pacman -S xcompmgr
     # sudo pacman -S hsetroot
     # sudo pacman -S xorg-xsetroot

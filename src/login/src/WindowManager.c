@@ -67,7 +67,7 @@
 #define   YPOS       310
 #define   WIDTH      30
 #define   HEIGHT     30
-#define   IMG_FILE   "/etc/X11/glm/pics/settings.png"
+#define   IMG_FILE   "/etc/X11/glm/img/settings.png"
 #define   SES_FILE   "/etc/X11/glm/log/session.log"
 
 

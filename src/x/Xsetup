@@ -24,8 +24,7 @@ done
 
 
 ## Set background 
-/usr/bin/hsetroot -fill /etc/X11/glm/pics/wallpapers/smooth.jpg
+/usr/bin/hsetroot -fill /etc/X11/glm/img/wallpapers/abstract.jpg
 
 ## Cursor and background attributes
 /usr/bin/xsetroot -cursor_name left_ptr
-# /usr/bin/xdotool mousemove --sync 790 250
