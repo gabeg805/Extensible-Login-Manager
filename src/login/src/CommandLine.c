@@ -1,43 +1,46 @@
 // 
-// Created By: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
 // 
 // 
-// Name:
+// NAME:
 // 
 //     CommandLine.c
 // 
 // 
-// Syntax: 
+// SYNTAX: 
 // 
-//     ./CommandLine
+//     Without a 'main' function, include the header file:
+// 
+//         #include "../hdr/CommandLine.h"
 // 
 // 
-// Purpose:
+// PURPOSE:
 // 
 //     Executes the desired command, and returns the output as a string.
 // 
 // 
-// Keywords:
+// KEYWORDS:
 // 
-//     Unknown
-// 
-// 
-// Functions:
-// 
-//     command_line - Returns command output as a string
+//     N/A
 // 
 // 
-// File Structure:
+// FUNCTIONS:
+// 
+//     command_line - Return command output as a string
+// 
+// 
+// FILE STRUCTURE:
 // 
 //     * Includes and Declares
 //     * Get Command Output
 // 
 // 
-// Modification History:
+// MODIFICATION HISTORY:
 // 	
 //     gabeg Aug 06 2014 <> created
 // 
 // **********************************************************************************
+
 
 
 // /////////////////////////////////

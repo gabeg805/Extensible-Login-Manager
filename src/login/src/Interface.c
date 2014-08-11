@@ -1,43 +1,55 @@
 // 
-// Created By: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
 // 
 // 
-// Name:
+// NAME:
 // 
 //     Interface.c
 // 
 // 
-// Syntax: 
+// SYNTAX: 
 // 
-//     ./Interface
+//     Without a 'main' function, include the header file:
+// 
+//         #include "../hdr/Interface.h"
+// 
+//     With a 'main' function, execute the following:
+// 
+//         $ gcc -o Interface Interface.c \
+//               Username.c Transparency.c Clock.c Frame.c TextImage.c WindowManager.c \
+//               `pkg-config gtk+-3.0 --cflags --libs`
+//         $ ./Interface
 // 
 // 
-// Purpose:
+// PURPOSE:
 // 
 //     Display the login interface.
 // 
 // 
-// Keywords:
+// KEYWORDS:
 // 
 //     Unknown
 // 
 // 
-// Functions:
+// FUNCTIONS:
 // 
 //     login_interface - Display the login interface
 // 
 // 
-// File Structure:
+// FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Display Interface
+//     * Display Login Interface
 // 
 // 
-// Modification History:
+// MODIFICATION HISTORY:
 // 	
 //     gabeg Aug 07 2014 <> created
 // 
+//     gabeg Aug 10 2014 <> Updated header
+// 
 // **********************************************************************************
+
 
 
 // /////////////////////////////////
@@ -46,6 +58,7 @@
 
 // Includes
 #include "../hdr/Interface.h"
+#include "../hdr/Username.h"
 #include "../hdr/Transparency.h"
 #include "../hdr/Clock.h"
 #include "../hdr/Frame.h"
@@ -64,9 +77,9 @@ void login_interface(int argc, char *argv[]);
 
 
 
-// /////////////////////////////
-// ///// DISPLAY INTERFACE ///// 
-// /////////////////////////////
+// ///////////////////////////////////
+// ///// DISPLAY LOGIN INTERFACE ///// 
+// ///////////////////////////////////
 
 // Display the login interface
 void login_interface(int argc, char *argv[]) {
@@ -93,7 +106,14 @@ void login_interface(int argc, char *argv[]) {
     // Define window manager
     GtkWidget *wm_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *wm_dropmenu = gtk_menu_button_new();
-    GtkWidget *wm_menu = gtk_menu_new();    
+    GtkWidget *wm_menu = gtk_menu_new();
+    
+    // Define username menu
+    GtkWidget *user_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *user_dropmenu = gtk_menu_button_new();
+    GtkWidget *user_menu = gtk_menu_new();
+    GtkWidget *user_label = gtk_label_new("");
+    
     
     // Initialize the root window with all its objects
     init_date_clock_root(clock_date_window, clock_date);
@@ -101,6 +121,7 @@ void login_interface(int argc, char *argv[]) {
     init_frame_root(frame_window, frame);
     init_text_root(text_window, text);
     init_wm_root(wm_window, wm_dropmenu, wm_menu);    
+    init_usermenu_root(user_window, user_dropmenu, user_menu, user_label);    
     
     
     // Display the clock date
@@ -124,7 +145,13 @@ void login_interface(int argc, char *argv[]) {
     gtk_widget_show(wm_dropmenu);
     gtk_widget_show(wm_window);
     
+    // Display the username menu
+    set_username_entries(user_menu, user_label);
+    gtk_widget_show(user_label);
+    gtk_widget_show(user_dropmenu);
+    gtk_widget_show(user_window);
     
+        
     // Log to file that interface is beginning execution
     FILE *fp;
     fp = fopen(log, "w");

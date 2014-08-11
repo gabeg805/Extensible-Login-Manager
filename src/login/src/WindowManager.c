@@ -1,51 +1,63 @@
 // 
-// Created By: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
 // 
 // 
-// Name:
+// NAME:
 // 
 //     WindowManager.c
 // 
 // 
-// Syntax: 
+// SYNTAX: 
 // 
-//     ./WindowManager
+//     Without a 'main' function, include the header file:
+// 
+//         #include "../hdr/WindowManager.h"
+// 
+//     With a 'main' function, execute the following:
+// 
+//         $ gcc -o WindowManager WindowManager.c CommandLine.c Transparency.c \
+//               `pkg-config gtk+-3.0 --cflags --libs`
+//         $ ./WindowManager
 // 
 // 
 // Purpose:
 // 
-//     Displays a button for the user to choose between possible window managers for 
+//     Display a button for the user to choose between possible window managers for 
 //     their login session.
 // 
 // 
 // Keywords:
 // 
-//     Unknown
+//     N/A
 // 
 // 
 // Functions:
 // 
 //     init_wm_root        - Initialize the root window
+// 
 //     set_wm_color        - Set the color scheme for the root window
+// 
 //     wm_write_to_file    - Write to a file, which window manager to use for the 
 //                           session
+// 
 //     set_wm_entries      - Determine which window manager(s) the system has and add 
 //                           them as entries to the menu
-//     main                - Display the window manager chooser
 // 
 // 
 // File Structure:
 // 
 //     * Includes and Declares
-//     * Initialization
+//     * Initialize Root Window
+//     * Set Color Scheme For Root Window
 //     * WM Command
 //     * Add WM Entries to the Menu 
-//     * Display the WM Chooser
 // 
 // 
 // Modification History:
 // 	
 //     gabeg Aug 02 2014 <> created
+// 
+//     gabeg Aug 10 2014 <> Updated header
 // 
 // **********************************************************************************
 
@@ -64,7 +76,7 @@
 #include <stdlib.h>
 
 #define   XPOS       770
-#define   YPOS       310
+#define   YPOS       315
 #define   WIDTH      30
 #define   HEIGHT     30
 #define   IMG_FILE   "/etc/X11/glm/img/settings.png"
@@ -79,9 +91,9 @@ void set_wm_entries(GtkWidget *menu);
 
 
 
-// //////////////////////////
-// ///// INITIALIZATION /////
-// //////////////////////////
+// //////////////////////////////////
+// ///// INITIALIZE ROOT WINDOW /////
+// //////////////////////////////////
 
 // Initialize the root window and its objects
 void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
@@ -148,12 +160,10 @@ void wm_write_to_file(GtkMenu *item) {
     // Chosen session to start
     const gchar *sess = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
     
-    // Command to write to file
-    char cmd[50];
-    snprintf(cmd, sizeof(cmd), "%s %s %s %s", "echo", sess, ">", SES_FILE);    
-    
-    // Write chosen session to file
-    system(cmd);
+    // Write session to file
+    FILE *handle = fopen(SES_FILE, "w");
+    fprintf(handle, "%s", sess);
+    fclose(handle);
 }
 
 
@@ -206,35 +216,3 @@ void set_wm_entries(GtkWidget *menu) {
     // Freeing up the memory
     free(allwm);
 }
-
-
-
-// //////////////////////////////////
-// ///// DISPLAY THE WM CHOOSER /////
-// //////////////////////////////////
-
-// Display the window manager chooser
-/* int main(int argc, char *argv[]) { */
-
-/*     // Initialize GTK toolkit */
-/*     gtk_init(&argc, &argv); */
-    
-/*     // Define window and drawing area */
-/*     GtkWidget *wm_window = gtk_window_new(GTK_WINDOW_TOPLEVEL), */
-/*         *wm_dropmenu     = gtk_menu_button_new(), */
-/*         *wm_menu         = gtk_menu_new(), */
-/*         *session; */
-    
-/*     // Initialize the root window and its objects */
-/*     init_wm_root(wm_window, wm_dropmenu, wm_menu); */
-    
-/*     // Attach the window manager menu to the dropdown menu */
-/*     get_wm_entries(session, wm_menu); */
-    
-/*     // Display GTK window */
-/*     gtk_widget_show(wm_dropmenu); */
-/*     gtk_widget_show(wm_window); */
-/*     gtk_main(); */
-    
-/*     return 0; */
-/* } */

@@ -1,43 +1,48 @@
 // 
-// Created By: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
 // 
 // 
-// Name:
+// NAME:
 // 
 //     glm.c
 // 
 // 
-// Syntax: 
+// SYNTAX: 
 // 
-//     glm
-// 
-// 
-// Purpose:
-// 
-//     Display "Gabe's Login Manager".
+//     ./glm
 // 
 // 
-// Keywords:
+// PURPOSE:
 // 
-//     Unknown
+//     Display "Gabe's Login Manager", a login manager I created that is extremely 
+//     customizable, where any item(s) can be added/removed/modified on the login 
+//     screen.
 // 
 // 
-// Functions:
+// KEYWORDS:
+// 
+//     N/A
+// 
+// 
+// FUNCTIONS:
 // 
 //     main - Display Gabe's Login Manager
 // 
 // 
-// File Structure:
+// FILE STRUCTURE:
 // 
 //     * Includes and Declares
 //     * Gabe's Login Manager
 // 
 // 
-// Modification History:
+// MODIFICATION HISTORY:
 // 	
 //     gabeg Aug 07 2014 <> created
 // 
+//     gabeg Aug 10 2014 <> Updated the header
+// 
 // **********************************************************************************
+
 
 
 // /////////////////////////////////
@@ -45,6 +50,7 @@
 // /////////////////////////////////
 
 // Includes
+#include "../hdr/Username.h"
 #include "../hdr/Password.h"
 #include "../hdr/Interface.h"
 #include "../hdr/Authenticate.h"
@@ -107,11 +113,7 @@ int main(int argc, char *argv[]) {
     
     
     // Login to the system
-    char *USERNAME = "gabeg";
-    char *PASSWORD;
     int status = 1;
-    
-        
     while (status) {
         char temp[1024];
         char input[1024];
@@ -125,18 +127,24 @@ int main(int argc, char *argv[]) {
         // Remove trailing newline characters
         input[strlen(input)-1] = '\0';
         fclose(fp);
-        printf("%s-%s-\n", input, flag);
+        
         if ( strcmp(input, flag) == 0 ) {
             while (status) {
-                PASSWORD = password_entry(argc, argv);
+                char *PASSWORD = password_entry(argc, argv);
+                
+                FILE *handle = fopen("/etc/X11/glm/log/user.log", "r");
+                char temp[1024];
+                fgets(temp, sizeof(temp), handle);
+                char USERNAME[strlen(temp)];
+                strcpy(USERNAME, "");
+                strncat(USERNAME, temp, strlen(temp)); 
+                fclose(handle);
+                
                 status  = login(USERNAME, PASSWORD);
+                free(PASSWORD);
             }
         }
     }
     
-    
-    /* // Free up username and password */
-    /* // free(USERNAME); */
-    free(PASSWORD);
     return 0;
 }

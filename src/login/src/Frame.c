@@ -1,48 +1,58 @@
 // 
-// Created By: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
 // 
 // 
-// Name:
+// NAME:
 // 
 //     Frame.c
 // 
 // 
-// Syntax: 
+// SYNTAX: 
 // 
-//     ./Frame
+//     Without a 'main' function, include the header file:
 // 
+//         #include "../hdr/Frame.h"
 // 
-// Purpose:
+//     With a 'main' function, execute the following:
 // 
-//     Creates a frame for the login items.
-// 
-// 
-// Keywords:
-// 
-//     Unknown
+//         $ gcc -o Frame Frame.c Transparency.c `pkg-config gtk+-3.0 --cflags --libs`
+//         $ ./Frame
 // 
 // 
-// Functions:
+// PURPOSE:
+// 
+//     Create a frame for the login items.
+// 
+// 
+// KEYWORDS:
+// 
+//     N/A
+// 
+// 
+// FUNCTIONS:
 // 
 //     init_frame_root     - Initialize the root window and all its objects
+// 
 //     draw_frame_window   - Draw the root window
+// 
 //     draw_frame          - Draw the login frame
-//     main                - Display the login frame
 // 
 // 
-// File Structure:
+// FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Initialization
-//     * Drawing
-//     * Display the Login Frame
+//     * Initialize Root Window
+//     * Draw Frame
 // 
 // 
-// Modification History:
+// MODIFICATION HISTORY:
 // 	
 //     gabeg Aug 03 2014 <> created
 // 
+//     gabeg Aug 03 2014 <> Updated the header
+// 
 // **********************************************************************************
+
 
 
 // /////////////////////////////////
@@ -59,8 +69,8 @@
 
 #define   XPOS      550
 #define   YPOS      300
-#define   FWIDTH    265
-#define   FHEIGHT   100
+#define   WIDTH     265
+#define   HEIGHT    100
 
 
 // Declares
@@ -70,9 +80,9 @@ gboolean draw_frame_window(GtkWidget *widget);
 
 
 
-// //////////////////////////
-// ///// INITIALIZATION /////
-// //////////////////////////
+// //////////////////////////////////
+// ///// INITIALIZE ROOT WINDOW /////
+// //////////////////////////////////
 
 // Initialize the root window and all its objects
 void init_frame_root(GtkWidget *window, GtkWidget *area) {
@@ -80,7 +90,7 @@ void init_frame_root(GtkWidget *window, GtkWidget *area) {
     // Set window attributes
     gtk_window_set_title(GTK_WINDOW(window), "Login Frame");
     gtk_window_move(GTK_WINDOW(window), XPOS, YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), FWIDTH+2, FHEIGHT+2);
+    gtk_window_set_default_size(GTK_WINDOW(window), WIDTH+2, HEIGHT+2);
     
     // Add area to window
     gtk_container_add(GTK_CONTAINER(window), area);
@@ -96,9 +106,9 @@ void init_frame_root(GtkWidget *window, GtkWidget *area) {
 
 
 
-// ///////////////////
-// ///// DRAWING /////
-// ///////////////////
+// //////////////////////
+// ///// DRAW FRAME /////
+// //////////////////////
 
 // Draw the root window 
 gboolean draw_frame_window(GtkWidget *widget) {
@@ -134,7 +144,7 @@ void draw_frame(cairo_t *cr) {
     double x             = 1, 
            y             = 1,
            aspect        = 1.0, 
-           corner_radius = FHEIGHT / 10.0; 
+           corner_radius = HEIGHT / 10.0; 
     
     double radius = corner_radius / aspect;
     double degrees = M_PI / 180.0;
@@ -142,9 +152,9 @@ void draw_frame(cairo_t *cr) {
     // Create the rouded rectangle
     cairo_set_line_width (cr, 0);
     cairo_new_sub_path(cr);
-    cairo_arc(cr,   x+FWIDTH-radius,   y+radius,           radius,   -90*degrees,     0*degrees);
-    cairo_arc(cr,   x+FWIDTH-radius,   y+FHEIGHT-radius,   radius,     0*degrees,    90*degrees);
-    cairo_arc(cr,   x+radius,          y+FHEIGHT-radius,   radius,    90*degrees,   180*degrees);
+    cairo_arc(cr,   x+WIDTH-radius,   y+radius,           radius,   -90*degrees,     0*degrees);
+    cairo_arc(cr,   x+WIDTH-radius,   y+HEIGHT-radius,   radius,     0*degrees,    90*degrees);
+    cairo_arc(cr,   x+radius,          y+HEIGHT-radius,   radius,    90*degrees,   180*degrees);
     cairo_arc(cr,   x+radius,          y+radius,           radius,   180*degrees,   270*degrees);
     cairo_close_path (cr);
     
@@ -160,30 +170,3 @@ void draw_frame(cairo_t *cr) {
     cairo_fill_preserve(cr);
     cairo_stroke (cr);
 }
-
-
-
-// ///////////////////////////////////
-// ///// DISPLAY THE LOGIN FRAME /////
-// ///////////////////////////////////
-
-// Display the login frame
-/* int main(int argc, char *argv[]) { */
-    
-/*     // Initialize GTK toolkit */
-/*     gtk_init(&argc, &argv); */
-    
-/*     // Create window and drawing area */
-/*     GtkWidget *frame_window = gtk_window_new(GTK_WINDOW_TOPLEVEL); */
-/*     GtkWidget *frame = gtk_drawing_area_new(); */
-    
-/*     // Initialize the root window with all its objects */
-/*     init_frame_root(frame_window, frame); */
-    
-/*     // Display GTK window */
-/*     gtk_widget_show(frame); */
-/*     gtk_widget_show(frame_window); */
-/*     gtk_main(); */
-    
-/*     return 0; */
-/* } */

@@ -1,43 +1,48 @@
 // 
-// Created By: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
 // 
 // 
-// Name:
+// NAME:
 // 
 //     Transparency.c
 // 
 // 
-// Syntax: 
+// SYNTAX: 
 // 
-//     #include "Transparency.h"
+//     Without a 'main' function, include the header file:
+// 
+//         #include "../hdr/Transparency.h"
 // 
 // 
-// Purpose:
+// PURPOSE:
 // 
 //     Enables transparency for the specified GTK widget.
 // 
 // 
-// Keywords:
+// KEYWORDS:
 // 
-//     Unknown
-// 
-// 
-// Functions:
-// 
-//     main - the main function
+//     N/A
 // 
 // 
-// File Structure:
+// FUNCTIONS:
+// 
+//     enable_transparency - Enable widget transparency
+// 
+// 
+// FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Objective
+//     * Enable Widget Transparency
 // 
 // 
-// Modification History:
+// MODIFICATION HISTORY:
 // 	
-//     gabeg MON DAY YEAR <> created
+//     gabeg Aug 06 2014 <> created
+// 
+//     gabeg Aug 10 2014 <> Updated header
 // 
 // **********************************************************************************
+
 
 
 // /////////////////////////////////
@@ -48,6 +53,7 @@
 #include "../hdr/Transparency.h"
 
 #include <gtk/gtk.h>
+
 
 // Declares
 void enable_transparency(GtkWidget *widget);

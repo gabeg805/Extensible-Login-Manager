@@ -1,43 +1,48 @@
 // 
-// Created By: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
 // 
 // 
-// Name:
+// NAME:
 // 
 //     OpenDisplay.c
 // 
 // 
-// Syntax: 
+// SYNTAX: 
 // 
-//     ./OpenDisplay
+//     Without a 'main' function, include the header file:
 // 
-// 
-// Purpose:
-// 
-//     Returns an open display for an X server to start on.
+//         #include "../hdr/OpenDisplay.h"
 // 
 // 
-// Keywords:
+// PURPOSE:
 // 
-//     Unknown
-// 
-// 
-// Functions:
-// 
-//     get_open_display - return an open display for an X server to start on
+//     Return an open display for an X server to start on.
 // 
 // 
-// File Structure:
+// KEYWORDS:
+// 
+//     N/A
+// 
+// 
+// FUNCTIONS:
+// 
+//     get_open_display - Return an open display for an X server to start on
+// 
+// 
+// FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Get Open Display
+//     * Get Open X Display
 // 
 // 
-// Modification History:
+// MODIFICATION HISTORY:
 // 	
 //     gabeg Aug 06 2014 <> created
 // 
+//     gabeg Aug 10 2014 <> Updated header
+// 
 // **********************************************************************************
+
 
 
 // /////////////////////////////////
@@ -57,9 +62,9 @@ char * get_open_display();
 
 
 
-// ////////////////////////////
-// ///// GET OPEN DISPLAY ///// 
-// ////////////////////////////
+// //////////////////////////////
+// ///// GET OPEN X DISPLAY ///// 
+// //////////////////////////////
 
 // Return an open display in the form ':0'
 char * get_open_display() {

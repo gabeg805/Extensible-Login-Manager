@@ -1,51 +1,64 @@
 // 
-// Created By: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
 // 
 // 
-// Name:
+// NAME:
 // 
 //     Clock.c
 // 
 // 
-// Syntax: 
+// SYNTAX: 
 // 
-//     ./Clock
+//     Without a 'main' function, include the header file:
 // 
+//         #include "../hdr/Clock.h"
 // 
-// Purpose:
+//     With a 'main' function, execute the following:
 // 
-//     Display a clock that updates every second.
-// 
-// 
-// Keywords:
-// 
-//     Unknown
+//         $ gcc -o Clock Clock.c Transparency.c `pkg-config gtk+-3.0 --cflags --libs`
+//         $ ./Clock
 // 
 // 
-// Functions:
+// PURPOSE:
 // 
-//     init_clock_root - Initialize the root window with all its objects
-//     set_clock_color - Set color scheme for root window
-//     set_clock_label - Set the clock label font and text size
-//     clock_update    - Refresh the current clock label
-//     main            - Display the clock
+//     Display a clock that updates every thirty seconds.
 // 
 // 
-// File Structure:
+// KEYWORDS:
+// 
+//     N/A
+// 
+// 
+// FUNCTIONS:
+// 
+//     init_date_clock_root - Initialize the clock window that displays the date
+//     init_time_clock_root - Initialize the clock window that displays the time
+// 
+//     set_clock_color      - Set color scheme for the root window
+// 
+//     set_clock_label      - Set the clock label font and text size
+// 
+//     date_clock_update    - Refresh the date clock label
+//     time_clock_update    - Refresh the time clock label
+// 
+// 
+// FILE STRUCTURE:
 // 
 //     * Includes and Declares
 //     * Initialization
 //     * Set Color Scheme For Root Window
-//     * Get Current Time
+//     * Set Current Time
 //     * Update the Clock
-//     * Display the Clock
 // 
 // 
-// Modification History:
+// MODIFICATION HISTORY:
 // 	
 //     gabeg Aug 02 2014 <> created
 // 
+//     gabeg Aug 10 2014 <> Updated header
+// 
 // **********************************************************************************
+
 
 
 // /////////////////////////////////
@@ -218,41 +231,3 @@ gboolean time_clock_update(gpointer data) {
     
     return TRUE;
 }
-
-
-
-// /////////////////////////////
-// ///// DISPLAY THE CLOCK /////
-// /////////////////////////////
-
-// Display the clock
-/* int main(int argc, char *argv[]) { */
-    
-/*     // Initialize GTK toolkit */
-/*     gtk_init(&argc, &argv); */
-    
-/*     // Define clock date  */
-/*     GtkWidget *clock_date_window = gtk_window_new(GTK_WINDOW_TOPLEVEL); */
-/*     GtkWidget *clock_date = gtk_label_new(""); */
-    
-/*     // Define clock time  */
-/*     GtkWidget *clock_time_window = gtk_window_new(GTK_WINDOW_TOPLEVEL); */
-/*     GtkWidget *clock_time = gtk_label_new(""); */
-    
-/*     // Initialize the root window and all its objects */
-/*     init_date_clock_root(clock_date_window, clock_date); */
-/*     init_time_clock_root(clock_time_window, clock_time); */
-    
-/*     // Display the clock date */
-/*     gtk_widget_show(clock_date); */
-/*     gtk_widget_show(clock_date_window); */
-
-/*     // Display the clock time */
-/*     gtk_widget_show(clock_time); */
-/*     gtk_widget_show(clock_time_window); */
-/*     g_timeout_add_seconds(10, clock_update, clock_time); */
-
-/*     gtk_main(); */
-    
-/*     return 0; */
-/* } */

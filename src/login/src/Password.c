@@ -1,50 +1,63 @@
 // 
-// Created By: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
 // 
 // 
-// Name:
+// NAME:
 // 
 //     Password.c
 // 
 // 
-// Syntax: 
+// SYNTAX: 
 // 
-//     ./Password
+//     Without a 'main' function, include the header file:
 // 
+//         #include "../hdr/Password.h"
 // 
-// Purpose:
+//     With a 'main' function, execute the following:
 // 
-//     Displays an entry box in which the user may enter their password.
-// 
-// 
-// Keywords:
-// 
-//     Unknown
+//         $ gcc -o Password Password.c Transparency.c `pkg-config gtk+-3.0 --cflags --libs`
+//         $ ./Password
 // 
 // 
-// Functions:
+// PURPOSE:
+// 
+//     Display an entry box in which the user may enter their password.
+// 
+// 
+// KEYWORDS:
+// 
+//     N/A
+// 
+// 
+// FUNCTIONS:
 // 
 //     init_entry_root - Initialize the root window
 //     init_entry      - Initialize the entry box
+// 
 //     set_entry_color - Set the color scheme for the root window
+// 
 //     get_entry_text  - Return user entry text
+// 
 //     password_entry  - Display the password entry box and return the input password
 // 
 // 
-// File Structure:
+// FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Initialization
+//     * Initialize Root Window
 //     * Set Color Scheme For Root Window
 //     * Get Entry Text
 //     * Display Entry Box
 // 
 // 
-// Modification History:
+// MODIFICATION HISTORY:
 // 	
 //     gabeg Aug 03 2014 <> created
 // 
+//     gabeg Aug 10 2014 <> Updated header
+// 
 // **********************************************************************************
+
 
 
 // /////////////////////////////////
@@ -56,7 +69,6 @@
 #include "../hdr/Transparency.h"
 
 #include <gtk/gtk.h>
-#include <glib.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -82,9 +94,9 @@ char output[1024];
 
 
 
-// //////////////////////////
-// ///// INITIALIZATION /////
-// //////////////////////////
+// //////////////////////////////////
+// ///// INITIALIZE ROOT WINDOW /////
+// //////////////////////////////////
 
 // Initialize the root window
 void init_entry_root(GtkWidget *window, GtkWidget *entry) {
@@ -151,7 +163,7 @@ void set_entry_color(GtkWidget *window, GtkWidget *entry) {
     const GdkRGBA bg_window = {0, 0, 0, 0};
     const GdkRGBA fg_window = {0, 0, 0, 0};
     const GdkRGBA bg_entry = {1, 1, 1, 0.5};
-    const GdkRGBA fg_entry = {1, 1, 1, 1};
+    const GdkRGBA fg_entry = {0, 0, 0, 1};
     
     // Set color scheme
     gtk_widget_override_background_color(window, GTK_STATE_FLAG_NORMAL, &bg_window);

@@ -1,48 +1,57 @@
 // 
-// Created By: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
 // 
 // 
-// Name:
+// NAME:
 // 
-//     PasswordImage.c
-// 
-// 
-// Syntax: 
-// 
-//     ./PasswordImage
+//     TextImage.c
 // 
 // 
-// Purpose:
+// SYNTAX: 
 // 
-//     Creates and displays the image of the word 'Password:'.
+//     Without a 'main' function, include the header file:
+// 
+//         #include "../hdr/TextImage.h"
+// 
+//     With a 'main' function, execute the following:
+// 
+//         $ gcc -o TextImage TextImage.c Transparency.c `pkg-config gtk+-3.0 --cflags --libs`
+//         $ ./TextImage
 // 
 // 
-// Keywords:
+// PURPOSE:
 // 
-//     Unknown
+//     Create and display the image of the word 'Password:'.
 // 
 // 
-// Functions:
+// KEYWORDS:
+// 
+//     N/A
+// 
+// 
+// FUNCTIONS:
 // 
 //     init_text_root      - Initialize the root window
+// 
 //     draw_text           - Draw the password text
 //     draw_text_window    - Draw the root window with all its objects
-//     main                - Create and display the root window with all its object
 // 
 // 
-// File Structure:
+// FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Initialization
-//     * Create Drawing
-//     * Display the Root Window
+//     * Initialize Root Window
+//     * Draw Text
+/// 
 // 
-// 
-// Modification History:
+// MODIFICATION HISTORY:
 // 	
 //     gabeg Aug 02 2014 <> created
 // 
+//     gabeg Aug 10 2014 <> Updated the header
+// 
 // **********************************************************************************
+
 
 
 // /////////////////////////////////
@@ -60,7 +69,7 @@
 #define   XPOS    570
 #define   YPOS    330
 #define   NAME    "Password"
-#define   FONT    "Inconsolata"
+#define   FONT    "DejaVu Sans"
 #define   FSIZE   12
 
 
@@ -71,9 +80,9 @@ gboolean draw_text_window(GtkWidget *window);
 
 
 
-// //////////////////////////
-// ///// INITIALIZATION /////
-// //////////////////////////
+// //////////////////////////////////
+// ///// INITIALIZE ROOT WINDOW /////
+// //////////////////////////////////
 
 // Initialize the root window and its objects
 void init_text_root(GtkWidget *window, GtkWidget *area) {
@@ -97,9 +106,9 @@ void init_text_root(GtkWidget *window, GtkWidget *area) {
 
 
 
-// //////////////////////////
-// ///// CREATE DRAWING /////
-// //////////////////////////
+// /////////////////////
+// ///// DRAW TEXT /////
+// /////////////////////
 
 // Draw the text
 void draw_text(cairo_t *cr) {         
@@ -142,30 +151,3 @@ gboolean draw_text_window(GtkWidget *window) {
     
     return FALSE;
 }
-
-
-
-// ///////////////////////////////////
-// ///// DISPLAY THE ROOT WINDOW /////
-// ///////////////////////////////////
-
-// Create and the display the root window and its objects
-/* int main(int argc, char *argv[]) { */
-
-/*     // Initialize GTK toolkit */
-/*     gtk_init(&argc, &argv); */
-    
-/*     // Define window and drawing area */
-/*     GtkWidget *text_window = gtk_window_new(GTK_WINDOW_TOPLEVEL); */
-/*     GtkWidget *text = gtk_drawing_area_new(); */
-    
-/*     // Initialize the root window and its objects */
-/*     init_text_root(text_window, text); */
-    
-/*     // Display GTK window */
-/*     gtk_widget_show(text); */
-/*     gtk_widget_show(text_window); */
-/*     gtk_main(); */
-    
-/*     return 0; */
-/* } */
