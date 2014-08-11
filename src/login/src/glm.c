@@ -136,8 +136,7 @@ int main(int argc, char *argv[]) {
                 char temp[1024];
                 fgets(temp, sizeof(temp), handle);
                 char USERNAME[strlen(temp)];
-                strcpy(USERNAME, "");
-                strncat(USERNAME, temp, strlen(temp)); 
+                snprintf(USERNAME, sizeof(USERNAME), temp); 
                 fclose(handle);
                 
                 status  = login(USERNAME, PASSWORD);

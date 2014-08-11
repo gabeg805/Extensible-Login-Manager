@@ -103,7 +103,7 @@ void init_entry_root(GtkWidget *window, GtkWidget *entry) {
     
     // Set window attributes
     gtk_window_move(GTK_WINDOW(window), XPOS, YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), WIDTH, HEIGHT);
+    gtk_window_set_default_size(GTK_WINDOW(window), WIDTH, HEIGHT*0);
     
     // Set color scheme for root window
     set_entry_color(window, entry);

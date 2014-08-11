@@ -15,9 +15,7 @@
 // 
 //     With a 'main' function, execute the following:
 // 
-//         $ gcc -o Interface Interface.c \
-//               Username.c Transparency.c Clock.c Frame.c TextImage.c WindowManager.c \
-//               `pkg-config gtk+-3.0 --cflags --libs`
+//         $ gcc -o Interface Interface.c Username.c Transparency.c Clock.c Frame.c TextImage.c WindowManager.c `pkg-config gtk+-3.0 --cflags --libs`
 //         $ ./Interface
 // 
 // 
@@ -88,12 +86,12 @@ void login_interface(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
     
     // Define clock date
-    GtkWidget *clock_date_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *clock_date = gtk_label_new("");
+    GtkWidget *date_clock_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *date_clock = gtk_label_new("");
     
     // Define clock time
-    GtkWidget *clock_time_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *clock_time = gtk_label_new("");
+    GtkWidget *time_clock_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *time_clock = gtk_label_new("");
     
     // Define frame  
     GtkWidget *frame_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -116,8 +114,8 @@ void login_interface(int argc, char *argv[]) {
     
     
     // Initialize the root window with all its objects
-    init_date_clock_root(clock_date_window, clock_date);
-    init_time_clock_root(clock_time_window, clock_time);
+    init_date_clock_root(date_clock_window, date_clock);
+    init_time_clock_root(time_clock_window, time_clock);
     init_frame_root(frame_window, frame);
     init_text_root(text_window, text);
     init_wm_root(wm_window, wm_dropmenu, wm_menu);    
@@ -125,12 +123,12 @@ void login_interface(int argc, char *argv[]) {
     
     
     // Display the clock date
-    gtk_widget_show(clock_date);
-    gtk_widget_show(clock_date_window);
+    gtk_widget_show(date_clock);
+    gtk_widget_show(date_clock_window);
     
     // Display the clock time
-    gtk_widget_show(clock_time);
-    gtk_widget_show(clock_time_window);
+    gtk_widget_show(time_clock);
+    gtk_widget_show(time_clock_window);
     
     // Display the login frame
     gtk_widget_show(frame);

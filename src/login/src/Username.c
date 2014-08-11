@@ -71,12 +71,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define   XPOS        550
-#define   YPOS        150
-#define   WIDTH       265
-#define   HEIGHT      75
+#define   XPOS        665
+#define   YPOS        197
+#define   WIDTH       150
+#define   HEIGHT      50
 #define   FONT        "DejaVu Sans"
-#define   FSIZE       25*1024
+#define   FSIZE       23*1024
 #define   USER_FILE   "/etc/X11/glm/log/user.log"
 
 
@@ -96,10 +96,17 @@ void set_username_entries(GtkWidget *menu, GtkWidget *label);
 // Initialize the root window and its objects
 void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu, GtkWidget *label) {
     
+    // Set username icon
+    if ( !fork() ) 
+        execlp("/usr/bin/pqiv", "/usr/bin/pqiv", 
+               "-c", "-i", "-P", "575,190", 
+               "/home/gabeg/yo.png", NULL);
+    
+    
     // Set window attributes
     gtk_window_set_title(GTK_WINDOW(window), "Window Manager");
     gtk_window_move(GTK_WINDOW(window), XPOS, YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), WIDTH, HEIGHT);
+    gtk_window_set_default_size(GTK_WINDOW(window), WIDTH*0, HEIGHT*0);
     
     // Define and set color schemes
     set_usermenu_color(window, dropmenu);
@@ -126,7 +133,7 @@ void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu,
 void init_userlabel(GtkWidget *label) {
     
     // Set label text
-    gtk_label_set_text(GTK_LABEL(label), "Username");
+    gtk_label_set_text(GTK_LABEL(label), "User");
     
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
@@ -180,7 +187,7 @@ void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
     
     // Write username to file
     FILE *handle = fopen(USER_FILE, "w");
-    fprintf(handle, "%s", user);
+    fprintf(handle, "%s\n", user);
     fclose(handle);
     
     // Modify button style

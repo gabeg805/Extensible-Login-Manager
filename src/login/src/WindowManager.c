@@ -15,8 +15,7 @@
 // 
 //     With a 'main' function, execute the following:
 // 
-//         $ gcc -o WindowManager WindowManager.c CommandLine.c Transparency.c \
-//               `pkg-config gtk+-3.0 --cflags --libs`
+//         $ gcc -o WindowManager WindowManager.c CommandLine.c Transparency.c `pkg-config gtk+-3.0 --cflags --libs`
 //         $ ./WindowManager
 // 
 // 
@@ -101,7 +100,7 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
     // Set window attributes
     gtk_window_set_title(GTK_WINDOW(window), "Window Manager");
     gtk_window_move(GTK_WINDOW(window), XPOS, YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), WIDTH, HEIGHT);
+    gtk_window_set_default_size(GTK_WINDOW(window), WIDTH*0, HEIGHT*0);
     
     // Define and set color schemes
     set_wm_color(window, dropmenu);
@@ -162,7 +161,7 @@ void wm_write_to_file(GtkMenu *item) {
     
     // Write session to file
     FILE *handle = fopen(SES_FILE, "w");
-    fprintf(handle, "%s", sess);
+    fprintf(handle, "%s\n", sess);
     fclose(handle);
 }
 
@@ -175,44 +174,68 @@ void wm_write_to_file(GtkMenu *item) {
 // Determine which window manager(s) the system has and add them as entries to the menu
 void set_wm_entries(GtkWidget *menu) {
     
-    // Initialize WM session menu item
-    GtkWidget *session;
-    
     // Get window manager string
-    char *allwm = command_line("ls -1 /usr/share/xsessions/ | sed 's/.desktop//'");
-    char wm[strlen(allwm)];
-    GSList *group;
+    char *val = command_line("ls -1 /usr/share/xsessions/ | wc -l");
+    int num = atoi(val);
+    char *wmstr = command_line("ls -1 /usr/share/xsessions/ | sed 's/.desktop//'");
+    char *wmdup = strdup(wmstr);
+    char *allwm[num];
     
-    // Determine window manager entries and add them as entries to the menu
-    int i=0, j=0, count=0;    
-    for (i = 0; i < strlen(allwm); i++) {
-        
-        // Window manager string array delimeter, space separates one string from the next
-        if ( allwm[i] == ' ' ) {
-            
-            // Create the menu items and add them to the same group
-            if (count == 0) {
-                session = gtk_radio_menu_item_new_with_label(NULL, wm);
-                group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(session));
-            } else
-                session = gtk_radio_menu_item_new_with_label(group, wm);
-            
-            // Attach window manager entries to the menu
-            gtk_menu_attach(GTK_MENU(menu), session, 0, 1, count, count+1);
-            gtk_widget_show(session);
-            
-            // Add menu entry signal
-            g_signal_connect(G_OBJECT(session), "activate", G_CALLBACK(wm_write_to_file), NULL);
-            
-            j = 0;
-            count++;
-        } else {
-            wm[j] = allwm[i];
-            wm[j+1] = '\0';
-            j++;
-        }
+    // Set window manager array items
+    int i = 0;
+    char *buffer;
+    while ( (buffer = strsep(&wmdup, " ")) ) {
+        if ( strcmp(buffer, "") != 0 )
+            allwm[i] = buffer;
+        i++;
     }
     
+    // Read previous window manager used
+    FILE *handle = fopen(SES_FILE, "r");
+    char temp[1024];
+    fgets(temp, sizeof(temp), handle);
+    char wmfocus[strlen(temp)];
+    snprintf(wmfocus, sizeof(wmfocus), temp);
+    fclose(handle);
+    
+    // Set the menu items
+    int j = 0, q = 0, p = 0;
+    GtkWidget *session;
+    GSList *group;
+    while (1) {
+        if ( strcmp(allwm[j], wmfocus) == 0 ) {
+            session = gtk_radio_menu_item_new_with_label(NULL, allwm[j]);
+            group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(session));
+            
+            allwm[j] = "";
+            p = 1;
+        } else if ( q != 0 && strcmp(allwm[j], "") != 0 ) {
+            session = gtk_radio_menu_item_new_with_label(group, allwm[j]);
+            allwm[j] = "";
+            p = 1;
+        } else {
+            p = 0;
+        }
+        
+        // Setup the menu items
+        if ( p == 1 ) {
+            gtk_menu_attach(GTK_MENU(menu), session, 0, 1, q, q+1);
+            gtk_widget_show(session);
+            g_signal_connect(G_OBJECT(session), "activate", G_CALLBACK(wm_write_to_file), NULL);
+            
+            q++;
+            if ( q == num ) 
+                break;
+        }
+        
+        
+        j++;
+        if ( j >= num )
+            j = 0;
+    }
+    
+    
     // Freeing up the memory
-    free(allwm);
+    free(val);
+    free(wmstr);
 }

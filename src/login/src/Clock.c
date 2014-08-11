@@ -72,7 +72,7 @@
 #include <gtk/gtk.h>
 #include <time.h>
 
-#define   DATE_XPOS     0
+#define   DATE_XPOS     50
 #define   DATE_YPOS     650
 #define   DATE_WIDTH    400
 #define   DATE_HEIGHT   50
@@ -80,7 +80,7 @@
 #define   DATE_FSIZE    25*1024
 #define   DATE_FMT      "%A, %B %-d"
 
-#define   TIME_XPOS     0
+#define   TIME_XPOS     86
 #define   TIME_YPOS     575
 #define   TIME_WIDTH    400
 #define   TIME_HEIGHT   75
@@ -110,7 +110,7 @@ void init_date_clock_root(GtkWidget *window, GtkWidget *clock) {
     // Set window attributes
     gtk_window_set_title(GTK_WINDOW(window), "System Date Clock");
     gtk_window_move(GTK_WINDOW(window), DATE_XPOS, DATE_YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), DATE_WIDTH, DATE_HEIGHT);
+    gtk_window_set_default_size(GTK_WINDOW(window), DATE_WIDTH*0, DATE_HEIGHT*0);
         
     // Set clock attributes
     set_clock_color(window, clock);
@@ -135,7 +135,7 @@ void init_time_clock_root(GtkWidget *window, GtkWidget *clock) {
     // Set window attributes
     gtk_window_set_title(GTK_WINDOW(window), "System Time Clock");
     gtk_window_move(GTK_WINDOW(window), TIME_XPOS, TIME_YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), TIME_WIDTH, TIME_HEIGHT);
+    gtk_window_set_default_size(GTK_WINDOW(window), TIME_WIDTH*0, TIME_HEIGHT*0);
         
     // Set clock attributes
     set_clock_color(window, clock);
