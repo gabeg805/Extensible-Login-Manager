@@ -24,7 +24,7 @@ done
 
 
 ## Set background 
-/usr/bin/hsetroot -fill /etc/X11/glm/img/wallpapers/abstract.jpg
+/usr/bin/hsetroot -fill /etc/X11/glm/img/wallpapers/night-sky.jpg
 
 ## Cursor and background attributes
 /usr/bin/xsetroot -cursor_name left_ptr
