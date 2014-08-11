@@ -188,5 +188,9 @@ Executing this program on startup can have some pretty adverse effects, but fear
               If this doesn't work then hopefully at the very least your bootup time 
               will be faster! 
     
+    - Password is incorrect, even though it is typed in correctly.
+            * When this happens, a reboot tends to fix it. If it doesn't work the 
+              first time, try a couple of reboots. I think this problem is related 
+              to how the text is stored in memory, but I'm not 100% sure.
 
 Who knows what gems the logs may hold!
