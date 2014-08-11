@@ -78,7 +78,7 @@
 #define   YPOS       315
 #define   WIDTH      30
 #define   HEIGHT     30
-#define   IMG_FILE   "/etc/X11/glm/img/settings.png"
+#define   IMG_FILE   "/etc/X11/glm/img/interface/settings.png"
 #define   SES_FILE   "/etc/X11/glm/log/session.log"
 
 
@@ -104,7 +104,6 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
     
     // Define and set color schemes
     set_wm_color(window, dropmenu);
-    
     
     // Modify button style
     GtkWidget *image = gtk_image_new_from_file(IMG_FILE);

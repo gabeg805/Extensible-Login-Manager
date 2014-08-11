@@ -15,7 +15,7 @@
 // 
 //     With a 'main' function, execute the following:
 // 
-//         $ gcc -o Interface Interface.c Username.c Transparency.c Clock.c Frame.c TextImage.c WindowManager.c `pkg-config gtk+-3.0 --cflags --libs`
+//         $ gcc -o Interface Interface.c Username.c Transparency.c Clock.c Frame.c TextImage.c WindowManager.c Power.c `pkg-config gtk+-3.0 --cflags --libs`
 //         $ ./Interface
 // 
 // 
@@ -62,6 +62,7 @@
 #include "../hdr/Frame.h"
 #include "../hdr/TextImage.h"
 #include "../hdr/WindowManager.h"
+#include "../hdr/Power.h"
 
 #include <gtk/gtk.h>
 #include <stdio.h>
@@ -85,32 +86,36 @@ void login_interface(int argc, char *argv[]) {
     // Initialize GTK toolkit
     gtk_init(&argc, &argv);
     
-    // Define clock date
+    // Define the clock 
     GtkWidget *date_clock_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *date_clock = gtk_label_new("");
-    
-    // Define clock time
     GtkWidget *time_clock_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *time_clock = gtk_label_new("");
     
-    // Define frame  
+    // Define the frame  
     GtkWidget *frame_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *frame = gtk_drawing_area_new();
     
-    // Define text image
+    // Define the text image
     GtkWidget *text_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *text = gtk_drawing_area_new();
     
-    // Define window manager
+    // Define the window manager
     GtkWidget *wm_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *wm_dropmenu = gtk_menu_button_new();
     GtkWidget *wm_menu = gtk_menu_new();
     
-    // Define username menu
+    // Define the username menu
     GtkWidget *user_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *user_dropmenu = gtk_menu_button_new();
     GtkWidget *user_menu = gtk_menu_new();
     GtkWidget *user_label = gtk_label_new("");
+    
+    // Define the power button window
+    GtkWidget *shutdown_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *shutdown = gtk_button_new();
+    GtkWidget *reboot_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *reboot = gtk_button_new();
     
     
     // Initialize the root window with all its objects
@@ -120,13 +125,13 @@ void login_interface(int argc, char *argv[]) {
     init_text_root(text_window, text);
     init_wm_root(wm_window, wm_dropmenu, wm_menu);    
     init_usermenu_root(user_window, user_dropmenu, user_menu, user_label);    
+    init_shutdown_root(shutdown_window, shutdown);
+    init_reboot_root(reboot_window, reboot);
     
     
-    // Display the clock date
+    // Display the clock 
     gtk_widget_show(date_clock);
     gtk_widget_show(date_clock_window);
-    
-    // Display the clock time
     gtk_widget_show(time_clock);
     gtk_widget_show(time_clock_window);
     
@@ -148,6 +153,12 @@ void login_interface(int argc, char *argv[]) {
     gtk_widget_show(user_label);
     gtk_widget_show(user_dropmenu);
     gtk_widget_show(user_window);
+    
+    // Display the power button 
+    gtk_widget_show(shutdown);
+    gtk_widget_show(shutdown_window);
+    gtk_widget_show(reboot);
+    gtk_widget_show(reboot_window);
     
         
     // Log to file that interface is beginning execution

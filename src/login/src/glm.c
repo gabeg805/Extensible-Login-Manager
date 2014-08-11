@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
         char *xsetup = "/etc/X11/glm/src/x/Xsetup";
-        execlp(xsetup, xsetup, DISPLAY, XTTY, NULL);
+        execl(xsetup, xsetup, DISPLAY, XTTY, NULL);
     } else {
         int status;
         waitpid(child_pid, &status, 0);
@@ -130,6 +130,12 @@ int main(int argc, char *argv[]) {
         
         if ( strcmp(input, flag) == 0 ) {
             while (status) {
+                
+                /* // Uncomment to take a screenshot */
+                /* if ( !fork() ) */
+                /*     execl("/usr/bin/scrot", "/usr/bin/scrot",  */
+                /*           "-d", "3", "/etc/X11/glm/screenshot.png", NULL);                  */
+                
                 char *PASSWORD = password_entry(argc, argv);
                 
                 FILE *handle = fopen("/etc/X11/glm/log/user.log", "r");

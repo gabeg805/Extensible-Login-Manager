@@ -78,6 +78,8 @@
 #define   FONT        "DejaVu Sans"
 #define   FSIZE       23*1024
 #define   USER_FILE   "/etc/X11/glm/log/user.log"
+#define   IMG_FILE    "/etc/X11/glm/img/interface/user.png"
+#define   IMG_COM     "/usr/bin/pqiv"
 
 
 // Declares
@@ -98,10 +100,7 @@ void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu,
     
     // Set username icon
     if ( !fork() ) 
-        execlp("/usr/bin/pqiv", "/usr/bin/pqiv", 
-               "-c", "-i", "-P", "575,190", 
-               "/home/gabeg/yo.png", NULL);
-    
+        execl(IMG_COM, IMG_COM, "-c", "-i", "-P", "575,190", IMG_FILE, NULL);
     
     // Set window attributes
     gtk_window_set_title(GTK_WINDOW(window), "Window Manager");

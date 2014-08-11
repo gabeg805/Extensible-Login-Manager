@@ -111,7 +111,7 @@ void init_date_clock_root(GtkWidget *window, GtkWidget *clock) {
     gtk_window_set_title(GTK_WINDOW(window), "System Date Clock");
     gtk_window_move(GTK_WINDOW(window), DATE_XPOS, DATE_YPOS);
     gtk_window_set_default_size(GTK_WINDOW(window), DATE_WIDTH*0, DATE_HEIGHT*0);
-        
+    
     // Set clock attributes
     set_clock_color(window, clock);
     set_clock_label(clock, DATE_FMT, DATE_FONT, DATE_FSIZE);
@@ -136,7 +136,7 @@ void init_time_clock_root(GtkWidget *window, GtkWidget *clock) {
     gtk_window_set_title(GTK_WINDOW(window), "System Time Clock");
     gtk_window_move(GTK_WINDOW(window), TIME_XPOS, TIME_YPOS);
     gtk_window_set_default_size(GTK_WINDOW(window), TIME_WIDTH*0, TIME_HEIGHT*0);
-        
+    
     // Set clock attributes
     set_clock_color(window, clock);
     set_clock_label(clock, TIME_FMT, TIME_FONT, TIME_FSIZE);
