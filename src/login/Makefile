@@ -1,10 +1,10 @@
 CC      = gcc
-LIBS    = gtk+-3.0 cairo
+LIBS    = gtk+-3.0 gdk-3.0 cairo
 CFLAGS  = -g -Wall -lpam
 CFLAGS += `pkg-config $(LIBS) --cflags --libs`
 
 PROGRAM = glm
-NAMES   = $(PROGRAM) Username Password Interface Authenticate CommandLine OpenDisplay Transparency Clock Frame TextImage WindowManager Power
+NAMES   = $(PROGRAM) Username Password Interface Authenticate CommandLine OpenDisplay Transparency Clock Frame TextImage WindowManager Panel
 SOURCES = $(addprefix ./src/, $(addsuffix .c, $(NAMES)))
 HEADERS = $(addprefix ./hdr/, $(addsuffix .h, $(NAMES)))
 OBJECTS = $(addprefix ./obj/, $(addsuffix .o, $(NAMES)))

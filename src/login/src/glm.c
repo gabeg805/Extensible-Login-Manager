@@ -116,34 +116,33 @@ int main(int argc, char *argv[]) {
     int status = 1;
     while (status) {
         char temp[1024];
-        char input[1024];
         
         fp = fopen(log, "r");
-        strcpy(input, "");
-        while (fgets(temp, sizeof(input)-1, fp) != NULL ) {        
-            strcat(input, temp);
-        }
-        
-        // Remove trailing newline characters
-        input[strlen(input)-1] = '\0';
+        fgets(temp, sizeof(temp), fp);
         fclose(fp);
         
-        if ( strcmp(input, flag) == 0 ) {
+        char checkflag[strlen(temp)];
+        snprintf(checkflag, sizeof(checkflag), temp);
+        
+        if ( strcmp(checkflag, flag) == 0 ) {
             while (status) {
                 
                 /* // Uncomment to take a screenshot */
                 /* if ( !fork() ) */
                 /*     execl("/usr/bin/scrot", "/usr/bin/scrot",  */
-                /*           "-d", "3", "/etc/X11/glm/screenshot.png", NULL);                  */
+                /*           "-d", "3", "/etc/X11/glm/screenshot.png", NULL); */
                 
                 char *PASSWORD = password_entry(argc, argv);
                 
-                FILE *handle = fopen("/etc/X11/glm/log/user.log", "r");
                 char temp[1024];
+                
+                FILE *handle = fopen("/etc/X11/glm/log/user.log", "r");
                 fgets(temp, sizeof(temp), handle);
+                fclose(handle);
+                
                 char USERNAME[strlen(temp)];
                 snprintf(USERNAME, sizeof(USERNAME), temp); 
-                fclose(handle);
+                
                 
                 status  = login(USERNAME, PASSWORD);
                 free(PASSWORD);

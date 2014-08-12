@@ -15,7 +15,7 @@
 // 
 //     With a 'main' function, execute the following:
 // 
-//         $ gcc -o TextImage TextImage.c Transparency.c `pkg-config gtk+-3.0 --cflags --libs`
+//         $ gcc -o TextImage TextImage.c Transparency.c `pkg-config gtk+-3.0 cairo --cflags --libs`
 //         $ ./TextImage
 // 
 // 
@@ -40,8 +40,8 @@
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Initialize Root Window
-//     * Draw Text
+//     * Initialize Text Image Window
+//     * Draw Text Image
 /// 
 // 
 // MODIFICATION HISTORY:
@@ -80,9 +80,9 @@ gboolean draw_text_window(GtkWidget *window);
 
 
 
-// //////////////////////////////////
-// ///// INITIALIZE ROOT WINDOW /////
-// //////////////////////////////////
+// ////////////////////////////////////////
+// ///// INITIALIZE TEXT IMAGE WINDOW /////
+// ////////////////////////////////////////
 
 // Initialize the root window and its objects
 void init_text_root(GtkWidget *window, GtkWidget *area) {
@@ -106,9 +106,9 @@ void init_text_root(GtkWidget *window, GtkWidget *area) {
 
 
 
-// /////////////////////
-// ///// DRAW TEXT /////
-// /////////////////////
+// ///////////////////////////
+// ///// DRAW TEXT IMAGE /////
+// ///////////////////////////
 
 // Draw the text
 void draw_text(cairo_t *cr) {         

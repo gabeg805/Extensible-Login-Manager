@@ -15,7 +15,7 @@
 // 
 //     With a 'main' function, execute the following:
 // 
-//         $ gcc -o Interface Interface.c Username.c Transparency.c Clock.c Frame.c TextImage.c WindowManager.c Power.c `pkg-config gtk+-3.0 --cflags --libs`
+//         $ gcc -o Interface Interface.c Username.c Transparency.c Clock.c Frame.c TextImage.c WindowManager.c Panel.c `pkg-config gtk+-3.0 --cflags --libs`
 //         $ ./Interface
 // 
 // 
@@ -26,7 +26,7 @@
 // 
 // KEYWORDS:
 // 
-//     Unknown
+//     N/A
 // 
 // 
 // FUNCTIONS:
@@ -62,7 +62,7 @@
 #include "../hdr/Frame.h"
 #include "../hdr/TextImage.h"
 #include "../hdr/WindowManager.h"
-#include "../hdr/Power.h"
+#include "../hdr/Panel.h"
 
 #include <gtk/gtk.h>
 #include <stdio.h>
@@ -116,6 +116,8 @@ void login_interface(int argc, char *argv[]) {
     GtkWidget *shutdown = gtk_button_new();
     GtkWidget *reboot_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *reboot = gtk_button_new();
+    GtkWidget *refresh_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *refresh = gtk_button_new();
     
     
     // Initialize the root window with all its objects
@@ -127,6 +129,7 @@ void login_interface(int argc, char *argv[]) {
     init_usermenu_root(user_window, user_dropmenu, user_menu, user_label);    
     init_shutdown_root(shutdown_window, shutdown);
     init_reboot_root(reboot_window, reboot);
+    init_refresh_login_root(refresh_window, refresh);
     
     
     // Display the clock 
@@ -159,8 +162,10 @@ void login_interface(int argc, char *argv[]) {
     gtk_widget_show(shutdown_window);
     gtk_widget_show(reboot);
     gtk_widget_show(reboot_window);
+    gtk_widget_show(refresh);
+    gtk_widget_show(refresh_window);
     
-        
+    
     // Log to file that interface is beginning execution
     FILE *fp;
     fp = fopen(log, "w");

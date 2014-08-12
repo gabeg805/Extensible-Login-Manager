@@ -222,8 +222,8 @@ int login(const char *username, const char *password) {
         char *session = command_line("tail -1 /etc/X11/glm/log/session.log");
         char *close = "'";
         
-        
         snprintf(cmd, sizeof(cmd), "%s %s %s %s %s", super, username, bash, session, close);
+        free(session);
         execl(pw->pw_shell, pw->pw_shell, "-c", cmd, NULL);
     }
     

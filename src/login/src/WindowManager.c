@@ -46,9 +46,9 @@
 // File Structure:
 // 
 //     * Includes and Declares
-//     * Initialize Root Window
-//     * Set Color Scheme For Root Window
-//     * WM Command
+//     * Initialize Window Manager Button
+//     * Set Window Manager Button Color 
+//     * Window Manager Command
 //     * Add WM Entries to the Menu 
 // 
 // 
@@ -90,9 +90,9 @@ void set_wm_entries(GtkWidget *menu);
 
 
 
-// //////////////////////////////////
-// ///// INITIALIZE ROOT WINDOW /////
-// //////////////////////////////////
+// ////////////////////////////////////////////
+// ///// INITIALIZE WINDOW MANAGER BUTTON /////
+// ////////////////////////////////////////////
 
 // Initialize the root window and its objects
 void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
@@ -126,9 +126,9 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
 
 
 
-// ////////////////////////////////////////////
-// ///// SET COLOR SCHEME FOR ROOT WINDOW /////
-// ////////////////////////////////////////////
+// ///////////////////////////////////////////
+// ///// SET WINDOW MANAGER BUTTON COLOR /////
+// ///////////////////////////////////////////
 
 // Set the color scheme for the root window
 void set_wm_color(GtkWidget *window, GtkWidget *dropmenu) {
@@ -148,9 +148,9 @@ void set_wm_color(GtkWidget *window, GtkWidget *dropmenu) {
 
 
 
-// //////////////////////
-// ///// WM COMMAND ///// 
-// //////////////////////
+// //////////////////////////////////
+// ///// WINDOW MANAGER COMMAND ///// 
+// //////////////////////////////////
 
 // Write to a file, which window manager to use for the session
 void wm_write_to_file(GtkMenu *item) {

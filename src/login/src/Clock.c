@@ -45,7 +45,7 @@
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Initialization
+//     * Initialize Date and Time Clock
 //     * Set Color Scheme For Root Window
 //     * Set Current Time
 //     * Update the Clock
@@ -100,9 +100,9 @@ gboolean time_clock_update(gpointer data);
 
 
 
-// //////////////////////////
-// ///// INITIALIZATION ///// 
-// //////////////////////////
+// //////////////////////////////////////////
+// ///// INITIALIZE DATE AND TIME CLOCK ///// 
+// //////////////////////////////////////////
 
 // Initialize the root window with all its objects
 void init_date_clock_root(GtkWidget *window, GtkWidget *clock) {

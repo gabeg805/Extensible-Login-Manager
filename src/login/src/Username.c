@@ -21,7 +21,7 @@
 // 
 // PURPOSE:
 // 
-//     Unknown
+//     Display dropdown menu that has all users that are able to login to the system.
 // 
 // 
 // KEYWORDS:
@@ -44,8 +44,8 @@
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Initialize Root Window
-//     * Set Color Scheme For Root Window
+//     * Initialize Username Menu
+//     * Set Menu Color 
 //     * Write User Menu Item to File
 //     * Add Username Entries to the Menu
 // 
@@ -91,9 +91,9 @@ void set_username_entries(GtkWidget *menu, GtkWidget *label);
 
 
 
-// //////////////////////////////////
-// ///// INITIALIZE ROOT WINDOW /////
-// //////////////////////////////////
+// ////////////////////////////////////
+// ///// INITIALIZE USERNAME MENU /////
+// ////////////////////////////////////
 
 // Initialize the root window and its objects
 void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu, GtkWidget *label) {
@@ -152,9 +152,9 @@ void init_userlabel(GtkWidget *label) {
 
 
 
-// ////////////////////////////////////////////
-// ///// SET COLOR SCHEME FOR ROOT WINDOW /////
-// ////////////////////////////////////////////
+// ///////////////////////////
+// ///// SET MENU COLOR  /////
+// ///////////////////////////
 
 // Set the color scheme for the root window
 void set_usermenu_color(GtkWidget *window, GtkWidget *dropmenu) {

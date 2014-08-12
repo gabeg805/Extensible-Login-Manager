@@ -44,8 +44,8 @@
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Initialize Root Window
-//     * Set Color Scheme For Root Window
+//     * Initialize Entry Box
+//     * Set Entry Box Window Color
 //     * Get Entry Text
 //     * Display Entry Box
 // 
@@ -94,9 +94,9 @@ char output[1024];
 
 
 
-// //////////////////////////////////
-// ///// INITIALIZE ROOT WINDOW /////
-// //////////////////////////////////
+// ////////////////////////////////
+// ///// INITIALIZE ENTRY BOX /////
+// ////////////////////////////////
 
 // Initialize the root window
 void init_entry_root(GtkWidget *window, GtkWidget *entry) {
@@ -152,9 +152,9 @@ void init_entry(GtkWidget *entry) {
 
 
 
-// ////////////////////////////////////////////
-// ///// SET COLOR SCHEME FOR ROOT WINDOW /////
-// ////////////////////////////////////////////
+// //////////////////////////////////////
+// ///// SET ENTRY BOX WINDOW COLOR /////
+// //////////////////////////////////////
 
 // Set the color scheme for the root window
 void set_entry_color(GtkWidget *window, GtkWidget *entry) {
@@ -196,7 +196,7 @@ void get_entry_text(GtkWidget *entry) {
     // Quit the entry widget
     if ( len != 0 ) {
         gtk_main_quit();
-        strncpy(output, text, len);
+        snprintf(output, len+1, text);
     }
 }        
 
@@ -225,7 +225,6 @@ char * password_entry(int argc, char *argv[]) {
     gtk_widget_show(entry_window);
     
     gtk_main();
-    
     
     // Allocate memory for command output 
     size_t sz = strlen(output);

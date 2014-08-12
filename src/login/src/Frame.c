@@ -15,7 +15,7 @@
 // 
 //     With a 'main' function, execute the following:
 // 
-//         $ gcc -o Frame Frame.c Transparency.c `pkg-config gtk+-3.0 --cflags --libs`
+//         $ gcc -o Frame Frame.c Transparency.c `pkg-config gtk+-3.0 cairo --cflags --libs`
 //         $ ./Frame
 // 
 // 
@@ -41,7 +41,7 @@
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Initialize Root Window
+//     * Initialize Frame
 //     * Draw Frame
 // 
 // 
@@ -80,9 +80,9 @@ gboolean draw_frame_window(GtkWidget *widget);
 
 
 
-// //////////////////////////////////
-// ///// INITIALIZE ROOT WINDOW /////
-// //////////////////////////////////
+// ////////////////////////////
+// ///// INITIALIZE FRAME /////
+// ////////////////////////////
 
 // Initialize the root window and all its objects
 void init_frame_root(GtkWidget *window, GtkWidget *area) {

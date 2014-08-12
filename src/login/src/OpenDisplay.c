@@ -57,6 +57,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 // Declares
 char * get_open_display();
 
@@ -69,26 +70,17 @@ char * get_open_display();
 // Return an open display in the form ':0'
 char * get_open_display() {
     
-    // Display variables
-    char dval[5];
-    char display[5];
-    char filename[15];
-    
-    
     // Loop through possible displays
     int d;
+    char filename[15];
+    char display[5];
+    
     for ( d=0; d < 10; d++ ) {
         
         // Pieces of the actual file name
         char *xtmp = "/tmp/.X";
         char *xlock = "-lock";
-        snprintf(dval, sizeof(dval), "%d", d);
-        
-        // File name pieced together
-        strcpy(filename, "");
-        strcat(filename, xtmp);
-        strcat(filename, dval);
-        strcat(filename, xlock);
+        snprintf(filename, sizeof(filename), "%s%s%d", xtmp, xlock, d);
         
         // Check for file existence
         int result = access(filename, F_OK);
@@ -96,10 +88,8 @@ char * get_open_display() {
             break;
     }
     
-    
     // Open display
-    strcpy(display, ":");
-    strcat(display, dval);
+    snprintf(display, sizeof(display), ":%d", d);
     
     // Allocate memory for display output 
     size_t sz = strlen(display);

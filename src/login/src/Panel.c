@@ -11,11 +11,11 @@
 // 
 //     Without a 'main' function, include the following:
 // 
-//         #include "../hdr/Power.h"
+//         #include "../hdr/Panel.h"
 // 
 //     With a 'main' function, execute the following:
 // 
-//         $ gcc -o Power Power.c Transparency.c `pkg-config gtk+-3.0 gdk-3.0 --cflags --libs` 
+//         $ gcc -o Panel Panel.c Transparency.c `pkg-config gtk+-3.0 gdk-3.0 --cflags --libs` 
 //         $ ./Power
 // 
 // 
@@ -31,18 +31,29 @@
 // 
 // FUNCTIONS:
 // 
-//     main - the main function
+//     init_shutdown_root      - Initialize shutdown button
+//     init_reboot_root        - Initialize reboot button
+//     init_refresh_login_root - Initialize refresh login button
+//     set_panel_color         - Set panel window color
+//     system_shutdown         - Command to shutdown computer
+//     system_reboot           - Command to reboot computer
+//     refresh_login           - Command to refresh the login manager
 // 
 // 
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Objective
+//     * Initialize Panel Buttons 
+//     * Set Panel Button Color
+//     * System Commands
 // 
 // 
 // MODIFICATION HISTORY:
 // 	
-//     gabeg MON DAY YEAR <> created
+//     gabeg Aug 11 2014 <> created
+// 
+//     gabeg Aug 12 2014 <> Changed name from 'Power.c' to 'Panel.c' and added
+//                          a Refresh Login Screen function
 // 
 // **********************************************************************************
 
@@ -53,39 +64,48 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/Power.h"
+#include "../hdr/Panel.h"
 #include "../hdr/Transparency.h"
 
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
-#define   SHUT_XPOS       gdk_screen_width()-32
+#define   SHUT_XPOS       gdk_screen_width()-32*1
 #define   SHUT_YPOS       gdk_screen_height()-32
 #define   SHUT_WIDTH      32
 #define   SHUT_HEIGHT     32
 #define   SHUT_IMG_FILE   "/etc/X11/glm/img/interface/shutdown.png"
 #define   SHUT_COM        "/usr/bin/poweroff"
 
-#define   REB_XPOS       gdk_screen_width()-64
+#define   REB_XPOS       gdk_screen_width()-32*2
 #define   REB_YPOS       gdk_screen_height()-32
 #define   REB_WIDTH      32
 #define   REB_HEIGHT     32
 #define   REB_IMG_FILE   "/etc/X11/glm/img/interface/reboot.png"
 #define   REB_COM        "/usr/bin/reboot"
 
+#define   LREF_XPOS       gdk_screen_width()-32*3
+#define   LREF_YPOS       gdk_screen_height()-32
+#define   LREF_WIDTH      32
+#define   LREF_HEIGHT     32
+#define   LREF_IMG_FILE   "/etc/X11/glm/img/interface/refresh.png"
+#define   LREF_COM        "/usr/bin/systemctl"
+
 
 // Declares
 void init_shutdown_root(GtkWidget *shutdow_window, GtkWidget *shutdown);
 void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot);
-void set_power_color(GtkWidget *window, GtkWidget *power);
+void init_refresh_login_root(GtkWidget *refresh_window, GtkWidget *refresh);
+void set_panel_color(GtkWidget *window, GtkWidget *panel);
 void system_shutdown();
 void system_reboot();
+void refresh_login();
 
 
 
-// //////////////////////////////////////////
-// ///// INITIALIZE POWER BUTTON WINDOW /////
-// //////////////////////////////////////////
+// ////////////////////////////////////
+// ///// INITIALIZE PANEL BUTTONS /////
+// ////////////////////////////////////
 
 // Initialize the shutdown root window
 void init_shutdown_root(GtkWidget *shutdown_window, GtkWidget *shutdown) {
@@ -96,7 +116,7 @@ void init_shutdown_root(GtkWidget *shutdown_window, GtkWidget *shutdown) {
     gtk_window_set_default_size(GTK_WINDOW(shutdown_window), SHUT_WIDTH*0, SHUT_HEIGHT*0);
     
     // Set power button attributes
-    set_power_color(shutdown_window, shutdown);
+    set_panel_color(shutdown_window, shutdown);
     
     // Modify button style
     GtkWidget *image = gtk_image_new_from_file(SHUT_IMG_FILE);
@@ -126,7 +146,7 @@ void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot) {
     gtk_window_set_default_size(GTK_WINDOW(reboot_window), REB_WIDTH*0, REB_HEIGHT*0);
     
     // Set power button attributes
-    set_power_color(reboot_window, reboot);
+    set_panel_color(reboot_window, reboot);
     
     // Modify button style
     GtkWidget *image = gtk_image_new_from_file(REB_IMG_FILE);
@@ -147,31 +167,61 @@ void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot) {
 
 
 
+// Initialize the refresh login root window
+void init_refresh_login_root(GtkWidget *refresh_window, GtkWidget *refresh) {
+    
+    // Set window attributes
+    gtk_window_set_title(GTK_WINDOW(refresh_window), "Refresh Login Button");
+    gtk_window_move(GTK_WINDOW(refresh_window), LREF_XPOS, LREF_YPOS);
+    gtk_window_set_default_size(GTK_WINDOW(refresh_window), LREF_WIDTH*0, LREF_HEIGHT*0);
+    
+    // Set power button attributes
+    set_panel_color(refresh_window, refresh);
+    
+    // Modify button style
+    GtkWidget *image = gtk_image_new_from_file(LREF_IMG_FILE);
+    gtk_button_set_image(GTK_BUTTON(refresh), image);
+    gtk_button_set_relief(GTK_BUTTON(refresh), GTK_RELIEF_NONE);
+    gtk_window_set_decorated(GTK_WINDOW(refresh_window), FALSE);
+    
+    // Add the clock to the root window 
+    gtk_container_add(GTK_CONTAINER(refresh_window), refresh);
+        
+    // Enable transparency
+    enable_transparency(refresh_window);
+    
+    // GTK signal
+    g_signal_connect(G_OBJECT(refresh), "clicked", G_CALLBACK(refresh_login), NULL);
+    g_signal_connect(refresh_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+}
+
+
+
 // //////////////////////////////////
 // ///// SET POWER BUTTON COLOR /////
 // //////////////////////////////////
 
 // Set color of power button window
-void set_power_color(GtkWidget *window, GtkWidget *power) {
+void set_panel_color(GtkWidget *window, GtkWidget *panel) {
     
     // Define the color scheme
     const GdkRGBA bg_window = {0, 0, 0, 0};
     const GdkRGBA fg_window = {0, 0, 0, 0};
-    const GdkRGBA bg_power = {0, 0, 0, 0};
-    const GdkRGBA fg_power = {1, 1, 1, 1};
+    const GdkRGBA bg_panel = {0, 0, 0, 0};
+    const GdkRGBA fg_panel = {1, 1, 1, 1};
     
     // Set the color scheme
     gtk_widget_override_background_color(window, GTK_STATE_FLAG_NORMAL, &bg_window);
-    gtk_widget_override_background_color(power, GTK_STATE_FLAG_NORMAL, &bg_power);
+    gtk_widget_override_background_color(panel, GTK_STATE_FLAG_NORMAL, &bg_panel);
     gtk_widget_override_color(window, GTK_STATE_FLAG_NORMAL, &fg_window);
-    gtk_widget_override_color(power, GTK_STATE_FLAG_NORMAL, &fg_power);    
+    gtk_widget_override_color(panel, GTK_STATE_FLAG_NORMAL, &fg_panel);    
 }
 
 
 
-// /////////////////////////////////
-// ///// SYSTEM POWER COMMANDS /////
-// /////////////////////////////////
+// ///////////////////////////
+// ///// SYSTEM COMMANDS /////
+// ///////////////////////////
 
 // Shutdown the system
 void system_shutdown() {
@@ -187,31 +237,7 @@ void system_reboot() {
 
 
 
-/* // Main function */
-/* void main(int argc, char *argv[]) { */
-    
-/*     // Initialize GTK toolkit */
-/*     gtk_init(&argc, &argv); */
-    
-/*     // Define the power button window */
-/*     GtkWidget *shutdown_window = gtk_window_new(GTK_WINDOW_TOPLEVEL); */
-/*     GtkWidget *shutdown = gtk_button_new(); */
-    
-/*     GtkWidget *reboot_window = gtk_window_new(GTK_WINDOW_TOPLEVEL); */
-/*     GtkWidget *reboot = gtk_button_new(); */
-    
-    
-/*     // Initialize the power button window */
-/*     init_shutdown_root(shutdown_window, shutdown); */
-/*     init_reboot_root(reboot_window, reboot); */
-    
-/*     // Display the power button window */
-/*     gtk_widget_show(shutdown); */
-/*     gtk_widget_show(shutdown_window); */
-    
-/*     gtk_widget_show(reboot); */
-/*     gtk_widget_show(reboot_window); */
-
-/*     gtk_main(); */
-
-/* } */
+// Refresh the login screen
+void refresh_login() {
+    execl(LREF_COM, LREF_COM, "restart", "glm.service", NULL);
+}
