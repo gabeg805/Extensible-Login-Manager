@@ -34,7 +34,7 @@
 //     init_shutdown_root      - Initialize shutdown button
 //     init_reboot_root        - Initialize reboot button
 //     init_refresh_login_root - Initialize refresh login button
-//     set_panel_color         - Set panel window color
+// 
 //     system_shutdown         - Command to shutdown computer
 //     system_reboot           - Command to reboot computer
 //     refresh_login           - Command to refresh the login manager
@@ -44,7 +44,6 @@
 // 
 //     * Includes and Declares
 //     * Initialize Panel Buttons 
-//     * Set Panel Button Color
 //     * System Commands
 // 
 // 
@@ -97,7 +96,6 @@
 void init_shutdown_root(GtkWidget *shutdow_window, GtkWidget *shutdown);
 void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot);
 void init_refresh_login_root(GtkWidget *refresh_window, GtkWidget *refresh);
-void set_panel_color(GtkWidget *window, GtkWidget *panel);
 void system_shutdown();
 void system_reboot();
 void refresh_login();
@@ -117,7 +115,9 @@ void init_shutdown_root(GtkWidget *shutdown_window, GtkWidget *shutdown) {
     gtk_window_set_default_size(GTK_WINDOW(shutdown_window), SHUT_WIDTH*0, SHUT_HEIGHT*0);
     
     // Set power button attributes
-    set_panel_color(shutdown_window, shutdown);
+    const GdkRGBA bg_widget = {0, 0, 0, 0};
+    const GdkRGBA fg_widget = {1, 1, 1, 1};
+    set_color_and_opacity(shutdown_window, shutdown, bg_widget, fg_widget);
     
     // Modify button style
     GtkWidget *image = gtk_image_new_from_file(SHUT_IMG_FILE);
@@ -147,7 +147,9 @@ void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot) {
     gtk_window_set_default_size(GTK_WINDOW(reboot_window), REB_WIDTH*0, REB_HEIGHT*0);
     
     // Set power button attributes
-    set_panel_color(reboot_window, reboot);
+    const GdkRGBA bg_widget = {0, 0, 0, 0};
+    const GdkRGBA fg_widget = {1, 1, 1, 1};
+    set_color_and_opacity(reboot_window, reboot, bg_widget, fg_widget);
     
     // Modify button style
     GtkWidget *image = gtk_image_new_from_file(REB_IMG_FILE);
@@ -177,7 +179,9 @@ void init_refresh_login_root(GtkWidget *refresh_window, GtkWidget *refresh) {
     gtk_window_set_default_size(GTK_WINDOW(refresh_window), LREF_WIDTH*0, LREF_HEIGHT*0);
     
     // Set power button attributes
-    set_panel_color(refresh_window, refresh);
+    const GdkRGBA bg_widget = {0, 0, 0, 0};
+    const GdkRGBA fg_widget = {1, 1, 1, 1};
+    set_color_and_opacity(refresh_window, refresh, bg_widget, fg_widget);
     
     // Modify button style
     GtkWidget *image = gtk_image_new_from_file(LREF_IMG_FILE);
@@ -194,28 +198,6 @@ void init_refresh_login_root(GtkWidget *refresh_window, GtkWidget *refresh) {
     // GTK signal
     g_signal_connect(G_OBJECT(refresh), "clicked", G_CALLBACK(refresh_login), NULL);
     g_signal_connect(refresh_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-}
-
-
-
-// //////////////////////////////////
-// ///// SET POWER BUTTON COLOR /////
-// //////////////////////////////////
-
-// Set color of power button window
-void set_panel_color(GtkWidget *window, GtkWidget *panel) {
-    
-    // Define the color scheme
-    const GdkRGBA bg_window = {0, 0, 0, 0};
-    const GdkRGBA fg_window = {0, 0, 0, 0};
-    const GdkRGBA bg_panel = {0, 0, 0, 0};
-    const GdkRGBA fg_panel = {1, 1, 1, 1};
-    
-    // Set the color scheme
-    gtk_widget_override_background_color(window, GTK_STATE_FLAG_NORMAL, &bg_window);
-    gtk_widget_override_background_color(panel, GTK_STATE_FLAG_NORMAL, &bg_panel);
-    gtk_widget_override_color(window, GTK_STATE_FLAG_NORMAL, &fg_window);
-    gtk_widget_override_color(panel, GTK_STATE_FLAG_NORMAL, &fg_panel);    
 }
 
 

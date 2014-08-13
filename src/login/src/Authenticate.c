@@ -15,7 +15,7 @@
 // 
 //     With a 'main' function, execute the following:
 // 
-//         $ gcc -o Authenticate Authenticate.c CommandLine.c -lpam
+//         $ gcc -o Authenticate Authenticate.c FileRW.c -lpam
 //         $ ./Authenticate
 // 
 // 

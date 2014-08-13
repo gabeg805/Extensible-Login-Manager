@@ -26,13 +26,16 @@
 // 
 // FUNCTIONS:
 // 
-//     enable_transparency - Enable widget transparency
+//     enable_transparency   - Enable widget transparency
+// 
+//     set_color_and_opacity - Set a widget's color and opacity 
 // 
 // 
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
 //     * Enable Widget Transparency
+//     * Set Widget Color and Opacity
 // 
 // 
 // MODIFICATION HISTORY:
@@ -57,6 +60,8 @@
 
 // Declares
 void enable_transparency(GtkWidget *widget);
+void set_color_and_opacity(GtkWidget *window, GtkWidget *widget, 
+                           const GdkRGBA bg_widget, const GdkRGBA fg_widget);
 
 gboolean supports_alpha = FALSE;
 
@@ -82,4 +87,25 @@ void enable_transparency(GtkWidget *widget) {
     
     // Set widget visual
     gtk_widget_set_visual(widget, visual);
+}
+
+
+
+// ////////////////////////////////////////
+// ///// SET WIDGET COLOR AND OPACITY /////
+// ////////////////////////////////////////
+
+// Set widget color and opacity
+void set_color_and_opacity(GtkWidget *window, GtkWidget *widget, 
+                           const GdkRGBA bg_widget, const GdkRGBA fg_widget) {
+    
+    // Define the color scheme
+    const GdkRGBA bg_window = {0, 0, 0, 0};
+    const GdkRGBA fg_window = {0, 0, 0, 0};
+    
+    // Set the color scheme
+    gtk_widget_override_background_color(window, GTK_STATE_FLAG_NORMAL, &bg_window);
+    gtk_widget_override_background_color(widget, GTK_STATE_FLAG_NORMAL, &bg_widget);
+    gtk_widget_override_color(window, GTK_STATE_FLAG_NORMAL, &fg_window);
+    gtk_widget_override_color(widget, GTK_STATE_FLAG_NORMAL, &fg_widget);
 }

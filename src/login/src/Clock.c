@@ -34,8 +34,6 @@
 //     init_date_clock_root - Initialize the clock window that displays the date
 //     init_time_clock_root - Initialize the clock window that displays the time
 // 
-//     set_clock_color      - Set color scheme for the root window
-// 
 //     set_clock_label      - Set the clock label font and text size
 // 
 //     date_clock_update    - Refresh the date clock label
@@ -46,7 +44,6 @@
 // 
 //     * Includes and Declares
 //     * Initialize Date and Time Clock
-//     * Set Color Scheme For Root Window
 //     * Set Current Time
 //     * Update the Clock
 // 
@@ -93,7 +90,6 @@
 // Declares
 void init_date_clock_root(GtkWidget *window, GtkWidget *clock);
 void init_time_clock_root(GtkWidget *window, GtkWidget *clock);
-void set_clock_color(GtkWidget *window, GtkWidget *clock);
 void set_clock_label(GtkWidget *clock, char *fmt, const char *font, int fsize);
 gboolean date_clock_update(gpointer data);
 gboolean time_clock_update(gpointer data);
@@ -113,7 +109,9 @@ void init_date_clock_root(GtkWidget *window, GtkWidget *clock) {
     gtk_window_set_default_size(GTK_WINDOW(window), DATE_WIDTH*0, DATE_HEIGHT*0);
     
     // Set clock attributes
-    set_clock_color(window, clock);
+    const GdkRGBA bg_widget = {0, 0, 0, 0};
+    const GdkRGBA fg_widget = {1, 1, 1, 1};
+    set_color_and_opacity(window, clock, bg_widget, fg_widget);
     set_clock_label(clock, DATE_FMT, DATE_FONT, DATE_FSIZE);
     
     // Add the clock to the root window 
@@ -138,7 +136,9 @@ void init_time_clock_root(GtkWidget *window, GtkWidget *clock) {
     gtk_window_set_default_size(GTK_WINDOW(window), TIME_WIDTH*0, TIME_HEIGHT*0);
     
     // Set clock attributes
-    set_clock_color(window, clock);
+    const GdkRGBA bg_widget = {0, 0, 0, 0};
+    const GdkRGBA fg_widget = {1, 1, 1, 1};
+    set_color_and_opacity(window, clock, bg_widget, fg_widget);
     set_clock_label(clock, TIME_FMT, TIME_FONT, TIME_FSIZE);
     
     // Add the clock to the root window 
@@ -150,28 +150,6 @@ void init_time_clock_root(GtkWidget *window, GtkWidget *clock) {
     
     // GTK signal
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-}
-
-
-
-// ////////////////////////////////////////////
-// ///// SET COLOR SCHEME FOR ROOT WINDOW /////
-// ////////////////////////////////////////////
-
-// Set color scheme for root window
-void set_clock_color(GtkWidget *window, GtkWidget *clock) {
-    
-    // Define the color scheme
-    const GdkRGBA bg_window = {0, 0, 0, 0};
-    const GdkRGBA fg_window = {0, 0, 0, 0};
-    const GdkRGBA bg_clock = {0, 0, 0, 0};
-    const GdkRGBA fg_clock = {1, 1, 1, 1};
-    
-    // Set the color scheme
-    gtk_widget_override_background_color(window, GTK_STATE_FLAG_NORMAL, &bg_window);
-    gtk_widget_override_background_color(clock, GTK_STATE_FLAG_NORMAL, &bg_clock);
-    gtk_widget_override_color(window, GTK_STATE_FLAG_NORMAL, &fg_window);
-    gtk_widget_override_color(clock, GTK_STATE_FLAG_NORMAL, &fg_clock);    
 }
 
 

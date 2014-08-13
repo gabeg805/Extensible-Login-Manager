@@ -34,8 +34,6 @@
 // 
 //     init_wm_root     - Initialize the root window
 // 
-//     set_wm_color     - Set the color scheme for the root window
-// 
 //     wm_write_to_file - Write to a file, which window manager to use for the 
 //                        session
 // 
@@ -49,7 +47,6 @@
 // 
 //     * Includes and Declares
 //     * Initialize Window Manager Button
-//     * Set Window Manager Button Color 
 //     * Write Window Manager to File
 //     * Get Linux Command Output
 //     * Add WM Entries to the Menu 
@@ -88,7 +85,6 @@
 
 // Declares
 void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu);
-void set_wm_color(GtkWidget *window, GtkWidget *dropmenu);
 void wm_write_to_file(GtkMenu *item);
 char * command_line(char *cmd);
 void set_wm_entries(GtkWidget *menu);
@@ -108,7 +104,9 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
     gtk_window_set_default_size(GTK_WINDOW(window), WIDTH*0, HEIGHT*0);
     
     // Define and set color schemes
-    set_wm_color(window, dropmenu);
+    const GdkRGBA bg_widget = {0, 0, 0, 0};
+    const GdkRGBA fg_widget = {1, 1, 1, 1};
+    set_color_and_opacity(window, dropmenu, bg_widget, fg_widget);
     
     // Modify button style
     GtkWidget *image = gtk_image_new_from_file(IMG_FILE);
@@ -116,11 +114,9 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
     gtk_button_set_relief(GTK_BUTTON(dropmenu), GTK_RELIEF_NONE);
     gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
     
-    
     // Attach the window manager menu to the dropdown menu
     gtk_menu_button_set_popup(GTK_MENU_BUTTON(dropmenu), menu);
     gtk_container_add(GTK_CONTAINER(window), dropmenu);
-    
     
     // Attempt to enable window transparency
     enable_transparency(window);
@@ -131,39 +127,13 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
 
 
 
-// ///////////////////////////////////////////
-// ///// SET WINDOW MANAGER BUTTON COLOR /////
-// ///////////////////////////////////////////
-
-// Set the color scheme for the root window
-void set_wm_color(GtkWidget *window, GtkWidget *dropmenu) {
-    
-    // Define color scheme
-    const GdkRGBA bg_window = {1, 1, 1, 0};
-    const GdkRGBA fg_window = {1, 1, 1, 0};
-    const GdkRGBA bg_menu = {1, 1, 1, 0};
-    const GdkRGBA fg_menu = {1, 1, 1, 1};
-    
-    // Set color scheme
-    gtk_widget_override_background_color(window, GTK_STATE_FLAG_NORMAL, &bg_window);
-    gtk_widget_override_background_color(dropmenu, GTK_STATE_FLAG_NORMAL, &bg_menu);
-    gtk_widget_override_color(window, GTK_STATE_FLAG_NORMAL, &fg_window);
-    gtk_widget_override_color(dropmenu, GTK_STATE_FLAG_NORMAL, &fg_menu);
-}
-
-
-
 // ////////////////////////////////////////
 // ///// WRITE WINDOW MANAGER TO FILE ///// 
 // ////////////////////////////////////////
 
 // Write to a file, which window manager to use for the session
 void wm_write_to_file(GtkMenu *item) {
-    
-    // Chosen session to start
     const gchar *sess = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    
-    // Write session to file
     file_write(SES_FILE, (char *)sess, "%s\n");
 }
 
@@ -219,10 +189,12 @@ void set_wm_entries(GtkWidget *menu) {
     
     // Get window manager string
     char *val = command_line("ls -1 /usr/share/xsessions/ | wc -l");
-    int num = atoi(val);
     char *wmstr = command_line("ls -1 /usr/share/xsessions/ | sed 's/.desktop//'");
     char *wmdup = strdup(wmstr);
+    
+    int num = atoi(val);
     char *allwm[num];
+    
     
     // Set window manager array items
     int i = 0;

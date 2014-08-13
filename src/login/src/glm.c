@@ -54,8 +54,6 @@
 #include "../hdr/Password.h"
 #include "../hdr/Interface.h"
 #include "../hdr/Authenticate.h"
-#include "../hdr/CommandLine.h"
-#include "../hdr/OpenDisplay.h"
 #include "../hdr/FileRW.h"
 
 #include <security/pam_appl.h>

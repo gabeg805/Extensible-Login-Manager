@@ -34,8 +34,6 @@
 //     init_usermenu_root     - Initialize user menu root window
 //     init_userlabel         - Initialize user menu label
 // 
-//     set_usermenu_color     - Set user menu color scheme
-// 
 //     usermenu_write_to_file - Write username to file
 // 
 //     set_username_entries   - Set entries in the user menu
@@ -45,7 +43,6 @@
 // 
 //     * Includes and Declares
 //     * Initialize Username Menu
-//     * Set Menu Color 
 //     * Write User Menu Item to File
 //     * Add Username Entries to the Menu
 // 
@@ -86,7 +83,6 @@
 // Declares
 void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu, GtkWidget *label);
 void init_userlabel(GtkWidget *label);
-void set_usermenu_color(GtkWidget *window, GtkWidget *dropmenu);
 void usermenu_write_to_file(GtkMenu *item, GtkWidget *label);
 void set_username_entries(GtkWidget *menu, GtkWidget *label);
 
@@ -104,12 +100,14 @@ void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu,
         execl(IMG_COM, IMG_COM, "-c", "-i", "-P", "575,190", IMG_FILE, NULL);
     
     // Set window attributes
-    gtk_window_set_title(GTK_WINDOW(window), "Window Manager");
+    gtk_window_set_title(GTK_WINDOW(window), "Username");
     gtk_window_move(GTK_WINDOW(window), XPOS, YPOS);
     gtk_window_set_default_size(GTK_WINDOW(window), WIDTH*0, HEIGHT*0);
     
     // Define and set color schemes
-    set_usermenu_color(window, dropmenu);
+    const GdkRGBA bg_widget = {0, 0, 0, 0};
+    const GdkRGBA fg_widget = {1, 1, 1, 1};
+    set_color_and_opacity(window, dropmenu, bg_widget, fg_widget);
     
     // Modify button style
     init_userlabel(label);
@@ -153,42 +151,15 @@ void init_userlabel(GtkWidget *label) {
 
 
 
-// ///////////////////////////
-// ///// SET MENU COLOR  /////
-// ///////////////////////////
-
-// Set the color scheme for the root window
-void set_usermenu_color(GtkWidget *window, GtkWidget *dropmenu) {
-    
-    // Define color scheme
-    const GdkRGBA bg_window = {0, 0, 0, 0};
-    const GdkRGBA fg_window = {0, 0, 0, 0};
-    const GdkRGBA bg_menu = {0, 0, 0, 0};
-    const GdkRGBA fg_menu = {1, 1, 1, 1};
-    
-    // Set color scheme
-    gtk_widget_override_background_color(window, GTK_STATE_FLAG_NORMAL, &bg_window);
-    gtk_widget_override_background_color(dropmenu, GTK_STATE_FLAG_NORMAL, &bg_menu);
-    gtk_widget_override_color(window, GTK_STATE_FLAG_NORMAL, &fg_window);
-    gtk_widget_override_color(dropmenu, GTK_STATE_FLAG_NORMAL, &fg_menu);
-}
-
-
-
 // ////////////////////////////////////////
 // ///// WRITE USER MENU ITEM TO FILE ///// 
 // ////////////////////////////////////////
 
 // Write to a file, which user to login as
 void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
-    
-    // Chosen session to start
     const gchar *user = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    
-    // Write username to file
     file_write(USER_FILE, (char *)user, "%s\n");
     
-    // Modify button style
     gtk_label_set_text(GTK_LABEL(label), user);
 }
 

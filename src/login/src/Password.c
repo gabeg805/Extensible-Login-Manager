@@ -34,8 +34,6 @@
 //     init_entry_root - Initialize the root window
 //     init_entry      - Initialize the entry box
 // 
-//     set_entry_color - Set the color scheme for the root window
-// 
 //     get_entry_text  - Return user entry text
 // 
 //     password_entry  - Display the password entry box and return the input password
@@ -45,7 +43,6 @@
 // 
 //     * Includes and Declares
 //     * Initialize Entry Box
-//     * Set Entry Box Window Color
 //     * Get Entry Text
 //     * Display Entry Box
 // 
@@ -86,7 +83,6 @@
 // Declares
 void init_entry_root(GtkWidget *window, GtkWidget *entry);
 void init_entry(GtkWidget *entry);
-void set_entry_color(GtkWidget *window, GtkWidget *entry);
 void get_entry_text(GtkWidget *entry);
 char * password_entry(int argc, char *argv[]);
 
@@ -106,7 +102,9 @@ void init_entry_root(GtkWidget *window, GtkWidget *entry) {
     gtk_window_set_default_size(GTK_WINDOW(window), WIDTH, HEIGHT*0);
     
     // Set color scheme for root window
-    set_entry_color(window, entry);
+    const GdkRGBA bg_widget = {1, 1, 1, 0.5};
+    const GdkRGBA fg_widget = {0, 0, 0, 1};
+    set_color_and_opacity(window, entry, bg_widget, fg_widget);
     
     // Add entry to window
     gtk_container_add(GTK_CONTAINER(window), entry);
@@ -148,28 +146,6 @@ void init_entry(GtkWidget *entry) {
     
     // Set the attributes
     gtk_entry_set_attributes(GTK_ENTRY(entry), attrList);   
-}
-
-
-
-// //////////////////////////////////////
-// ///// SET ENTRY BOX WINDOW COLOR /////
-// //////////////////////////////////////
-
-// Set the color scheme for the root window
-void set_entry_color(GtkWidget *window, GtkWidget *entry) {
-    
-    // Define color scheme
-    const GdkRGBA bg_window = {0, 0, 0, 0};
-    const GdkRGBA fg_window = {0, 0, 0, 0};
-    const GdkRGBA bg_entry = {1, 1, 1, 0.5};
-    const GdkRGBA fg_entry = {0, 0, 0, 1};
-    
-    // Set color scheme
-    gtk_widget_override_background_color(window, GTK_STATE_FLAG_NORMAL, &bg_window);
-    gtk_widget_override_background_color(entry, GTK_STATE_FLAG_NORMAL, &bg_entry);
-    gtk_widget_override_color(window, GTK_STATE_FLAG_NORMAL, &fg_window);
-    gtk_widget_override_color(entry, GTK_STATE_FLAG_NORMAL, &fg_entry);
 }
 
 

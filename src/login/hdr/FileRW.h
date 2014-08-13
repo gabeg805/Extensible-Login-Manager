@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,5 +8,6 @@
 
 void file_write(char *file, char *phrase, char *fmt);
 char * file_read(char *file);
+char * get_open_display();
 
 #endif
