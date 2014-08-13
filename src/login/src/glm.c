@@ -115,14 +115,14 @@ int main(int argc, char *argv[]) {
     while (status) {
         
         char *checkflag = file_read(log);
-        printf("%s-%s-\n", checkflag, flag);
+        
         if ( strcmp(checkflag, flag) == 0 ) {
             while (status) {
                 
-                // Uncomment to take a screenshot
-                if ( !fork() )
-                    execl("/usr/bin/scrot", "/usr/bin/scrot",
-                          "-d", "5", "/etc/X11/glm/img/screenshot.png", NULL);
+                /* // Uncomment to take a screenshot */
+                /* if ( !fork() ) */
+                /*     execl("/usr/bin/scrot", "/usr/bin/scrot", */
+                /*           "-d", "5", "/etc/X11/glm/img/screenshot.png", NULL); */
                 
                 char *PASSWORD = password_entry(argc, argv);
                 char *USERNAME = file_read("/etc/X11/glm/log/user.log"); 

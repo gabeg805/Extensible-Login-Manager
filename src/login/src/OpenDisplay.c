@@ -80,10 +80,11 @@ char * get_open_display() {
         // Pieces of the actual file name
         char *xtmp = "/tmp/.X";
         char *xlock = "-lock";
-        snprintf(filename, sizeof(filename), "%s%s%d", xtmp, xlock, d);
+        snprintf(filename, sizeof(filename), "%s%d%s", xtmp, d, xlock);
         
         // Check for file existence
         int result = access(filename, F_OK);
+        
         if ( result != 0 ) 
             break;
     }
