@@ -15,7 +15,7 @@
 // 
 //     With a 'main' function, execute the following:
 // 
-//         $ gcc -o WindowManager WindowManager.c CommandLine.c Transparency.c `pkg-config gtk+-3.0 --cflags --libs`
+//         $ gcc -o WindowManager WindowManager.c Transparency.c `pkg-config gtk+-3.0 --cflags --libs`
 //         $ ./WindowManager
 // 
 // 
@@ -32,15 +32,17 @@
 // 
 // Functions:
 // 
-//     init_wm_root        - Initialize the root window
+//     init_wm_root     - Initialize the root window
 // 
-//     set_wm_color        - Set the color scheme for the root window
+//     set_wm_color     - Set the color scheme for the root window
 // 
-//     wm_write_to_file    - Write to a file, which window manager to use for the 
-//                           session
+//     wm_write_to_file - Write to a file, which window manager to use for the 
+//                        session
 // 
-//     set_wm_entries      - Determine which window manager(s) the system has and add 
-//                           them as entries to the menu
+//     command_line     - Return output of a Linux command
+// 
+//     set_wm_entries   - Determine which window manager(s) the system has and add 
+//                        them as entries to the menu
 // 
 // 
 // File Structure:
@@ -48,7 +50,8 @@
 //     * Includes and Declares
 //     * Initialize Window Manager Button
 //     * Set Window Manager Button Color 
-//     * Window Manager Command
+//     * Write Window Manager to File
+//     * Get Linux Command Output
 //     * Add WM Entries to the Menu 
 // 
 // 
@@ -67,12 +70,12 @@
 
 // Includes
 #include "../hdr/WindowManager.h"
-#include "../hdr/CommandLine.h"
 #include "../hdr/Transparency.h"
 #include "../hdr/FileRW.h"
 
 #include <gtk/gtk.h>
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #define   XPOS       770
@@ -87,6 +90,7 @@
 void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu);
 void set_wm_color(GtkWidget *window, GtkWidget *dropmenu);
 void wm_write_to_file(GtkMenu *item);
+char * command_line(char *cmd);
 void set_wm_entries(GtkWidget *menu);
 
 
@@ -149,9 +153,9 @@ void set_wm_color(GtkWidget *window, GtkWidget *dropmenu) {
 
 
 
-// //////////////////////////////////
-// ///// WINDOW MANAGER COMMAND ///// 
-// //////////////////////////////////
+// ////////////////////////////////////////
+// ///// WRITE WINDOW MANAGER TO FILE ///// 
+// ////////////////////////////////////////
 
 // Write to a file, which window manager to use for the session
 void wm_write_to_file(GtkMenu *item) {
@@ -161,6 +165,47 @@ void wm_write_to_file(GtkMenu *item) {
     
     // Write session to file
     file_write(SES_FILE, (char *)sess, "%s\n");
+}
+
+
+
+// ////////////////////////////////////
+// ///// GET LINUX COMMAND OUTPUT ///// 
+// ////////////////////////////////////
+
+// Return command output as a string
+char * command_line(char *cmd) {
+    
+    // Max character length of output string
+    int outlen = 1024;
+    char temp[outlen];
+    char output[outlen];
+    FILE *fp;
+    
+    strcpy(output, "");
+    
+    // Read command output
+    fp = popen(cmd, "r");
+    while (fgets(temp, sizeof(output)-1, fp) != NULL ) {
+        
+        // Remove trailing newline characters
+        char *pos;
+        if ((pos=strchr(temp, '\n')) != NULL)
+            *pos = ' ';        
+        
+        // Append output to sessions string
+        strcat(output, temp);
+    }
+    
+    pclose(fp);
+    
+    
+    // Allocate memory for command output 
+    size_t sz = strlen(output);
+    char *type = malloc(sz);  
+    strncpy(type, output, sz);
+    
+    return(type);
 }
 
 

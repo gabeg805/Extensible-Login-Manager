@@ -4,7 +4,7 @@ CFLAGS  = -g -Wall -lpam
 CFLAGS += `pkg-config $(LIBS) --cflags --libs`
 
 PROGRAM = glm
-NAMES   = $(PROGRAM) Username Password Interface Authenticate CommandLine OpenDisplay Transparency Clock Frame TextImage WindowManager Panel FileRW
+NAMES   = $(PROGRAM) Username Password Interface Authenticate OpenDisplay Transparency Clock Frame TextImage WindowManager Panel FileRW
 SOURCES = $(addprefix ./src/, $(addsuffix .c, $(NAMES)))
 HEADERS = $(addprefix ./hdr/, $(addsuffix .h, $(NAMES)))
 OBJECTS = $(addprefix ./obj/, $(addsuffix .o, $(NAMES)))
