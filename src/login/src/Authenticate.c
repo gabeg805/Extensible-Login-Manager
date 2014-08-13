@@ -62,7 +62,7 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/CommandLine.h"
+#include "../hdr/FileRW.h"
 
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
@@ -215,11 +215,11 @@ int login(const char *username, const char *password) {
         chdir(pw->pw_dir);
         
         system("xwininfo -root -children | grep '  0x' | cut -d' ' -f6 | xargs -n1 xkill -id");
-                
+        
         char cmd[100];
         char *super = "su";
         char *bash = "-c 'exec /bin/bash -login /home/gabeg/.xinitrc";
-        char *session = command_line("tail -1 /etc/X11/glm/log/session.log");
+        char *session = file_read("/etc/X11/glm/log/session.log");
         char *close = "'";
         
         snprintf(cmd, sizeof(cmd), "%s %s %s %s %s", super, username, bash, session, close);

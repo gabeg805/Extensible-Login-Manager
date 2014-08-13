@@ -56,6 +56,7 @@
 #include "../hdr/Authenticate.h"
 #include "../hdr/CommandLine.h"
 #include "../hdr/OpenDisplay.h"
+#include "../hdr/FileRW.h"
 
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
@@ -99,10 +100,7 @@ int main(int argc, char *argv[]) {
     
     
     // Log to file that interface is beginning execution
-    FILE *fp;
-    fp = fopen(log, "w");
-    fprintf(fp, "%s\n", "FALSE");
-    fclose(fp);
+    file_write(log, "FALSE", "%s\n");
     
     
     // Display login interface
@@ -115,39 +113,28 @@ int main(int argc, char *argv[]) {
     // Login to the system
     int status = 1;
     while (status) {
-        char temp[1024];
         
-        fp = fopen(log, "r");
-        fgets(temp, sizeof(temp), fp);
-        fclose(fp);
-        
-        char checkflag[strlen(temp)];
-        snprintf(checkflag, sizeof(checkflag), temp);
-        
+        char *checkflag = file_read(log);
+        printf("%s-%s-\n", checkflag, flag);
         if ( strcmp(checkflag, flag) == 0 ) {
             while (status) {
                 
-                /* // Uncomment to take a screenshot */
-                /* if ( !fork() ) */
-                /*     execl("/usr/bin/scrot", "/usr/bin/scrot",  */
-                /*           "-d", "3", "/etc/X11/glm/screenshot.png", NULL); */
+                // Uncomment to take a screenshot
+                if ( !fork() )
+                    execl("/usr/bin/scrot", "/usr/bin/scrot",
+                          "-d", "5", "/etc/X11/glm/img/screenshot.png", NULL);
                 
                 char *PASSWORD = password_entry(argc, argv);
-                
-                char temp[1024];
-                
-                FILE *handle = fopen("/etc/X11/glm/log/user.log", "r");
-                fgets(temp, sizeof(temp), handle);
-                fclose(handle);
-                
-                char USERNAME[strlen(temp)];
-                snprintf(USERNAME, sizeof(USERNAME), temp); 
-                
+                char *USERNAME = file_read("/etc/X11/glm/log/user.log"); 
                 
                 status  = login(USERNAME, PASSWORD);
+                
                 free(PASSWORD);
+                free(USERNAME);
             }
         }
+        
+        free(checkflag);
     }
     
     return 0;

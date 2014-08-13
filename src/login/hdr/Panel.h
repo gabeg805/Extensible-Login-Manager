@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
+#include <stdlib.h>
 
 #ifndef PANEL_H
 #define PANEL_H

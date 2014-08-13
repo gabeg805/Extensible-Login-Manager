@@ -69,6 +69,7 @@
 #include "../hdr/WindowManager.h"
 #include "../hdr/CommandLine.h"
 #include "../hdr/Transparency.h"
+#include "../hdr/FileRW.h"
 
 #include <gtk/gtk.h>
 #include <string.h>
@@ -159,9 +160,7 @@ void wm_write_to_file(GtkMenu *item) {
     const gchar *sess = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
     
     // Write session to file
-    FILE *handle = fopen(SES_FILE, "w");
-    fprintf(handle, "%s\n", sess);
-    fclose(handle);
+    file_write(SES_FILE, (char *)sess, "%s\n");
 }
 
 
@@ -190,12 +189,7 @@ void set_wm_entries(GtkWidget *menu) {
     }
     
     // Read previous window manager used
-    FILE *handle = fopen(SES_FILE, "r");
-    char temp[1024];
-    fgets(temp, sizeof(temp), handle);
-    char wmfocus[strlen(temp)];
-    snprintf(wmfocus, sizeof(wmfocus), temp);
-    fclose(handle);
+    char *wmfocus = file_read(SES_FILE);
     
     // Set the menu items
     int j = 0, q = 0, p = 0;
@@ -237,4 +231,5 @@ void set_wm_entries(GtkWidget *menu) {
     // Freeing up the memory
     free(val);
     free(wmstr);
+    free(wmfocus);
 }

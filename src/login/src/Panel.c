@@ -4,7 +4,7 @@
 // 
 // NAME:
 // 
-//     Power.c
+//     Panel.c
 // 
 // 
 // SYNTAX: 
@@ -69,6 +69,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
+#include <stdlib.h>
 
 #define   SHUT_XPOS       gdk_screen_width()-32*1
 #define   SHUT_YPOS       gdk_screen_height()-32

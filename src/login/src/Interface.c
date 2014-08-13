@@ -63,6 +63,7 @@
 #include "../hdr/TextImage.h"
 #include "../hdr/WindowManager.h"
 #include "../hdr/Panel.h"
+#include "../hdr/FileRW.h"
 
 #include <gtk/gtk.h>
 #include <stdio.h>
@@ -167,10 +168,8 @@ void login_interface(int argc, char *argv[]) {
     
     
     // Log to file that interface is beginning execution
-    FILE *fp;
-    fp = fopen(log, "w");
-    fprintf(fp, "%s\n", "TRUE");
-    fclose(fp);
+    file_write(log, "TRUE", "%s\n");
+    
     
     gtk_main();
 }

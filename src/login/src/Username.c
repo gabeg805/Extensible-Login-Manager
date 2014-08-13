@@ -65,6 +65,7 @@
 // Includes
 #include "../hdr/Username.h"
 #include "../hdr/Transparency.h"
+#include "../hdr/FileRW.h"
 
 #include <gtk/gtk.h>
 #include <string.h>
@@ -185,9 +186,7 @@ void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
     const gchar *user = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
     
     // Write username to file
-    FILE *handle = fopen(USER_FILE, "w");
-    fprintf(handle, "%s\n", user);
-    fclose(handle);
+    file_write(USER_FILE, (char *)user, "%s\n");
     
     // Modify button style
     gtk_label_set_text(GTK_LABEL(label), user);
