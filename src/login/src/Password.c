@@ -203,8 +203,9 @@ char * password_entry(int argc, char *argv[]) {
     gtk_main();
     
     // Allocate memory for password output 
+    size_t sz = strlen(output);
     char *pass = malloc(sz);
-    snprintf(pass, strlen(output), output);
+    snprintf(pass, sz, output);
     
     return pass;
 }

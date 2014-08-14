@@ -104,7 +104,6 @@ gboolean time_clock_update(gpointer data);
 void init_date_clock_root(GtkWidget *window, GtkWidget *clock) {
     
     // Set window attributes
-    gtk_window_set_title(GTK_WINDOW(window), "System Date Clock");
     gtk_window_move(GTK_WINDOW(window), DATE_XPOS, DATE_YPOS);
     gtk_window_set_default_size(GTK_WINDOW(window), DATE_WIDTH*0, DATE_HEIGHT*0);
     
@@ -131,7 +130,6 @@ void init_date_clock_root(GtkWidget *window, GtkWidget *clock) {
 void init_time_clock_root(GtkWidget *window, GtkWidget *clock) {
     
     // Set window attributes
-    gtk_window_set_title(GTK_WINDOW(window), "System Time Clock");
     gtk_window_move(GTK_WINDOW(window), TIME_XPOS, TIME_YPOS);
     gtk_window_set_default_size(GTK_WINDOW(window), TIME_WIDTH*0, TIME_HEIGHT*0);
     
@@ -161,7 +159,7 @@ void init_time_clock_root(GtkWidget *window, GtkWidget *clock) {
 // Set the clock label font and text size
 void set_clock_label(GtkWidget *clock, char *fmt, const char *font, int fsize) {
 
-    /* Obtain current time as seconds elapsed since the Epoch. */
+    // Obtain current time as seconds elapsed since the Epoch.
     time_t current_time = time(NULL);
     char time_string[50];
     struct tm *tmp;

@@ -110,7 +110,6 @@ void refresh_login();
 void init_shutdown_root(GtkWidget *shutdown_window, GtkWidget *shutdown) {
     
     // Set window attributes
-    gtk_window_set_title(GTK_WINDOW(shutdown_window), "Shutdown System Button");
     gtk_window_move(GTK_WINDOW(shutdown_window), SHUT_XPOS, SHUT_YPOS);
     gtk_window_set_default_size(GTK_WINDOW(shutdown_window), SHUT_WIDTH*0, SHUT_HEIGHT*0);
     
@@ -142,7 +141,6 @@ void init_shutdown_root(GtkWidget *shutdown_window, GtkWidget *shutdown) {
 void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot) {
     
     // Set window attributes
-    gtk_window_set_title(GTK_WINDOW(reboot_window), "Reboot System Button");
     gtk_window_move(GTK_WINDOW(reboot_window), REB_XPOS, REB_YPOS);
     gtk_window_set_default_size(GTK_WINDOW(reboot_window), REB_WIDTH*0, REB_HEIGHT*0);
     
@@ -174,7 +172,6 @@ void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot) {
 void init_refresh_login_root(GtkWidget *refresh_window, GtkWidget *refresh) {
     
     // Set window attributes
-    gtk_window_set_title(GTK_WINDOW(refresh_window), "Refresh Login Button");
     gtk_window_move(GTK_WINDOW(refresh_window), LREF_XPOS, LREF_YPOS);
     gtk_window_set_default_size(GTK_WINDOW(refresh_window), LREF_WIDTH*0, LREF_HEIGHT*0);
     

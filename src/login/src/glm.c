@@ -68,10 +68,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define XTTY           "tty7"
-#define log            "/etc/X11/glm/log/interface.log"
-#define flag           "TRUE"
-
+#define   XTTY     "tty7"
+#define   LOG      "/etc/X11/glm/log/interface.log"
+#define   FLAG     "TRUE"
+#define   XSETUP   "/etc/X11/glm/src/x/Xsetup"
 
 
 // ////////////////////////////////
@@ -88,17 +88,16 @@ int main(int argc, char *argv[]) {
     
     // Setup the X server for logging in
     pid_t child_pid = fork();
-    if ( child_pid == 0 ) {
-        char *xsetup = "/etc/X11/glm/src/x/Xsetup";
-        execl(xsetup, xsetup, DISPLAY, XTTY, NULL);
-    } else {
+    if ( child_pid == 0 ) 
+        execl(XSETUP, XSETUP, DISPLAY, XTTY, NULL);
+    else {
         int status;
         waitpid(child_pid, &status, 0);
     }
     
     
     // Log to file that interface is beginning execution
-    file_write(log, "FALSE", "%s\n");
+    file_write(LOG, "FALSE", "%s\n");
     
     
     // Display login interface
@@ -112,9 +111,9 @@ int main(int argc, char *argv[]) {
     int status = 1;
     while (status) {
         
-        char *checkflag = file_read(log);
+        char *checkflag = file_read(LOG);
         
-        if ( strcmp(checkflag, flag) == 0 ) {
+        if ( strcmp(checkflag, FLAG) == 0 ) {
             while (status) {
                 
                 /* // Uncomment to take a screenshot */
@@ -135,5 +134,6 @@ int main(int argc, char *argv[]) {
         free(checkflag);
     }
     
+    free(DISPLAY);
     return 0;
 }

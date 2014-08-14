@@ -74,12 +74,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define   XPOS       770
-#define   YPOS       315
-#define   WIDTH      30
-#define   HEIGHT     30
-#define   IMG_FILE   "/etc/X11/glm/img/interface/settings.png"
-#define   SES_FILE   "/etc/X11/glm/log/session.log"
+#define   XPOS          770
+#define   YPOS          315
+#define   WIDTH         30
+#define   HEIGHT        30
+#define   IMG_FILE      "/etc/X11/glm/img/interface/settings.png"
+#define   SES_FILE      "/etc/X11/glm/log/session.log"
+#define   N_SES_CMD     "ls -1 /usr/share/xsessions/ | wc -l"
+#define   WM_SESS_CMD   "ls -1 /usr/share/xsessions/ | sed 's/.desktop//'"
 
 
 // Declares
@@ -97,7 +99,6 @@ void set_wm_entries(GtkWidget *menu);
 void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
     
     // Set window attributes
-    gtk_window_set_title(GTK_WINDOW(window), "Window Manager");
     gtk_window_move(GTK_WINDOW(window), XPOS, YPOS);
     gtk_window_set_default_size(GTK_WINDOW(window), WIDTH*0, HEIGHT*0);
     
@@ -145,8 +146,8 @@ void wm_write_to_file(GtkMenu *item) {
 void set_wm_entries(GtkWidget *menu) {
     
     // Get window manager information
-    char **val = command_line("ls -1 /usr/share/xsessions/ | wc -l", 5);
-    char **allwm  = command_line("ls -1 /usr/share/xsessions/ | sed 's/.desktop//'", 20);
+    char **val = command_line(N_SES_CMD, 5);
+    char **allwm  = command_line(WM_SES_CMD, 20);
     char *wmfocus = file_read(SES_FILE);
     int num = atoi(val[0]);
     

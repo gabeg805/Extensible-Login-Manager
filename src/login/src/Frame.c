@@ -88,7 +88,6 @@ gboolean draw_frame_window(GtkWidget *widget);
 void init_frame_root(GtkWidget *window, GtkWidget *area) {
     
     // Set window attributes
-    gtk_window_set_title(GTK_WINDOW(window), "Login Frame");
     gtk_window_move(GTK_WINDOW(window), XPOS, YPOS);
     gtk_window_set_default_size(GTK_WINDOW(window), WIDTH+2, HEIGHT+2);
     
@@ -122,7 +121,7 @@ gboolean draw_frame_window(GtkWidget *widget) {
         cairo_set_source_rgba(cr, 0, 0, 0, 0); 
     else 
         // Window opaque white 
-        cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); 
+        cairo_set_source_rgb(cr, 1, 1, 1); 
     
     
     // Draw the window background 
@@ -152,10 +151,10 @@ void draw_frame(cairo_t *cr) {
     // Create the rouded rectangle
     cairo_set_line_width (cr, 0);
     cairo_new_sub_path(cr);
-    cairo_arc(cr,   x+WIDTH-radius,   y+radius,           radius,   -90*degrees,     0*degrees);
+    cairo_arc(cr,   x+WIDTH-radius,   y+radius,          radius,   -90*degrees,     0*degrees);
     cairo_arc(cr,   x+WIDTH-radius,   y+HEIGHT-radius,   radius,     0*degrees,    90*degrees);
-    cairo_arc(cr,   x+radius,          y+HEIGHT-radius,   radius,    90*degrees,   180*degrees);
-    cairo_arc(cr,   x+radius,          y+radius,           radius,   180*degrees,   270*degrees);
+    cairo_arc(cr,   x+radius,         y+HEIGHT-radius,   radius,    90*degrees,   180*degrees);
+    cairo_arc(cr,   x+radius,         y+radius,          radius,   180*degrees,   270*degrees);
     cairo_close_path (cr);
     
     // Check for window transparency

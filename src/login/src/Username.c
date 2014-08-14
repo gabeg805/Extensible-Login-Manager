@@ -79,7 +79,7 @@
 #define   FSIZE       23*1024
 #define   USER_FILE   "/etc/X11/glm/log/user.log"
 #define   IMG_FILE    "/etc/X11/glm/img/interface/user.png"
-#define   IMG_COM     "/usr/bin/pqiv"
+#define   IMG_CMD     "/usr/bin/pqiv"
 
 
 // Declares
@@ -99,10 +99,9 @@ void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu,
     
     // Set username icon
     if ( !fork() ) 
-        execl(IMG_COM, IMG_COM, "-c", "-i", "-P", "575,190", IMG_FILE, NULL);
+        execl(IMG_CMD, IMG_CMD, "-c", "-i", "-P", "575,190", IMG_FILE, NULL);
     
     // Set window attributes
-    gtk_window_set_title(GTK_WINDOW(window), "Username");
     gtk_window_move(GTK_WINDOW(window), XPOS, YPOS);
     gtk_window_set_default_size(GTK_WINDOW(window), WIDTH*0, HEIGHT*0);
     

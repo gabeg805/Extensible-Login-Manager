@@ -72,7 +72,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define log "/etc/X11/glm/log/interface.log"
+#define LOG_FILE "/etc/X11/glm/log/interface.log"
 
 
 // Declares
@@ -171,7 +171,7 @@ void login_interface(int argc, char *argv[]) {
     
     
     // Log to file that interface is beginning execution
-    file_write(log, "TRUE", "%s\n");
+    file_write(LOG_FILE, "TRUE", "%s\n");
     
     
     gtk_main();
