@@ -194,3 +194,20 @@ Executing this program on startup can have some pretty adverse effects, but fear
               to how the text is stored in memory, but I'm not 100% sure.
 
 Who knows what gems the logs may hold!
+
+
+
+=====
+To-Do
+=====
+
+Here's a list of things I want to implement, but haven't had the time to do so yet:
+
+    - Config file(s) for '#define' variables, not sure if this is doable but worth 
+      a try
+    
+    - The function to set username entries is huge, try and cut it down to two 
+      functions:
+            * One that sets the username entries
+            * One that returns an array of strings of the format 
+                    {"USER_A UID_A", "USER_B UID_B, ...}
