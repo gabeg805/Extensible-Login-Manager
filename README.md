@@ -211,3 +211,5 @@ Here's a list of things I want to implement, but haven't had the time to do so y
             * One that sets the username entries
             * One that returns an array of strings of the format 
                     {"USER_A UID_A", "USER_B UID_B, ...}
+    
+    - Add a way to test out the login interface without having to reboot
