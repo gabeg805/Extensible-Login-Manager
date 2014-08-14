@@ -15,7 +15,7 @@
 // 
 //     With a 'main' function, execute the following:
 // 
-//         $ gcc -o WindowManager WindowManager.c Transparency.c `pkg-config gtk+-3.0 --cflags --libs`
+//         $ gcc -o WindowManager WindowManager.c Transparency.c FileRW.h `pkg-config gtk+-3.0 --cflags --libs`
 //         $ ./WindowManager
 // 
 // 
@@ -37,8 +37,6 @@
 //     wm_write_to_file - Write to a file, which window manager to use for the 
 //                        session
 // 
-//     command_line     - Return output of a Linux command
-// 
 //     set_wm_entries   - Determine which window manager(s) the system has and add 
 //                        them as entries to the menu
 // 
@@ -48,7 +46,6 @@
 //     * Includes and Declares
 //     * Initialize Window Manager Button
 //     * Write Window Manager to File
-//     * Get Linux Command Output
 //     * Add WM Entries to the Menu 
 // 
 // 
@@ -57,6 +54,8 @@
 //     gabeg Aug 02 2014 <> created
 // 
 //     gabeg Aug 10 2014 <> Updated header
+// 
+//     gabeg Aug 14 2014 <> Removed 'command_line' function and added it to FileRW.c
 // 
 // **********************************************************************************
 
@@ -86,7 +85,6 @@
 // Declares
 void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu);
 void wm_write_to_file(GtkMenu *item);
-char * command_line(char *cmd);
 void set_wm_entries(GtkWidget *menu);
 
 
@@ -139,47 +137,6 @@ void wm_write_to_file(GtkMenu *item) {
 
 
 
-// ////////////////////////////////////
-// ///// GET LINUX COMMAND OUTPUT ///// 
-// ////////////////////////////////////
-
-// Return command output as a string
-char * command_line(char *cmd) {
-    
-    // Max character length of output string
-    int outlen = 1024;
-    char temp[outlen];
-    char output[outlen];
-    FILE *fp;
-    
-    strcpy(output, "");
-    
-    // Read command output
-    fp = popen(cmd, "r");
-    while (fgets(temp, sizeof(output)-1, fp) != NULL ) {
-        
-        // Remove trailing newline characters
-        char *pos;
-        if ((pos=strchr(temp, '\n')) != NULL)
-            *pos = ' ';        
-        
-        // Append output to sessions string
-        strcat(output, temp);
-    }
-    
-    pclose(fp);
-    
-    
-    // Allocate memory for command output 
-    size_t sz = strlen(output);
-    char *type = malloc(sz);  
-    strncpy(type, output, sz);
-    
-    return(type);
-}
-
-
-
 // //////////////////////////////////////
 // ///// ADD WM ENTRIES TO THE MENU /////
 // //////////////////////////////////////
@@ -187,66 +144,48 @@ char * command_line(char *cmd) {
 // Determine which window manager(s) the system has and add them as entries to the menu
 void set_wm_entries(GtkWidget *menu) {
     
-    // Get window manager string
-    char *val = command_line("ls -1 /usr/share/xsessions/ | wc -l");
-    char *wmstr = command_line("ls -1 /usr/share/xsessions/ | sed 's/.desktop//'");
-    char *wmdup = strdup(wmstr);
-    
-    int num = atoi(val);
-    char *allwm[num];
-    
-    
-    // Set window manager array items
-    int i = 0;
-    char *buffer;
-    while ( (buffer = strsep(&wmdup, " ")) ) {
-        if ( strcmp(buffer, "") != 0 )
-            allwm[i] = buffer;
-        i++;
-    }
-    
-    // Read previous window manager used
+    // Get window manager information
+    char **val = command_line("ls -1 /usr/share/xsessions/ | wc -l", 5);
+    char **allwm  = command_line("ls -1 /usr/share/xsessions/ | sed 's/.desktop//'", 20);
     char *wmfocus = file_read(SES_FILE);
+    int num = atoi(val[0]);
     
     // Set the menu items
     int j = 0, q = 0, p = 0;
     GtkWidget *session;
     GSList *group;
+    
     while (1) {
+        
+        // Compare label with the focus label
+        p = 1;
         if ( strcmp(allwm[j], wmfocus) == 0 ) {
             session = gtk_radio_menu_item_new_with_label(NULL, allwm[j]);
             group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(session));
-            
-            allwm[j] = "";
-            p = 1;
-        } else if ( q != 0 && strcmp(allwm[j], "") != 0 ) {
+        } else if ( (q != 0) && (strcmp(allwm[j], "") != 0) ) 
             session = gtk_radio_menu_item_new_with_label(group, allwm[j]);
-            allwm[j] = "";
-            p = 1;
-        } else {
+        else 
             p = 0;
-        }
         
         // Setup the menu items
         if ( p == 1 ) {
+            allwm[j] = "";
+            
             gtk_menu_attach(GTK_MENU(menu), session, 0, 1, q, q+1);
             gtk_widget_show(session);
             g_signal_connect(G_OBJECT(session), "activate", G_CALLBACK(wm_write_to_file), NULL);
             
-            q++;
-            if ( q == num ) 
+            if ( (q++) == num ) 
                 break;
         }
         
-        
-        j++;
-        if ( j >= num )
+        // Increment counter
+        if ( (j++) >= num )
             j = 0;
     }
-    
-    
+        
     // Freeing up the memory
     free(val);
-    free(wmstr);
     free(wmfocus);
+    free(allwm);
 }

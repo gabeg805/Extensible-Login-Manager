@@ -32,16 +32,20 @@
 // 
 // FUNCTIONS:
 // 
-//     is_pam_success - Check if previous PAM command resulted in Success
+//     is_pam_success       - Check if previous PAM command resulted in Success
 // 
-//     conv           - PAM conversation
+//     conv                 - PAM conversation
 // 
-//     login          - Authenticate username/password combination with PAM
+//     manage_login_records - Write login to utmp/wtmp 
+// 
+//     login                - Authenticate username/password combination with PAM
 // 
 // 
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
+//     * Initialize Environment Variables
+//     * Manage Login Records
 //     * Check PAM Function Return Value
 //     * PAM Conversation
 //     * PAM Login Authentication
@@ -52,6 +56,9 @@
 //     gabeg Aug 02 2014 <> created
 // 
 //     gabeg Aug 10 2014 <> Added program header
+// 
+//     gabeg Aug 13 2014 <> Made login method less shady (stopped using 
+//                          'su USERNAME -c ...' to login)
 // 
 // **********************************************************************************
 
@@ -77,12 +84,82 @@
 
 #define SERVICE_NAME   "glm"
 #define XTTY           "tty7"
+#define LOGINCTL       "/usr/bin/loginctl"
+#define GREP           "/usr/bin/grep"
+#define AWK            "/usr/bin/awk"
 
 
 // Declares
 int is_pam_success(int result, pam_handle_t *pamh);
 int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr);
+void manage_login_records(const char *username, char *opt);
+void init_env(pam_handle_t *pam_handle, struct passwd *pw);
 int login(const char *username, const char *password);
+
+
+
+// ////////////////////////////////////////////
+// ///// INITIALIZE ENVIRONMENT VARIABLES /////
+// ////////////////////////////////////////////
+
+// Set environment variables for USER 
+void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
+    
+    // Define loginctl commands
+    char cmd_start[100];
+    char seat_cmd[100];
+    char session_id_cmd[100];
+    
+    snprintf(cmd_start, sizeof(cmd_start), "%s | %s %s | %s", LOGINCTL, GREP, pw->pw_name, AWK);
+    snprintf(seat_cmd, sizeof(seat_cmd), "%s %s", cmd_start, "'{ print $4 }'");
+    snprintf(session_id_cmd, sizeof(session_id_cmd), "%s %s", cmd_start, "'{ print $1 }'");
+    
+    
+    // Define environment variables
+    char **seat = command_line(seat_cmd, 10);
+    char **session_id = command_line(session_id_cmd, 10);
+    char vtnr[2];
+    char runtime_dir[100];
+    char xauthority[100];
+    
+    snprintf(vtnr, sizeof(vtnr), "%c", XTTY[strlen(XTTY)-1]);
+    snprintf(runtime_dir, sizeof(runtime_dir), "%s/%d", "/run/user", pw->pw_uid);
+    snprintf(xauthority, sizeof(xauthority), "%s/%s", pw->pw_dir, ".Xauthority");
+    
+    // Set environment variables
+    setenv("USER", pw->pw_name, 1);
+    setenv("SHELL", pw->pw_shell, 1);
+    setenv("XDG_VTNR", vtnr, 1);
+    setenv("XDG_SEAT", seat[0], 1);
+    setenv("XDG_SESSION_ID", session_id[0], 1);
+    setenv("XDG_RUNTIME_DIR", runtime_dir, 1);
+    setenv("XAUTHORITY", xauthority, 1);
+    
+    free(seat);
+    free(session_id);
+}
+
+
+
+// ////////////////////////////////
+// ///// MANAGE LOGIN RECORDS /////
+// ////////////////////////////////
+
+// Manager utmp/wtmp login records
+void manage_login_records(const char *username, char *opt) {
+    
+    // Execute sessreg
+    pid_t child_pid = fork();
+    if ( child_pid == 0 ) {
+        execl("/usr/bin/sessreg", "/usr/bin/sessreg", opt, 
+              "-w", "/var/log/wtmp", "-u", "/run/utmp",
+              "-l", XTTY, "-h", "", username, NULL);
+    } 
+    
+    // Wait for process to finish
+    int status;
+    waitpid(child_pid, &status, 0);
+}
 
 
 
@@ -198,32 +275,37 @@ int login(const char *username, const char *password) {
     result = pam_get_item(pam_handle, PAM_USER, (const void **)&username);
     if (result != PAM_SUCCESS || pw == NULL) return 1;
     
-    // Export PAM environment
-    char **pam_envlist, **pam_env;
-    if ((pam_envlist = pam_getenvlist(pam_handle)) != NULL) {
-        for (pam_env = pam_envlist; *pam_env != NULL; ++pam_env) {
-            putenv(*pam_env);
-            free(*pam_env);
-        }
-        free(pam_envlist);
-    }
     
-    
-    // Execute user session
+    // Setup and execute user session
     pid_t child_pid = fork();
-    if (child_pid == 0) {
-        chdir(pw->pw_dir);
+    if ( child_pid == 0 ) {
         
+        // Kill windows
         system("xwininfo -root -children | grep '  0x' | cut -d' ' -f6 | xargs -n1 xkill -id");
         
-        char cmd[100];
-        char *super = "su";
-        char *bash = "-c 'exec /bin/bash -login /home/gabeg/.xinitrc";
-        char *session = file_read("/etc/X11/glm/log/session.log");
-        char *close = "'";
+        // Add session to utmp/wtmp
+        manage_login_records(username, "-a");
         
-        snprintf(cmd, sizeof(cmd), "%s %s %s %s %s", super, username, bash, session, close);
+        // Set uid and groups for USER
+        if (initgroups(pw->pw_name, pw->pw_gid) == -1) 
+            exit(0);
+        if (setgid(pw->pw_gid) == -1) 
+            exit(0);
+        if (setuid(pw->pw_uid) == -1) 
+            exit(0);
+        
+        // Initialize environment variables
+        init_env(pam_handle, pw);
+        
+        // Setup xinitrc command
+        char cmd[100];
+        char *bash = "exec /bin/bash -login /home/gabeg/.xinitrc";
+        char *session = file_read("/etc/X11/glm/log/session.log");
+        snprintf(cmd, sizeof(cmd), "%s %s", bash, session);
         free(session);
+        
+        // Start user X session with xinitrc
+        chdir(pw->pw_dir);
         execl(pw->pw_shell, pw->pw_shell, "-c", cmd, NULL);
     }
     
@@ -231,7 +313,7 @@ int login(const char *username, const char *password) {
     // Wait for child process to finish (wait for logout)
     int status;
     waitpid(child_pid, &status, 0); // TODO: Handle errors
-    
+        
     // Close PAM session
     result = pam_close_session(pam_handle, 0);
     if (!is_pam_success(result, pam_handle)) {
@@ -246,6 +328,9 @@ int login(const char *username, const char *password) {
     // End PAM session
     result = pam_end(pam_handle, result);
     pam_handle = 0;
+    
+    // Delete session from utmp/wtmp
+    manage_login_records(username, "-d");    
     
     return 0;
 }

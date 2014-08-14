@@ -202,10 +202,9 @@ char * password_entry(int argc, char *argv[]) {
     
     gtk_main();
     
-    // Allocate memory for command output 
-    size_t sz = strlen(output);
-    char *type = malloc(sz);  
-    strncpy(type, output, sz);
+    // Allocate memory for password output 
+    char *pass = malloc(sz);
+    snprintf(pass, strlen(output), output);
     
-    return(type);
+    return pass;
 }

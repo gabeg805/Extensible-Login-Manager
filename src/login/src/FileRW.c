@@ -33,6 +33,9 @@
 //     get_open_display - Search for X display lock files and return a display that 
 //                        is not locked
 // 
+//     command_line     - Return output of a Linux command
+// 
+// 
 // 
 // FILE STRUCTURE:
 // 
@@ -45,6 +48,9 @@
 // MODIFICATION HISTORY:
 // 	
 //     gabeg Aug 12 2014 <> created
+// 
+//     gabeg Aug 14 2014 <> Modified command_line function to return an array of 
+//                          strings instead of just one long string
 // 
 // **********************************************************************************
 
@@ -67,6 +73,7 @@
 void file_write(char *file, char *phrase, char *fmt);
 char * file_read(char *file);
 char * get_open_display();
+char ** command_line(char *cmd, int size);
 
 
 
@@ -146,4 +153,38 @@ char * get_open_display() {
     strncpy(type, display, sz);
     
     return(type);
+}
+
+
+
+// ////////////////////////////////////
+// ///// GET LINUX COMMAND OUTPUT ///// 
+// ////////////////////////////////////
+
+// Return command output as a string
+char ** command_line(char *cmd, int size) {
+    
+    // Output arrays
+    char **array = (char**)malloc(sizeof(char*)*size);
+    char temp[size];
+    
+    // Read command output
+    FILE *fp  = popen(cmd, "r");
+    int i = 0;
+    
+    while (fgets(temp, sizeof(temp)-1, fp) != NULL ) {
+        
+        // Remove trailing newline characters
+        char *pos;
+        if ((pos=strchr(temp, '\n')) != NULL)
+            *pos = '\0';
+        
+        // Add string to the array
+        array[i] = strdup(temp);
+        i++;
+    }
+    
+    pclose(fp);
+    
+    return array;
 }

@@ -15,7 +15,7 @@
 // 
 //     With a 'main' function, execute the following:
 // 
-//         $ gcc -o Username Username.c Transparency.c `pkg-config gtk+-3.0 --cflags --libs`
+//         $ gcc -o Username Username.c Transparency.c FileRW.c `pkg-config gtk+-3.0 --cflags --libs`
 //         $ ./Username
 // 
 // 
@@ -50,6 +50,8 @@
 // MODIFICATION HISTORY:
 // 	
 //     gabeg Aug 10 2014 <> created
+// 
+//     gabeg Aug 14 2014 <> Updated gcc command in the header to include FileRW.c
 // 
 // **********************************************************************************
 

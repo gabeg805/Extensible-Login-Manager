@@ -15,7 +15,7 @@
 // 
 //     With a 'main' function, execute the following:
 // 
-//         $ gcc -o Interface Interface.c Username.c Transparency.c Clock.c Frame.c TextImage.c WindowManager.c Panel.c `pkg-config gtk+-3.0 --cflags --libs`
+//         $ gcc -o Interface Interface.c Username.c Clock.c Frame.c TextImage.c WindowManager.c Panel.c Transparency.c FileRW.c `pkg-config gtk+-3.0 --cflags --libs`
 //         $ ./Interface
 // 
 // 
@@ -46,6 +46,9 @@
 // 
 //     gabeg Aug 10 2014 <> Updated header
 // 
+//     gabeg Aug 14 2014 <> Updated gcc command to execute in the header to include
+//                          FileRW.c
+// 
 // **********************************************************************************
 
 
@@ -57,12 +60,12 @@
 // Includes
 #include "../hdr/Interface.h"
 #include "../hdr/Username.h"
-#include "../hdr/Transparency.h"
 #include "../hdr/Clock.h"
 #include "../hdr/Frame.h"
 #include "../hdr/TextImage.h"
 #include "../hdr/WindowManager.h"
 #include "../hdr/Panel.h"
+#include "../hdr/Transparency.h"
 #include "../hdr/FileRW.h"
 
 #include <gtk/gtk.h>
