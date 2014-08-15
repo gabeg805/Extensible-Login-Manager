@@ -176,14 +176,12 @@ void set_wm_entries(GtkWidget *menu) {
             gtk_widget_show(session);
             g_signal_connect(G_OBJECT(session), "activate", G_CALLBACK(wm_write_to_file), NULL);
             
-            q++;
-            if ( q == num ) 
+            if ( (++q) == num ) 
                 break;
         }
         
         // Increment counter
-        j++;
-        if ( j >= num )
+        if ( (++j) >= num )
             j = 0;
     }
         

@@ -9,6 +9,7 @@
 void init_entry_root(GtkWidget *window, GtkWidget *entry);
 void init_entry(GtkWidget *entry);
 void get_entry_text(GtkWidget *entry);
-char * password_entry(int argc, char *argv[]);
+
+extern char output[100];
 
 #endif

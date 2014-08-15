@@ -83,8 +83,7 @@ char ** command_line(char *cmd, int size);
 
 // Write to a file
 void file_write(char *file, char *phrase, char *fmt) {
-    FILE *handle;
-    handle = fopen(file, "w");
+    FILE *handle = fopen(file, "w");
     fprintf(handle, fmt, phrase);
     fclose(handle);
 }
@@ -110,10 +109,10 @@ char * file_read(char *file) {
     
     // Allocate memory for command output 
     size_t sz = strlen(temp);
-    char *type = malloc(sz);  
-    strncpy(type, temp, sz);
+    char *contents = malloc(sz);  
+    strncpy(contents, temp, sz);
     
-    return(type);
+    return contents;
 }
 
 
@@ -144,15 +143,15 @@ char * get_open_display() {
             break;
     }
     
-    // Open display
+    // Define open display
     snprintf(display, sizeof(display), ":%d", d);
     
     // Allocate memory for display output 
     size_t sz = strlen(display);
-    char *type = malloc(sz);  
-    strncpy(type, display, sz);
+    char *opendisp = malloc(sz);  
+    strncpy(opendisp, display, sz);
     
-    return(type);
+    return opendisp;
 }
 
 

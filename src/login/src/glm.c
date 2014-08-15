@@ -41,6 +41,9 @@
 // 
 //     gabeg Aug 10 2014 <> Updated the header
 // 
+//     gabeg Aug 14 2014 <> Changed login interface to include password entry box, 
+//                          thus changing the main while loop
+// 
 // **********************************************************************************
 
 
@@ -96,42 +99,24 @@ int main(int argc, char *argv[]) {
     }
     
     
-    // Log to file that interface is beginning execution
-    file_write(INTERFACE_LOG_FILE, "FALSE", "%s\n");
-    
-    
-    // Display login interface
-    if ( !fork() ) {
-        login_interface(argc, argv);
-        return 0;
-    }
-    
-    
-    // Login to the system
-    int status = 1;
-    while (status) {
+    // Log interface start and login to the system
+    file_write(INTERFACE_LOG_FILE, INTERFACE_FLAG, "%s\n");
+    int loop = 1;
+    while (loop) {
         
-        char *checkflag = file_read(INTERFACE_LOG_FILE);
+        // Authenticate username/password combination
+        char *PASSWORD = login_interface(argc, argv);
+        char *USERNAME = file_read("/etc/X11/glm/log/user.log"); 
         
-        if ( strcmp(checkflag, INTERFACE_FLAG) == 0 ) {
-            while (status) {
-                
-                /* // Uncomment to take a screenshot */
-                /* if ( !fork() ) */
-                /*     execl("/usr/bin/scrot", "/usr/bin/scrot", */
-                /*           "-d", "5", "/etc/X11/glm/img/screenshot.png", NULL); */
-                
-                char *PASSWORD = password_entry(argc, argv);
-                char *USERNAME = file_read("/etc/X11/glm/log/user.log"); 
-                file_write("/etc/X11/glm/log/fuck2.log", PASSWORD, "%s\n");
-                status  = login(USERNAME, PASSWORD);
-                
-                free(PASSWORD);
-                free(USERNAME);
-            }
-        }
+        if ( login(USERNAME, PASSWORD) )
+            loop = 0;
         
-        free(checkflag);
+        // Log that interface has already begun
+        file_write(INTERFACE_LOG_FILE, "FALSE", "%s\n");
+        
+        // Free allocated memory
+        free(PASSWORD);
+        free(USERNAME);
     }
     
     free(DISPLAY);

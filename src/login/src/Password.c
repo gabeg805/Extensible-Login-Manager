@@ -36,15 +36,12 @@
 // 
 //     get_entry_text  - Return user entry text
 // 
-//     password_entry  - Display the password entry box and return the input password
-// 
 // 
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
 //     * Initialize Entry Box
 //     * Get Entry Text
-//     * Display Entry Box
 // 
 // 
 // MODIFICATION HISTORY:
@@ -85,9 +82,8 @@
 void init_entry_root(GtkWidget *window, GtkWidget *entry);
 void init_entry(GtkWidget *entry);
 void get_entry_text(GtkWidget *entry);
-char * password_entry(int argc, char *argv[]);
 
-char output[1024];
+extern char output[100];
 
 
 
@@ -176,37 +172,3 @@ void get_entry_text(GtkWidget *entry) {
         snprintf(output, len+1, text);
     }
 } 
-
-
-
-// /////////////////////////////
-// ///// DISPLAY ENTRY BOX /////
-// /////////////////////////////
-
-// Display the password entry box
-char * password_entry(int argc, char *argv[]) {
-    
-    // Initialize GTK toolkit
-    gtk_init(&argc, &argv);
-    
-    // Define window and entry box
-    GtkWidget *entry_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *entry = gtk_entry_new();
-    
-    // Initialize root window and entry box
-    init_entry_root(entry_window, entry);
-    init_entry(entry);
-    
-    // Display entry box
-    gtk_widget_show(entry);
-    gtk_widget_show(entry_window);
-    
-    gtk_main();
-    
-    // Allocate memory for password output 
-    size_t sz = strlen(output);
-    char *pass = malloc(sz);
-    snprintf(pass, sz+1, output);
-    
-    return pass;
-}

@@ -255,38 +255,38 @@ int login(const char *username, const char *password) {
     
     // Start PAM
     int result = pam_start(SERVICE_NAME, NULL, &pam_conv, &pam_handle);
-    if (!is_pam_success(result, pam_handle)) return 1;
+    if (!is_pam_success(result, pam_handle)) return 0;
     
     // Set PAM items
     result = pam_set_item(pam_handle, PAM_USER, username);
-    if (!is_pam_success(result, pam_handle)) return 1;
+    if (!is_pam_success(result, pam_handle)) return 0;
     result = pam_set_item(pam_handle, PAM_TTY, XTTY);
-    if (!is_pam_success(result, pam_handle)) return 1;
+    if (!is_pam_success(result, pam_handle)) return 0;
     
     // Authenticate PAM user
     result = pam_authenticate(pam_handle, 0);
-    if (!is_pam_success(result, pam_handle)) return 1;
+    if (!is_pam_success(result, pam_handle)) return 0;
     
     // Check if user account is valid
     result = pam_acct_mgmt(pam_handle, 0);
-    if (!is_pam_success(result, pam_handle)) return 1;
+    if (!is_pam_success(result, pam_handle)) return 0;
     
     // Establish credentials
     result = pam_setcred(pam_handle, PAM_ESTABLISH_CRED);
-    if (!is_pam_success(result, pam_handle)) return 1;
+    if (!is_pam_success(result, pam_handle)) return 0;
     
     // Open PAM session
     result = pam_open_session(pam_handle, 0);
     if (!is_pam_success(result, pam_handle)) {
         pam_setcred(pam_handle, PAM_DELETE_CRED);
-        return 1;
+        return 0;
     }
     
     
     // Get mapped user name, PAM may have changed it
     struct passwd *pw = getpwnam(username);
     result = pam_get_item(pam_handle, PAM_USER, (const void **)&username);
-    if (result != PAM_SUCCESS || pw == NULL) return 1;
+    if (result != PAM_SUCCESS || pw == NULL) return 0;
     
     
     // Setup and execute user session
@@ -331,12 +331,12 @@ int login(const char *username, const char *password) {
     result = pam_close_session(pam_handle, 0);
     if (!is_pam_success(result, pam_handle)) {
         pam_setcred(pam_handle, PAM_DELETE_CRED);
-        return 1;
+        return 0;
     }
     
     // Remove credentials
     result = pam_setcred(pam_handle, PAM_DELETE_CRED);
-    if (!is_pam_success(result, pam_handle)) return 1;
+    if (!is_pam_success(result, pam_handle)) return 0;
     
     // End PAM session
     result = pam_end(pam_handle, result);
@@ -345,5 +345,5 @@ int login(const char *username, const char *password) {
     // Delete session from utmp/wtmp
     manage_login_records(username, "-d");    
     
-    return 0;
+    return 1;
 }
