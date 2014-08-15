@@ -67,10 +67,10 @@
 #include <cairo.h>
 #include <math.h>
 
-#define   XPOS      550
-#define   YPOS      300
-#define   WIDTH     265
-#define   HEIGHT    100
+#define   FRAME_XPOS     550
+#define   FRAME_YPOS     300
+#define   FRAME_WIDTH    265
+#define   FRAME_HEIGHT   100
 
 
 // Declares
@@ -88,8 +88,8 @@ gboolean draw_frame_window(GtkWidget *widget);
 void init_frame_root(GtkWidget *window, GtkWidget *area) {
     
     // Set window attributes
-    gtk_window_move(GTK_WINDOW(window), XPOS, YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), WIDTH+2, HEIGHT+2);
+    gtk_window_move(GTK_WINDOW(window), FRAME_XPOS, FRAME_YPOS);
+    gtk_window_set_default_size(GTK_WINDOW(window), FRAME_WIDTH+2, FRAME_HEIGHT+2);
     
     // Add area to window
     gtk_container_add(GTK_CONTAINER(window), area);
@@ -143,7 +143,7 @@ void draw_frame(cairo_t *cr) {
     double x             = 1, 
            y             = 1,
            aspect        = 1.0, 
-           corner_radius = HEIGHT / 10.0; 
+           corner_radius = FRAME_HEIGHT / 10.0; 
     
     double radius = corner_radius / aspect;
     double degrees = M_PI / 180.0;
@@ -151,10 +151,10 @@ void draw_frame(cairo_t *cr) {
     // Create the rouded rectangle
     cairo_set_line_width (cr, 0);
     cairo_new_sub_path(cr);
-    cairo_arc(cr,   x+WIDTH-radius,   y+radius,          radius,   -90*degrees,     0*degrees);
-    cairo_arc(cr,   x+WIDTH-radius,   y+HEIGHT-radius,   radius,     0*degrees,    90*degrees);
-    cairo_arc(cr,   x+radius,         y+HEIGHT-radius,   radius,    90*degrees,   180*degrees);
-    cairo_arc(cr,   x+radius,         y+radius,          radius,   180*degrees,   270*degrees);
+    cairo_arc(cr,   x+FRAME_WIDTH-radius,   y+radius,                radius,   -90*degrees,     0*degrees);
+    cairo_arc(cr,   x+FRAME_WIDTH-radius,   y+FRAME_HEIGHT-radius,   radius,     0*degrees,    90*degrees);
+    cairo_arc(cr,   x+radius,               y+FRAME_HEIGHT-radius,   radius,    90*degrees,   180*degrees);
+    cairo_arc(cr,   x+radius,               y+radius,                radius,   180*degrees,   270*degrees);
     cairo_close_path (cr);
     
     // Check for window transparency

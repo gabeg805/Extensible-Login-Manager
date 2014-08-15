@@ -64,20 +64,21 @@
 // Includes
 #include "../hdr/Password.h"
 #include "../hdr/Transparency.h"
+#include "../hdr/FileRW.h"
 
 #include <gtk/gtk.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define   XPOS        570
-#define   YPOS        350
-#define   WIDTH       230
-#define   HEIGHT      30
-#define   FONT        "Inconsolata"
-#define   FSIZE       10*1024
-#define   INVISCHAR   '*'
-#define   MAXCHARS    30
+#define   PASSWORD_ENTRY_XPOS        570
+#define   PASSWORD_ENTRY_YPOS        350
+#define   PASSWORD_ENTRY_WIDTH       230
+#define   PASSWORD_ENTRY_HEIGHT      30
+#define   PASSWORD_ENTRY_FONT        "Inconsolata"
+#define   PASSWORD_ENTRY_FSIZE       10*1024
+#define   PASSWORD_ENTRY_INVISCHAR   '*'
+#define   PASSWORD_ENTRY_MAXCHARS    30
 
 
 // Declares
@@ -98,8 +99,8 @@ char output[1024];
 void init_entry_root(GtkWidget *window, GtkWidget *entry) {
     
     // Set window attributes
-    gtk_window_move(GTK_WINDOW(window), XPOS, YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), WIDTH, HEIGHT*0);
+    gtk_window_move(GTK_WINDOW(window), PASSWORD_ENTRY_XPOS, PASSWORD_ENTRY_YPOS);
+    gtk_window_set_default_size(GTK_WINDOW(window), PASSWORD_ENTRY_WIDTH, PASSWORD_ENTRY_HEIGHT*0);
     
     // Set color scheme for root window
     const GdkRGBA bg_widget = {1, 1, 1, 0.5};
@@ -124,17 +125,17 @@ void init_entry(GtkWidget *entry) {
 
     // Set entry box attributes
     gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-    gtk_entry_set_invisible_char(GTK_ENTRY(entry), INVISCHAR);
+    gtk_entry_set_invisible_char(GTK_ENTRY(entry), PASSWORD_ENTRY_INVISCHAR);
     
     GtkEntryBuffer *buf = gtk_entry_buffer_new(NULL, -1);
-    gtk_entry_buffer_set_max_length(buf, MAXCHARS);
+    gtk_entry_buffer_set_max_length(buf, PASSWORD_ENTRY_MAXCHARS);
     gtk_entry_set_buffer(GTK_ENTRY(entry), buf);
 
         
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
-    PangoAttribute *attrFont = pango_attr_family_new(FONT);
-    PangoAttribute *attrSize = pango_attr_size_new(FSIZE);
+    PangoAttribute *attrFont = pango_attr_family_new(PASSWORD_ENTRY_FONT);
+    PangoAttribute *attrSize = pango_attr_size_new(PASSWORD_ENTRY_FSIZE);
     PangoAttribute *attrColor = pango_attr_foreground_new(0, 0, 0);
     
     // Add attributes to the list (and increase the reference counter)
@@ -166,7 +167,7 @@ void get_entry_text(GtkWidget *entry) {
     
     // Reset the buffer
     buf = gtk_entry_buffer_new(NULL, -1);
-    gtk_entry_buffer_set_max_length(buf, MAXCHARS);
+    gtk_entry_buffer_set_max_length(buf, PASSWORD_ENTRY_MAXCHARS);
     gtk_entry_set_buffer(GTK_ENTRY(entry), buf);
     
     // Quit the entry widget
@@ -174,7 +175,7 @@ void get_entry_text(GtkWidget *entry) {
         gtk_main_quit();
         snprintf(output, len+1, text);
     }
-}        
+} 
 
 
 
@@ -187,11 +188,11 @@ char * password_entry(int argc, char *argv[]) {
     
     // Initialize GTK toolkit
     gtk_init(&argc, &argv);
-
+    
     // Define window and entry box
     GtkWidget *entry_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *entry = gtk_entry_new();
-        
+    
     // Initialize root window and entry box
     init_entry_root(entry_window, entry);
     init_entry(entry);
@@ -205,7 +206,7 @@ char * password_entry(int argc, char *argv[]) {
     // Allocate memory for password output 
     size_t sz = strlen(output);
     char *pass = malloc(sz);
-    snprintf(pass, sz, output);
+    snprintf(pass, sz+1, output);
     
     return pass;
 }

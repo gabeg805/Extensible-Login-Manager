@@ -31,13 +31,13 @@
 // 
 // FUNCTIONS:
 // 
-//     init_date_clock_root - Initialize the clock window that displays the date
-//     init_time_clock_root - Initialize the clock window that displays the time
+//     init_clock_date_root - Initialize the clock window that displays the date
+//     init_clock_time_root - Initialize the clock window that displays the time
 // 
 //     set_clock_label      - Set the clock label font and text size
 // 
-//     date_clock_update    - Refresh the date clock label
-//     time_clock_update    - Refresh the time clock label
+//     clock_date_update    - Refresh the date clock label
+//     clock_time_update    - Refresh the time clock label
 // 
 // 
 // FILE STRUCTURE:
@@ -69,30 +69,30 @@
 #include <gtk/gtk.h>
 #include <time.h>
 
-#define   DATE_XPOS     50
-#define   DATE_YPOS     650
-#define   DATE_WIDTH    400
-#define   DATE_HEIGHT   50
-#define   DATE_FONT     "Inconsolata"
-#define   DATE_FSIZE    25*1024
-#define   DATE_FMT      "%A, %B %-d"
+#define   CLOCK_DATE_XPOS     50
+#define   CLOCK_DATE_YPOS     650
+#define   CLOCK_DATE_WIDTH    400
+#define   CLOCK_DATE_HEIGHT   50
+#define   CLOCK_DATE_FONT     "Inconsolata"
+#define   CLOCK_DATE_FSIZE    25*1024
+#define   CLOCK_DATE_FMT      "%A, %B %-d"
 
-#define   TIME_XPOS     86
-#define   TIME_YPOS     575
-#define   TIME_WIDTH    400
-#define   TIME_HEIGHT   75
-#define   TIME_FONT     "Inconsolata"
-#define   TIME_FSIZE    45*1024
-#define   TIME_FMT      "%-I:%M %p"
+#define   CLOCK_TIME_XPOS     86
+#define   CLOCK_TIME_YPOS     575
+#define   CLOCK_TIME_WIDTH    400
+#define   CLOCK_TIME_HEIGHT   75
+#define   CLOCK_TIME_FONT     "Inconsolata"
+#define   CLOCK_TIME_FSIZE    45*1024
+#define   CLOCK_TIME_FMT      "%-I:%M %p"
 
-#define   REFRESH_TIME   30
+#define   CLOCK_UPDATE_SEC   30
 
 // Declares
-void init_date_clock_root(GtkWidget *window, GtkWidget *clock);
-void init_time_clock_root(GtkWidget *window, GtkWidget *clock);
+void init_clock_date_root(GtkWidget *window, GtkWidget *clock);
+void init_clock_time_root(GtkWidget *window, GtkWidget *clock);
 void set_clock_label(GtkWidget *clock, char *fmt, const char *font, int fsize);
-gboolean date_clock_update(gpointer data);
-gboolean time_clock_update(gpointer data);
+gboolean clock_date_update(gpointer data);
+gboolean clock_time_update(gpointer data);
 
 
 
@@ -101,21 +101,21 @@ gboolean time_clock_update(gpointer data);
 // //////////////////////////////////////////
 
 // Initialize the root window with all its objects
-void init_date_clock_root(GtkWidget *window, GtkWidget *clock) {
+void init_clock_date_root(GtkWidget *window, GtkWidget *clock) {
     
     // Set window attributes
-    gtk_window_move(GTK_WINDOW(window), DATE_XPOS, DATE_YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), DATE_WIDTH*0, DATE_HEIGHT*0);
+    gtk_window_move(GTK_WINDOW(window), CLOCK_DATE_XPOS, CLOCK_DATE_YPOS);
+    gtk_window_set_default_size(GTK_WINDOW(window), CLOCK_DATE_WIDTH*0, CLOCK_DATE_HEIGHT*0);
     
     // Set clock attributes
     const GdkRGBA bg_widget = {0, 0, 0, 0};
     const GdkRGBA fg_widget = {1, 1, 1, 1};
     set_color_and_opacity(window, clock, bg_widget, fg_widget);
-    set_clock_label(clock, DATE_FMT, DATE_FONT, DATE_FSIZE);
+    set_clock_label(clock, CLOCK_DATE_FMT, CLOCK_DATE_FONT, CLOCK_DATE_FSIZE);
     
     // Add the clock to the root window 
     gtk_container_add(GTK_CONTAINER(window), clock);
-    g_timeout_add_seconds(REFRESH_TIME, date_clock_update, clock);
+    g_timeout_add_seconds(CLOCK_UPDATE_SEC, clock_date_update, clock);
     
     // Enable transparency
     enable_transparency(window);
@@ -127,21 +127,21 @@ void init_date_clock_root(GtkWidget *window, GtkWidget *clock) {
 
 
 // Initialize the root window with all its objects
-void init_time_clock_root(GtkWidget *window, GtkWidget *clock) {
+void init_clock_time_root(GtkWidget *window, GtkWidget *clock) {
     
     // Set window attributes
-    gtk_window_move(GTK_WINDOW(window), TIME_XPOS, TIME_YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), TIME_WIDTH*0, TIME_HEIGHT*0);
+    gtk_window_move(GTK_WINDOW(window), CLOCK_TIME_XPOS, CLOCK_TIME_YPOS);
+    gtk_window_set_default_size(GTK_WINDOW(window), CLOCK_TIME_WIDTH*0, CLOCK_TIME_HEIGHT*0);
     
     // Set clock attributes
     const GdkRGBA bg_widget = {0, 0, 0, 0};
     const GdkRGBA fg_widget = {1, 1, 1, 1};
     set_color_and_opacity(window, clock, bg_widget, fg_widget);
-    set_clock_label(clock, TIME_FMT, TIME_FONT, TIME_FSIZE);
+    set_clock_label(clock, CLOCK_TIME_FMT, CLOCK_TIME_FONT, CLOCK_TIME_FSIZE);
     
     // Add the clock to the root window 
     gtk_container_add(GTK_CONTAINER(window), clock);
-    g_timeout_add_seconds(REFRESH_TIME, time_clock_update, clock);
+    g_timeout_add_seconds(CLOCK_UPDATE_SEC, clock_time_update, clock);
     
     // Enable transparency
     enable_transparency(window);
@@ -192,18 +192,18 @@ void set_clock_label(GtkWidget *clock, char *fmt, const char *font, int fsize) {
 // ////////////////////////////
 
 // Refresh the current clock label
-gboolean date_clock_update(gpointer data) {
+gboolean clock_date_update(gpointer data) {
     GtkWidget *clock = (GtkWidget *) data;
-    set_clock_label(clock, DATE_FMT, DATE_FONT, DATE_FSIZE);
+    set_clock_label(clock, CLOCK_DATE_FMT, CLOCK_DATE_FONT, CLOCK_DATE_FSIZE);
     
     return TRUE;
 }
 
 
 // Refresh the current clock label
-gboolean time_clock_update(gpointer data) {
+gboolean clock_time_update(gpointer data) {
     GtkWidget *clock = (GtkWidget *) data;
-    set_clock_label(clock, TIME_FMT, TIME_FONT, TIME_FSIZE);
+    set_clock_label(clock, CLOCK_TIME_FMT, CLOCK_TIME_FONT, CLOCK_TIME_FSIZE);
     
     return TRUE;
 }

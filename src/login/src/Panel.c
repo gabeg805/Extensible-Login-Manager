@@ -70,26 +70,27 @@
 #include <gdk/gdk.h>
 #include <stdlib.h>
 
-#define   SHUT_XPOS       gdk_screen_width()-32*1
-#define   SHUT_YPOS       gdk_screen_height()-32
-#define   SHUT_WIDTH      32
-#define   SHUT_HEIGHT     32
-#define   SHUT_IMG_FILE   "/etc/X11/glm/img/interface/shutdown.png"
-#define   SHUT_COM        "/usr/bin/poweroff"
+#define   POWEROFF    "/usr/bin/poweroff"
+#define   REBOOT      "/usr/bin/reboot"
+#define   SYSTEMCTL   "/usr/bin/systemctl"
 
-#define   REB_XPOS       gdk_screen_width()-32*2
-#define   REB_YPOS       gdk_screen_height()-32
-#define   REB_WIDTH      32
-#define   REB_HEIGHT     32
-#define   REB_IMG_FILE   "/etc/X11/glm/img/interface/reboot.png"
-#define   REB_COM        "/usr/bin/reboot"
+#define   PANEL_SHUTDOWN_XPOS       gdk_screen_width()-32*1
+#define   PANEL_SHUTDOWN_YPOS       gdk_screen_height()-32
+#define   PANEL_SHUTDOWN_WIDTH      32
+#define   PANEL_SHUTDOWN_HEIGHT     32
+#define   PANEL_SHUTDOWN_IMG_FILE   "/etc/X11/glm/img/interface/shutdown.png"
 
-#define   LREF_XPOS       gdk_screen_width()-32*3
-#define   LREF_YPOS       gdk_screen_height()-32
-#define   LREF_WIDTH      32
-#define   LREF_HEIGHT     32
-#define   LREF_IMG_FILE   "/etc/X11/glm/img/interface/refresh.png"
-#define   LREF_COM        "/usr/bin/systemctl"
+#define   PANEL_REBOOT_XPOS       gdk_screen_width()-32*2
+#define   PANEL_REBOOT_YPOS       gdk_screen_height()-32
+#define   PANEL_REBOOT_WIDTH      32
+#define   PANEL_REBOOT_HEIGHT     32
+#define   PANEL_REBOOT_IMG_FILE   "/etc/X11/glm/img/interface/reboot.png"
+
+#define   PANEL_REFRESH_XPOS       gdk_screen_width()-32*3
+#define   PANEL_REFRESH_YPOS       gdk_screen_height()-32
+#define   PANEL_REFRESH_WIDTH      32
+#define   PANEL_REFRESH_HEIGHT     32
+#define   PANEL_REFRESH_IMG_FILE   "/etc/X11/glm/img/interface/refresh.png"
 
 
 // Declares
@@ -110,8 +111,8 @@ void refresh_login();
 void init_shutdown_root(GtkWidget *shutdown_window, GtkWidget *shutdown) {
     
     // Set window attributes
-    gtk_window_move(GTK_WINDOW(shutdown_window), SHUT_XPOS, SHUT_YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(shutdown_window), SHUT_WIDTH*0, SHUT_HEIGHT*0);
+    gtk_window_move(GTK_WINDOW(shutdown_window), PANEL_SHUTDOWN_XPOS, PANEL_SHUTDOWN_YPOS);
+    gtk_window_set_default_size(GTK_WINDOW(shutdown_window), PANEL_SHUTDOWN_WIDTH*0, PANEL_SHUTDOWN_HEIGHT*0);
     
     // Set power button attributes
     const GdkRGBA bg_widget = {0, 0, 0, 0};
@@ -119,7 +120,7 @@ void init_shutdown_root(GtkWidget *shutdown_window, GtkWidget *shutdown) {
     set_color_and_opacity(shutdown_window, shutdown, bg_widget, fg_widget);
     
     // Modify button style
-    GtkWidget *image = gtk_image_new_from_file(SHUT_IMG_FILE);
+    GtkWidget *image = gtk_image_new_from_file(PANEL_SHUTDOWN_IMG_FILE);
     gtk_button_set_image(GTK_BUTTON(shutdown), image);
     gtk_button_set_relief(GTK_BUTTON(shutdown), GTK_RELIEF_NONE);
     gtk_window_set_decorated(GTK_WINDOW(shutdown_window), FALSE);
@@ -141,8 +142,8 @@ void init_shutdown_root(GtkWidget *shutdown_window, GtkWidget *shutdown) {
 void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot) {
     
     // Set window attributes
-    gtk_window_move(GTK_WINDOW(reboot_window), REB_XPOS, REB_YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(reboot_window), REB_WIDTH*0, REB_HEIGHT*0);
+    gtk_window_move(GTK_WINDOW(reboot_window), PANEL_REBOOT_XPOS, PANEL_REBOOT_YPOS);
+    gtk_window_set_default_size(GTK_WINDOW(reboot_window), PANEL_REBOOT_WIDTH*0, PANEL_REBOOT_HEIGHT*0);
     
     // Set power button attributes
     const GdkRGBA bg_widget = {0, 0, 0, 0};
@@ -150,7 +151,7 @@ void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot) {
     set_color_and_opacity(reboot_window, reboot, bg_widget, fg_widget);
     
     // Modify button style
-    GtkWidget *image = gtk_image_new_from_file(REB_IMG_FILE);
+    GtkWidget *image = gtk_image_new_from_file(PANEL_REBOOT_IMG_FILE);
     gtk_button_set_image(GTK_BUTTON(reboot), image);
     gtk_button_set_relief(GTK_BUTTON(reboot), GTK_RELIEF_NONE);
     gtk_window_set_decorated(GTK_WINDOW(reboot_window), FALSE);
@@ -172,8 +173,8 @@ void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot) {
 void init_refresh_login_root(GtkWidget *refresh_window, GtkWidget *refresh) {
     
     // Set window attributes
-    gtk_window_move(GTK_WINDOW(refresh_window), LREF_XPOS, LREF_YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(refresh_window), LREF_WIDTH*0, LREF_HEIGHT*0);
+    gtk_window_move(GTK_WINDOW(refresh_window), PANEL_REFRESH_XPOS, PANEL_REFRESH_YPOS);
+    gtk_window_set_default_size(GTK_WINDOW(refresh_window), PANEL_REFRESH_WIDTH*0, PANEL_REFRESH_HEIGHT*0);
     
     // Set power button attributes
     const GdkRGBA bg_widget = {0, 0, 0, 0};
@@ -181,7 +182,7 @@ void init_refresh_login_root(GtkWidget *refresh_window, GtkWidget *refresh) {
     set_color_and_opacity(refresh_window, refresh, bg_widget, fg_widget);
     
     // Modify button style
-    GtkWidget *image = gtk_image_new_from_file(LREF_IMG_FILE);
+    GtkWidget *image = gtk_image_new_from_file(PANEL_REFRESH_IMG_FILE);
     gtk_button_set_image(GTK_BUTTON(refresh), image);
     gtk_button_set_relief(GTK_BUTTON(refresh), GTK_RELIEF_NONE);
     gtk_window_set_decorated(GTK_WINDOW(refresh_window), FALSE);
@@ -205,19 +206,19 @@ void init_refresh_login_root(GtkWidget *refresh_window, GtkWidget *refresh) {
 
 // Shutdown the system
 void system_shutdown() {
-    execl(SHUT_COM, SHUT_COM, NULL);
+    execl(POWEROFF, POWEROFF, NULL);
 }
 
 
 
 // Shutdown the system
 void system_reboot() {
-    execl(REB_COM, REB_COM, NULL);
+    execl(REBOOT, REBOOT, NULL);
 }
 
 
 
 // Refresh the login screen
 void refresh_login() {
-    execl(LREF_COM, LREF_COM, "restart", "glm.service", NULL);
+    execl(SYSTEMCTL, SYSTEMCTL, "restart", "glm.service", NULL);
 }

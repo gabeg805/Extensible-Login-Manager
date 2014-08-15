@@ -82,11 +82,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define SERVICE_NAME   "glm"
-#define XTTY           "tty7"
-#define LOGINCTL       "/usr/bin/loginctl"
-#define GREP           "/usr/bin/grep"
-#define AWK            "/usr/bin/awk"
+#define   SERVICE_NAME   "glm"
+#define   XTTY           "tty7"
+#define   LOGINCTL       "/usr/bin/loginctl"
+#define   GREP           "/usr/bin/grep"
+#define   AWK            "/usr/bin/awk"
+#define   SESSREG        "/usr/bin/sessreg"
+#define   WTMP           "/var/log/wtmp"
+#define   UTMP_A         "/run/utmp"
+#define   UTMP_D         "/var/run/utmp"
 
 
 // Declares
@@ -151,8 +155,17 @@ void manage_login_records(const char *username, char *opt) {
     // Execute sessreg
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
-        execl("/usr/bin/sessreg", "/usr/bin/sessreg", opt, 
-              "-w", "/var/log/wtmp", "-u", "/run/utmp",
+        
+        // Use correct utmp file
+        char *UTMP;
+        if ( strcmp(opt, "-a") == 0 )
+            UTMP = UTMP_A;
+        else
+            UTMP = UTMP_D;
+        
+        // Execute sessreg command
+        execl(SESSREG, SESSREG, opt, 
+              "-w", WTMP, "-u", UTMP,
               "-l", XTTY, "-h", "", username, NULL);
     } 
     

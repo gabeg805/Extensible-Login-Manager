@@ -72,7 +72,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define LOG_FILE "/etc/X11/glm/log/interface.log"
+#define INTERFACE_LOG_FILE   "/etc/X11/glm/log/interface.log"
+#define INTERFACE_FLAG       "TRUE"
 
 
 // Declares
@@ -125,8 +126,8 @@ void login_interface(int argc, char *argv[]) {
     
     
     // Initialize the root window with all its objects
-    init_date_clock_root(date_clock_window, date_clock);
-    init_time_clock_root(time_clock_window, time_clock);
+    init_clock_date_root(date_clock_window, date_clock);
+    init_clock_time_root(time_clock_window, time_clock);
     init_frame_root(frame_window, frame);
     init_text_root(text_window, text);
     init_wm_root(wm_window, wm_dropmenu, wm_menu);    
@@ -141,7 +142,7 @@ void login_interface(int argc, char *argv[]) {
     gtk_widget_show(date_clock_window);
     gtk_widget_show(time_clock);
     gtk_widget_show(time_clock_window);
-    
+
     // Display the login frame
     gtk_widget_show(frame);
     gtk_widget_show(frame_window);
@@ -171,8 +172,7 @@ void login_interface(int argc, char *argv[]) {
     
     
     // Log to file that interface is beginning execution
-    file_write(LOG_FILE, "TRUE", "%s\n");
-    
+    file_write(INTERFACE_LOG_FILE, INTERFACE_FLAG, "%s\n");
     
     gtk_main();
 }

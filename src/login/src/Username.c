@@ -71,15 +71,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define   XPOS        665
-#define   YPOS        197
-#define   WIDTH       150
-#define   HEIGHT      50
-#define   FONT        "DejaVu Sans"
-#define   FSIZE       23*1024
-#define   USER_FILE   "/etc/X11/glm/log/user.log"
-#define   IMG_FILE    "/etc/X11/glm/img/interface/user.png"
-#define   IMG_CMD     "/usr/bin/pqiv"
+#define   USERNAME_MENU_XPOS        665
+#define   USERNAME_MENU_YPOS        197
+#define   USERNAME_MENU_WIDTH       150
+#define   USERNAME_MENU_HEIGHT      50
+#define   USERNAME_MENU_FONT        "DejaVu Sans"
+#define   USERNAME_MENU_FSIZE       23*1024
+#define   USERNAME_MENU_USER_FILE   "/etc/X11/glm/log/user.log"
+#define   USERNAME_MENU_IMG_FILE    "/etc/X11/glm/img/interface/user.png"
+#define   PQIV                      "/usr/bin/pqiv"
 
 
 // Declares
@@ -99,11 +99,11 @@ void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu,
     
     // Set username icon
     if ( !fork() ) 
-        execl(IMG_CMD, IMG_CMD, "-c", "-i", "-P", "575,190", IMG_FILE, NULL);
+        execl(PQIV, PQIV, "-c", "-i", "-P", "575,190", USERNAME_MENU_IMG_FILE, NULL);
     
     // Set window attributes
-    gtk_window_move(GTK_WINDOW(window), XPOS, YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), WIDTH*0, HEIGHT*0);
+    gtk_window_move(GTK_WINDOW(window), USERNAME_MENU_XPOS, USERNAME_MENU_YPOS);
+    gtk_window_set_default_size(GTK_WINDOW(window), USERNAME_MENU_WIDTH*0, USERNAME_MENU_HEIGHT*0);
     
     // Define and set color schemes
     const GdkRGBA bg_widget = {0, 0, 0, 0};
@@ -136,8 +136,8 @@ void init_userlabel(GtkWidget *label) {
     
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
-    PangoAttribute *attrFont = pango_attr_family_new(FONT);
-    PangoAttribute *attrSize = pango_attr_size_new(FSIZE);
+    PangoAttribute *attrFont = pango_attr_family_new(USERNAME_MENU_FONT);
+    PangoAttribute *attrSize = pango_attr_size_new(USERNAME_MENU_FSIZE);
     PangoAttribute *attrColor = pango_attr_foreground_new(65535, 65535, 65535);
     
     // Add attributes to the list (and increase the reference counter)
@@ -159,7 +159,7 @@ void init_userlabel(GtkWidget *label) {
 // Write to a file, which user to login as
 void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
     const gchar *user = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    file_write(USER_FILE, (char *)user, "%s\n");
+    file_write(USERNAME_MENU_USER_FILE, (char *)user, "%s\n");
     
     gtk_label_set_text(GTK_LABEL(label), user);
 }

