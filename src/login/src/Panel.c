@@ -70,9 +70,14 @@
 #include <gdk/gdk.h>
 #include <stdlib.h>
 
+#define SERVICE   "glm.service"
+
 #define   POWEROFF    "/usr/bin/poweroff"
 #define   REBOOT      "/usr/bin/reboot"
 #define   SYSTEMCTL   "/usr/bin/systemctl"
+
+#define   PANEL_DIALOG_XPOS         505
+#define   PANEL_DIALOG_YPOS         310
 
 #define   PANEL_SHUTDOWN_XPOS       gdk_screen_width()-32*1
 #define   PANEL_SHUTDOWN_YPOS       gdk_screen_height()-32
@@ -96,10 +101,13 @@
 // Declares
 void init_shutdown_root(GtkWidget *shutdow_window, GtkWidget *shutdown);
 void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot);
-void init_refresh_login_root(GtkWidget *refresh_window, GtkWidget *refresh);
+void init_glm_dialog_root(GtkWidget *refresh_window, GtkWidget *refresh);
+void init_glm_dialog();
 void system_shutdown();
 void system_reboot();
-void refresh_login();
+void cancel_glm();
+void refresh_glm();
+void quit_glm();
 
 
 
@@ -170,7 +178,7 @@ void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot) {
 
 
 // Initialize the refresh login root window
-void init_refresh_login_root(GtkWidget *refresh_window, GtkWidget *refresh) {
+void init_glm_dialog_root(GtkWidget *refresh_window, GtkWidget *refresh) {
     
     // Set window attributes
     gtk_window_move(GTK_WINDOW(refresh_window), PANEL_REFRESH_XPOS, PANEL_REFRESH_YPOS);
@@ -194,8 +202,53 @@ void init_refresh_login_root(GtkWidget *refresh_window, GtkWidget *refresh) {
     enable_transparency(refresh_window);
     
     // GTK signal
-    g_signal_connect(G_OBJECT(refresh), "clicked", G_CALLBACK(refresh_login), NULL);
+    g_signal_connect(G_OBJECT(refresh), "clicked", G_CALLBACK(init_glm_dialog), NULL);
     g_signal_connect(refresh_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+}
+
+
+
+// Initialize the login prompt
+void init_glm_dialog() {
+    
+    // Initialize widgets
+    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *grid = gtk_grid_new();
+    GtkWidget *label = gtk_label_new("Choose an action for Gabe's Login Manager.");
+    GtkWidget *blank = gtk_label_new(" ");
+
+    GtkWidget *refresh_button = gtk_button_new_with_label("Restart");
+    GtkWidget *quit_button    = gtk_button_new_with_label("Quit");
+    GtkWidget *cancel_button  = gtk_button_new_with_label("Cancel");
+    
+    // Grid attributes
+    gtk_grid_set_column_homogeneous(GTK_GRID(grid),TRUE);
+    
+    // Place widgets on the grid
+    gtk_grid_attach(GTK_GRID(grid), label,            0, 0, 5, 1);
+    gtk_grid_attach(GTK_GRID(grid), blank,            0, 1, 5, 1);
+    gtk_grid_attach(GTK_GRID(grid), refresh_button,   0, 2, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), cancel_button,    3, 2, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), quit_button,      4, 2, 1, 1);
+    
+    // Add grid to window
+    gtk_window_move(GTK_WINDOW(window), PANEL_DIALOG_XPOS, PANEL_DIALOG_YPOS);
+    gtk_container_add(GTK_CONTAINER(window), grid);
+    
+    // Show widgets
+    gtk_widget_show(label);
+    gtk_widget_show(blank);    
+    gtk_widget_show(refresh_button);
+    gtk_widget_show(quit_button);
+    gtk_widget_show(cancel_button);
+    gtk_widget_show(grid);
+    gtk_widget_show(window);
+    
+    // GTK signals
+    g_signal_connect(G_OBJECT(refresh_button), "clicked", G_CALLBACK(refresh_glm), NULL);
+    g_signal_connect(G_OBJECT(quit_button), "clicked", G_CALLBACK(quit_glm), NULL);
+    g_signal_connect(G_OBJECT(cancel_button), "clicked", G_CALLBACK(cancel_glm), window);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 }
 
 
@@ -218,7 +271,21 @@ void system_reboot() {
 
 
 
+// Quit the prompt
+void cancel_glm(GtkWidget *button, GtkWidget *window) {
+    gtk_widget_destroy(window);
+}
+
+
+
 // Refresh the login screen
-void refresh_login() {
-    execl(SYSTEMCTL, SYSTEMCTL, "stop", "glm.service", NULL);
+void refresh_glm() {
+    execl(SYSTEMCTL, SYSTEMCTL, "restart", SERVICE, NULL);
+}
+
+
+
+// Quit the login screen
+void quit_glm() {
+    execl(SYSTEMCTL, SYSTEMCTL, "stop", SERVICE, NULL);
 }

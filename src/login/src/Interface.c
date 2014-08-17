@@ -142,7 +142,7 @@ char * login_interface(int argc, char *argv[]) {
         init_usermenu_root(user_window, user_dropmenu, user_menu, user_label);
         init_shutdown_root(shutdown_window, shutdown);
         init_reboot_root(reboot_window, reboot);
-        init_refresh_login_root(refresh_window, refresh);
+        init_glm_dialog_root(refresh_window, refresh);
         
         
         // Display the clock
