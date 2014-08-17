@@ -71,10 +71,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define   XTTY                 "tty7"
 #define   INTERFACE_LOG_FILE   "/etc/X11/glm/log/interface.log"
 #define   INTERFACE_FLAG       "TRUE"
 #define   XSETUP               "/etc/X11/glm/src/x/Xsetup"
+
 
 
 // ////////////////////////////////
@@ -87,12 +87,16 @@ int main(int argc, char *argv[]) {
     // Set the display environment variable
     char *DISPLAY = get_open_display();
     setenv("DISPLAY", DISPLAY, 1);
+        
+    // Get open tty port
+    char TTY[6];
+    snprintf(TTY, sizeof(TTY), "%s%d", "tty", get_open_tty());
     
     
     // Setup the X server for logging in
     pid_t child_pid = fork();
     if ( child_pid == 0 )
-        execl(XSETUP, XSETUP, DISPLAY, XTTY, NULL);
+        execl(XSETUP, XSETUP, DISPLAY, TTY, NULL);
     else {
         int status;
         waitpid(child_pid, &status, 0);
@@ -106,7 +110,7 @@ int main(int argc, char *argv[]) {
         
         // Authenticate username/password combination
         char *PASSWORD = login_interface(argc, argv);
-        char *USERNAME = file_read("/etc/X11/glm/log/user.log"); 
+        char *USERNAME = file_read("/etc/X11/glm/log/user.log");
         
         if ( login(USERNAME, PASSWORD) )
             loop = 0;

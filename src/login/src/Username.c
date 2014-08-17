@@ -86,6 +86,7 @@
 void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu, GtkWidget *label);
 void init_userlabel(GtkWidget *label);
 void usermenu_write_to_file(GtkMenu *item, GtkWidget *label);
+char ** get_username(char *file, int size);
 void set_username_entries(GtkWidget *menu, GtkWidget *label);
 
 
@@ -98,7 +99,7 @@ void set_username_entries(GtkWidget *menu, GtkWidget *label);
 void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu, GtkWidget *label) {
     
     // Set username icon
-    if ( !fork() ) 
+    if ( !fork() )
         execl(PQIV, PQIV, "-c", "-i", "-P", "575,190", USERNAME_MENU_IMG_FILE, NULL);
     
     // Set window attributes
@@ -131,9 +132,6 @@ void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu,
 // Initialze the label for the user menu
 void init_userlabel(GtkWidget *label) {
     
-    // Set label text
-    gtk_label_set_text(GTK_LABEL(label), "User");
-    
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
     PangoAttribute *attrFont = pango_attr_family_new(USERNAME_MENU_FONT);
@@ -147,7 +145,12 @@ void init_userlabel(GtkWidget *label) {
     pango_attr_list_insert(attrList, attrSize);
     pango_attr_list_insert(attrList, attrColor);
 
+    // Set label text
+    char *user = file_read(USERNAME_MENU_USER_FILE);
+    gtk_label_set_text(GTK_LABEL(label), user);
     gtk_label_set_attributes(GTK_LABEL(label), attrList);
+    
+    free(user);
 }
 
 
@@ -160,8 +163,81 @@ void init_userlabel(GtkWidget *label) {
 void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
     const gchar *user = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
     file_write(USERNAME_MENU_USER_FILE, (char *)user, "%s\n");
-    
     gtk_label_set_text(GTK_LABEL(label), user);
+}
+
+
+
+// ////////////////////////////////////////
+// ///// GET USERNAME-UID COMBINATION /////
+// ////////////////////////////////////////
+
+// Get username/uid combination from the specified file
+char ** get_username(char *file, int size) {
+    
+    // Initialize username array
+    char **array = (char**)malloc(sizeof(char*)*size);
+    array[0] = "0";
+    
+    // Open file for reading
+    FILE *handle = fopen(file, "r");
+    char line[150];
+    
+    // Loop through file lines
+    int i = 1;
+    while ( fgets(line, sizeof(line), handle) != NULL ) {
+        
+        // Information on file lines
+        int uid;
+        char *user;
+        char *sep;
+        char *buffer, *orig;
+        buffer = orig = strdup(line);
+        
+        
+        // Loop through words (delimited by ':') on line
+        int count = 0;
+        while ( (count < 3) && (sep = strsep(&buffer, ":")) ) {
+            if ( count == 0 ) 
+                user = sep;
+            else if ( count == 1 ) 
+                ;
+            else if ( count == 2 ) {
+                uid = atoi(sep);
+                
+                if ( (strcmp(user, "root") == 0) && (uid != 0) )
+                    return array;
+                
+                if ( (uid == 0) || ((uid >= 1000) && (uid <= 9999)) ) {
+                    size_t sz = strlen(user);
+                    char *output = malloc(sz+1);
+                    snprintf(output, sz+1, user);
+                    
+                    array[i] = output;
+                    ++i;
+                }
+            }
+            
+            count++;
+        }
+        
+        free(orig);
+    }
+    
+    // Close file
+    fclose(handle);
+    
+    // Put number of array elements into first index
+    char val[5];
+    snprintf(val, sizeof(val), "%d", (i-1));
+    
+    size_t sz = strlen(val);
+    char *copy = malloc(sz+1);
+    snprintf(copy, sz+1, val);
+    
+    array[0] = copy;
+    
+    return array;
 }
 
 
@@ -173,107 +249,57 @@ void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
 // Set user name entries
 void set_username_entries(GtkWidget *menu, GtkWidget *label) {
     
-    // Initialize WM session menu item
-    GtkWidget *session;
+    // Initialize user menu items
+    GtkWidget *user;
     GSList *group;
     
-    // Possible files containing list of regular users
+    // Search for login users in passwd files
+    int size = 20;
     char *files[] = {"/etc/shadow", "/etc/passwd", NULL};
-    int c = 0;
+    char *userfocus = file_read(USERNAME_MENU_USER_FILE);
     
-    // Loop through files
-    int i = 0;
-    while ( files[i] != NULL ) {
+    /* char **allusers; */
+    /* allusers = get_username(files[0], size); */
+    /* if ( allusers[0] == NULL ) */
+    char **allusers = get_username(files[1], size);
+    int num = atoi(allusers[0]);
+    
+    // Define menu item counters
+    int i = 1, q = 0, p = 0;
+    while (1) {
         
-        // Open file for reading
-        FILE *handle = fopen(files[i], "r");
-        char line[1024];
+        // Compare label with the focus label
+        p = 1; 
+        if ( strcmp(allusers[i], userfocus) == 0 ) {
+            user = gtk_radio_menu_item_new_with_label(NULL, allusers[i]);
+            group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(user));
+        } else if ( (q != 0) && (strcmp(allusers[i], "") != 0) )
+            user = gtk_radio_menu_item_new_with_label(group, allusers[i]);
+        else 
+            p = 0;
         
-        // Loop through file lines
-        int trigger = 0;
-        while ( fgets(line, sizeof(line), handle) != NULL ) {
+        // Setup the menu items
+        if ( p == 1 ) {
+            free(allusers[i]);
             
-            // Information on file lines
-            char *buffer = strdup(line);
-            char *sep;
-            char *user;
-            int uid;
+            // Attach window manager entries to the menu
+            gtk_menu_attach(GTK_MENU(menu), user, 0, 1, q, q+1);
+            gtk_widget_show(user);
             
-            // Loop through words (delimited by ':') on line
-            int count = 0;
-            int flag = 0;
-            while ( (count < 3) && (sep = strsep(&buffer, ":")) ) {
-                
-                // Value dependent actions
-                switch (count) {
-                    
-                    // Define user and look for 'root' on line 
-                case 0:
-                    user = sep;
-                    if ( strcmp(user, "root") == 0 ) 
-                        flag = 1;
-                    else
-                        flag = 0;
-                    break;
-                    
-                    // Check for 'x' in second word delimited by ':'
-                case 1:
-                    if ( (flag == 1) && (strcmp(sep, "x") == 0) ) 
-                        flag = 1;
-                    else
-                        flag = 0;
-                    break;
-                    
-                    // If 'x' was there, then this is the correct file, print out user
-                case 2:
-                    if ( trigger == 1 ) {
-                        uid = atoi(sep);
-                        
-                        // Create the menu items and add them to the same group
-                        if ( (uid >= 1000) && (uid <= 9999) ) {
-                            
-                            if (c == 0) {
-                                // First user
-                                session = gtk_radio_menu_item_new_with_label(NULL, user);
-                                group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(session));
-                            } else
-                                // Othere users
-                                session = gtk_radio_menu_item_new_with_label(group, user);
-                            
-                            // Attach window manager entries to the menu
-                            gtk_menu_attach(GTK_MENU(menu), session, 0, 1, c, c+1);
-                            gtk_widget_show(session);
-                            
-                            // Add menu entry signal
-                            g_signal_connect(G_OBJECT(session), "activate", G_CALLBACK(usermenu_write_to_file), label);
-                            
-                            c++;
-                        }
-                    }
-                    break;
-                }
-                
-                
-                // Set trigger which specifies whether this is the correct file or not
-                if ( (count == 1) && (flag == 1) && (trigger == 0) ) 
-                    trigger = 1;
-                else if ( (count == 1) && (flag == 0) && (trigger == 0) ) {
-                    trigger = 0;
-                    break;
-                }
-                
-                // Increment count
-                count++;
-            }
+            // Add menu entry signal
+            g_signal_connect(G_OBJECT(user), "activate", G_CALLBACK(usermenu_write_to_file), label);
             
-            // File was bad, break out of loop to switch to next file
-            if ( trigger == 0 )
+            if ( (++q) == num ) 
                 break;
         }
         
-        // Close file and increment file index
-        fclose(handle);
-        i++;
+        // Increment counter
+        if ( (++i) > num )
+            i = 1;
     }
-        
+    
+    // Free the memory
+    free(allusers[0]);
+    free(allusers);
+    free(userfocus);
 }

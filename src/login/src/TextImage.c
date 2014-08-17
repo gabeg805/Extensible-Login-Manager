@@ -111,11 +111,11 @@ void init_text_root(GtkWidget *window, GtkWidget *area) {
 
 // Draw the text
 void draw_text(cairo_t *cr) {         
-    cairo_select_font_face (cr, TEXTIMAGE_FONT, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size (cr, TEXTIMAGE_FSIZE);
-    cairo_set_source_rgb (cr, 0, 0, 0);
-    cairo_move_to (cr, 0, TEXTIMAGE_FSIZE);
-    cairo_show_text (cr, TEXTIMAGE_TEXT);
+    cairo_select_font_face(cr, TEXTIMAGE_FONT, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size(cr, TEXTIMAGE_FSIZE);
+    cairo_set_source_rgb(cr, 0, 0, 0);
+    cairo_move_to(cr, 0, TEXTIMAGE_FSIZE);
+    cairo_show_text(cr, TEXTIMAGE_TEXT);
 }
 
 
@@ -128,19 +128,18 @@ gboolean draw_text_window(GtkWidget *window) {
     
     // Check for window transparency
     if (supports_alpha) 
-        // Window transparent 
         cairo_set_source_rgba(cr, 0, 0, 0, 0); 
     else 
-        // Window opaque white 
         cairo_set_source_rgb(cr, 1, 1, 1); 
     
     
     // Draw the window background 
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
     cairo_paint(cr);
-    
+        
     // Draw the login frame
     draw_text(cr);
+    cairo_destroy(cr);
     
     return FALSE;
 }

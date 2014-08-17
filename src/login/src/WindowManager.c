@@ -80,8 +80,7 @@
 #define   WINDOWMANAGER_HEIGHT        30
 #define   WINDOWMANAGER_IMG_FILE      "/etc/X11/glm/img/interface/settings.png"
 #define   WINDOWMANAGER_SES_FILE      "/etc/X11/glm/log/session.log"
-#define   N_SES_CMD     "ls -1 /usr/share/xsessions/ | wc -l"
-#define   WM_SES_CMD   "ls -1 /usr/share/xsessions/ | sed 's/.desktop//'"
+#define   WM_SES_CMD                  "ls -1 /usr/share/xsessions/ | sed 's/.desktop//'"
 
 
 // Declares
@@ -119,7 +118,7 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
     
     // Attempt to enable window transparency
     enable_transparency(window);
-    
+
     // GTK signals
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 }
@@ -145,32 +144,32 @@ void wm_write_to_file(GtkMenu *item) {
 // Determine which window manager(s) the system has and add them as entries to the menu
 void set_wm_entries(GtkWidget *menu) {
     
-    // Get window manager information
-    char **val = command_line(N_SES_CMD, 5);
-    char **allwm  = command_line(WM_SES_CMD, 20);
-    char *wmfocus = file_read(WINDOWMANAGER_SES_FILE);
-    int num = atoi(val[0]);
-    
-    // Set the menu items
-    int j = 0, q = 0, p = 0;
+    // Initialize WM session items
     GtkWidget *session;
     GSList *group;
     
+    // Get window manager information
+    char **allwm  = command_line(WM_SES_CMD, 20);
+    char *wmfocus = file_read(WINDOWMANAGER_SES_FILE);
+    int num = atoi(allwm[0]);
+    
+    // Define menu item counters
+    int i = 1, q = 0, p = 0;    
     while (1) {
         
         // Compare label with the focus label
         p = 1;
-        if ( strcmp(allwm[j], wmfocus) == 0 ) {
-            session = gtk_radio_menu_item_new_with_label(NULL, allwm[j]);
+        if ( strcmp(allwm[i], wmfocus) == 0 ) {
+            session = gtk_radio_menu_item_new_with_label(NULL, allwm[i]);
             group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(session));
-        } else if ( (q != 0) && (strcmp(allwm[j], "") != 0) ) 
-            session = gtk_radio_menu_item_new_with_label(group, allwm[j]);
+        } else if ( (q != 0) && (strcmp(allwm[i], "") != 0) ) 
+            session = gtk_radio_menu_item_new_with_label(group, allwm[i]);
         else 
             p = 0;
         
         // Setup the menu items
         if ( p == 1 ) {
-            allwm[j] = "";
+            free(allwm[i]);
             
             gtk_menu_attach(GTK_MENU(menu), session, 0, 1, q, q+1);
             gtk_widget_show(session);
@@ -181,12 +180,12 @@ void set_wm_entries(GtkWidget *menu) {
         }
         
         // Increment counter
-        if ( (++j) >= num )
-            j = 0;
+        if ( (++i) > num )
+            i = 1;
     }
         
     // Freeing up the memory
-    free(val);
+    free(allwm[0]);
     free(allwm);
     free(wmfocus);
 }

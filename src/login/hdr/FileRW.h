@@ -9,6 +9,7 @@
 void file_write(char *file, char *phrase, char *fmt);
 char * file_read(char *file);
 char * get_open_display();
+int get_open_tty();
 char ** command_line(char *cmd, int size);
 
 #endif

@@ -7,6 +7,6 @@ void enable_transparency(GtkWidget *widget);
 void set_color_and_opacity(GtkWidget *window, GtkWidget *widget, 
                            const GdkRGBA bg_widget, const GdkRGBA fg_widget);
 
-extern gboolean supports_alpha;
+gboolean supports_alpha;
 
 #endif

@@ -87,6 +87,7 @@
 
 #define   CLOCK_UPDATE_SEC   30
 
+
 // Declares
 void init_clock_date_root(GtkWidget *window, GtkWidget *clock);
 void init_clock_time_root(GtkWidget *window, GtkWidget *clock);
@@ -176,11 +177,11 @@ void set_clock_label(GtkWidget *clock, char *fmt, const char *font, int fsize) {
     
     // Add attributes to the list (and increase the reference counter)
     attrList = pango_attr_list_ref(attrList);
-    pango_attr_list_insert(attrList, attrSize); 
+    pango_attr_list_insert(attrList, attrSize);
     pango_attr_list_insert(attrList, attrFont);
-
     
-    // Set the label text and font        
+    
+    // Set the label text and font
     gtk_label_set_attributes(GTK_LABEL(clock), attrList);
     gtk_label_set_text(GTK_LABEL(clock), time_string);
 }

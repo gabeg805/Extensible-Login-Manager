@@ -220,5 +220,5 @@ void system_reboot() {
 
 // Refresh the login screen
 void refresh_login() {
-    execl(SYSTEMCTL, SYSTEMCTL, "restart", "glm.service", NULL);
+    execl(SYSTEMCTL, SYSTEMCTL, "stop", "glm.service", NULL);
 }

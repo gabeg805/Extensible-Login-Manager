@@ -83,7 +83,6 @@
 #include <string.h>
 
 #define   SERVICE_NAME   "glm"
-#define   XTTY           "tty7"
 #define   LOGINCTL       "/usr/bin/loginctl"
 #define   GREP           "/usr/bin/grep"
 #define   AWK            "/usr/bin/awk"
@@ -91,6 +90,7 @@
 #define   WTMP           "/var/log/wtmp"
 #define   UTMP_A         "/run/utmp"
 #define   UTMP_D         "/var/run/utmp"
+#define   XINITRC_FILE   "/etc/X11/glm/src/x/xinitrc"
 
 
 // Declares
@@ -122,11 +122,11 @@ void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
     // Define environment variables
     char **seat = command_line(seat_cmd, 10);
     char **session_id = command_line(session_id_cmd, 10);
-    char vtnr[2];
+    char vtnr[3];
     char runtime_dir[100];
     char xauthority[100];
     
-    snprintf(vtnr, sizeof(vtnr), "%c", XTTY[strlen(XTTY)-1]);
+    snprintf(vtnr, sizeof(vtnr), "%d", get_open_tty());
     snprintf(runtime_dir, sizeof(runtime_dir), "%s/%d", "/run/user", pw->pw_uid);
     snprintf(xauthority, sizeof(xauthority), "%s/%s", pw->pw_dir, ".Xauthority");
     
@@ -134,12 +134,16 @@ void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
     setenv("USER", pw->pw_name, 1);
     setenv("SHELL", pw->pw_shell, 1);
     setenv("XDG_VTNR", vtnr, 1);
-    setenv("XDG_SEAT", seat[0], 1);
-    setenv("XDG_SESSION_ID", session_id[0], 1);
+    setenv("XDG_SEAT", seat[1], 1);
+    setenv("XDG_SESSION_ID", session_id[1], 1);
     setenv("XDG_RUNTIME_DIR", runtime_dir, 1);
     setenv("XAUTHORITY", xauthority, 1);
     
+    free(seat[1]);
+    free(seat[0]);
     free(seat);
+    free(session_id[1]);
+    free(session_id[0]);
     free(session_id);
 }
 
@@ -156,6 +160,10 @@ void manage_login_records(const char *username, char *opt) {
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
         
+        // Get open tty port
+        char TTY[6];
+        snprintf(TTY, sizeof(TTY), "%s%d", "tty", get_open_tty());
+        
         // Use correct utmp file
         char *UTMP;
         if ( strcmp(opt, "-a") == 0 )
@@ -164,9 +172,9 @@ void manage_login_records(const char *username, char *opt) {
             UTMP = UTMP_D;
         
         // Execute sessreg command
-        execl(SESSREG, SESSREG, opt, 
+        execl(SESSREG, SESSREG, opt,
               "-w", WTMP, "-u", UTMP,
-              "-l", XTTY, "-h", "", username, NULL);
+              "-l", TTY, "-h", "", username, NULL);
     } 
     
     // Wait for process to finish
@@ -258,9 +266,12 @@ int login(const char *username, const char *password) {
     if (!is_pam_success(result, pam_handle)) return 0;
     
     // Set PAM items
+    char TTY[6];
+    snprintf(TTY, sizeof(TTY), "%s%d", "tty", get_open_tty());
+    
     result = pam_set_item(pam_handle, PAM_USER, username);
     if (!is_pam_success(result, pam_handle)) return 0;
-    result = pam_set_item(pam_handle, PAM_TTY, XTTY);
+    result = pam_set_item(pam_handle, PAM_TTY, TTY);
     if (!is_pam_success(result, pam_handle)) return 0;
     
     // Authenticate PAM user
@@ -299,26 +310,30 @@ int login(const char *username, const char *password) {
         // Add session to utmp/wtmp
         manage_login_records(username, "-a");
         
+        // Change directory and ownership of GLM xinitrc file
+        chdir(pw->pw_dir);
+        chown(XINITRC_FILE, pw->pw_uid, pw->pw_gid);
+        
         // Set uid and groups for USER
-        if (initgroups(pw->pw_name, pw->pw_gid) == -1) 
+        if (initgroups(pw->pw_name, pw->pw_gid) == -1)
             exit(0);
-        if (setgid(pw->pw_gid) == -1) 
+        if (setgid(pw->pw_gid) == -1)
             exit(0);
-        if (setuid(pw->pw_uid) == -1) 
+        if (setuid(pw->pw_uid) == -1)
             exit(0);
         
         // Initialize environment variables
         init_env(pam_handle, pw);
         
-        // Setup xinitrc command
-        char cmd[100];
-        char *bash = "exec /bin/bash -login /home/gabeg/.xinitrc";
+        // Read session from file and piece together X session command
         char *session = file_read("/etc/X11/glm/log/session.log");
-        snprintf(cmd, sizeof(cmd), "%s %s", bash, session);
+        size_t szx = strlen(XINITRC_FILE);
+        size_t szs = strlen(session);
+        char cmd[szx+szs+2];
+        snprintf(cmd, szx+szs+2, "%s %s", XINITRC_FILE, session);
         free(session);
         
         // Start user X session with xinitrc
-        chdir(pw->pw_dir);
         execl(pw->pw_shell, pw->pw_shell, "-c", cmd, NULL);
     }
     

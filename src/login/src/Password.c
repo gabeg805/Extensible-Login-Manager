@@ -15,7 +15,7 @@
 // 
 //     With a 'main' function, execute the following:
 // 
-//         $ gcc -o Password Password.c Transparency.c `pkg-config gtk+-3.0 --cflags --libs`
+//         $ gcc -o Password Password.c Transparency.c FileRW.c `pkg-config gtk+-3.0 --cflags --libs`
 //         $ ./Password
 // 
 // 
@@ -118,7 +118,7 @@ void init_entry_root(GtkWidget *window, GtkWidget *entry) {
 
 // Initialize the entry box
 void init_entry(GtkWidget *entry) {
-
+    
     // Set entry box attributes
     gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
     gtk_entry_set_invisible_char(GTK_ENTRY(entry), PASSWORD_ENTRY_INVISCHAR);
@@ -126,8 +126,8 @@ void init_entry(GtkWidget *entry) {
     GtkEntryBuffer *buf = gtk_entry_buffer_new(NULL, -1);
     gtk_entry_buffer_set_max_length(buf, PASSWORD_ENTRY_MAXCHARS);
     gtk_entry_set_buffer(GTK_ENTRY(entry), buf);
-
-        
+    
+    
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
     PangoAttribute *attrFont = pango_attr_family_new(PASSWORD_ENTRY_FONT);
@@ -138,11 +138,11 @@ void init_entry(GtkWidget *entry) {
     attrList = pango_attr_list_ref(attrList);
     attrList = pango_attr_list_ref(attrList);
     pango_attr_list_insert(attrList, attrFont);
-    pango_attr_list_insert(attrList, attrSize); 
+    pango_attr_list_insert(attrList, attrSize);
     pango_attr_list_insert(attrList, attrColor);
     
     // Set the attributes
-    gtk_entry_set_attributes(GTK_ENTRY(entry), attrList);   
+    gtk_entry_set_attributes(GTK_ENTRY(entry), attrList);
 }
 
 
@@ -168,6 +168,7 @@ void get_entry_text(GtkWidget *entry) {
     
     // Quit the entry widget
     if ( len != 0 ) {
+        gtk_widget_destroy(entry);
         gtk_main_quit();
         snprintf(output, len+1, text);
     }

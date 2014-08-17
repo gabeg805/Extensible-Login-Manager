@@ -73,8 +73,8 @@
 void file_write(char *file, char *phrase, char *fmt);
 char * file_read(char *file);
 char * get_open_display();
+int get_open_tty();
 char ** command_line(char *cmd, int size);
-
 
 
 // /////////////////////////
@@ -96,10 +96,12 @@ void file_write(char *file, char *phrase, char *fmt) {
 
 // Read a file's contents
 char * file_read(char *file) {
+    
+    // Store file contents in variable
+    FILE *handle = fopen(file, "r");
     char temp[100];
     
-    FILE *handle = fopen(file, "r");
-    fgets(temp, sizeof(temp), handle);
+    fgets(temp, sizeof(temp)-1, handle);
     fclose(handle);
     
     // Remove trailing newline characters
@@ -109,8 +111,8 @@ char * file_read(char *file) {
     
     // Allocate memory for command output 
     size_t sz = strlen(temp);
-    char *contents = malloc(sz);  
-    strncpy(contents, temp, sz);
+    char *contents = malloc(sz+1);
+    snprintf(contents, sz+1, temp);
     
     return contents;
 }
@@ -148,10 +150,55 @@ char * get_open_display() {
     
     // Allocate memory for display output 
     size_t sz = strlen(display);
-    char *opendisp = malloc(sz);  
-    strncpy(opendisp, display, sz);
+    char *opendisp = malloc(sz+1);  
+    snprintf(opendisp, sz+1, display);
     
     return opendisp;
+}
+
+
+
+// ////////////////////////
+// ///// GET OPEN TTY /////
+// ////////////////////////
+
+// Return an open TTY port
+int get_open_tty() {
+    
+    // Look for running process that opens TTY
+    char *cmd = "pgrep -a tty";
+    char **tty = command_line(cmd, 50);
+    int num = atoi(tty[0]);
+    
+    // Loop through all process command strings
+    int n = 1, i = 1;
+    while ( num != 0 && i <= num ) {
+        char *sep;
+        char *buffer, *orig;
+        buffer = orig = strdup(tty[i]);
+        
+        while ( (sep = strsep(&buffer, " ")) != NULL ) {
+            
+            // Check process command for 'tty#'
+            char *ttyrun = strstr(sep, "tty");
+            char *ttycmd = strstr(sep, "getty");
+            
+            if ( (ttyrun != NULL) && (ttycmd == NULL) ) {
+                char val[3];
+                snprintf(val, 3, "%c", sep[3]);
+                n = atoi(val)+1;
+            }
+        }
+        
+        free(orig);
+        free(tty[i]);
+        i++;
+    }
+    
+    free(tty[0]);
+    free(tty);
+    n = 7;
+    return n;
 }
 
 
@@ -165,12 +212,12 @@ char ** command_line(char *cmd, int size) {
     
     // Output arrays
     char **array = (char**)malloc(sizeof(char*)*size);
-    char temp[size];
+    char temp[size-1];
+    array[0] = "0";
     
     // Read command output
     FILE *fp  = popen(cmd, "r");
-    int i = 0;
-    
+    int i = 1;
     while (fgets(temp, sizeof(temp)-1, fp) != NULL ) {
         
         // Remove trailing newline characters
@@ -179,11 +226,26 @@ char ** command_line(char *cmd, int size) {
             *pos = '\0';
         
         // Add string to the array
-        array[i] = strdup(temp);
-        i++;
+        size_t sz = strlen(temp);
+        char *copy = malloc(sz+1);
+        snprintf(copy, sz+1, temp);
+        
+        array[i] = copy;
+        ++i;
     }
     
+    // Close process
     pclose(fp);
+    
+    // Put number of array elements into first index
+    char val[5];
+    snprintf(val, sizeof(val), "%d", (i-1));
+    
+    size_t sz = strlen(val);
+    char *copy = malloc(sz+1);
+    snprintf(copy, sz+1, val);
+    
+    array[0] = copy;
     
     return array;
 }

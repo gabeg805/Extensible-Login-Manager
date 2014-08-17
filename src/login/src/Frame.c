@@ -116,20 +116,19 @@ gboolean draw_frame_window(GtkWidget *widget) {
     cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widget));
     
     // Check for window transparency
-    if (supports_alpha) 
-        // Window transparent 
-        cairo_set_source_rgba(cr, 0, 0, 0, 0); 
-    else 
-        // Window opaque white 
-        cairo_set_source_rgb(cr, 1, 1, 1); 
+    if (supports_alpha)
+        cairo_set_source_rgba(cr, 0, 0, 0, 0);
+    else
+        cairo_set_source_rgb(cr, 1, 1, 1);
     
     
-    // Draw the window background 
+    // Draw the window background
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
     cairo_paint(cr);
     
     // Draw the login frame
     draw_frame(cr);
+    cairo_destroy(cr);
     
     return FALSE;
 }
@@ -159,10 +158,8 @@ void draw_frame(cairo_t *cr) {
     
     // Check for window transparency
     if (supports_alpha) 
-        // Window transparent
         cairo_set_source_rgba(cr, 1, 1, 1, 0.5);
     else 
-        // Window opaque white
         cairo_set_source_rgb(cr, 1, 1, 1); 
     
     // Fill login frame
