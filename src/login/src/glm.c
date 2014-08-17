@@ -76,18 +76,22 @@
 #define   XSETUP               "/etc/X11/glm/src/x/Xsetup"
 
 
+// Declares
+void setupX(char *DISPLAY);
+void system_login_loop(int argc, char *argv[], int preview);
 
-// ////////////////////////////////
-// ///// GABE'S LOGIN MANAGER ///// 
-// ////////////////////////////////
 
-// Display Gabe's Login Manager 
-int main(int argc, char *argv[]) {
+
+// //////////////////////////
+// ///// SETUP X SERVER ///// 
+// //////////////////////////
+
+// Setup the X server
+void setupX(char *DISPLAY) {
     
     // Set the display environment variable
-    char *DISPLAY = get_open_display();
     setenv("DISPLAY", DISPLAY, 1);
-        
+    
     // Get open tty port
     char TTY[6];
     snprintf(TTY, sizeof(TTY), "%s%d", "tty", get_open_tty());
@@ -101,10 +105,21 @@ int main(int argc, char *argv[]) {
         int status;
         waitpid(child_pid, &status, 0);
     }
+}
+
+
+
+// /////////////////////////////
+// ///// LOGIN PROMPT LOOP /////
+// /////////////////////////////
+
+// Start system login prompt
+void system_login_loop(int argc, char *argv[], int preview) {
     
-    
-    // Log interface start and login to the system
+    // Log interface start
     file_write(INTERFACE_LOG_FILE, INTERFACE_FLAG, "%s\n");
+    
+    // Start the login loop
     int loop = 1;
     while (loop) {
         
@@ -112,7 +127,7 @@ int main(int argc, char *argv[]) {
         char *PASSWORD = login_interface(argc, argv);
         char *USERNAME = file_read("/etc/X11/glm/log/user.log");
         
-        if ( login(USERNAME, PASSWORD) )
+        if ( login(USERNAME, PASSWORD, preview) )
             loop = 0;
         
         // Log that interface has already begun
@@ -122,8 +137,36 @@ int main(int argc, char *argv[]) {
         free(PASSWORD);
         free(USERNAME);
     }
+}
+
+
+
+// ////////////////////////////////
+// ///// GABE'S LOGIN MANAGER /////
+// ////////////////////////////////
+
+// Display Gabe's Login Manager 
+int main(int argc, char *argv[]) {
     
-    free(DISPLAY);
+    // Start GLM in preview mode
+    int preview = 0;
+    if ( (argc == 2) && (strcmp(argv[1], "-p") == 0) )
+        preview = 1;
+    
+    
+    // Preview parameter not set, it's safe to setup X
+    char *DISPLAY;
+    if (!preview) {
+        DISPLAY = get_open_display();
+        setupX(DISPLAY);
+    }
+    
+    // Login to the system
+    system_login_loop(argc, argv, preview);
+    
+    // Free display memory
+    if (!preview)
+        free(DISPLAY);
     
     return 0;
 }

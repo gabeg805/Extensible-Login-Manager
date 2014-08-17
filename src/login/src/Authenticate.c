@@ -98,7 +98,7 @@ int is_pam_success(int result, pam_handle_t *pamh);
 int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr);
 void manage_login_records(const char *username, char *opt);
 void init_env(pam_handle_t *pam_handle, struct passwd *pw);
-int login(const char *username, const char *password);
+int login(const char *username, const char *password, int preview);
 
 
 
@@ -253,7 +253,7 @@ int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp
 // ////////////////////////////////////
 
 // Authenticate username/password combination with PAM
-int login(const char *username, const char *password) {
+int login(const char *username, const char *password, int preview) {
     
     // Initiate PAM conversation
     pam_handle_t *pam_handle;
@@ -303,38 +303,50 @@ int login(const char *username, const char *password) {
     // Setup and execute user session
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
+
+        // Check if GLM is in preview mode
+        if (preview) 
+            
+            // GLM is in preview mode
+            execl(pw->pw_shell, pw->pw_shell, "-c", " ", NULL);
+        else {
+            
+            // GLM not in preview mode
+            
+            // Kill windows
+            system("xwininfo -root -children | grep '  0x' | cut -d' ' -f6 | xargs -n1 xkill -id");
         
-        // Kill windows
-        system("xwininfo -root -children | grep '  0x' | cut -d' ' -f6 | xargs -n1 xkill -id");
+            // Add session to utmp/wtmp
+            manage_login_records(username, "-a");
         
-        // Add session to utmp/wtmp
-        manage_login_records(username, "-a");
+            // Change directory and ownership of GLM xinitrc file
+            chdir(pw->pw_dir);
+            chown(XINITRC_FILE, pw->pw_uid, pw->pw_gid);
         
-        // Change directory and ownership of GLM xinitrc file
-        chdir(pw->pw_dir);
-        chown(XINITRC_FILE, pw->pw_uid, pw->pw_gid);
+            // Set uid and groups for USER
+            if (initgroups(pw->pw_name, pw->pw_gid) == -1)
+                exit(0);
+            if (setgid(pw->pw_gid) == -1)
+                exit(0);
+            if (setuid(pw->pw_uid) == -1)
+                exit(0);
         
-        // Set uid and groups for USER
-        if (initgroups(pw->pw_name, pw->pw_gid) == -1)
-            exit(0);
-        if (setgid(pw->pw_gid) == -1)
-            exit(0);
-        if (setuid(pw->pw_uid) == -1)
-            exit(0);
-        
-        // Initialize environment variables
-        init_env(pam_handle, pw);
-        
-        // Read session from file and piece together X session command
-        char *session = file_read("/etc/X11/glm/log/session.log");
-        size_t szx = strlen(XINITRC_FILE);
-        size_t szs = strlen(session);
-        char cmd[szx+szs+2];
-        snprintf(cmd, szx+szs+2, "%s %s", XINITRC_FILE, session);
-        free(session);
-        
-        // Start user X session with xinitrc
-        execl(pw->pw_shell, pw->pw_shell, "-c", cmd, NULL);
+            // Initialize environment variables
+            init_env(pam_handle, pw);
+            
+            
+            // Piece together X session cmd
+            char *session = file_read("/etc/X11/glm/log/session.log");
+            size_t szx = strlen(XINITRC_FILE);
+            size_t szs = strlen(session);
+            
+            char cmd[szx+szs+2];
+            snprintf(cmd, szx+szs+2, "%s %s", XINITRC_FILE, session);
+            free(session);
+            
+            // Start user X session with xinitrc
+            execl(pw->pw_shell, pw->pw_shell, "-c", cmd, NULL);
+        }
     }
     
     
@@ -358,7 +370,8 @@ int login(const char *username, const char *password) {
     pam_handle = 0;
     
     // Delete session from utmp/wtmp
-    manage_login_records(username, "-d");    
+    if (!preview)
+        manage_login_records(username, "-d");    
     
     return 1;
 }
