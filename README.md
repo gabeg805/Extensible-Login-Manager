@@ -145,10 +145,27 @@ Potential Problems
 ==================
 
 Executing this program on startup can have some pretty adverse effects, but fear not! 
+
+    - Transparency is not working.
+            * When this happens, it means that the compositing manager is starting 
+              up either too early or too late. To fix this, hit the leaf icon in the
+              bottom right of the screen, this will restart the GLM service.
+
+    - Everytime GLM starts up, the screen flickers, getty is visible for a short 
+      period, and then GLM appears again.
+            * When this happens, GLM is starting before Getty, and when Getty starts 
+              up, it kills GLM, which then causes GLM to restart and appear again.
+              To fix this, try and have GLM start up on a different TTY by changing 
+              the TTY variable.
+
+    - After I enter my password, the X session is not started, but rather the screen 
+      just turns black.
+            * This probably means that the xinitrc executable file is not starting 
+              the X session correctly. Check the logs! 
     
-    - On bootup, your screen remains black and nothing shows up
-            * To fix this you want to have a bootable USB at hand, then you want to 
-              mount the root partition so execute: 
+    - On bootup, your screen remains black and nothing shows up.
+            * This is one of the worst problems to have. To fix this you want to have 
+              a bootable USB at hand and mount the root partition
 
                     # mount /dev/sdX# /mnt
 
@@ -167,32 +184,8 @@ Executing this program on startup can have some pretty adverse effects, but fear
               to login to your system using Getty. At this point though, the problem 
               for why the screen was black could be anything so you'll have to do 
               some debugging. When the screen turns black though, it'd be good to 
-              check what's happening with X when it starts, check the logs!
+              check what's happening with X when it starts, check the logs!    
     
-    - On bootup, the login manager shows, but once I enter my password, the screen 
-      remains black.
-            * To fix this check the exec command in 'Authentication.c' and make sure 
-              it's doing what you want. Also, check the logs! 
-    
-    - Transparency is not working.
-            * When this happens, it means that the compositing manager is starting 
-              up either too early or too late. It's something I tried to fix but it's
-              difficult to guarentee process order with background process. In short,
-              it's a constant battle I've had with the compositing manager... *Sigh*
-              To MAYBE fix this, make sure you are using the readahead daemon when 
-              you bootup, no promises though! To enable the readahead daemon execute:
-
-                    # systemctl enable systemd-readahead-collect.service systemd-readahead-replay.service
-
-              It has to learn your boot process so give it a couple reboots to work. 
-              If this doesn't work then hopefully at the very least your bootup time 
-              will be faster! 
-    
-    - Password is incorrect, even though it is typed in correctly.
-            * When this happens, a reboot tends to fix it. If it doesn't work the 
-              first time, try a couple of reboots. I think this problem is related 
-              to how the text is stored in memory, but I'm not 100% sure.
-
 Who knows what gems the logs may hold!
 
 
@@ -206,10 +199,8 @@ Here's a list of things I want to implement, but haven't had the time to do so y
     - Config file(s) for '#define' variables, not sure if this is doable but worth 
       a try
     
-    - The function to set username entries is huge, try and cut it down to two 
-      functions:
-            * One that sets the username entries
-            * One that returns an array of strings of the format 
-                    {"USER_A UID_A", "USER_B UID_B, ...}
-    
     - Add a way to test out the login interface without having to reboot
+    
+    - Start GLM over getty
+    
+    - Add more logs
