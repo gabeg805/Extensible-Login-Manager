@@ -199,8 +199,6 @@ Here's a list of things I want to implement, but haven't had the time to do so y
     - Config file(s) for '#define' variables, not sure if this is doable but worth 
       a try
     
-    - Add a way to test out the login interface without having to reboot
-    
     - Start GLM over getty
     
     - Add more logs
