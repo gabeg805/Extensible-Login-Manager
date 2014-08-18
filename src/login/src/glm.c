@@ -53,6 +53,7 @@
 // /////////////////////////////////
 
 // Includes
+#include "../hdr/Xsetup.h"
 #include "../hdr/Username.h"
 #include "../hdr/Password.h"
 #include "../hdr/Interface.h"
@@ -73,48 +74,23 @@
 
 #define   INTERFACE_LOG_FILE   "/etc/X11/glm/log/interface.log"
 #define   INTERFACE_FLAG       "TRUE"
-#define   XSETUP               "/etc/X11/glm/src/x/Xsetup"
-
-
-// Declares
-void setupX(char *DISPLAY);
-void system_login_loop(int argc, char *argv[], int preview);
 
 
 
-// //////////////////////////
-// ///// SETUP X SERVER ///// 
-// //////////////////////////
+// ////////////////////////////////
+// ///// GABE'S LOGIN MANAGER /////
+// ////////////////////////////////
 
-// Setup the X server
-void setupX(char *DISPLAY) {
+// Display Gabe's Login Manager 
+int main(int argc, char *argv[]) {
     
-    // Set the display environment variable
-    setenv("DISPLAY", DISPLAY, 1);
+    // Read input parameters, check for 'Preview' mode
+    int preview = 0;
+    if ( (argc == 2) && (strcmp(argv[1], "-p") == 0) )
+        preview = 1;
     
-    // Get open tty port
-    char TTY[6];
-    snprintf(TTY, sizeof(TTY), "%s%d", "tty", get_open_tty());
-    
-    
-    // Setup the X server for logging in
-    pid_t child_pid = fork();
-    if ( child_pid == 0 )
-        execl(XSETUP, XSETUP, DISPLAY, TTY, NULL);
-    else {
-        int status;
-        waitpid(child_pid, &status, 0);
-    }
-}
-
-
-
-// /////////////////////////////
-// ///// LOGIN PROMPT LOOP /////
-// /////////////////////////////
-
-// Start system login prompt
-void system_login_loop(int argc, char *argv[], int preview) {
+    // Setup X
+    xsetup(preview);
     
     // Log interface start
     file_write(INTERFACE_LOG_FILE, INTERFACE_FLAG, "%s\n");
@@ -130,43 +106,10 @@ void system_login_loop(int argc, char *argv[], int preview) {
         if ( login(USERNAME, PASSWORD, preview) )
             loop = 0;
         
-        // Log that interface has already begun
-        file_write(INTERFACE_LOG_FILE, "FALSE", "%s\n");
-        
         // Free allocated memory
         free(PASSWORD);
         free(USERNAME);
     }
-}
-
-
-
-// ////////////////////////////////
-// ///// GABE'S LOGIN MANAGER /////
-// ////////////////////////////////
-
-// Display Gabe's Login Manager 
-int main(int argc, char *argv[]) {
-    
-    // Start GLM in preview mode
-    int preview = 0;
-    if ( (argc == 2) && (strcmp(argv[1], "-p") == 0) )
-        preview = 1;
-    
-    
-    // Preview parameter not set, it's safe to setup X
-    char *DISPLAY;
-    if (!preview) {
-        DISPLAY = get_open_display();
-        setupX(DISPLAY);
-    }
-    
-    // Login to the system
-    system_login_loop(argc, argv, preview);
-    
-    // Free display memory
-    if (!preview)
-        free(DISPLAY);
-    
+        
     return 0;
 }

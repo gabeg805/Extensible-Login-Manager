@@ -177,6 +177,9 @@ char * login_interface(int argc, char *argv[]) {
         gtk_widget_show(reboot_window);
         gtk_widget_show(refresh);
         gtk_widget_show(refresh_window);
+
+        // Log that interface has already begun
+        file_write(INTERFACE_LOG_FILE, "FALSE", "%s\n");
     }
     
     

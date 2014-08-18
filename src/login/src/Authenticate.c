@@ -303,7 +303,7 @@ int login(const char *username, const char *password, int preview) {
     // Setup and execute user session
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
-
+        
         // Check if GLM is in preview mode
         if (preview) 
             
@@ -311,29 +311,26 @@ int login(const char *username, const char *password, int preview) {
             execl(pw->pw_shell, pw->pw_shell, "-c", " ", NULL);
         else {
             
-            // GLM not in preview mode
-            
             // Kill windows
             system("xwininfo -root -children | grep '  0x' | cut -d' ' -f6 | xargs -n1 xkill -id");
-        
+            
             // Add session to utmp/wtmp
             manage_login_records(username, "-a");
-        
+            
             // Change directory and ownership of GLM xinitrc file
             chdir(pw->pw_dir);
             chown(XINITRC_FILE, pw->pw_uid, pw->pw_gid);
-        
+            
             // Set uid and groups for USER
             if (initgroups(pw->pw_name, pw->pw_gid) == -1)
-                exit(0);
+                return 0;
             if (setgid(pw->pw_gid) == -1)
-                exit(0);
+                return 0;
             if (setuid(pw->pw_uid) == -1)
-                exit(0);
-        
+                return 0;
+            
             // Initialize environment variables
             init_env(pam_handle, pw);
-            
             
             // Piece together X session cmd
             char *session = file_read("/etc/X11/glm/log/session.log");
