@@ -66,6 +66,7 @@
 
 // Includes
 #include "../hdr/WindowManager.h"
+#include "../hdr/Config.h"
 #include "../hdr/Transparency.h"
 #include "../hdr/FileRW.h"
 
@@ -73,14 +74,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#define   WINDOWMANAGER_XPOS          770
-#define   WINDOWMANAGER_YPOS          315
-#define   WINDOWMANAGER_WIDTH         30
-#define   WINDOWMANAGER_HEIGHT        30
-#define   WINDOWMANAGER_IMG_FILE      "/etc/X11/glm/img/interface/settings.png"
-#define   WINDOWMANAGER_SES_FILE      "/etc/X11/glm/log/session.log"
-#define   WM_SES_CMD                  "ls -1 /usr/share/xsessions/ | sed 's/.desktop//'"
 
 
 // Declares
@@ -107,7 +100,7 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
     set_color_and_opacity(window, dropmenu, bg_widget, fg_widget);
     
     // Modify button style
-    GtkWidget *image = gtk_image_new_from_file(WINDOWMANAGER_IMG_FILE);
+    GtkWidget *image = gtk_image_new_from_file(WINDOWMANAGER_IMG);
     gtk_button_set_image(GTK_BUTTON(dropmenu), image);
     gtk_button_set_relief(GTK_BUTTON(dropmenu), GTK_RELIEF_NONE);
     gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
@@ -132,7 +125,7 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
 // Write to a file, which window manager to use for the session
 void wm_write_to_file(GtkMenu *item) {
     const gchar *sess = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    file_write(WINDOWMANAGER_SES_FILE, (char *)sess, "%s\n");
+    file_write(WINDOWMANAGER_LOG, (char *)sess, "%s\n");
 }
 
 
@@ -150,7 +143,7 @@ void set_wm_entries(GtkWidget *menu) {
     
     // Get window manager information
     char **allwm  = command_line(WM_SES_CMD, 20);
-    char *wmfocus = file_read(WINDOWMANAGER_SES_FILE);
+    char *wmfocus = file_read(WINDOWMANAGER_LOG);
     int num = atoi(allwm[0]);
     
     // Define menu item counters

@@ -32,6 +32,8 @@
 // 
 // FUNCTIONS:
 // 
+//     init_env             - Set environment variables for the authenticated user
+// 
 //     is_pam_success       - Check if previous PAM command resulted in Success
 // 
 //     conv                 - PAM conversation
@@ -60,6 +62,11 @@
 //     gabeg Aug 13 2014 <> Made login method less shady (stopped using 
 //                          'su USERNAME -c ...' to login)
 // 
+//     gabeg Aug 15 2014 <> Added a function to initialize necessary environment 
+//                          variables for the authenticated user
+// 
+//     gabeg Aug 17 2014 <> Added a function to record user login in UTMP and WTMP
+// 
 // **********************************************************************************
 
 
@@ -69,6 +76,7 @@
 // /////////////////////////////////
 
 // Includes
+#include "../hdr/Config.h"
 #include "../hdr/FileRW.h"
 
 #include <security/pam_appl.h>
@@ -82,22 +90,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define   SERVICE_NAME   "glm"
-#define   LOGINCTL       "/usr/bin/loginctl"
-#define   GREP           "/usr/bin/grep"
-#define   AWK            "/usr/bin/awk"
-#define   SESSREG        "/usr/bin/sessreg"
-#define   WTMP           "/var/log/wtmp"
-#define   UTMP_A         "/run/utmp"
-#define   UTMP_D         "/var/run/utmp"
-#define   XINITRC_FILE   "/etc/X11/glm/src/x/xinitrc"
-
 
 // Declares
+void init_env(pam_handle_t *pam_handle, struct passwd *pw);
+void manage_login_records(const char *username, char *opt);
 int is_pam_success(int result, pam_handle_t *pamh);
 int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr);
-void manage_login_records(const char *username, char *opt);
-void init_env(pam_handle_t *pam_handle, struct passwd *pw);
 int login(const char *username, const char *password, int preview);
 
 
@@ -167,9 +165,9 @@ void manage_login_records(const char *username, char *opt) {
         // Use correct utmp file
         char *UTMP;
         if ( strcmp(opt, "-a") == 0 )
-            UTMP = UTMP_A;
+            UTMP = UTMP_ADD;
         else
-            UTMP = UTMP_D;
+            UTMP = UTMP_DEL;
         
         // Execute sessreg command
         execl(SESSREG, SESSREG, opt,
@@ -262,7 +260,7 @@ int login(const char *username, const char *password, int preview) {
     
     
     // Start PAM
-    int result = pam_start(SERVICE_NAME, NULL, &pam_conv, &pam_handle);
+    int result = pam_start(SERVICE, NULL, &pam_conv, &pam_handle);
     if (!is_pam_success(result, pam_handle)) return 0;
     
     // Set PAM items
@@ -319,7 +317,7 @@ int login(const char *username, const char *password, int preview) {
             
             // Change directory and ownership of GLM xinitrc file
             chdir(pw->pw_dir);
-            chown(XINITRC_FILE, pw->pw_uid, pw->pw_gid);
+            chown(XINITRC, pw->pw_uid, pw->pw_gid);
             
             // Set uid and groups for USER
             if (initgroups(pw->pw_name, pw->pw_gid) == -1)
@@ -334,11 +332,11 @@ int login(const char *username, const char *password, int preview) {
             
             // Piece together X session cmd
             char *session = file_read("/etc/X11/glm/log/session.log");
-            size_t szx = strlen(XINITRC_FILE);
+            size_t szx = strlen(XINITRC);
             size_t szs = strlen(session);
             
             char cmd[szx+szs+2];
-            snprintf(cmd, szx+szs+2, "%s %s", XINITRC_FILE, session);
+            snprintf(cmd, szx+szs+2, "%s %s", XINITRC, session);
             free(session);
             
             // Start user X session with xinitrc

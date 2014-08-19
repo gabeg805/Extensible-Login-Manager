@@ -34,7 +34,6 @@
 //     init_frame_root     - Initialize the root window and all its objects
 // 
 //     draw_frame_window   - Draw the root window
-// 
 //     draw_frame          - Draw the login frame
 // 
 // 
@@ -61,16 +60,12 @@
 
 // Includes
 #include "../hdr/Frame.h"
+#include "../hdr/Config.h"
 #include "../hdr/Transparency.h"
 
 #include <gtk/gtk.h>
 #include <cairo.h>
 #include <math.h>
-
-#define   FRAME_XPOS     550
-#define   FRAME_YPOS     300
-#define   FRAME_WIDTH    265
-#define   FRAME_HEIGHT   100
 
 
 // Declares

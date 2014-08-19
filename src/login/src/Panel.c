@@ -64,38 +64,11 @@
 
 // Includes
 #include "../hdr/Panel.h"
+#include "../hdr/Config.h"
 #include "../hdr/Transparency.h"
 
 #include <gtk/gtk.h>
-#include <gdk/gdk.h>
 #include <stdlib.h>
-
-#define SERVICE   "glm.service"
-
-#define   POWEROFF    "/usr/bin/poweroff"
-#define   REBOOT      "/usr/bin/reboot"
-#define   SYSTEMCTL   "/usr/bin/systemctl"
-
-#define   PANEL_DIALOG_XPOS         505
-#define   PANEL_DIALOG_YPOS         310
-
-#define   PANEL_SHUTDOWN_XPOS       gdk_screen_width()-32*1
-#define   PANEL_SHUTDOWN_YPOS       gdk_screen_height()-32
-#define   PANEL_SHUTDOWN_WIDTH      32
-#define   PANEL_SHUTDOWN_HEIGHT     32
-#define   PANEL_SHUTDOWN_IMG_FILE   "/etc/X11/glm/img/interface/shutdown.png"
-
-#define   PANEL_REBOOT_XPOS       gdk_screen_width()-32*2
-#define   PANEL_REBOOT_YPOS       gdk_screen_height()-32
-#define   PANEL_REBOOT_WIDTH      32
-#define   PANEL_REBOOT_HEIGHT     32
-#define   PANEL_REBOOT_IMG_FILE   "/etc/X11/glm/img/interface/reboot.png"
-
-#define   PANEL_REFRESH_XPOS       gdk_screen_width()-32*3
-#define   PANEL_REFRESH_YPOS       gdk_screen_height()-32
-#define   PANEL_REFRESH_WIDTH      32
-#define   PANEL_REFRESH_HEIGHT     32
-#define   PANEL_REFRESH_IMG_FILE   "/etc/X11/glm/img/interface/refresh.png"
 
 
 // Declares
@@ -128,7 +101,7 @@ void init_shutdown_root(GtkWidget *shutdown_window, GtkWidget *shutdown) {
     set_color_and_opacity(shutdown_window, shutdown, bg_widget, fg_widget);
     
     // Modify button style
-    GtkWidget *image = gtk_image_new_from_file(PANEL_SHUTDOWN_IMG_FILE);
+    GtkWidget *image = gtk_image_new_from_file(PANEL_SHUTDOWN_IMG);
     gtk_button_set_image(GTK_BUTTON(shutdown), image);
     gtk_button_set_relief(GTK_BUTTON(shutdown), GTK_RELIEF_NONE);
     gtk_window_set_decorated(GTK_WINDOW(shutdown_window), FALSE);
@@ -159,7 +132,7 @@ void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot) {
     set_color_and_opacity(reboot_window, reboot, bg_widget, fg_widget);
     
     // Modify button style
-    GtkWidget *image = gtk_image_new_from_file(PANEL_REBOOT_IMG_FILE);
+    GtkWidget *image = gtk_image_new_from_file(PANEL_REBOOT_IMG);
     gtk_button_set_image(GTK_BUTTON(reboot), image);
     gtk_button_set_relief(GTK_BUTTON(reboot), GTK_RELIEF_NONE);
     gtk_window_set_decorated(GTK_WINDOW(reboot_window), FALSE);
@@ -190,7 +163,7 @@ void init_glm_dialog_root(GtkWidget *refresh_window, GtkWidget *refresh) {
     set_color_and_opacity(refresh_window, refresh, bg_widget, fg_widget);
     
     // Modify button style
-    GtkWidget *image = gtk_image_new_from_file(PANEL_REFRESH_IMG_FILE);
+    GtkWidget *image = gtk_image_new_from_file(PANEL_REFRESH_IMG);
     gtk_button_set_image(GTK_BUTTON(refresh), image);
     gtk_button_set_relief(GTK_BUTTON(refresh), GTK_RELIEF_NONE);
     gtk_window_set_decorated(GTK_WINDOW(refresh_window), FALSE);

@@ -60,17 +60,12 @@
 
 // Includes
 #include "../hdr/TextImage.h"
+#include "../hdr/Config.h"
 #include "../hdr/Transparency.h"
 
 #include <gtk/gtk.h>
 #include <cairo.h>
 #include <string.h>
-
-#define   TEXTIMAGE_XPOS    570
-#define   TEXTIMAGE_YPOS    330
-#define   TEXTIMAGE_TEXT    "Password:"
-#define   TEXTIMAGE_FONT    "DejaVu Sans"
-#define   TEXTIMAGE_FSIZE   12
 
 
 // Declares

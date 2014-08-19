@@ -33,6 +33,8 @@
 //     get_open_display - Search for X display lock files and return a display that 
 //                        is not locked
 // 
+//     get_open_tty     - Return an open TTY port
+// 
 //     command_line     - Return output of a Linux command
 // 
 // 
@@ -43,6 +45,8 @@
 //     * Write to File
 //     * Read File
 //     * Get Open X Display
+//     * Get Open TTY 
+//     * Get Linux Command Output
 // 
 // 
 // MODIFICATION HISTORY:

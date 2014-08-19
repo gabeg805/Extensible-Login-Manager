@@ -59,6 +59,7 @@
 
 // Includes
 #include "../hdr/Interface.h"
+#include "../hdr/Config.h"
 #include "../hdr/Username.h"
 #include "../hdr/Password.h"
 #include "../hdr/Clock.h"
@@ -73,9 +74,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#define INTERFACE_LOG_FILE   "/etc/X11/glm/log/interface.log"
-#define INTERFACE_FLAG       "TRUE"
 
 
 // Declares
@@ -95,7 +93,7 @@ char * login_interface(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
 
     // Check file to see if interface requires setup
-    char *flag = file_read(INTERFACE_LOG_FILE);
+    char *flag = file_read(INTERFACE_LOG);
     
     if ( strcmp(flag, INTERFACE_FLAG) == 0 ) {
         
@@ -179,7 +177,7 @@ char * login_interface(int argc, char *argv[]) {
         gtk_widget_show(refresh_window);
 
         // Log that interface has already begun
-        file_write(INTERFACE_LOG_FILE, "FALSE", "%s\n");
+        file_write(INTERFACE_LOG, "FALSE", "%s\n");
     }
     
     

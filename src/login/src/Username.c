@@ -63,6 +63,7 @@
 
 // Includes
 #include "../hdr/Username.h"
+#include "../hdr/Config.h"
 #include "../hdr/Transparency.h"
 #include "../hdr/FileRW.h"
 
@@ -70,16 +71,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#define   USERNAME_MENU_XPOS        665
-#define   USERNAME_MENU_YPOS        197
-#define   USERNAME_MENU_WIDTH       150
-#define   USERNAME_MENU_HEIGHT      50
-#define   USERNAME_MENU_FONT        "DejaVu Sans"
-#define   USERNAME_MENU_FSIZE       23*1024
-#define   USERNAME_MENU_USER_FILE   "/etc/X11/glm/log/user.log"
-#define   USERNAME_MENU_IMG_FILE    "/etc/X11/glm/img/interface/user.png"
-#define   PQIV                      "/usr/bin/pqiv"
 
 
 // Declares
@@ -100,11 +91,11 @@ void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu,
     
     // Set username icon
     if ( !fork() )
-        execl(PQIV, PQIV, "-c", "-i", "-P", "575,190", USERNAME_MENU_IMG_FILE, NULL);
+        execl(PQIV, PQIV, "-c", "-i", "-P", "575,190", USERNAME_IMG, NULL);
     
     // Set window attributes
-    gtk_window_move(GTK_WINDOW(window), USERNAME_MENU_XPOS, USERNAME_MENU_YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), USERNAME_MENU_WIDTH*0, USERNAME_MENU_HEIGHT*0);
+    gtk_window_move(GTK_WINDOW(window), USERNAME_XPOS, USERNAME_YPOS);
+    gtk_window_set_default_size(GTK_WINDOW(window), USERNAME_WIDTH*0, USERNAME_HEIGHT*0);
     
     // Define and set color schemes
     const GdkRGBA bg_widget = {0, 0, 0, 0};
@@ -134,8 +125,8 @@ void init_userlabel(GtkWidget *label) {
     
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
-    PangoAttribute *attrFont = pango_attr_family_new(USERNAME_MENU_FONT);
-    PangoAttribute *attrSize = pango_attr_size_new(USERNAME_MENU_FSIZE);
+    PangoAttribute *attrFont = pango_attr_family_new(USERNAME_FONT);
+    PangoAttribute *attrSize = pango_attr_size_new(USERNAME_FSIZE);
     PangoAttribute *attrColor = pango_attr_foreground_new(65535, 65535, 65535);
     
     // Add attributes to the list (and increase the reference counter)
@@ -146,7 +137,7 @@ void init_userlabel(GtkWidget *label) {
     pango_attr_list_insert(attrList, attrColor);
 
     // Set label text
-    char *user = file_read(USERNAME_MENU_USER_FILE);
+    char *user = file_read(USERNAME_LOG);
     gtk_label_set_text(GTK_LABEL(label), user);
     gtk_label_set_attributes(GTK_LABEL(label), attrList);
     
@@ -162,7 +153,7 @@ void init_userlabel(GtkWidget *label) {
 // Write to a file, which user to login as
 void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
     const gchar *user = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    file_write(USERNAME_MENU_USER_FILE, (char *)user, "%s\n");
+    file_write(USERNAME_LOG, (char *)user, "%s\n");
     gtk_label_set_text(GTK_LABEL(label), user);
 }
 
@@ -256,13 +247,19 @@ void set_username_entries(GtkWidget *menu, GtkWidget *label) {
     // Search for login users in passwd files
     int size = 20;
     char *files[] = {"/etc/shadow", "/etc/passwd", NULL};
-    char *userfocus = file_read(USERNAME_MENU_USER_FILE);
+    char *userfocus = file_read(USERNAME_LOG);
     
-    /* char **allusers; */
-    /* allusers = get_username(files[0], size); */
-    /* if ( allusers[0] == NULL ) */
-    char **allusers = get_username(files[1], size);
-    int num = atoi(allusers[0]);
+    // Set usernames from file
+    int num;
+    char **allusers;
+    allusers = get_username(files[0], size);
+    num = atoi(allusers[0]);
+    
+    // Wrong file was used above, use the other file
+    if ( num == 0 ) {
+        allusers = get_username(files[1], size);
+        num = atoi(allusers[0]);
+    }
     
     // Define menu item counters
     int i = 1, q = 0, p = 0;

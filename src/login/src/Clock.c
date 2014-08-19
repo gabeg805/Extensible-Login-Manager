@@ -64,28 +64,11 @@
 
 // Includes
 #include "../hdr/Clock.h"
+#include "../hdr/Config.h"
 #include "../hdr/Transparency.h"
 
 #include <gtk/gtk.h>
 #include <time.h>
-
-#define   CLOCK_DATE_XPOS     50
-#define   CLOCK_DATE_YPOS     650
-#define   CLOCK_DATE_WIDTH    400
-#define   CLOCK_DATE_HEIGHT   50
-#define   CLOCK_DATE_FONT     "Inconsolata"
-#define   CLOCK_DATE_FSIZE    25*1024
-#define   CLOCK_DATE_FMT      "%A, %B %-d"
-
-#define   CLOCK_TIME_XPOS     86
-#define   CLOCK_TIME_YPOS     575
-#define   CLOCK_TIME_WIDTH    400
-#define   CLOCK_TIME_HEIGHT   75
-#define   CLOCK_TIME_FONT     "Inconsolata"
-#define   CLOCK_TIME_FSIZE    45*1024
-#define   CLOCK_TIME_FMT      "%-I:%M %p"
-
-#define   CLOCK_UPDATE_SEC   30
 
 
 // Declares

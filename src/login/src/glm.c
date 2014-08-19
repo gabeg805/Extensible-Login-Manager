@@ -9,7 +9,7 @@
 // 
 // SYNTAX: 
 // 
-//     ./glm
+//     # ./glm
 // 
 // 
 // PURPOSE:
@@ -53,6 +53,7 @@
 // /////////////////////////////////
 
 // Includes
+#include "../hdr/Config.h"
 #include "../hdr/Xsetup.h"
 #include "../hdr/Username.h"
 #include "../hdr/Password.h"
@@ -72,9 +73,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define   INTERFACE_LOG_FILE   "/etc/X11/glm/log/interface.log"
-#define   INTERFACE_FLAG       "TRUE"
-
 
 
 // ////////////////////////////////
@@ -92,23 +90,20 @@ int main(int argc, char *argv[]) {
     // Setup X
     xsetup(preview);
     
-    // Log interface start
-    file_write(INTERFACE_LOG_FILE, INTERFACE_FLAG, "%s\n");
-    
     // Start the login loop
     int loop = 1;
     while (loop) {
         
         // Authenticate username/password combination
-        char *PASSWORD = login_interface(argc, argv);
-        char *USERNAME = file_read("/etc/X11/glm/log/user.log");
+        char *password = login_interface(argc, argv);
+        char *username = file_read(USERNAME_LOG);
         
-        if ( login(USERNAME, PASSWORD, preview) )
+        if ( login(username, password, preview) )
             loop = 0;
         
         // Free allocated memory
-        free(PASSWORD);
-        free(USERNAME);
+        free(password);
+        free(username);
     }
         
     return 0;
