@@ -1,17 +1,17 @@
 CC      = gcc
-LIBS    = gtk+-3.0 gdk-3.0 cairo
+LIBS    = gtk+-3.0 cairo
 CFLAGS  = -g -Wall -lpam
 CFLAGS += `pkg-config $(LIBS) --cflags --libs`
 
 PROGRAM = glm
 NAMES   = $(PROGRAM) Config Xsetup Interface Username Password Authenticate Clock Frame TextImage WindowManager Panel Transparency FileRW
-SOURCES = $(addprefix ./src/, $(addsuffix .c, $(NAMES)))
-HEADERS = $(addprefix ./hdr/, $(addsuffix .h, $(NAMES)))
-OBJECTS = $(addprefix ./obj/, $(addsuffix .o, $(NAMES)))
+SOURCES = $(addprefix ./src/login/src/, $(addsuffix .c, $(NAMES)))
+HEADERS = $(addprefix ./src/login/hdr/, $(addsuffix .h, $(NAMES)))
+OBJECTS = $(addprefix ./src/login/obj/, $(addsuffix .o, $(NAMES)))
 
 all: $(PROGRAM)
 
-./obj/%.o: ./src/%.c 
+./src/login/obj/%.o: ./src/login/src/%.c 
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(PROGRAM): $(OBJECTS)
