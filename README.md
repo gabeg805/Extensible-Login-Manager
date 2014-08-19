@@ -195,9 +195,6 @@ To-Do
 =====
 
 Here's a list of things I want to implement, but haven't had the time to do so yet:
-
-    - Config file(s) for '#define' variables, not sure if this is doable but worth 
-      a try
     
     - Start GLM over getty
     
