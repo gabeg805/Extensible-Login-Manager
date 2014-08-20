@@ -98,6 +98,7 @@ int is_pam_success(int result, pam_handle_t *pamh);
 int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr);
 int login(const char *username, const char *password, int preview);
 
+char TTY[6];
 
 
 // ////////////////////////////////////////////
@@ -124,7 +125,7 @@ void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
     char runtime_dir[100];
     char xauthority[100];
     
-    snprintf(vtnr, sizeof(vtnr), "%d", get_open_tty());
+    snprintf(vtnr, sizeof(vtnr), "%d", TTY_N);
     snprintf(runtime_dir, sizeof(runtime_dir), "%s/%d", "/run/user", pw->pw_uid);
     snprintf(xauthority, sizeof(xauthority), "%s/%s", pw->pw_dir, ".Xauthority");
     
@@ -157,10 +158,6 @@ void manage_login_records(const char *username, char *opt) {
     // Execute sessreg
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
-        
-        // Get open tty port
-        char TTY[6];
-        snprintf(TTY, sizeof(TTY), "%s%d", "tty", get_open_tty());
         
         // Use correct utmp file
         char *UTMP;
@@ -264,8 +261,7 @@ int login(const char *username, const char *password, int preview) {
     if (!is_pam_success(result, pam_handle)) return 0;
     
     // Set PAM items
-    char TTY[6];
-    snprintf(TTY, sizeof(TTY), "%s%d", "tty", get_open_tty());
+    snprintf(TTY, sizeof(TTY), "%s%d", "tty", TTY_N);
     
     result = pam_set_item(pam_handle, PAM_USER, username);
     if (!is_pam_success(result, pam_handle)) return 0;
@@ -309,16 +305,21 @@ int login(const char *username, const char *password, int preview) {
             execl(pw->pw_shell, pw->pw_shell, "-c", " ", NULL);
         else {
             
+            // Log system login start
+            file_write(GLM_LOG, "a+", "%s\n", "Setting up user session...");
+            
+            
             // Kill windows
             system("xwininfo -root -children | grep '  0x' | cut -d' ' -f6 | xargs -n1 xkill -id");
             
             // Add session to utmp/wtmp
             manage_login_records(username, "-a");
-            
+                        
             // Change directory and ownership of GLM xinitrc file
             chdir(pw->pw_dir);
             chown(XINITRC, pw->pw_uid, pw->pw_gid);
-            
+            chown(GLM_LOG, pw->pw_uid, pw->pw_gid);
+                        
             // Set uid and groups for USER
             if (initgroups(pw->pw_name, pw->pw_gid) == -1)
                 return 0;
@@ -331,13 +332,22 @@ int login(const char *username, const char *password, int preview) {
             init_env(pam_handle, pw);
             
             // Piece together X session cmd
-            char *session = file_read("/etc/X11/glm/log/session.log");
+            char *session = file_read(WINDOWMANAGER_LOG);
             size_t szx = strlen(XINITRC);
             size_t szs = strlen(session);
             
             char cmd[szx+szs+2];
             snprintf(cmd, szx+szs+2, "%s %s", XINITRC, session);
+            
+            
+            // Log system login start
+            file_write(GLM_LOG, "a+", "%s %s %s\n%s %s.\n\n", 
+                       "User session", session, "is active.", 
+                       "Successfully logged in as", username);
+                        
+            // Free memory
             free(session);
+            
             
             // Start user X session with xinitrc
             execl(pw->pw_shell, pw->pw_shell, "-c", cmd, NULL);

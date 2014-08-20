@@ -125,7 +125,7 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
 // Write to a file, which window manager to use for the session
 void wm_write_to_file(GtkMenu *item) {
     const gchar *sess = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    file_write(WINDOWMANAGER_LOG, (char *)sess, "%s\n");
+    file_write(WINDOWMANAGER_LOG, "w", "%s\n", (char *)sess);
 }
 
 

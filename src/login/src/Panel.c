@@ -260,5 +260,8 @@ void refresh_glm() {
 
 // Quit the login screen
 void quit_glm() {
-    execl(SYSTEMCTL, SYSTEMCTL, "stop", SERVICE, NULL);
+    /* char *cmd = "/usr/bin/chvt 2; /usr/bin/systemctl stop glm; /usr/bin/deallocvt 7"; */
+    char *cmd = "/usr/bin/chvt 2; /usr/bin/systemctl stop glm; /usr/bin/deallocvt 7; /usr/bin/deallocvt 7";
+    execl("/bin/bash", "/bin/bash", "-c", cmd, NULL);
+    /* execl(SYSTEMCTL, SYSTEMCTL, "stop", SERVICE, NULL); */
 }

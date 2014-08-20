@@ -91,11 +91,12 @@ char * login_interface(int argc, char *argv[]) {
     
     // Initialize GTK toolkit
     gtk_init(&argc, &argv);
-
-    // Check file to see if interface requires setup
-    char *flag = file_read(INTERFACE_LOG);
     
-    if ( strcmp(flag, INTERFACE_FLAG) == 0 ) {
+    if ( INTERFACE ) {
+        
+        // Log interface display
+        file_write(GLM_LOG, "a+", "%s\n", "Displaying login interface...");
+        
         
         // Define the clock
         GtkWidget *date_clock_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -176,8 +177,8 @@ char * login_interface(int argc, char *argv[]) {
         gtk_widget_show(refresh);
         gtk_widget_show(refresh_window);
 
-        // Log that interface has already begun
-        file_write(INTERFACE_LOG, "FALSE", "%s\n");
+        // Denote that interface has already begun
+        INTERFACE = 0;
     }
     
     
@@ -199,7 +200,9 @@ char * login_interface(int argc, char *argv[]) {
     char *pass = malloc(sz+1);
     snprintf(pass, sz+1, output);
     
-    free(flag);
+    
+    // Log interface display is done
+    file_write(GLM_LOG, "a+", "%s\n", "Login interface finished.");
     
     return pass;
 }

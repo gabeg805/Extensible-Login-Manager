@@ -47,10 +47,12 @@
 
 
 // Commands
+char *DATE       = "/usr/bin/date";
 char *XORG       = "/usr/bin/Xorg";
 char *XCOMPMGR   = "/usr/bin/xcompmgr";
 char *AWK        = "/usr/bin/awk";
 char *GREP       = "/usr/bin/grep";
+char *TAIL       = "/usr/bin/tail";
 char *LOGINCTL   = "/usr/bin/loginctl";
 char *SYSTEMCTL  = "/usr/bin/systemctl";
 char *POWEROFF   = "/usr/bin/poweroff";
@@ -136,10 +138,12 @@ char *UTMP_DEL       = "/var/run/utmp";
 char *XSERVER_AUTH   = "/etc/X11/glm/log/glm.auth";
 
 // Log Files
+char *GLM_LOG             = "/etc/X11/glm/log/glm.log";
 char *XSERVER_LOG         = "/etc/X11/glm/log/xserver.log";
-char *INTERFACE_LOG       = "/etc/X11/glm/log/interface.log";
+char *TTY_LOG_DIR         = "/etc/X11/glm/log/tty/";
 char *USERNAME_LOG        = "/etc/X11/glm/log/user.log";
 char *WINDOWMANAGER_LOG   = "/etc/X11/glm/log/session.log";
+
 
 // Image Files
 char *USERNAME_IMG         = "/etc/X11/glm/img/interface/user.png";
@@ -153,7 +157,6 @@ char *PANEL_REFRESH_IMG    = "/etc/X11/glm/img/interface/refresh.png";
 // Misc
 char *TEXTIMAGE_TEXT   = "Password:";
 
-char *INTERFACE_FLAG   = "TRUE";
 
 char *CLOCK_DATE_FMT   = "%A, %B %-d";
 char *CLOCK_TIME_FMT   = "%-I:%M %p";
@@ -161,3 +164,9 @@ int CLOCK_UPDATE_SEC   = 30;
 
 char PASSWORD_INVISCHAR   = '*';
 int PASSWORD_MAXCHARS     = 30;
+
+int TTY_N = 4;
+
+char *DISPLAY = ":0";
+
+int INTERFACE = 0;

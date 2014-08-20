@@ -69,12 +69,13 @@
 
 #include <unistd.h>
 #include <string.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 
 //Declares
-void file_write(char *file, char *phrase, char *fmt);
+void file_write(char *file, char *opt, const char *fmt, ...);
 char * file_read(char *file);
 char * get_open_display();
 int get_open_tty();
@@ -86,9 +87,14 @@ char ** command_line(char *cmd, int size);
 // /////////////////////////
 
 // Write to a file
-void file_write(char *file, char *phrase, char *fmt) {
-    FILE *handle = fopen(file, "w");
-    fprintf(handle, fmt, phrase);
+void file_write(char *file, char *opt, const char *fmt, ...) {
+    FILE *handle = fopen(file, opt);
+    va_list args;
+    
+    va_start(args, fmt);
+    vfprintf(handle, fmt, args);
+    va_end(args);
+    
     fclose(handle);
 }
 

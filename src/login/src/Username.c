@@ -153,7 +153,7 @@ void init_userlabel(GtkWidget *label) {
 // Write to a file, which user to login as
 void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
     const gchar *user = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    file_write(USERNAME_LOG, (char *)user, "%s\n");
+    file_write(USERNAME_LOG, "w", "%s\n", (char *)user);
     gtk_label_set_text(GTK_LABEL(label), user);
 }
 

@@ -87,6 +87,11 @@ int main(int argc, char *argv[]) {
     if ( (argc == 2) && (strcmp(argv[1], "-p") == 0) )
         preview = 1;
     
+    // Log program start
+    char **date_str = command_line(DATE, 40);
+    file_write(GLM_LOG, "a+", "\n%s %s\n%s %d\n\n", "Date:", date_str[1], "Preview:", preview);
+    
+    
     // Setup X
     xsetup(preview);
     

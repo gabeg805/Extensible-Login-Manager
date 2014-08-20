@@ -89,20 +89,29 @@ void xsetup(int preview);
 // Start the X server
 void start_xserver() {
     
+    // Log X start
+    file_write(GLM_LOG, "a+", "%s\n", "Starting X server...");
+    
+    
     // Set the display environment variable
-    char *DISPLAY = get_open_display();
+    DISPLAY = get_open_display();
     setenv("DISPLAY", DISPLAY, 1);
     
     // Get open tty port
-    char VTTY[6];
-    snprintf(VTTY, sizeof(VTTY), "%s%d", "vt", get_open_tty());
+    TTY_N = get_open_tty();
+    char VT[6];
+    snprintf(VT, sizeof(VT), "%s%d", "vt", TTY_N);
     
     // Start X server
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
         execl(XORG, XORG, "-logverbose", "-logfile", XSERVER_LOG, "-nolisten", "tcp", DISPLAY, "-auth",
-              XSERVER_AUTH, VTTY, NULL);
+              XSERVER_AUTH, VT, NULL);
     }
+    
+        
+    // Log X start
+    file_write(GLM_LOG, "a+", "%s\n", "X server is active.");
     
     
     // Free display memory
@@ -117,6 +126,10 @@ void start_xserver() {
 
 // Start compositing manager (for transparency)
 void start_compman() {
+    
+    // Log compositing manager start
+    file_write(GLM_LOG, "a+", "%s\n", "Starting compositing manager...");
+    
     
     // Initialize monotonic clock
     struct timespec start, end; 
@@ -136,7 +149,7 @@ void start_compman() {
         
         // Get the last line of X server log file
         char cmd[100];
-        snprintf(cmd, sizeof(cmd), "%s %s", "/usr/bin/tail -1", XSERVER_LOG);
+        snprintf(cmd, sizeof(cmd), "%s %s %s", TAIL, "-1", XSERVER_LOG);
         char **xcheck = command_line(cmd, sizeof(cmd));
         int num = atoi(xcheck[0]);
         
@@ -149,7 +162,7 @@ void start_compman() {
         }
         
         // Once a safe amount of time has elapsed, execute the compositing manager
-        if ( (count == 200) || (diff == 2*BILLION) ) {
+        if ( (count == 500) || (diff == 2*BILLION) ) {
             pid_t new_pid = fork();
             if ( new_pid == 0 )
                 execl(XCOMPMGR, XCOMPMGR, NULL);
@@ -157,6 +170,10 @@ void start_compman() {
         }
         ++i;
     }
+    
+    
+    // Log status of composite manager
+    file_write(GLM_LOG, "a+", "%s\n", "Composite manager is active.");
 }
 
 
@@ -182,5 +199,5 @@ void xsetup(int preview) {
     system("/usr/bin/xsetroot -cursor_name left_ptr");    
 
     // Log that interface is allowed start
-    file_write(INTERFACE_LOG, INTERFACE_FLAG, "%s\n");
+    INTERFACE = 1;
 }

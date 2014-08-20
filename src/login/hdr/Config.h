@@ -3,10 +3,12 @@
 
 
 // Commands
+extern char *DATE;
 extern char *XORG;
 extern char *XCOMPMGR;
 extern char *AWK;
 extern char *GREP;
+extern char *TAIL;
 extern char *LOGINCTL;
 extern char *SYSTEMCTL;
 extern char *POWEROFF;
@@ -92,8 +94,8 @@ extern char *UTMP_DEL;
 extern char *XSERVER_AUTH;
 
 // Log Files
+extern char *GLM_LOG;
 extern char *XSERVER_LOG;
-extern char *INTERFACE_LOG;
 extern char *USERNAME_LOG;
 extern char *WINDOWMANAGER_LOG;
 
@@ -109,13 +111,17 @@ extern char *PANEL_REFRESH_IMG;
 // Misc
 extern char *TEXTIMAGE_TEXT;
 
-extern char *INTERFACE_FLAG;
-
 extern char *CLOCK_DATE_FMT;
 extern char *CLOCK_TIME_FMT;
 extern int CLOCK_UPDATE_SEC;
 
 extern char PASSWORD_INVISCHAR;
 extern int PASSWORD_MAXCHARS;
+
+extern int TTY_N;
+
+extern char *DISPLAY;
+
+extern int INTERFACE;
 
 #endif
