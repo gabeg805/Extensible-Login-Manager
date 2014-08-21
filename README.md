@@ -149,15 +149,26 @@ Executing this program on startup can have some pretty adverse effects, but fear
     - Transparency is not working.
             * When this happens, it means that the compositing manager is starting 
               up either too early or too late. To fix this, hit the leaf icon in the
-              bottom right of the screen, this will restart the GLM service.
-
-    - Everytime GLM starts up, the screen flickers, getty is visible for a short 
-      period, and then GLM appears again.
-            * When this happens, GLM is starting before Getty, and when Getty starts 
-              up, it kills GLM, which then causes GLM to restart and appear again.
-              To fix this, try and have GLM start up on a different TTY by changing 
-              the TTY variable.
-
+              bottom right of the screen, and hit restart. This will restart the 
+              GLM service.
+    
+    - I enter my password correctly, but it registers as an incorrect login.
+            * When this happens it usually means that the USERNAME global variable
+              has gotten overwritten by something in the Authenticate.c module. To 
+              test a temporary fix, click on the username menu and hit your name,
+              and then try logging in. If you tried this or not, it would be good
+              to fix the source of the error because this is only temporary. What I 
+              would suggest is to insert the following line anywhere in any module
+              to find out where exactly the change occurs:
+              
+                    file_write("/PATH/TO/WHATEVER/FILE", "a+", "%s %s %s\n", "MODULE LOCATION", USERNAME, PASSWORD);
+              
+              This will print the USERNAME and PASSWORD variables to a log file and 
+              then after you gain access to your system, you can check where things 
+              were going wrong. Note: The "MODULE LOCATION" is just there so that 
+              when it logs to the file, you know which module the print is coming 
+              from.
+    
     - After I enter my password, the X session is not started, but rather the screen 
       just turns black.
             * This probably means that the xinitrc executable file is not starting 
@@ -198,4 +209,3 @@ Here's a list of things I want to implement, but haven't had the time to do so y
     
     - Start GLM over getty
     
-    - Add more logs

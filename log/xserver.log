@@ -319,3 +319,6 @@ Release Date: 2014-07-16
 [    23.556] (II) intel(0): Printing DDC gathered Modelines:
 [    23.556] (II) intel(0): Modeline "1366x768"x0.0   70.00  1366 1402 1450 1492  768 771 776 782 -hsync -vsync (46.9 kHz eP)
 [    23.556] (II) intel(0): Modeline "1366x768"x0.0   48.30  1366 1402 1450 1520  768 771 776 794 -hsync -vsync (31.8 kHz e)
+[    96.494] (II) config/udev: removing device Laptop_Integrated_Webcam_HD
+[    96.520] (II) evdev: Laptop_Integrated_Webcam_HD: Close
+[    96.520] (II) UnloadModule: "evdev"
