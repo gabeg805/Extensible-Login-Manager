@@ -138,9 +138,9 @@ void start_compman() {
     
     
     // Time the logging to X server log file
-    long BILLION = 1000000000L;
-    int count = 0;
     char *last = NULL;
+    int i = 0, count = 0;
+    long BILLION = 1000000000L;
     
     while (1) {
         
@@ -161,20 +161,20 @@ void start_compman() {
         // Make sure file is not empty
         if ( num == 1 ) {
             
-            // Increment count and free last
-            if ( last != NULL ) {
-                if ( strcmp(last, xcheck[1]) == 0 ) 
-                    ++count;
-                free(last);
-            }
+            // Increment count and define last
+            if ( (i != 0) && (last != NULL) && (strcmp(last, xcheck[1]) == 0) ) 
+                ++count;
             
             // Define last
+            if ( last != NULL )
+                free(last);
             last = strdup(xcheck[1]);
             
             // Free memory
             free(xcheck[1]);
             xcheck[1] = NULL;
         }
+        
         
         // Free memory
         free(xcheck[0]);
@@ -191,6 +191,7 @@ void start_compman() {
                 execl(XCOMPMGR, XCOMPMGR, NULL);
             break;
         }
+        ++i;
     }
     
     

@@ -38,6 +38,9 @@
 // 	
 //     gabeg Aug 18 2014 <> created
 // 
+//     gabeg Aug 20 2014 <> Made USERNAME, PASSWORD, SESSION, and INTERFACE global 
+//                          variables.
+// 
 // **********************************************************************************
 
 
@@ -50,6 +53,8 @@
 char *DATE       = "/usr/bin/date";
 char *XORG       = "/usr/bin/Xorg";
 char *XCOMPMGR   = "/usr/bin/xcompmgr";
+char *HSETROOT   = "/usr/bin/hsetroot";
+char *XSETROOT   = "/usr/bin/xsetroot";
 char *AWK        = "/usr/bin/awk";
 char *GREP       = "/usr/bin/grep";
 char *TAIL       = "/usr/bin/tail";
@@ -142,10 +147,10 @@ char *GLM_LOG             = "/etc/X11/glm/log/glm.log";
 char *XSERVER_LOG         = "/etc/X11/glm/log/xserver.log";
 char *TTY_LOG_DIR         = "/etc/X11/glm/log/tty/";
 char *USERNAME_LOG        = "/etc/X11/glm/log/user.log";
-char *WINDOWMANAGER_LOG   = "/etc/X11/glm/log/session.log";
-
+char *SESSION_LOG         = "/etc/X11/glm/log/session.log";
 
 // Image Files
+char *WALLPAPER            = "/etc/X11/glm/img/wallpapers/night-sky.jpg";
 char *USERNAME_IMG         = "/etc/X11/glm/img/interface/user.png";
 char *WINDOWMANAGER_IMG    = "/etc/X11/glm/img/interface/settings.png";
 char *PANEL_SHUTDOWN_IMG   = "/etc/X11/glm/img/interface/shutdown.png";
@@ -156,7 +161,6 @@ char *PANEL_REFRESH_IMG    = "/etc/X11/glm/img/interface/refresh.png";
 
 // Misc
 char *TEXTIMAGE_TEXT   = "Password:";
-
 
 char *CLOCK_DATE_FMT   = "%A, %B %-d";
 char *CLOCK_TIME_FMT   = "%-I:%M %p";
@@ -170,3 +174,8 @@ int TTY_N = 4;
 char *DISPLAY = ":0";
 
 int INTERFACE = 0;
+char *USERNAME = "User";
+char *PASSWORD = "Password";
+char *SESSION = "xterm";
+
+int PREVIEW = 0;

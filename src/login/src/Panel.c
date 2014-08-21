@@ -39,12 +39,15 @@
 //     system_reboot           - Command to reboot computer
 //     refresh_login           - Command to refresh the login manager
 // 
+//     display_panel           - Display button panel
+// 
 // 
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
 //     * Initialize Panel Buttons 
 //     * System Commands
+//     * Display Button Panel
 // 
 // 
 // MODIFICATION HISTORY:
@@ -53,6 +56,9 @@
 // 
 //     gabeg Aug 12 2014 <> Changed name from 'Power.c' to 'Panel.c' and added
 //                          a Refresh Login Screen function
+// 
+//     gabeg Aug 20 2014 <> Moved the code inside Interface.c that displays the 
+//                          button panel into the main Panel.c module 
 // 
 // **********************************************************************************
 
@@ -81,6 +87,7 @@ void system_reboot();
 void cancel_glm();
 void refresh_glm();
 void quit_glm();
+void display_panel();
 
 
 
@@ -260,8 +267,39 @@ void refresh_glm() {
 
 // Quit the login screen
 void quit_glm() {
-    /* char *cmd = "/usr/bin/chvt 2; /usr/bin/systemctl stop glm; /usr/bin/deallocvt 7"; */
-    char *cmd = "/usr/bin/chvt 2; /usr/bin/systemctl stop glm; /usr/bin/deallocvt 7; /usr/bin/deallocvt 7";
+    char *cmd = "/usr/bin/chvt 2; /usr/bin/systemctl stop glm";
     execl("/bin/bash", "/bin/bash", "-c", cmd, NULL);
-    /* execl(SYSTEMCTL, SYSTEMCTL, "stop", SERVICE, NULL); */
+}
+
+
+
+// ////////////////////////////////
+// ///// DISPLAY BUTTON PANEL /////
+// ////////////////////////////////
+
+// Display button panel 
+void display_panel() {
+    
+    // Initialize button panel items
+    GtkWidget *shutdown_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *shutdown = gtk_button_new();
+    GtkWidget *reboot_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *reboot = gtk_button_new();
+    GtkWidget *refresh_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *refresh = gtk_button_new();
+    
+    // Setup buttons on the panel
+    init_shutdown_root(shutdown_window, shutdown);
+    init_reboot_root(reboot_window, reboot);
+    init_glm_dialog_root(refresh_window, refresh);
+    
+    // Display the button panel
+    gtk_widget_show(shutdown);
+    gtk_widget_show(shutdown_window);
+    
+    gtk_widget_show(reboot);
+    gtk_widget_show(reboot_window);
+    
+    gtk_widget_show(refresh);
+    gtk_widget_show(refresh_window);
 }

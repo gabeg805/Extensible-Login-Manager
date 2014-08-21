@@ -222,13 +222,13 @@ char ** command_line(char *cmd, int size) {
     
     // Output arrays
     char **array = (char**)malloc(sizeof(char*)*size);
-    char temp[size-1];
+    char temp[size];
     array[0] = "0";
     
     // Read command output
     FILE *fp  = popen(cmd, "r");
     int i = 1;
-    while (fgets(temp, sizeof(temp)-1, fp) != NULL ) {
+    while (fgets(temp, sizeof(temp), fp) != NULL ) {
         
         // Remove trailing newline characters
         char *pos;

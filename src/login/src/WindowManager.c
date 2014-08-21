@@ -32,13 +32,15 @@
 // 
 // Functions:
 // 
-//     init_wm_root     - Initialize the root window
+//     init_wm_root           - Initialize the root window
 // 
-//     wm_write_to_file - Write to a file, which window manager to use for the 
-//                        session
+//     wm_write_to_file       - Write to a file, which window manager to use for the 
+//                              session
 // 
-//     set_wm_entries   - Determine which window manager(s) the system has and add 
-//                        them as entries to the menu
+//     set_wm_entries         - Determine which window manager(s) the system has and add 
+//                              them as entries to the menu
+// 
+//     display_window_manager - Display the window manager button
 // 
 // 
 // File Structure:
@@ -47,6 +49,7 @@
 //     * Initialize Window Manager Button
 //     * Write Window Manager to File
 //     * Add WM Entries to the Menu 
+//     * Display Window Manager
 // 
 // 
 // Modification History:
@@ -56,6 +59,10 @@
 //     gabeg Aug 10 2014 <> Updated header
 // 
 //     gabeg Aug 14 2014 <> Removed 'command_line' function and added it to FileRW.c
+// 
+//     gabeg Aug 20 2014 <> Moved the code inside Interface.c that displays the 
+//                          window manager button into the main WindowManager.c 
+//                          module 
 // 
 // **********************************************************************************
 
@@ -80,6 +87,7 @@
 void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu);
 void wm_write_to_file(GtkMenu *item);
 void set_wm_entries(GtkWidget *menu);
+void display_window_manager();
 
 
 
@@ -94,10 +102,11 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
     gtk_window_move(GTK_WINDOW(window), WINDOWMANAGER_XPOS, WINDOWMANAGER_YPOS);
     gtk_window_set_default_size(GTK_WINDOW(window), WINDOWMANAGER_WIDTH*0, WINDOWMANAGER_HEIGHT*0);
     
-    // Define and set color schemes
+    // Setup button attributes
     const GdkRGBA bg_widget = {0, 0, 0, 0};
     const GdkRGBA fg_widget = {1, 1, 1, 1};
     set_color_and_opacity(window, dropmenu, bg_widget, fg_widget);
+    set_wm_entries(menu);
     
     // Modify button style
     GtkWidget *image = gtk_image_new_from_file(WINDOWMANAGER_IMG);
@@ -125,7 +134,8 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
 // Write to a file, which window manager to use for the session
 void wm_write_to_file(GtkMenu *item) {
     const gchar *sess = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    file_write(WINDOWMANAGER_LOG, "w", "%s\n", (char *)sess);
+    SESSION = (char*)sess;
+    file_write(SESSION_LOG, "w", "%s\n", SESSION);
 }
 
 
@@ -143,7 +153,7 @@ void set_wm_entries(GtkWidget *menu) {
     
     // Get window manager information
     char **allwm  = command_line(WM_SES_CMD, 20);
-    char *wmfocus = file_read(WINDOWMANAGER_LOG);
+    char *wmfocus = strdup(SESSION);
     int num = atoi(allwm[0]);
     
     // Define menu item counters
@@ -155,7 +165,7 @@ void set_wm_entries(GtkWidget *menu) {
         if ( strcmp(allwm[i], wmfocus) == 0 ) {
             session = gtk_radio_menu_item_new_with_label(NULL, allwm[i]);
             group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(session));
-        } else if ( (q != 0) && (strcmp(allwm[i], "") != 0) ) 
+        } else if ( (q != 0) && (allwm[i] != NULL) ) 
             session = gtk_radio_menu_item_new_with_label(group, allwm[i]);
         else 
             p = 0;
@@ -163,6 +173,7 @@ void set_wm_entries(GtkWidget *menu) {
         // Setup the menu items
         if ( p == 1 ) {
             free(allwm[i]);
+            allwm[i] = NULL;
             
             gtk_menu_attach(GTK_MENU(menu), session, 0, 1, q, q+1);
             gtk_widget_show(session);
@@ -179,6 +190,34 @@ void set_wm_entries(GtkWidget *menu) {
         
     // Freeing up the memory
     free(allwm[0]);
+    allwm[0] = NULL;
+    
     free(allwm);
+    allwm = NULL;
+    
     free(wmfocus);
+    wmfocus = NULL;
+}
+
+
+
+// //////////////////////////////////
+// ///// DISPLAY WINDOW MANAGER /////
+// //////////////////////////////////
+
+// Display the window manager button
+void display_window_manager() {
+    
+    // Initialize window manager elements
+    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *dropmenu = gtk_menu_button_new();
+    GtkWidget *menu = gtk_menu_new();
+    
+    // Setup window manager button
+    SESSION = file_read(SESSION_LOG);
+    init_wm_root(window, dropmenu, menu);
+    
+    // Display the window manager button
+    gtk_widget_show(dropmenu);
+    gtk_widget_show(window);
 }

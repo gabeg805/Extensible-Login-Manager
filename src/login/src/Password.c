@@ -31,10 +31,12 @@
 // 
 // FUNCTIONS:
 // 
-//     init_entry_root - Initialize the root window
-//     init_entry      - Initialize the entry box
+//     init_entry_root        - Initialize the root window
+//     init_entry             - Initialize the entry box
 // 
-//     get_entry_text  - Return user entry text
+//     get_entry_text         - Return user entry text
+// 
+//     display_password_entry - Display password entry box
 // 
 // 
 // FILE STRUCTURE:
@@ -42,6 +44,7 @@
 //     * Includes and Declares
 //     * Initialize Entry Box
 //     * Get Entry Text
+//     * Display Password Entry Box
 // 
 // 
 // MODIFICATION HISTORY:
@@ -49,6 +52,9 @@
 //     gabeg Aug 03 2014 <> created
 // 
 //     gabeg Aug 10 2014 <> Updated header
+// 
+//     gabeg Aug 20 2014 <> Moved the code inside Interface.c that displays the 
+//                          password entry box into the main Password.c module 
 // 
 // **********************************************************************************
 
@@ -74,8 +80,7 @@
 void init_entry_root(GtkWidget *window, GtkWidget *entry);
 void init_entry(GtkWidget *entry);
 void get_entry_text(GtkWidget *entry);
-
-extern char output[100];
+void display_password_entry();
 
 
 
@@ -162,6 +167,29 @@ void get_entry_text(GtkWidget *entry) {
     if ( len != 0 ) {
         gtk_widget_destroy(entry);
         gtk_main_quit();
-        snprintf(output, len+1, text);
+        
+        PASSWORD = (char*)text;
     }
 } 
+
+
+
+// //////////////////////////////////////
+// ///// DISPLAY PASSWORD ENTRY BOX /////
+// //////////////////////////////////////
+
+// Display the password entry box
+void display_password_entry() {
+    
+    // Initialize password entry box elements
+    GtkWidget *password_entry_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *password_entry = gtk_entry_new();
+    
+    // Setup password entry box
+    init_entry(password_entry);
+    init_entry_root(password_entry_window, password_entry);
+    
+    // Display password entry box
+    gtk_widget_show(password_entry);
+    gtk_widget_show(password_entry_window);
+}

@@ -13,5 +13,6 @@ void system_reboot();
 void cancel_glm();
 void refresh_glm();
 void quit_glm();
+void display_panel();
 
 #endif

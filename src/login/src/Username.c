@@ -38,6 +38,8 @@
 // 
 //     set_username_entries   - Set entries in the user menu
 // 
+//     display_username       - Display the username menu
+// 
 // 
 // FILE STRUCTURE:
 // 
@@ -45,6 +47,7 @@
 //     * Initialize Username Menu
 //     * Write User Menu Item to File
 //     * Add Username Entries to the Menu
+//     * Display Username Menu
 // 
 // 
 // MODIFICATION HISTORY:
@@ -52,6 +55,9 @@
 //     gabeg Aug 10 2014 <> created
 // 
 //     gabeg Aug 14 2014 <> Updated gcc command in the header to include FileRW.c
+// 
+//     gabeg Aug 20 2014 <> Moved the code inside Interface.c that displays the 
+//                          username menu into the main Username.c module 
 // 
 // **********************************************************************************
 
@@ -79,6 +85,7 @@ void init_userlabel(GtkWidget *label);
 void usermenu_write_to_file(GtkMenu *item, GtkWidget *label);
 char ** get_username(char *file, int size);
 void set_username_entries(GtkWidget *menu, GtkWidget *label);
+void display_username();
 
 
 
@@ -97,10 +104,11 @@ void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu,
     gtk_window_move(GTK_WINDOW(window), USERNAME_XPOS, USERNAME_YPOS);
     gtk_window_set_default_size(GTK_WINDOW(window), USERNAME_WIDTH*0, USERNAME_HEIGHT*0);
     
-    // Define and set color schemes
+    // Set username menu attributes
     const GdkRGBA bg_widget = {0, 0, 0, 0};
     const GdkRGBA fg_widget = {1, 1, 1, 1};
     set_color_and_opacity(window, dropmenu, bg_widget, fg_widget);
+    set_username_entries(menu, label);
     
     // Modify button style
     init_userlabel(label);
@@ -137,11 +145,8 @@ void init_userlabel(GtkWidget *label) {
     pango_attr_list_insert(attrList, attrColor);
 
     // Set label text
-    char *user = file_read(USERNAME_LOG);
-    gtk_label_set_text(GTK_LABEL(label), user);
+    gtk_label_set_text(GTK_LABEL(label), USERNAME);
     gtk_label_set_attributes(GTK_LABEL(label), attrList);
-    
-    free(user);
 }
 
 
@@ -153,8 +158,9 @@ void init_userlabel(GtkWidget *label) {
 // Write to a file, which user to login as
 void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
     const gchar *user = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    file_write(USERNAME_LOG, "w", "%s\n", (char *)user);
-    gtk_label_set_text(GTK_LABEL(label), user);
+    USERNAME = (char*)user;
+    file_write(USERNAME_LOG, "w", "%s\n", USERNAME);
+    gtk_label_set_text(GTK_LABEL(label), USERNAME);
 }
 
 
@@ -213,6 +219,7 @@ char ** get_username(char *file, int size) {
         }
         
         free(orig);
+        orig = NULL;
     }
     
     // Close file
@@ -247,7 +254,7 @@ void set_username_entries(GtkWidget *menu, GtkWidget *label) {
     // Search for login users in passwd files
     int size = 20;
     char *files[] = {"/etc/shadow", "/etc/passwd", NULL};
-    char *userfocus = file_read(USERNAME_LOG);
+    char *userfocus = strdup(USERNAME);
     
     // Set usernames from file
     int num;
@@ -270,7 +277,7 @@ void set_username_entries(GtkWidget *menu, GtkWidget *label) {
         if ( strcmp(allusers[i], userfocus) == 0 ) {
             user = gtk_radio_menu_item_new_with_label(NULL, allusers[i]);
             group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(user));
-        } else if ( (q != 0) && (strcmp(allusers[i], "") != 0) )
+        } else if ( (q != 0) && (allusers[i] != NULL) )
             user = gtk_radio_menu_item_new_with_label(group, allusers[i]);
         else 
             p = 0;
@@ -278,6 +285,7 @@ void set_username_entries(GtkWidget *menu, GtkWidget *label) {
         // Setup the menu items
         if ( p == 1 ) {
             free(allusers[i]);
+            allusers[i] = NULL;
             
             // Attach window manager entries to the menu
             gtk_menu_attach(GTK_MENU(menu), user, 0, 1, q, q+1);
@@ -297,6 +305,35 @@ void set_username_entries(GtkWidget *menu, GtkWidget *label) {
     
     // Free the memory
     free(allusers[0]);
+    allusers[0] = NULL;
+    
     free(allusers);
+    allusers = NULL;
+    
     free(userfocus);
+    userfocus = NULL; 
+}
+
+
+
+// /////////////////////////////////
+// ///// DISPLAY USERNAME MENU /////
+// /////////////////////////////////
+
+// Display the username menu
+void display_username() {
+    
+    // Initialize username menu elements
+    GtkWidget *user_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *user_dropmenu = gtk_menu_button_new();
+    GtkWidget *user_menu = gtk_menu_new();
+    GtkWidget *user_label = gtk_label_new("");
+    
+    // Setup username menu
+    init_usermenu_root(user_window, user_dropmenu, user_menu, user_label);
+    
+    // Display the username menu
+    gtk_widget_show(user_label);
+    gtk_widget_show(user_dropmenu);
+    gtk_widget_show(user_window);
 }

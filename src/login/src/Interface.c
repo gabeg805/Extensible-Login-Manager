@@ -49,6 +49,9 @@
 //     gabeg Aug 14 2014 <> Updated gcc command to execute in the header to include
 //                          FileRW.c and included Password.c into the main loop
 // 
+//     gabeg Aug 20 2014 <> Moved the login interface code that displays the 
+//                          different modules, into the modules themselves
+// 
 // **********************************************************************************
 
 
@@ -77,9 +80,8 @@
 
 
 // Declares
-char * login_interface(int argc, char *argv[]);
+void login_interface(int argc, char *argv[]);
 
-char output[100];
 
 
 // ///////////////////////////////////
@@ -87,122 +89,41 @@ char output[100];
 // ///////////////////////////////////
 
 // Display the login interface
-char * login_interface(int argc, char *argv[]) {
+void login_interface(int argc, char *argv[]) {
     
     // Initialize GTK toolkit
     gtk_init(&argc, &argv);
     
+    // Define username
+    USERNAME = file_read(USERNAME_LOG);
+    
+    
+    // Display login interface items
     if ( INTERFACE ) {
         
         // Log interface display
         file_write(GLM_LOG, "a+", "%s\n", "Displaying login interface...");
         
+        // Display interface items
+        display_clock();
+        display_frame();
+        display_text_image();
+        display_window_manager();        
+        display_username();
+        display_panel();
         
-        // Define the clock
-        GtkWidget *date_clock_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        GtkWidget *date_clock = gtk_label_new("");
-        GtkWidget *time_clock_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        GtkWidget *time_clock = gtk_label_new("");
-        
-        // Define the frame
-        GtkWidget *frame_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        GtkWidget *frame = gtk_drawing_area_new();
-        
-        // Define the text image
-        GtkWidget *text_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        GtkWidget *text = gtk_drawing_area_new();
-        
-        // Define the window manager
-        GtkWidget *wm_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        GtkWidget *wm_dropmenu = gtk_menu_button_new();
-        GtkWidget *wm_menu = gtk_menu_new();
-        
-        // Define the username menu
-        GtkWidget *user_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        GtkWidget *user_dropmenu = gtk_menu_button_new();
-        GtkWidget *user_menu = gtk_menu_new();
-        GtkWidget *user_label = gtk_label_new("");
-        
-        // Define the power button window
-        GtkWidget *shutdown_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        GtkWidget *shutdown = gtk_button_new();
-        GtkWidget *reboot_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        GtkWidget *reboot = gtk_button_new();
-        GtkWidget *refresh_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        GtkWidget *refresh = gtk_button_new();
-        
-        
-        // Initialize the root window with all its objects
-        init_clock_date_root(date_clock_window, date_clock);
-        init_clock_time_root(time_clock_window, time_clock);
-        init_frame_root(frame_window, frame);
-        init_text_root(text_window, text);
-        init_wm_root(wm_window, wm_dropmenu, wm_menu);
-        init_usermenu_root(user_window, user_dropmenu, user_menu, user_label);
-        init_shutdown_root(shutdown_window, shutdown);
-        init_reboot_root(reboot_window, reboot);
-        init_glm_dialog_root(refresh_window, refresh);
-        
-        
-        // Display the clock
-        gtk_widget_show(date_clock);
-        gtk_widget_show(date_clock_window);
-        gtk_widget_show(time_clock);
-        gtk_widget_show(time_clock_window);
-        
-        // Display the login frame
-        gtk_widget_show(frame);
-        gtk_widget_show(frame_window);
-        
-        // Display the password text image
-        gtk_widget_show(text);
-        gtk_widget_show(text_window);
-        
-        // Display the dropdown menu
-        set_wm_entries(wm_menu);
-        gtk_widget_show(wm_dropmenu);
-        gtk_widget_show(wm_window);
-        
-        // Display the username menu
-        set_username_entries(user_menu, user_label);
-        gtk_widget_show(user_label);
-        gtk_widget_show(user_dropmenu);
-        gtk_widget_show(user_window);
-        
-        // Display the power button
-        gtk_widget_show(shutdown);
-        gtk_widget_show(shutdown_window);
-        gtk_widget_show(reboot);
-        gtk_widget_show(reboot_window);
-        gtk_widget_show(refresh);
-        gtk_widget_show(refresh_window);
-
         // Denote that interface has already begun
         INTERFACE = 0;
     }
     
     
-    // Display entry box
-    GtkWidget *password_entry_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *password_entry = gtk_entry_new();
-    init_entry(password_entry);
-    init_entry_root(password_entry_window, password_entry);
-    gtk_widget_show(password_entry);
-    gtk_widget_show(password_entry_window);
-    
+    // Display entry box (and define password)
+    display_password_entry();
     
     // Begin GTK main loop
     gtk_main();
     
     
-    // Allocate memory for password output 
-    size_t sz = strlen(output);
-    char *pass = malloc(sz+1);
-    snprintf(pass, sz+1, output);
-    
-    
     // Log interface display is done
     file_write(GLM_LOG, "a+", "%s\n", "Login interface finished.");
-    
-    return pass;
 }

@@ -96,9 +96,10 @@ void init_env(pam_handle_t *pam_handle, struct passwd *pw);
 void manage_login_records(const char *username, char *opt);
 int is_pam_success(int result, pam_handle_t *pamh);
 int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr);
-int login(const char *username, const char *password, int preview);
+int login(const char *username, const char *password);
 
 char TTY[6];
+
 
 
 // ////////////////////////////////////////////
@@ -138,12 +139,20 @@ void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
     setenv("XDG_RUNTIME_DIR", runtime_dir, 1);
     setenv("XAUTHORITY", xauthority, 1);
     
+    // Free up the memory
     free(seat[1]);
+    seat[1] = NULL;
     free(seat[0]);
+    seat[0] = NULL;
     free(seat);
+    seat = NULL;
+    
     free(session_id[1]);
+    session_id[1] = NULL;
     free(session_id[0]);
+    session_id[0] = NULL;
     free(session_id);
+    session_id = NULL;
 }
 
 
@@ -248,7 +257,7 @@ int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp
 // ////////////////////////////////////
 
 // Authenticate username/password combination with PAM
-int login(const char *username, const char *password, int preview) {
+int login(const char *username, const char *password) {
     
     // Initiate PAM conversation
     pam_handle_t *pam_handle;
@@ -299,7 +308,7 @@ int login(const char *username, const char *password, int preview) {
     if ( child_pid == 0 ) {
         
         // Check if GLM is in preview mode
-        if (preview) 
+        if (PREVIEW) 
             
             // GLM is in preview mode
             execl(pw->pw_shell, pw->pw_shell, "-c", " ", NULL);
@@ -332,21 +341,16 @@ int login(const char *username, const char *password, int preview) {
             init_env(pam_handle, pw);
             
             // Piece together X session cmd
-            char *session = file_read(WINDOWMANAGER_LOG);
             size_t szx = strlen(XINITRC);
-            size_t szs = strlen(session);
-            
+            size_t szs = strlen(SESSION);
             char cmd[szx+szs+2];
-            snprintf(cmd, szx+szs+2, "%s %s", XINITRC, session);
+            snprintf(cmd, szx+szs+2, "%s %s", XINITRC, SESSION);
             
             
             // Log system login start
-            file_write(GLM_LOG, "a+", "%s %s %s\n%s %s.\n\n", 
-                       "User session", session, "is active.", 
+            file_write(GLM_LOG, "a+", "%s '%s' %s\n%s '%s'.\n\n", 
+                       "User session", SESSION, "is active.", 
                        "Successfully logged in as", username);
-                        
-            // Free memory
-            free(session);
             
             
             // Start user X session with xinitrc
@@ -375,7 +379,7 @@ int login(const char *username, const char *password, int preview) {
     pam_handle = 0;
     
     // Delete session from utmp/wtmp
-    if (!preview)
+    if (!PREVIEW)
         manage_login_records(username, "-d");    
     
     return 1;

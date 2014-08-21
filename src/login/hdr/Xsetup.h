@@ -10,6 +10,6 @@
 
 void start_xserver();
 void start_compman();
-void xsetup(int preview);
+void xsetup();
 
 #endif

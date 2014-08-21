@@ -83,32 +83,30 @@
 int main(int argc, char *argv[]) {
     
     // Read input parameters, check for 'Preview' mode
-    int preview = 0;
     if ( (argc == 2) && (strcmp(argv[1], "-p") == 0) )
-        preview = 1;
+        PREVIEW = 1;
     
     // Log program start
     char **date_str = command_line(DATE, 40);
-    file_write(GLM_LOG, "a+", "\n%s %s\n%s %d\n\n", "Date:", date_str[1], "Preview:", preview);
+    file_write(GLM_LOG, "a+", "\n%s %s\n%s %d\n\n", "Date:", date_str[1], "Preview:", PREVIEW);
     
     
     // Setup X
-    xsetup(preview);
+    xsetup();
     
     // Start the login loop
     int loop = 1;
     while (loop) {
         
         // Authenticate username/password combination
-        char *password = login_interface(argc, argv);
-        char *username = file_read(USERNAME_LOG);
+        login_interface(argc, argv);
         
-        if ( login(username, password, preview) )
+        if ( login(USERNAME, PASSWORD) )
             loop = 0;
         
         // Free allocated memory
-        free(password);
-        free(username);
+        free(PASSWORD);
+        free(USERNAME);
     }
         
     return 0;

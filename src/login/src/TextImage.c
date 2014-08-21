@@ -31,10 +31,12 @@
 // 
 // FUNCTIONS:
 // 
-//     init_text_root      - Initialize the root window
+//     init_text_root     - Initialize the root window
 // 
-//     draw_text           - Draw the password text
-//     draw_text_window    - Draw the root window with all its objects
+//     draw_text          - Draw the password text
+//     draw_text_window   - Draw the root window with all its objects
+// 
+//     display_text_image - Display the text image
 // 
 // 
 // FILE STRUCTURE:
@@ -42,6 +44,7 @@
 //     * Includes and Declares
 //     * Initialize Text Image Window
 //     * Draw Text Image
+//     * Dislay Text Image
 /// 
 // 
 // MODIFICATION HISTORY:
@@ -72,6 +75,7 @@
 void init_text_root(GtkWidget *window, GtkWidget *area);
 void draw_text(cairo_t *);
 gboolean draw_text_window(GtkWidget *window);
+void display_text_image();
 
 
 
@@ -137,4 +141,25 @@ gboolean draw_text_window(GtkWidget *window) {
     cairo_destroy(cr);
     
     return FALSE;
+}
+
+
+
+// //////////////////////////////
+// ///// DISPLAY TEXT IMAGE /////
+// //////////////////////////////
+
+// Dislay the text image
+void display_text_image() {
+    
+    // Initialize text image elements
+    GtkWidget *text_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *text = gtk_drawing_area_new();
+    
+    // Setup the text image
+    init_text_root(text_window, text);
+    
+    // Display the password text image
+    gtk_widget_show(text);
+    gtk_widget_show(text_window);
 }

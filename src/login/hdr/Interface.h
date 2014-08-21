@@ -6,6 +6,6 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-char * login_interface(int argc, char *argv[]);
+void login_interface(int argc, char *argv[]);
 
 #endif

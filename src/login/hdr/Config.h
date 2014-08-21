@@ -6,6 +6,8 @@
 extern char *DATE;
 extern char *XORG;
 extern char *XCOMPMGR;
+extern char *HSETROOT;
+extern char *XSETROOT;
 extern char *AWK;
 extern char *GREP;
 extern char *TAIL;
@@ -96,10 +98,12 @@ extern char *XSERVER_AUTH;
 // Log Files
 extern char *GLM_LOG;
 extern char *XSERVER_LOG;
+extern char *TTY_LOG_DIR;
 extern char *USERNAME_LOG;
-extern char *WINDOWMANAGER_LOG;
+extern char *SESSION_LOG;
 
 // Image Files
+extern char *WALLPAPER;
 extern char *USERNAME_IMG;
 extern char *WINDOWMANAGER_IMG;
 extern char *PANEL_SHUTDOWN_IMG;
@@ -123,5 +127,10 @@ extern int TTY_N;
 extern char *DISPLAY;
 
 extern int INTERFACE;
+extern char *USERNAME;
+extern char *PASSWORD;
+extern char *SESSION;
+
+extern int PREVIEW;
 
 #endif

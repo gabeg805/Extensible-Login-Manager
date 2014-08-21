@@ -31,10 +31,12 @@
 // 
 // FUNCTIONS:
 // 
-//     init_frame_root     - Initialize the root window and all its objects
+//     init_frame_root   - Initialize the root window and all its objects
 // 
-//     draw_frame_window   - Draw the root window
-//     draw_frame          - Draw the login frame
+//     draw_frame_window - Draw the root window
+//     draw_frame        - Draw the login frame
+// 
+//     display_frame     - Display the login frame
 // 
 // 
 // FILE STRUCTURE:
@@ -42,6 +44,7 @@
 //     * Includes and Declares
 //     * Initialize Frame
 //     * Draw Frame
+//     * Display Frame
 // 
 // 
 // MODIFICATION HISTORY:
@@ -49,6 +52,9 @@
 //     gabeg Aug 03 2014 <> created
 // 
 //     gabeg Aug 03 2014 <> Updated the header
+// 
+//     gabeg Aug 20 2014 <> Moved the code inside Interface.c that displays the 
+//                          login frame into the main Frame.c module 
 // 
 // **********************************************************************************
 
@@ -72,6 +78,7 @@
 void init_frame_root(GtkWidget *window, GtkWidget *area);
 void draw_frame(cairo_t *);
 gboolean draw_frame_window(GtkWidget *widget);
+void display_frame();
 
 
 
@@ -160,4 +167,25 @@ void draw_frame(cairo_t *cr) {
     // Fill login frame
     cairo_fill_preserve(cr);
     cairo_stroke (cr);
+}
+
+
+
+// /////////////////////////
+// ///// DISPLAY FRAME /////
+// /////////////////////////
+
+// Display the login frame
+void display_frame() {
+    
+    // Initialize frame elements
+    GtkWidget *frame_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *frame = gtk_drawing_area_new();
+    
+    // Setup frame
+    init_frame_root(frame_window, frame);
+    
+    // Display the login frame
+    gtk_widget_show(frame);
+    gtk_widget_show(frame_window);
 }

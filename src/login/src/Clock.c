@@ -39,13 +39,16 @@
 //     clock_date_update    - Refresh the date clock label
 //     clock_time_update    - Refresh the time clock label
 // 
+//     display_clock        - Display the clock
+// 
 // 
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
 //     * Initialize Date and Time Clock
 //     * Set Current Time
-//     * Update the Clock
+//     * Update Clock
+//     * Display Clock
 // 
 // 
 // MODIFICATION HISTORY:
@@ -53,6 +56,9 @@
 //     gabeg Aug 02 2014 <> created
 // 
 //     gabeg Aug 10 2014 <> Updated header
+// 
+//     gabeg Aug 20 2014 <> Moved the code inside Interface.c that displays the 
+//                          clock into the main Clock.c module 
 // 
 // **********************************************************************************
 
@@ -77,6 +83,7 @@ void init_clock_time_root(GtkWidget *window, GtkWidget *clock);
 void set_clock_label(GtkWidget *clock, char *fmt, const char *font, int fsize);
 gboolean clock_date_update(gpointer data);
 gboolean clock_time_update(gpointer data);
+void display_clock();
 
 
 
@@ -171,9 +178,9 @@ void set_clock_label(GtkWidget *clock, char *fmt, const char *font, int fsize) {
 
 
 
-// ////////////////////////////
-// ///// UPDATE THE CLOCK /////
-// ////////////////////////////
+// ////////////////////////
+// ///// UPDATE CLOCK /////
+// ////////////////////////
 
 // Refresh the current clock label
 gboolean clock_date_update(gpointer data) {
@@ -190,4 +197,30 @@ gboolean clock_time_update(gpointer data) {
     set_clock_label(clock, CLOCK_TIME_FMT, CLOCK_TIME_FONT, CLOCK_TIME_FSIZE);
     
     return TRUE;
+}
+
+
+
+// /////////////////////////
+// ///// DISPLAY CLOCK /////
+// /////////////////////////
+
+// Display the date and time clock
+void display_clock() {
+    
+    // Initialize clock elements
+    GtkWidget *date_clock_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *date_clock = gtk_label_new("");
+    GtkWidget *time_clock_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *time_clock = gtk_label_new("");
+    
+    // Setup date and time clocks 
+    init_clock_date_root(date_clock_window, date_clock);
+    init_clock_time_root(time_clock_window, time_clock);
+    
+    // Display the clock
+    gtk_widget_show(date_clock);
+    gtk_widget_show(date_clock_window);
+    gtk_widget_show(time_clock);
+    gtk_widget_show(time_clock_window);
 }
