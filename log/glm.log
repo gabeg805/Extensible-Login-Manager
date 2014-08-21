@@ -1,31 +1,5 @@
 
-Date: Wed Aug 20 09:44:44 EDT 2014
-Preview: 0
-
-Starting X server...
-Done executing X server.
-Starting compositing manager...
-Done executing composite manager.
-Displaying login interface...
-Done executing login interface.
-Setting up user session...
-Successfully logged in as gabeg .
-
-
-Date: Wed Aug 20 09:46:54 EDT 2014
-Preview: 0
-
-Starting X server...
-Done executing X server.
-Starting compositing manager...
-Done executing composite manager.
-Displaying login interface...
-Done executing login interface.
-Setting up user session...
-Successfully logged in as gabeg.
-
-
-Date: Wed Aug 20 10:01:14 EDT 2014
+Date: Thu Aug 21 11:58:09 EDT 2014
 Preview: 0
 
 Starting X server...
@@ -35,6 +9,6 @@ Composite manager is active.
 Displaying login interface...
 Login interface finished.
 Setting up user session...
-User session awesome is active.
-Successfully logged in as gabeg.
+User session 'awesome' is active.
+Successfully logged in as 'gabeg'.
 
