@@ -1,324 +1,324 @@
-[    13.016] 
+[    16.625] 
 X.Org X Server 1.16.0
 Release Date: 2014-07-16
-[    13.016] X Protocol Version 11, Revision 0
-[    13.016] Build Operating System: Linux 3.15.5-2-ARCH x86_64 
-[    13.016] Current Operating System: Linux archy 3.15.8-1-ARCH #1 SMP PREEMPT Fri Aug 1 08:51:42 CEST 2014 x86_64
-[    13.016] Kernel command line: BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=74426f6c-67d5-4bad-8b57-8d908dd34e29 rw pcie_aspm=force resume=/dev/sda6 resume_offset=479232 quiet rw init=/usr/lib/systemd/systemd
-[    13.016] Build Date: 31 July 2014  11:53:19AM
-[    13.016]  
-[    13.016] Current version of pixman: 0.32.6
-[    13.016] 	Before reporting problems, check http://wiki.x.org
+[    16.625] X Protocol Version 11, Revision 0
+[    16.625] Build Operating System: Linux 3.15.5-2-ARCH x86_64 
+[    16.625] Current Operating System: Linux archy 3.15.8-1-ARCH #1 SMP PREEMPT Fri Aug 1 08:51:42 CEST 2014 x86_64
+[    16.625] Kernel command line: BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=74426f6c-67d5-4bad-8b57-8d908dd34e29 rw pcie_aspm=force resume=/dev/sda6 resume_offset=479232 quiet rw init=/usr/lib/systemd/systemd
+[    16.625] Build Date: 31 July 2014  11:53:19AM
+[    16.625]  
+[    16.625] Current version of pixman: 0.32.6
+[    16.625] 	Before reporting problems, check http://wiki.x.org
 	to make sure that you have the latest version.
-[    13.016] Markers: (--) probed, (**) from config file, (==) default setting,
+[    16.625] Markers: (--) probed, (**) from config file, (==) default setting,
 	(++) from command line, (!!) notice, (II) informational,
 	(WW) warning, (EE) error, (NI) not implemented, (??) unknown.
-[    13.016] (++) Log file: "/etc/X11/glm/log/xserver.log", Time: Thu Aug 21 11:58:09 2014
-[    13.029] (==) Using config directory: "/etc/X11/xorg.conf.d"
-[    13.029] (==) Using system config directory "/usr/share/X11/xorg.conf.d"
-[    13.038] (==) No Layout section.  Using the first Screen section.
-[    13.038] (==) No screen section available. Using defaults.
-[    13.038] (**) |-->Screen "Default Screen Section" (0)
-[    13.038] (**) |   |-->Monitor "<default monitor>"
-[    13.038] (==) No monitor specified for screen "Default Screen Section".
+[    16.625] (++) Log file: "/etc/X11/glm/log/xserver.log", Time: Sat Aug 23 19:13:37 2014
+[    16.625] (==) Using config directory: "/etc/X11/xorg.conf.d"
+[    16.625] (==) Using system config directory "/usr/share/X11/xorg.conf.d"
+[    16.625] (==) No Layout section.  Using the first Screen section.
+[    16.625] (==) No screen section available. Using defaults.
+[    16.625] (**) |-->Screen "Default Screen Section" (0)
+[    16.625] (**) |   |-->Monitor "<default monitor>"
+[    16.625] (==) No monitor specified for screen "Default Screen Section".
 	Using a default monitor configuration.
-[    13.038] (==) Automatically adding devices
-[    13.038] (==) Automatically enabling devices
-[    13.038] (==) Automatically adding GPU devices
-[    13.055] (WW) `fonts.dir' not found (or not valid) in "/usr/share/fonts/100dpi/".
-[    13.055] 	Entry deleted from font path.
-[    13.055] 	(Run 'mkfontdir' on "/usr/share/fonts/100dpi/").
-[    13.056] (WW) `fonts.dir' not found (or not valid) in "/usr/share/fonts/75dpi/".
-[    13.056] 	Entry deleted from font path.
-[    13.056] 	(Run 'mkfontdir' on "/usr/share/fonts/75dpi/").
-[    13.056] (==) FontPath set to:
+[    16.625] (==) Automatically adding devices
+[    16.625] (==) Automatically enabling devices
+[    16.625] (==) Automatically adding GPU devices
+[    16.632] (WW) `fonts.dir' not found (or not valid) in "/usr/share/fonts/100dpi/".
+[    16.632] 	Entry deleted from font path.
+[    16.632] 	(Run 'mkfontdir' on "/usr/share/fonts/100dpi/").
+[    16.632] (WW) `fonts.dir' not found (or not valid) in "/usr/share/fonts/75dpi/".
+[    16.632] 	Entry deleted from font path.
+[    16.632] 	(Run 'mkfontdir' on "/usr/share/fonts/75dpi/").
+[    16.632] (==) FontPath set to:
 	/usr/share/fonts/misc/,
 	/usr/share/fonts/TTF/,
 	/usr/share/fonts/OTF/,
 	/usr/share/fonts/Type1/
-[    13.056] (==) ModulePath set to "/usr/lib/xorg/modules"
-[    13.056] (II) The server relies on udev to provide the list of input devices.
+[    16.632] (==) ModulePath set to "/usr/lib/xorg/modules"
+[    16.633] (II) The server relies on udev to provide the list of input devices.
 	If no devices become available, reconfigure udev or disable AutoAddDevices.
-[    13.056] (II) Loader magic: 0x818d80
-[    13.056] (II) Module ABI versions:
-[    13.056] 	X.Org ANSI C Emulation: 0.4
-[    13.056] 	X.Org Video Driver: 18.0
-[    13.056] 	X.Org XInput driver : 21.0
-[    13.056] 	X.Org Server Extension : 8.0
-[    13.057] (EE) systemd-logind: failed to get session: PID 515 does not belong to any known session
-[    13.057] (II) xfree86: Adding drm device (/dev/dri/card0)
-[    13.058] (--) PCI:*(0:0:2:0) 8086:0116:1028:04d7 rev 9, Mem @ 0xd0000000/4194304, 0xc0000000/268435456, I/O @ 0x00004000/64
-[    13.058] (WW) Open ACPI failed (/var/run/acpid.socket) (No such file or directory)
-[    13.058] (II) LoadModule: "glx"
-[    13.068] (II) Loading /usr/lib/xorg/modules/extensions/libglx.so
-[    13.069] (II) Module glx: vendor="X.Org Foundation"
-[    13.069] 	compiled for 1.16.0, module version = 1.0.0
-[    13.069] 	ABI class: X.Org Server Extension, version 8.0
-[    13.069] (==) AIGLX enabled
-[    13.069] (==) Matched intel as autoconfigured driver 0
-[    13.069] (==) Matched intel as autoconfigured driver 1
-[    13.069] (==) Matched modesetting as autoconfigured driver 2
-[    13.069] (==) Matched fbdev as autoconfigured driver 3
-[    13.069] (==) Matched vesa as autoconfigured driver 4
-[    13.069] (==) Assigned the driver to the xf86ConfigLayout
-[    13.069] (II) LoadModule: "intel"
-[    13.069] (II) Loading /usr/lib/xorg/modules/drivers/intel_drv.so
-[    13.069] (II) Module intel: vendor="X.Org Foundation"
-[    13.069] 	compiled for 1.16.0, module version = 2.99.914
-[    13.069] 	Module class: X.Org Video Driver
-[    13.069] 	ABI class: X.Org Video Driver, version 18.0
-[    13.069] (II) LoadModule: "modesetting"
-[    13.070] (WW) Warning, couldn't open module modesetting
-[    13.070] (II) UnloadModule: "modesetting"
-[    13.070] (II) Unloading modesetting
-[    13.070] (EE) Failed to load module "modesetting" (module does not exist, 0)
-[    13.070] (II) LoadModule: "fbdev"
-[    13.070] (WW) Warning, couldn't open module fbdev
-[    13.070] (II) UnloadModule: "fbdev"
-[    13.070] (II) Unloading fbdev
-[    13.070] (EE) Failed to load module "fbdev" (module does not exist, 0)
-[    13.070] (II) LoadModule: "vesa"
-[    13.070] (II) Loading /usr/lib/xorg/modules/drivers/vesa_drv.so
-[    13.070] (II) Module vesa: vendor="X.Org Foundation"
-[    13.070] 	compiled for 1.16.0, module version = 2.3.2
-[    13.070] 	Module class: X.Org Video Driver
-[    13.070] 	ABI class: X.Org Video Driver, version 18.0
-[    13.070] (II) intel: Driver for Intel(R) Integrated Graphics Chipsets:
+[    16.633] (II) Loader magic: 0x818d80
+[    16.633] (II) Module ABI versions:
+[    16.633] 	X.Org ANSI C Emulation: 0.4
+[    16.633] 	X.Org Video Driver: 18.0
+[    16.633] 	X.Org XInput driver : 21.0
+[    16.633] 	X.Org Server Extension : 8.0
+[    16.634] (EE) systemd-logind: failed to get session: PID 454 does not belong to any known session
+[    16.634] (II) xfree86: Adding drm device (/dev/dri/card0)
+[    16.635] (--) PCI:*(0:0:2:0) 8086:0116:1028:04d7 rev 9, Mem @ 0xd0000000/4194304, 0xc0000000/268435456, I/O @ 0x00004000/64
+[    16.635] (WW) Open ACPI failed (/var/run/acpid.socket) (No such file or directory)
+[    16.635] (II) LoadModule: "glx"
+[    16.645] (II) Loading /usr/lib/xorg/modules/extensions/libglx.so
+[    16.646] (II) Module glx: vendor="X.Org Foundation"
+[    16.646] 	compiled for 1.16.0, module version = 1.0.0
+[    16.646] 	ABI class: X.Org Server Extension, version 8.0
+[    16.646] (==) AIGLX enabled
+[    16.646] (==) Matched intel as autoconfigured driver 0
+[    16.646] (==) Matched intel as autoconfigured driver 1
+[    16.646] (==) Matched modesetting as autoconfigured driver 2
+[    16.646] (==) Matched fbdev as autoconfigured driver 3
+[    16.646] (==) Matched vesa as autoconfigured driver 4
+[    16.646] (==) Assigned the driver to the xf86ConfigLayout
+[    16.646] (II) LoadModule: "intel"
+[    16.646] (II) Loading /usr/lib/xorg/modules/drivers/intel_drv.so
+[    16.646] (II) Module intel: vendor="X.Org Foundation"
+[    16.646] 	compiled for 1.16.0, module version = 2.99.914
+[    16.646] 	Module class: X.Org Video Driver
+[    16.646] 	ABI class: X.Org Video Driver, version 18.0
+[    16.646] (II) LoadModule: "modesetting"
+[    16.646] (WW) Warning, couldn't open module modesetting
+[    16.646] (II) UnloadModule: "modesetting"
+[    16.646] (II) Unloading modesetting
+[    16.646] (EE) Failed to load module "modesetting" (module does not exist, 0)
+[    16.646] (II) LoadModule: "fbdev"
+[    16.647] (WW) Warning, couldn't open module fbdev
+[    16.647] (II) UnloadModule: "fbdev"
+[    16.647] (II) Unloading fbdev
+[    16.647] (EE) Failed to load module "fbdev" (module does not exist, 0)
+[    16.647] (II) LoadModule: "vesa"
+[    16.647] (II) Loading /usr/lib/xorg/modules/drivers/vesa_drv.so
+[    16.647] (II) Module vesa: vendor="X.Org Foundation"
+[    16.647] 	compiled for 1.16.0, module version = 2.3.2
+[    16.647] 	Module class: X.Org Video Driver
+[    16.647] 	ABI class: X.Org Video Driver, version 18.0
+[    16.647] (II) intel: Driver for Intel(R) Integrated Graphics Chipsets:
 	i810, i810-dc100, i810e, i815, i830M, 845G, 854, 852GM/855GM, 865G,
 	915G, E7221 (i915), 915GM, 945G, 945GM, 945GME, Pineview GM,
 	Pineview G, 965G, G35, 965Q, 946GZ, 965GM, 965GME/GLE, G33, Q35, Q33,
 	GM45, 4 Series, G45/G43, Q45/Q43, G41, B43
-[    13.070] (II) intel: Driver for Intel(R) HD Graphics: 2000-6000
-[    13.070] (II) intel: Driver for Intel(R) Iris(TM) Graphics: 5100, 6100
-[    13.070] (II) intel: Driver for Intel(R) Iris(TM) Pro Graphics: 5200, 6200, P6300
-[    13.070] (II) VESA: driver for VESA chipsets: vesa
-[    13.070] (++) using VT number 7
+[    16.647] (II) intel: Driver for Intel(R) HD Graphics: 2000-6000
+[    16.647] (II) intel: Driver for Intel(R) Iris(TM) Graphics: 5100, 6100
+[    16.647] (II) intel: Driver for Intel(R) Iris(TM) Pro Graphics: 5200, 6200, P6300
+[    16.647] (II) VESA: driver for VESA chipsets: vesa
+[    16.647] (++) using VT number 7
 
-[    13.074] (II) intel(0): Using Kernel Mode Setting driver: i915, version 1.6.0 20080730
-[    13.075] (WW) Falling back to old probe method for vesa
-[    13.075] (--) intel(0): Integrated Graphics Chipset: Intel(R) HD Graphics 3000
-[    13.075] (--) intel(0): CPU: x86-64, sse2, sse3, ssse3, sse4.1, sse4.2, avx
-[    13.075] (II) intel(0): Creating default Display subsection in Screen section
+[    16.650] (II) intel(0): Using Kernel Mode Setting driver: i915, version 1.6.0 20080730
+[    16.650] (WW) Falling back to old probe method for vesa
+[    16.650] (--) intel(0): Integrated Graphics Chipset: Intel(R) HD Graphics 3000
+[    16.650] (--) intel(0): CPU: x86-64, sse2, sse3, ssse3, sse4.1, sse4.2, avx
+[    16.650] (II) intel(0): Creating default Display subsection in Screen section
 	"Default Screen Section" for depth/fbbpp 24/32
-[    13.075] (==) intel(0): Depth 24, (--) framebuffer bpp 32
-[    13.075] (==) intel(0): RGB weight 888
-[    13.075] (==) intel(0): Default visual is TrueColor
-[    13.075] (II) intel(0): Output LVDS1 has no monitor section
-[    13.075] (--) intel(0): Found backlight control interface acpi_video0 (type 'firmware') for output LVDS1
-[    13.075] (II) intel(0): Output VGA1 has no monitor section
-[    13.075] (II) intel(0): Output HDMI1 has no monitor section
-[    13.075] (II) intel(0): Output DP1 has no monitor section
-[    13.075] (--) intel(0): Using a maximum size of 256x256 for hardware cursors
-[    13.075] (II) intel(0): Output VIRTUAL1 has no monitor section
-[    13.075] (--) intel(0): Output LVDS1 using initial mode 1366x768 on pipe 0
-[    13.075] (==) intel(0): TearFree disabled
-[    13.075] (==) intel(0): DPI set to (96, 96)
-[    13.075] (II) Loading sub module "dri2"
-[    13.075] (II) LoadModule: "dri2"
-[    13.075] (II) Module "dri2" already built-in
-[    13.075] (II) Loading sub module "present"
-[    13.075] (II) LoadModule: "present"
-[    13.075] (II) Module "present" already built-in
-[    13.075] (II) UnloadModule: "vesa"
-[    13.075] (II) Unloading vesa
-[    13.076] (==) Depth 24 pixmap format is 32 bpp
-[    13.076] (II) intel(0): SNA initialized with Sandybridge (gen6, gt2) backend
-[    13.076] (==) intel(0): Backing store enabled
-[    13.076] (==) intel(0): Silken mouse enabled
-[    13.076] (II) intel(0): HW Cursor enabled
-[    13.076] (II) intel(0): RandR 1.2 enabled, ignore the following RandR disabled message.
-[    13.076] (==) intel(0): DPMS enabled
-[    13.076] (II) intel(0): [DRI2] Setup complete
-[    13.076] (II) intel(0): [DRI2]   DRI driver: i965
-[    13.076] (II) intel(0): [DRI2]   VDPAU driver: i965
-[    13.076] (II) intel(0): direct rendering: DRI2 enabled
-[    13.076] (II) intel(0): hardware support for Present enabled
-[    13.076] (==) intel(0): display hotplug detection enabled
-[    13.076] (--) RandR disabled
-[    13.089] (II) AIGLX: enabled GLX_MESA_copy_sub_buffer
-[    13.089] (II) AIGLX: enabled GLX_ARB_create_context
-[    13.089] (II) AIGLX: enabled GLX_ARB_create_context_profile
-[    13.089] (II) AIGLX: enabled GLX_EXT_create_context_es2_profile
-[    13.089] (II) AIGLX: enabled GLX_INTEL_swap_event
-[    13.089] (II) AIGLX: enabled GLX_SGI_swap_control and GLX_MESA_swap_control
-[    13.089] (II) AIGLX: enabled GLX_EXT_framebuffer_sRGB
-[    13.089] (II) AIGLX: enabled GLX_ARB_fbconfig_float
-[    13.089] (II) AIGLX: GLX_EXT_texture_from_pixmap backed by buffer objects
-[    13.089] (II) AIGLX: enabled GLX_ARB_create_context_robustness
-[    13.089] (II) AIGLX: Loaded and initialized i965
-[    13.089] (II) GLX: Initialized DRI2 GL provider for screen 0
-[    13.091] (II) intel(0): switch to mode 1366x768@60.0 on LVDS1 using pipe 0, position (0, 0), rotation normal, reflection none
-[    13.096] (II) intel(0): Setting screen physical size to 361 x 203
-[    13.167] (II) XKB: Reusing cached keymap
-[    13.169] (II) config/udev: Adding input device Power Button (/dev/input/event3)
-[    13.169] (**) Power Button: Applying InputClass "evdev keyboard catchall"
-[    13.169] (II) LoadModule: "evdev"
-[    13.169] (II) Loading /usr/lib/xorg/modules/input/evdev_drv.so
-[    13.169] (II) Module evdev: vendor="X.Org Foundation"
-[    13.169] 	compiled for 1.16.0, module version = 2.9.0
-[    13.169] 	Module class: X.Org XInput Driver
-[    13.169] 	ABI class: X.Org XInput driver, version 21.0
-[    13.169] (II) Using input driver 'evdev' for 'Power Button'
-[    13.169] (**) Power Button: always reports core events
-[    13.169] (**) evdev: Power Button: Device: "/dev/input/event3"
-[    13.169] (--) evdev: Power Button: Vendor 0 Product 0x1
-[    13.169] (--) evdev: Power Button: Found keys
-[    13.169] (II) evdev: Power Button: Configuring as keyboard
-[    13.169] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXPWRBN:00/input/input3/event3"
-[    13.169] (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD, id 6)
-[    13.169] (**) Option "xkb_rules" "evdev"
-[    13.169] (**) Option "xkb_model" "pc104"
-[    13.169] (**) Option "xkb_layout" "us"
-[    13.189] (II) config/udev: Adding input device Video Bus (/dev/input/event4)
-[    13.189] (**) Video Bus: Applying InputClass "evdev keyboard catchall"
-[    13.189] (II) Using input driver 'evdev' for 'Video Bus'
-[    13.189] (**) Video Bus: always reports core events
-[    13.189] (**) evdev: Video Bus: Device: "/dev/input/event4"
-[    13.189] (--) evdev: Video Bus: Vendor 0 Product 0x6
-[    13.189] (--) evdev: Video Bus: Found keys
-[    13.189] (II) evdev: Video Bus: Configuring as keyboard
-[    13.189] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/LNXVIDEO:00/input/input4/event4"
-[    13.189] (II) XINPUT: Adding extended input device "Video Bus" (type: KEYBOARD, id 7)
-[    13.189] (**) Option "xkb_rules" "evdev"
-[    13.189] (**) Option "xkb_model" "pc104"
-[    13.189] (**) Option "xkb_layout" "us"
-[    13.189] (II) XKB: Reusing cached keymap
-[    13.189] (II) config/udev: Adding input device Power Button (/dev/input/event0)
-[    13.189] (**) Power Button: Applying InputClass "evdev keyboard catchall"
-[    13.189] (II) Using input driver 'evdev' for 'Power Button'
-[    13.189] (**) Power Button: always reports core events
-[    13.189] (**) evdev: Power Button: Device: "/dev/input/event0"
-[    13.189] (--) evdev: Power Button: Vendor 0 Product 0x1
-[    13.189] (--) evdev: Power Button: Found keys
-[    13.189] (II) evdev: Power Button: Configuring as keyboard
-[    13.189] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00/input/input0/event0"
-[    13.189] (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD, id 8)
-[    13.189] (**) Option "xkb_rules" "evdev"
-[    13.189] (**) Option "xkb_model" "pc104"
-[    13.189] (**) Option "xkb_layout" "us"
-[    13.189] (II) XKB: Reusing cached keymap
-[    13.190] (II) config/udev: Adding input device Lid Switch (/dev/input/event2)
-[    13.190] (II) No input driver specified, ignoring this device.
-[    13.190] (II) This device may have been added with another device file.
-[    13.190] (II) config/udev: Adding input device Sleep Button (/dev/input/event1)
-[    13.190] (**) Sleep Button: Applying InputClass "evdev keyboard catchall"
-[    13.190] (II) Using input driver 'evdev' for 'Sleep Button'
-[    13.190] (**) Sleep Button: always reports core events
-[    13.190] (**) evdev: Sleep Button: Device: "/dev/input/event1"
-[    13.190] (--) evdev: Sleep Button: Vendor 0 Product 0x3
-[    13.190] (--) evdev: Sleep Button: Found keys
-[    13.190] (II) evdev: Sleep Button: Configuring as keyboard
-[    13.190] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0E:00/input/input1/event1"
-[    13.190] (II) XINPUT: Adding extended input device "Sleep Button" (type: KEYBOARD, id 9)
-[    13.190] (**) Option "xkb_rules" "evdev"
-[    13.190] (**) Option "xkb_model" "pc104"
-[    13.190] (**) Option "xkb_layout" "us"
-[    13.190] (II) XKB: Reusing cached keymap
-[    13.190] (II) config/udev: Adding input device Laptop_Integrated_Webcam_HD (/dev/input/event13)
-[    13.190] (**) Laptop_Integrated_Webcam_HD: Applying InputClass "evdev keyboard catchall"
-[    13.190] (II) Using input driver 'evdev' for 'Laptop_Integrated_Webcam_HD'
-[    13.191] (**) Laptop_Integrated_Webcam_HD: always reports core events
-[    13.191] (**) evdev: Laptop_Integrated_Webcam_HD: Device: "/dev/input/event13"
-[    13.191] (--) evdev: Laptop_Integrated_Webcam_HD: Vendor 0x1bcf Product 0x2980
-[    13.191] (--) evdev: Laptop_Integrated_Webcam_HD: Found keys
-[    13.191] (II) evdev: Laptop_Integrated_Webcam_HD: Configuring as keyboard
-[    13.191] (**) Option "config_info" "udev:/sys/devices/pci0000:00/0000:00:1a.0/usb1/1-1/1-1.4/1-1.4:1.0/input/input14/event13"
-[    13.191] (II) XINPUT: Adding extended input device "Laptop_Integrated_Webcam_HD" (type: KEYBOARD, id 10)
-[    13.191] (**) Option "xkb_rules" "evdev"
-[    13.191] (**) Option "xkb_model" "pc104"
-[    13.191] (**) Option "xkb_layout" "us"
-[    13.191] (II) XKB: Reusing cached keymap
-[    13.191] (II) config/udev: Adding input device HDA Digital PCBeep (/dev/input/event9)
-[    13.191] (II) No input driver specified, ignoring this device.
-[    13.191] (II) This device may have been added with another device file.
-[    13.191] (II) config/udev: Adding input device HDA Intel PCH Mic (/dev/input/event10)
-[    13.192] (II) No input driver specified, ignoring this device.
-[    13.192] (II) This device may have been added with another device file.
-[    13.192] (II) config/udev: Adding input device HDA Intel PCH Headphone (/dev/input/event11)
-[    13.192] (II) No input driver specified, ignoring this device.
-[    13.192] (II) This device may have been added with another device file.
-[    13.192] (II) config/udev: Adding input device HDA Intel PCH HDMI/DP,pcm=3 (/dev/input/event12)
-[    13.192] (II) No input driver specified, ignoring this device.
-[    13.192] (II) This device may have been added with another device file.
-[    13.192] (II) config/udev: Adding input device AT Translated Set 2 keyboard (/dev/input/event5)
-[    13.192] (**) AT Translated Set 2 keyboard: Applying InputClass "evdev keyboard catchall"
-[    13.192] (II) Using input driver 'evdev' for 'AT Translated Set 2 keyboard'
-[    13.192] (**) AT Translated Set 2 keyboard: always reports core events
-[    13.192] (**) evdev: AT Translated Set 2 keyboard: Device: "/dev/input/event5"
-[    13.192] (--) evdev: AT Translated Set 2 keyboard: Vendor 0x1 Product 0x1
-[    13.192] (--) evdev: AT Translated Set 2 keyboard: Found keys
-[    13.192] (II) evdev: AT Translated Set 2 keyboard: Configuring as keyboard
-[    13.192] (**) Option "config_info" "udev:/sys/devices/platform/i8042/serio0/input/input5/event5"
-[    13.192] (II) XINPUT: Adding extended input device "AT Translated Set 2 keyboard" (type: KEYBOARD, id 11)
-[    13.192] (**) Option "xkb_rules" "evdev"
-[    13.193] (**) Option "xkb_model" "pc104"
-[    13.193] (**) Option "xkb_layout" "us"
-[    13.193] (II) XKB: Reusing cached keymap
-[    13.193] (II) config/udev: Adding input device SynPS/2 Synaptics TouchPad (/dev/input/event7)
-[    13.193] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "evdev touchpad catchall"
-[    13.193] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "touchpad catchall"
-[    13.193] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "Default clickpad buttons"
-[    13.193] (II) LoadModule: "synaptics"
-[    13.193] (II) Loading /usr/lib/xorg/modules/input/synaptics_drv.so
-[    13.193] (II) Module synaptics: vendor="X.Org Foundation"
-[    13.193] 	compiled for 1.16.0, module version = 1.8.0
-[    13.193] 	Module class: X.Org XInput Driver
-[    13.193] 	ABI class: X.Org XInput driver, version 21.0
-[    13.193] (II) Using input driver 'synaptics' for 'SynPS/2 Synaptics TouchPad'
-[    13.193] (**) SynPS/2 Synaptics TouchPad: always reports core events
-[    13.193] (**) Option "Device" "/dev/input/event7"
-[    13.260] (**) Option "Device" "/dev/input/event7"
-[    13.260] (II) synaptics: SynPS/2 Synaptics TouchPad: ignoring touch events for semi-multitouch device
-[    13.260] (--) synaptics: SynPS/2 Synaptics TouchPad: x-axis range 1472 - 5798 (res 59)
-[    13.260] (--) synaptics: SynPS/2 Synaptics TouchPad: y-axis range 1408 - 4992 (res 99)
-[    13.260] (--) synaptics: SynPS/2 Synaptics TouchPad: pressure range 0 - 255
-[    13.260] (--) synaptics: SynPS/2 Synaptics TouchPad: finger width range 0 - 15
-[    13.260] (--) synaptics: SynPS/2 Synaptics TouchPad: buttons: left right double triple
-[    13.260] (--) synaptics: SynPS/2 Synaptics TouchPad: Vendor 0x2 Product 0x7
-[    13.260] (**) Option "VertEdgeScroll" "on"
-[    13.260] (**) Option "HorizEdgeScroll" "on"
-[    13.260] (**) Option "VertTwoFingerScroll" "on"
-[    13.260] (**) Option "HorizTwoFingerScroll" "on"
-[    13.260] (**) Option "TapButton1" "1"
-[    13.260] (**) Option "TapButton2" "2"
-[    13.260] (**) Option "TapButton3" "3"
-[    13.260] (**) Option "CoastingSpeed" "0"
-[    13.260] (--) synaptics: SynPS/2 Synaptics TouchPad: touchpad found
-[    13.260] (**) SynPS/2 Synaptics TouchPad: always reports core events
-[    13.302] (**) Option "config_info" "udev:/sys/devices/platform/i8042/serio1/input/input7/event7"
-[    13.302] (II) XINPUT: Adding extended input device "SynPS/2 Synaptics TouchPad" (type: TOUCHPAD, id 12)
-[    13.302] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) MinSpeed is now constant deceleration 2.5
-[    13.302] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) MaxSpeed is now 1.75
-[    13.302] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) AccelFactor is now 0.036
-[    13.303] (**) SynPS/2 Synaptics TouchPad: (accel) keeping acceleration scheme 1
-[    13.303] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration profile 1
-[    13.303] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration factor: 2.000
-[    13.303] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration threshold: 4
-[    13.303] (**) Option "Device" "/dev/input/event7"
-[    13.303] (--) synaptics: SynPS/2 Synaptics TouchPad: touchpad found
-[    13.303] (II) config/udev: Adding input device SynPS/2 Synaptics TouchPad (/dev/input/mouse0)
-[    13.303] (**) SynPS/2 Synaptics TouchPad: Ignoring device from InputClass "touchpad ignore duplicates"
-[    13.303] (II) config/udev: Adding input device PC Speaker (/dev/input/event6)
-[    13.303] (II) No input driver specified, ignoring this device.
-[    13.303] (II) This device may have been added with another device file.
-[    13.304] (II) config/udev: Adding input device Dell WMI hotkeys (/dev/input/event8)
-[    13.304] (**) Dell WMI hotkeys: Applying InputClass "evdev keyboard catchall"
-[    13.304] (II) Using input driver 'evdev' for 'Dell WMI hotkeys'
-[    13.304] (**) Dell WMI hotkeys: always reports core events
-[    13.304] (**) evdev: Dell WMI hotkeys: Device: "/dev/input/event8"
-[    13.304] (--) evdev: Dell WMI hotkeys: Vendor 0 Product 0
-[    13.304] (--) evdev: Dell WMI hotkeys: Found keys
-[    13.304] (II) evdev: Dell WMI hotkeys: Configuring as keyboard
-[    13.304] (**) Option "config_info" "udev:/sys/devices/virtual/input/input9/event8"
-[    13.304] (II) XINPUT: Adding extended input device "Dell WMI hotkeys" (type: KEYBOARD, id 13)
-[    13.304] (**) Option "xkb_rules" "evdev"
-[    13.304] (**) Option "xkb_model" "pc104"
-[    13.304] (**) Option "xkb_layout" "us"
-[    13.304] (II) XKB: Reusing cached keymap
-[    23.556] (II) intel(0): EDID vendor "LGD", prod id 745
-[    23.556] (II) intel(0): Printing DDC gathered Modelines:
-[    23.556] (II) intel(0): Modeline "1366x768"x0.0   70.00  1366 1402 1450 1492  768 771 776 782 -hsync -vsync (46.9 kHz eP)
-[    23.556] (II) intel(0): Modeline "1366x768"x0.0   48.30  1366 1402 1450 1520  768 771 776 794 -hsync -vsync (31.8 kHz e)
-[    96.494] (II) config/udev: removing device Laptop_Integrated_Webcam_HD
-[    96.520] (II) evdev: Laptop_Integrated_Webcam_HD: Close
-[    96.520] (II) UnloadModule: "evdev"
+[    16.650] (==) intel(0): Depth 24, (--) framebuffer bpp 32
+[    16.650] (==) intel(0): RGB weight 888
+[    16.650] (==) intel(0): Default visual is TrueColor
+[    16.650] (II) intel(0): Output LVDS1 has no monitor section
+[    16.650] (--) intel(0): Found backlight control interface acpi_video0 (type 'firmware') for output LVDS1
+[    16.650] (II) intel(0): Output VGA1 has no monitor section
+[    16.650] (II) intel(0): Output HDMI1 has no monitor section
+[    16.650] (II) intel(0): Output DP1 has no monitor section
+[    16.650] (--) intel(0): Using a maximum size of 256x256 for hardware cursors
+[    16.651] (II) intel(0): Output VIRTUAL1 has no monitor section
+[    16.651] (--) intel(0): Output LVDS1 using initial mode 1366x768 on pipe 0
+[    16.651] (==) intel(0): TearFree disabled
+[    16.651] (==) intel(0): DPI set to (96, 96)
+[    16.651] (II) Loading sub module "dri2"
+[    16.651] (II) LoadModule: "dri2"
+[    16.651] (II) Module "dri2" already built-in
+[    16.651] (II) Loading sub module "present"
+[    16.651] (II) LoadModule: "present"
+[    16.651] (II) Module "present" already built-in
+[    16.651] (II) UnloadModule: "vesa"
+[    16.651] (II) Unloading vesa
+[    16.651] (==) Depth 24 pixmap format is 32 bpp
+[    16.651] (II) intel(0): SNA initialized with Sandybridge (gen6, gt2) backend
+[    16.651] (==) intel(0): Backing store enabled
+[    16.651] (==) intel(0): Silken mouse enabled
+[    16.651] (II) intel(0): HW Cursor enabled
+[    16.651] (II) intel(0): RandR 1.2 enabled, ignore the following RandR disabled message.
+[    16.651] (==) intel(0): DPMS enabled
+[    16.651] (II) intel(0): [DRI2] Setup complete
+[    16.651] (II) intel(0): [DRI2]   DRI driver: i965
+[    16.651] (II) intel(0): [DRI2]   VDPAU driver: i965
+[    16.651] (II) intel(0): direct rendering: DRI2 enabled
+[    16.651] (II) intel(0): hardware support for Present enabled
+[    16.651] (==) intel(0): display hotplug detection enabled
+[    16.651] (--) RandR disabled
+[    16.660] (II) AIGLX: enabled GLX_MESA_copy_sub_buffer
+[    16.660] (II) AIGLX: enabled GLX_ARB_create_context
+[    16.660] (II) AIGLX: enabled GLX_ARB_create_context_profile
+[    16.660] (II) AIGLX: enabled GLX_EXT_create_context_es2_profile
+[    16.660] (II) AIGLX: enabled GLX_INTEL_swap_event
+[    16.660] (II) AIGLX: enabled GLX_SGI_swap_control and GLX_MESA_swap_control
+[    16.660] (II) AIGLX: enabled GLX_EXT_framebuffer_sRGB
+[    16.660] (II) AIGLX: enabled GLX_ARB_fbconfig_float
+[    16.660] (II) AIGLX: GLX_EXT_texture_from_pixmap backed by buffer objects
+[    16.660] (II) AIGLX: enabled GLX_ARB_create_context_robustness
+[    16.660] (II) AIGLX: Loaded and initialized i965
+[    16.660] (II) GLX: Initialized DRI2 GL provider for screen 0
+[    16.661] (II) intel(0): switch to mode 1366x768@60.0 on LVDS1 using pipe 0, position (0, 0), rotation normal, reflection none
+[    16.673] (II) intel(0): Setting screen physical size to 361 x 203
+[    16.722] (II) XKB: Reusing cached keymap
+[    16.723] (II) config/udev: Adding input device Power Button (/dev/input/event3)
+[    16.723] (**) Power Button: Applying InputClass "evdev keyboard catchall"
+[    16.723] (II) LoadModule: "evdev"
+[    16.723] (II) Loading /usr/lib/xorg/modules/input/evdev_drv.so
+[    16.723] (II) Module evdev: vendor="X.Org Foundation"
+[    16.723] 	compiled for 1.16.0, module version = 2.9.0
+[    16.723] 	Module class: X.Org XInput Driver
+[    16.723] 	ABI class: X.Org XInput driver, version 21.0
+[    16.723] (II) Using input driver 'evdev' for 'Power Button'
+[    16.724] (**) Power Button: always reports core events
+[    16.724] (**) evdev: Power Button: Device: "/dev/input/event3"
+[    16.724] (--) evdev: Power Button: Vendor 0 Product 0x1
+[    16.724] (--) evdev: Power Button: Found keys
+[    16.724] (II) evdev: Power Button: Configuring as keyboard
+[    16.724] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXPWRBN:00/input/input3/event3"
+[    16.724] (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD, id 6)
+[    16.724] (**) Option "xkb_rules" "evdev"
+[    16.724] (**) Option "xkb_model" "pc104"
+[    16.724] (**) Option "xkb_layout" "us"
+[    16.745] (II) config/udev: Adding input device Video Bus (/dev/input/event4)
+[    16.745] (**) Video Bus: Applying InputClass "evdev keyboard catchall"
+[    16.745] (II) Using input driver 'evdev' for 'Video Bus'
+[    16.745] (**) Video Bus: always reports core events
+[    16.745] (**) evdev: Video Bus: Device: "/dev/input/event4"
+[    16.745] (--) evdev: Video Bus: Vendor 0 Product 0x6
+[    16.745] (--) evdev: Video Bus: Found keys
+[    16.745] (II) evdev: Video Bus: Configuring as keyboard
+[    16.745] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/LNXVIDEO:00/input/input4/event4"
+[    16.745] (II) XINPUT: Adding extended input device "Video Bus" (type: KEYBOARD, id 7)
+[    16.745] (**) Option "xkb_rules" "evdev"
+[    16.745] (**) Option "xkb_model" "pc104"
+[    16.745] (**) Option "xkb_layout" "us"
+[    16.745] (II) XKB: Reusing cached keymap
+[    16.746] (II) config/udev: Adding input device Power Button (/dev/input/event0)
+[    16.746] (**) Power Button: Applying InputClass "evdev keyboard catchall"
+[    16.746] (II) Using input driver 'evdev' for 'Power Button'
+[    16.746] (**) Power Button: always reports core events
+[    16.746] (**) evdev: Power Button: Device: "/dev/input/event0"
+[    16.746] (--) evdev: Power Button: Vendor 0 Product 0x1
+[    16.746] (--) evdev: Power Button: Found keys
+[    16.746] (II) evdev: Power Button: Configuring as keyboard
+[    16.746] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00/input/input0/event0"
+[    16.746] (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD, id 8)
+[    16.746] (**) Option "xkb_rules" "evdev"
+[    16.746] (**) Option "xkb_model" "pc104"
+[    16.746] (**) Option "xkb_layout" "us"
+[    16.746] (II) XKB: Reusing cached keymap
+[    16.746] (II) config/udev: Adding input device Lid Switch (/dev/input/event2)
+[    16.746] (II) No input driver specified, ignoring this device.
+[    16.746] (II) This device may have been added with another device file.
+[    16.746] (II) config/udev: Adding input device Sleep Button (/dev/input/event1)
+[    16.746] (**) Sleep Button: Applying InputClass "evdev keyboard catchall"
+[    16.746] (II) Using input driver 'evdev' for 'Sleep Button'
+[    16.746] (**) Sleep Button: always reports core events
+[    16.746] (**) evdev: Sleep Button: Device: "/dev/input/event1"
+[    16.746] (--) evdev: Sleep Button: Vendor 0 Product 0x3
+[    16.746] (--) evdev: Sleep Button: Found keys
+[    16.746] (II) evdev: Sleep Button: Configuring as keyboard
+[    16.746] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0E:00/input/input1/event1"
+[    16.747] (II) XINPUT: Adding extended input device "Sleep Button" (type: KEYBOARD, id 9)
+[    16.747] (**) Option "xkb_rules" "evdev"
+[    16.747] (**) Option "xkb_model" "pc104"
+[    16.747] (**) Option "xkb_layout" "us"
+[    16.747] (II) XKB: Reusing cached keymap
+[    16.747] (II) config/udev: Adding input device Laptop_Integrated_Webcam_HD (/dev/input/event13)
+[    16.747] (**) Laptop_Integrated_Webcam_HD: Applying InputClass "evdev keyboard catchall"
+[    16.747] (II) Using input driver 'evdev' for 'Laptop_Integrated_Webcam_HD'
+[    16.747] (**) Laptop_Integrated_Webcam_HD: always reports core events
+[    16.747] (**) evdev: Laptop_Integrated_Webcam_HD: Device: "/dev/input/event13"
+[    16.747] (--) evdev: Laptop_Integrated_Webcam_HD: Vendor 0x1bcf Product 0x2980
+[    16.747] (--) evdev: Laptop_Integrated_Webcam_HD: Found keys
+[    16.747] (II) evdev: Laptop_Integrated_Webcam_HD: Configuring as keyboard
+[    16.747] (**) Option "config_info" "udev:/sys/devices/pci0000:00/0000:00:1a.0/usb1/1-1/1-1.4/1-1.4:1.0/input/input14/event13"
+[    16.747] (II) XINPUT: Adding extended input device "Laptop_Integrated_Webcam_HD" (type: KEYBOARD, id 10)
+[    16.747] (**) Option "xkb_rules" "evdev"
+[    16.747] (**) Option "xkb_model" "pc104"
+[    16.747] (**) Option "xkb_layout" "us"
+[    16.747] (II) XKB: Reusing cached keymap
+[    16.747] (II) config/udev: Adding input device HDA Digital PCBeep (/dev/input/event6)
+[    16.748] (II) No input driver specified, ignoring this device.
+[    16.748] (II) This device may have been added with another device file.
+[    16.748] (II) config/udev: Adding input device HDA Intel PCH Headphone (/dev/input/event8)
+[    16.748] (II) No input driver specified, ignoring this device.
+[    16.748] (II) This device may have been added with another device file.
+[    16.748] (II) config/udev: Adding input device HDA Intel PCH HDMI/DP,pcm=3 (/dev/input/event9)
+[    16.748] (II) No input driver specified, ignoring this device.
+[    16.748] (II) This device may have been added with another device file.
+[    16.748] (II) config/udev: Adding input device HDA Intel PCH Mic (/dev/input/event7)
+[    16.748] (II) No input driver specified, ignoring this device.
+[    16.748] (II) This device may have been added with another device file.
+[    16.748] (II) config/udev: Adding input device AT Translated Set 2 keyboard (/dev/input/event5)
+[    16.748] (**) AT Translated Set 2 keyboard: Applying InputClass "evdev keyboard catchall"
+[    16.748] (II) Using input driver 'evdev' for 'AT Translated Set 2 keyboard'
+[    16.748] (**) AT Translated Set 2 keyboard: always reports core events
+[    16.749] (**) evdev: AT Translated Set 2 keyboard: Device: "/dev/input/event5"
+[    16.749] (--) evdev: AT Translated Set 2 keyboard: Vendor 0x1 Product 0x1
+[    16.749] (--) evdev: AT Translated Set 2 keyboard: Found keys
+[    16.749] (II) evdev: AT Translated Set 2 keyboard: Configuring as keyboard
+[    16.749] (**) Option "config_info" "udev:/sys/devices/platform/i8042/serio0/input/input5/event5"
+[    16.749] (II) XINPUT: Adding extended input device "AT Translated Set 2 keyboard" (type: KEYBOARD, id 11)
+[    16.749] (**) Option "xkb_rules" "evdev"
+[    16.749] (**) Option "xkb_model" "pc104"
+[    16.749] (**) Option "xkb_layout" "us"
+[    16.749] (II) XKB: Reusing cached keymap
+[    16.749] (II) config/udev: Adding input device SynPS/2 Synaptics TouchPad (/dev/input/event11)
+[    16.749] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "evdev touchpad catchall"
+[    16.749] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "touchpad catchall"
+[    16.749] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "Default clickpad buttons"
+[    16.749] (II) LoadModule: "synaptics"
+[    16.749] (II) Loading /usr/lib/xorg/modules/input/synaptics_drv.so
+[    16.749] (II) Module synaptics: vendor="X.Org Foundation"
+[    16.749] 	compiled for 1.16.0, module version = 1.8.0
+[    16.749] 	Module class: X.Org XInput Driver
+[    16.749] 	ABI class: X.Org XInput driver, version 21.0
+[    16.749] (II) Using input driver 'synaptics' for 'SynPS/2 Synaptics TouchPad'
+[    16.749] (**) SynPS/2 Synaptics TouchPad: always reports core events
+[    16.749] (**) Option "Device" "/dev/input/event11"
+[    16.827] (**) Option "Device" "/dev/input/event11"
+[    16.827] (II) synaptics: SynPS/2 Synaptics TouchPad: ignoring touch events for semi-multitouch device
+[    16.827] (--) synaptics: SynPS/2 Synaptics TouchPad: x-axis range 1472 - 5798 (res 59)
+[    16.827] (--) synaptics: SynPS/2 Synaptics TouchPad: y-axis range 1408 - 4992 (res 99)
+[    16.827] (--) synaptics: SynPS/2 Synaptics TouchPad: pressure range 0 - 255
+[    16.827] (--) synaptics: SynPS/2 Synaptics TouchPad: finger width range 0 - 15
+[    16.827] (--) synaptics: SynPS/2 Synaptics TouchPad: buttons: left right double triple
+[    16.827] (--) synaptics: SynPS/2 Synaptics TouchPad: Vendor 0x2 Product 0x7
+[    16.827] (**) Option "VertEdgeScroll" "on"
+[    16.828] (**) Option "HorizEdgeScroll" "on"
+[    16.828] (**) Option "VertTwoFingerScroll" "on"
+[    16.828] (**) Option "HorizTwoFingerScroll" "on"
+[    16.828] (**) Option "TapButton1" "1"
+[    16.828] (**) Option "TapButton2" "2"
+[    16.828] (**) Option "TapButton3" "3"
+[    16.828] (**) Option "CoastingSpeed" "0"
+[    16.828] (--) synaptics: SynPS/2 Synaptics TouchPad: touchpad found
+[    16.828] (**) SynPS/2 Synaptics TouchPad: always reports core events
+[    16.850] (**) Option "config_info" "udev:/sys/devices/platform/i8042/serio1/input/input7/event11"
+[    16.850] (II) XINPUT: Adding extended input device "SynPS/2 Synaptics TouchPad" (type: TOUCHPAD, id 12)
+[    16.850] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) MinSpeed is now constant deceleration 2.5
+[    16.850] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) MaxSpeed is now 1.75
+[    16.850] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) AccelFactor is now 0.036
+[    16.850] (**) SynPS/2 Synaptics TouchPad: (accel) keeping acceleration scheme 1
+[    16.850] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration profile 1
+[    16.850] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration factor: 2.000
+[    16.850] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration threshold: 4
+[    16.850] (**) Option "Device" "/dev/input/event11"
+[    16.850] (--) synaptics: SynPS/2 Synaptics TouchPad: touchpad found
+[    16.850] (II) config/udev: Adding input device SynPS/2 Synaptics TouchPad (/dev/input/mouse0)
+[    16.850] (**) SynPS/2 Synaptics TouchPad: Ignoring device from InputClass "touchpad ignore duplicates"
+[    16.850] (II) config/udev: Adding input device PC Speaker (/dev/input/event10)
+[    16.850] (II) No input driver specified, ignoring this device.
+[    16.850] (II) This device may have been added with another device file.
+[    16.851] (II) config/udev: Adding input device Dell WMI hotkeys (/dev/input/event12)
+[    16.851] (**) Dell WMI hotkeys: Applying InputClass "evdev keyboard catchall"
+[    16.851] (II) Using input driver 'evdev' for 'Dell WMI hotkeys'
+[    16.851] (**) Dell WMI hotkeys: always reports core events
+[    16.851] (**) evdev: Dell WMI hotkeys: Device: "/dev/input/event12"
+[    16.851] (--) evdev: Dell WMI hotkeys: Vendor 0 Product 0
+[    16.851] (--) evdev: Dell WMI hotkeys: Found keys
+[    16.851] (II) evdev: Dell WMI hotkeys: Configuring as keyboard
+[    16.851] (**) Option "config_info" "udev:/sys/devices/virtual/input/input13/event12"
+[    16.851] (II) XINPUT: Adding extended input device "Dell WMI hotkeys" (type: KEYBOARD, id 13)
+[    16.851] (**) Option "xkb_rules" "evdev"
+[    16.851] (**) Option "xkb_model" "pc104"
+[    16.851] (**) Option "xkb_layout" "us"
+[    16.851] (II) XKB: Reusing cached keymap
+[    53.656] (II) intel(0): EDID vendor "LGD", prod id 745
+[    53.656] (II) intel(0): Printing DDC gathered Modelines:
+[    53.656] (II) intel(0): Modeline "1366x768"x0.0   70.00  1366 1402 1450 1492  768 771 776 782 -hsync -vsync (46.9 kHz eP)
+[    53.656] (II) intel(0): Modeline "1366x768"x0.0   48.30  1366 1402 1450 1520  768 771 776 794 -hsync -vsync (31.8 kHz e)
+[    96.516] (II) config/udev: removing device Laptop_Integrated_Webcam_HD
+[    96.547] (II) evdev: Laptop_Integrated_Webcam_HD: Close
+[    96.547] (II) UnloadModule: "evdev"
