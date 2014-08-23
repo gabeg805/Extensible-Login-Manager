@@ -103,9 +103,7 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
     gtk_window_set_default_size(GTK_WINDOW(window), WINDOWMANAGER_WIDTH*0, WINDOWMANAGER_HEIGHT*0);
     
     // Setup button attributes
-    const GdkRGBA bg_widget = {0, 0, 0, 0};
-    const GdkRGBA fg_widget = {1, 1, 1, 1};
-    set_color_and_opacity(window, dropmenu, bg_widget, fg_widget);
+    set_color_and_opacity(window, dropmenu, BG_WINDOWMANAGER, FG_WINDOWMANAGER);
     set_wm_entries(menu);
     
     // Modify button style

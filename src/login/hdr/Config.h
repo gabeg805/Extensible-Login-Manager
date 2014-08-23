@@ -1,25 +1,28 @@
+#include <gtk/gtk.h>
+
 #ifndef CONFIG_H
 #define CONFIG_H
 
 
-// Commands
-extern char *DATE;
-extern char *XORG;
-extern char *XCOMPMGR;
-extern char *HSETROOT;
-extern char *XSETROOT;
-extern char *AWK;
-extern char *GREP;
-extern char *TAIL;
-extern char *LOGINCTL;
-extern char *SYSTEMCTL;
-extern char *POWEROFF;
-extern char *REBOOT;
-extern char *SESSREG;
-extern char *PQIV;
-extern char *XINITRC;
 
-extern char *WM_SES_CMD;
+// Important
+extern int PREVIEW;
+extern int TTY_N;
+extern int INTERFACE;
+extern char *DISPLAY;
+extern char *USERNAME;
+extern char *PASSWORD;
+extern char *SESSION;
+
+
+
+// Miscellaneous
+extern int CLOCK_UPDATE_SEC;
+extern int PASSWORD_MAXCHARS;
+extern char *TEXTIMAGE_TEXT;
+extern char *CLOCK_DATE_FMT;
+extern char *CLOCK_TIME_FMT;
+extern char PASSWORD_INVISCHAR;
 
 
 
@@ -73,6 +76,27 @@ extern int PANEL_REFRESH_HEIGHT;
 
 
 
+// Colors
+const GdkRGBA BG_USERNAME;
+const GdkRGBA BG_PASSWORD;
+const GdkRGBA BG_DATE_CLOCK;
+const GdkRGBA BG_TIME_CLOCK;
+const GdkRGBA BG_SHUTDOWN;
+const GdkRGBA BG_REBOOT;
+const GdkRGBA BG_GLM_DIALOG;
+const GdkRGBA BG_WINDOWMANAGER;
+
+const GdkRGBA FG_USERNAME;
+const GdkRGBA FG_PASSWORD;
+const GdkRGBA FG_DATE_CLOCK;
+const GdkRGBA FG_TIME_CLOCK;
+const GdkRGBA FG_SHUTDOWN;
+const GdkRGBA FG_REBOOT;
+const GdkRGBA FG_GLM_DIALOG;
+const GdkRGBA FG_WINDOWMANAGER;
+
+
+
 // Fonts
 extern int TEXTIMAGE_FSIZE;
 extern int USERNAME_FSIZE;
@@ -112,25 +136,25 @@ extern char *PANEL_REFRESH_IMG;
 
 
 
-// Misc
-extern char *TEXTIMAGE_TEXT;
+// Commands
+extern char *DATE;
+extern char *XORG;
+extern char *XCOMPMGR;
+extern char *HSETROOT;
+extern char *XSETROOT;
+extern char *AWK;
+extern char *GREP;
+extern char *TAIL;
+extern char *LOGINCTL;
+extern char *SYSTEMCTL;
+extern char *POWEROFF;
+extern char *REBOOT;
+extern char *SESSREG;
+extern char *PQIV;
+extern char *XINITRC;
 
-extern char *CLOCK_DATE_FMT;
-extern char *CLOCK_TIME_FMT;
-extern int CLOCK_UPDATE_SEC;
+extern char *WM_SES_CMD;
 
-extern char PASSWORD_INVISCHAR;
-extern int PASSWORD_MAXCHARS;
 
-extern int TTY_N;
-
-extern char *DISPLAY;
-
-extern int INTERFACE;
-extern char *USERNAME;
-extern char *PASSWORD;
-extern char *SESSION;
-
-extern int PREVIEW;
 
 #endif

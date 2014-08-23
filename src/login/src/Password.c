@@ -96,9 +96,7 @@ void init_entry_root(GtkWidget *window, GtkWidget *entry) {
     gtk_window_set_default_size(GTK_WINDOW(window), PASSWORD_WIDTH, PASSWORD_HEIGHT*0);
     
     // Set color scheme for root window
-    const GdkRGBA bg_widget = {1, 1, 1, 0.5};
-    const GdkRGBA fg_widget = {0, 0, 0, 1};
-    set_color_and_opacity(window, entry, bg_widget, fg_widget);
+    set_color_and_opacity(window, entry, BG_PASSWORD, FG_PASSWORD);
     
     // Add entry to window
     gtk_container_add(GTK_CONTAINER(window), entry);

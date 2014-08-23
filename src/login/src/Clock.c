@@ -99,9 +99,7 @@ void init_clock_date_root(GtkWidget *window, GtkWidget *clock) {
     gtk_window_set_default_size(GTK_WINDOW(window), CLOCK_DATE_WIDTH*0, CLOCK_DATE_HEIGHT*0);
     
     // Set clock attributes
-    const GdkRGBA bg_widget = {0, 0, 0, 0};
-    const GdkRGBA fg_widget = {1, 1, 1, 1};
-    set_color_and_opacity(window, clock, bg_widget, fg_widget);
+    set_color_and_opacity(window, clock, BG_DATE_CLOCK, FG_DATE_CLOCK);
     set_clock_label(clock, CLOCK_DATE_FMT, CLOCK_DATE_FONT, CLOCK_DATE_FSIZE);
     
     // Add the clock to the root window 
@@ -125,9 +123,7 @@ void init_clock_time_root(GtkWidget *window, GtkWidget *clock) {
     gtk_window_set_default_size(GTK_WINDOW(window), CLOCK_TIME_WIDTH*0, CLOCK_TIME_HEIGHT*0);
     
     // Set clock attributes
-    const GdkRGBA bg_widget = {0, 0, 0, 0};
-    const GdkRGBA fg_widget = {1, 1, 1, 1};
-    set_color_and_opacity(window, clock, bg_widget, fg_widget);
+    set_color_and_opacity(window, clock, BG_TIME_CLOCK, FG_DATE_CLOCK);
     set_clock_label(clock, CLOCK_TIME_FMT, CLOCK_TIME_FONT, CLOCK_TIME_FSIZE);
     
     // Add the clock to the root window 

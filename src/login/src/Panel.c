@@ -103,9 +103,7 @@ void init_shutdown_root(GtkWidget *shutdown_window, GtkWidget *shutdown) {
     gtk_window_set_default_size(GTK_WINDOW(shutdown_window), PANEL_SHUTDOWN_WIDTH*0, PANEL_SHUTDOWN_HEIGHT*0);
     
     // Set power button attributes
-    const GdkRGBA bg_widget = {0, 0, 0, 0};
-    const GdkRGBA fg_widget = {1, 1, 1, 1};
-    set_color_and_opacity(shutdown_window, shutdown, bg_widget, fg_widget);
+    set_color_and_opacity(shutdown_window, shutdown, BG_SHUTDOWN, FG_SHUTDOWN);
     
     // Modify button style
     GtkWidget *image = gtk_image_new_from_file(PANEL_SHUTDOWN_IMG);
@@ -134,9 +132,7 @@ void init_reboot_root(GtkWidget *reboot_window, GtkWidget *reboot) {
     gtk_window_set_default_size(GTK_WINDOW(reboot_window), PANEL_REBOOT_WIDTH*0, PANEL_REBOOT_HEIGHT*0);
     
     // Set power button attributes
-    const GdkRGBA bg_widget = {0, 0, 0, 0};
-    const GdkRGBA fg_widget = {1, 1, 1, 1};
-    set_color_and_opacity(reboot_window, reboot, bg_widget, fg_widget);
+    set_color_and_opacity(reboot_window, reboot, BG_REBOOT, FG_REBOOT);
     
     // Modify button style
     GtkWidget *image = gtk_image_new_from_file(PANEL_REBOOT_IMG);
@@ -165,9 +161,7 @@ void init_glm_dialog_root(GtkWidget *refresh_window, GtkWidget *refresh) {
     gtk_window_set_default_size(GTK_WINDOW(refresh_window), PANEL_REFRESH_WIDTH*0, PANEL_REFRESH_HEIGHT*0);
     
     // Set power button attributes
-    const GdkRGBA bg_widget = {0, 0, 0, 0};
-    const GdkRGBA fg_widget = {1, 1, 1, 1};
-    set_color_and_opacity(refresh_window, refresh, bg_widget, fg_widget);
+    set_color_and_opacity(refresh_window, refresh, BG_GLM_DIALOG, FG_GLM_DIALOG);
     
     // Modify button style
     GtkWidget *image = gtk_image_new_from_file(PANEL_REFRESH_IMG);

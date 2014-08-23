@@ -105,9 +105,7 @@ void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu,
     gtk_window_set_default_size(GTK_WINDOW(window), USERNAME_WIDTH*0, USERNAME_HEIGHT*0);
     
     // Set username menu attributes
-    const GdkRGBA bg_widget = {0, 0, 0, 0};
-    const GdkRGBA fg_widget = {1, 1, 1, 1};
-    set_color_and_opacity(window, dropmenu, bg_widget, fg_widget);
+    set_color_and_opacity(window, dropmenu, BG_USERNAME, FG_USERNAME);
     set_username_entries(menu, label);
     
     // Modify button style

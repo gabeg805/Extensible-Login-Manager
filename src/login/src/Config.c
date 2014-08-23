@@ -48,25 +48,27 @@
 // Includes
 #include "../hdr/Config.h"
 
+#include <gtk/gtk.h>
 
-// Commands
-char *DATE       = "/usr/bin/date";
-char *XORG       = "/usr/bin/Xorg";
-char *XCOMPMGR   = "/usr/bin/xcompmgr";
-char *HSETROOT   = "/usr/bin/hsetroot";
-char *XSETROOT   = "/usr/bin/xsetroot";
-char *AWK        = "/usr/bin/awk";
-char *GREP       = "/usr/bin/grep";
-char *TAIL       = "/usr/bin/tail";
-char *LOGINCTL   = "/usr/bin/loginctl";
-char *SYSTEMCTL  = "/usr/bin/systemctl";
-char *POWEROFF   = "/usr/bin/poweroff";
-char *REBOOT     = "/usr/bin/reboot";
-char *SESSREG    = "/usr/bin/sessreg";
-char *PQIV       = "/usr/bin/pqiv";
-char *XINITRC    = "/etc/X11/glm/src/x/xinitrc";
 
-char *WM_SES_CMD               = "ls -1 /usr/share/xsessions/ | sed 's/.desktop//'";
+// Important
+int PREVIEW = 0;
+int TTY_N = 4;
+int INTERFACE = 0;
+char *DISPLAY = ":0";
+char *USERNAME = "User";
+char *PASSWORD = "Password";
+char *SESSION = "xterm";
+
+
+
+// Miscellaneous
+int CLOCK_UPDATE_SEC   = 30;
+int PASSWORD_MAXCHARS     = 30;
+char *TEXTIMAGE_TEXT   = "Password:";
+char *CLOCK_DATE_FMT   = "%A, %B %-d";
+char *CLOCK_TIME_FMT   = "%-I:%M %p";
+char PASSWORD_INVISCHAR   = '*';
 
 
 
@@ -120,6 +122,27 @@ int PANEL_REFRESH_HEIGHT    = 32;
 
 
 
+// Colors
+const GdkRGBA BG_USERNAME = {0, 0, 0, 0};
+const GdkRGBA BG_PASSWORD = {1, 1, 1, 0.5};
+const GdkRGBA BG_DATE_CLOCK = {0, 0, 0, 0};
+const GdkRGBA BG_TIME_CLOCK = {0, 0, 0, 0};
+const GdkRGBA BG_SHUTDOWN = {0, 0, 0, 0};
+const GdkRGBA BG_REBOOT = {0, 0, 0, 0};
+const GdkRGBA BG_GLM_DIALOG = {0, 0, 0, 0};
+const GdkRGBA BG_WINDOWMANAGER = {0, 0, 0, 0};
+
+const GdkRGBA FG_USERNAME = {1, 1, 1, 1};
+const GdkRGBA FG_PASSWORD = {0, 0, 0, 1};
+const GdkRGBA FG_DATE_CLOCK = {1, 1, 1, 1};
+const GdkRGBA FG_TIME_CLOCK = {1, 1, 1, 1};
+const GdkRGBA FG_SHUTDOWN = {1, 1, 1, 1};
+const GdkRGBA FG_REBOOT = {1, 1, 1, 1};
+const GdkRGBA FG_GLM_DIALOG = {1, 1, 1, 1};
+const GdkRGBA FG_WINDOWMANAGER = {1, 1, 1, 1};
+
+
+
 // Fonts
 int TEXTIMAGE_FSIZE     = 12;
 int USERNAME_FSIZE      = 23*1024;
@@ -159,23 +182,21 @@ char *PANEL_REFRESH_IMG    = "/etc/X11/glm/img/interface/refresh.png";
 
 
 
-// Misc
-char *TEXTIMAGE_TEXT   = "Password:";
+// Commands
+char *DATE       = "/usr/bin/date";
+char *XORG       = "/usr/bin/Xorg";
+char *XCOMPMGR   = "/usr/bin/xcompmgr";
+char *HSETROOT   = "/usr/bin/hsetroot";
+char *XSETROOT   = "/usr/bin/xsetroot";
+char *AWK        = "/usr/bin/awk";
+char *GREP       = "/usr/bin/grep";
+char *TAIL       = "/usr/bin/tail";
+char *LOGINCTL   = "/usr/bin/loginctl";
+char *SYSTEMCTL  = "/usr/bin/systemctl";
+char *POWEROFF   = "/usr/bin/poweroff";
+char *REBOOT     = "/usr/bin/reboot";
+char *SESSREG    = "/usr/bin/sessreg";
+char *PQIV       = "/usr/bin/pqiv";
+char *XINITRC    = "/etc/X11/glm/src/x/xinitrc";
 
-char *CLOCK_DATE_FMT   = "%A, %B %-d";
-char *CLOCK_TIME_FMT   = "%-I:%M %p";
-int CLOCK_UPDATE_SEC   = 30;
-
-char PASSWORD_INVISCHAR   = '*';
-int PASSWORD_MAXCHARS     = 30;
-
-int TTY_N = 4;
-
-char *DISPLAY = ":0";
-
-int INTERFACE = 0;
-char *USERNAME = "User";
-char *PASSWORD = "Password";
-char *SESSION = "xterm";
-
-int PREVIEW = 0;
+char *WM_SES_CMD               = "ls -1 /usr/share/xsessions/ | sed 's/.desktop//'";
