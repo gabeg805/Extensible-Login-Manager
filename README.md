@@ -209,3 +209,7 @@ Here's a list of things I want to implement, but haven't had the time to do so y
     
     - Start GLM over getty
     
+    - Change focus policy
+    
+    - Focus password entry 
+    
