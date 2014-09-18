@@ -4,14 +4,14 @@
 // 
 // NAME:
 // 
-//     FileRW.c
+//     Utility.c
 // 
 // 
 // SYNTAX: 
 // 
 //     Without a 'main' function, include the following header:
 // 
-//         #include "FileRW.c"
+//         #include "Utility.h"
 // 
 // 
 // PURPOSE:
@@ -37,6 +37,7 @@
 // 
 //     command_line     - Return output of a Linux command
 // 
+//     cleanup_child    - Remove zombie processes
 // 
 // 
 // FILE STRUCTURE:
@@ -47,6 +48,7 @@
 //     * Get Open X Display
 //     * Get Open TTY 
 //     * Get Linux Command Output
+//     * Remove Zombie Processes
 // 
 // 
 // MODIFICATION HISTORY:
@@ -55,6 +57,8 @@
 // 
 //     gabeg Aug 14 2014 <> Modified command_line function to return an array of 
 //                          strings instead of just one long string
+// 
+//     gabeg Sep 16 2014 <> Removed unneeded libraries, and added "cleanup_child"
 // 
 // **********************************************************************************
 
@@ -65,13 +69,18 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/FileRW.h"
+#include "../hdr/Utility.h"
+#include "../hdr/Config.h"
 
+#include <gtk/gtk.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <signal.h>
 
 
 //Declares
@@ -80,6 +89,12 @@ char * file_read(char *file);
 char * get_open_display();
 int get_open_tty();
 char ** command_line(char *cmd, int size);
+void cleanup_child(int signal);
+struct glmgui * setup_gui_struct(GtkWidget *window, GtkWidget *widget, 
+                                 const GdkRGBA bg_window, const GdkRGBA fg_window, 
+                                 const GdkRGBA bg_widget, const GdkRGBA fg_widget, 
+                                 int xpos, int ypos, int width, int height);
+struct glmtext * setup_text_struct(GtkWidget *widget, char *font, int size, char *fmt);
 
 
 // /////////////////////////
@@ -111,7 +126,7 @@ char * file_read(char *file) {
     FILE *handle = fopen(file, "r");
     char temp[100];
     
-    fgets(temp, sizeof(temp)-1, handle);
+    fgets(temp, sizeof(temp), handle);
     fclose(handle);
     
     // Remove trailing newline characters
@@ -120,9 +135,9 @@ char * file_read(char *file) {
         *pos = '\0';        
     
     // Allocate memory for command output 
-    size_t sz = strlen(temp);
-    char *contents = malloc(sz+1);
-    snprintf(contents, sz+1, temp);
+    size_t sz = strlen(temp) + 1;
+    char *contents = malloc(sz);
+    snprintf(contents, sz, temp);
     
     return contents;
 }
@@ -159,9 +174,9 @@ char * get_open_display() {
     snprintf(display, sizeof(display), ":%d", d);
     
     // Allocate memory for display output 
-    size_t sz = strlen(display);
-    char *opendisp = malloc(sz+1);  
-    snprintf(opendisp, sz+1, display);
+    size_t sz = strlen(display) + 1;
+    char *opendisp = malloc(sz);  
+    snprintf(opendisp, sz, display);
     
     return opendisp;
 }
@@ -221,7 +236,7 @@ int get_open_tty() {
 char ** command_line(char *cmd, int size) {
     
     // Output arrays
-    char **array = (char**)malloc(sizeof(char*)*size);
+    char **array = malloc(sizeof(char*)*size);
     char temp[size];
     array[0] = "0";
     
@@ -251,11 +266,66 @@ char ** command_line(char *cmd, int size) {
     char val[5];
     snprintf(val, sizeof(val), "%d", (i-1));
     
-    size_t sz = strlen(val);
-    char *copy = malloc(sz+1);
-    snprintf(copy, sz+1, val);
+    size_t sz = strlen(val) + 1;
+    char *copy = malloc(sz);
+    snprintf(copy, sz, val);
     
     array[0] = copy;
     
     return array;
 }
+
+
+
+// ///////////////////////////////////
+// ///// REMOVE ZOMBIE PROCESSES /////
+// ///////////////////////////////////
+
+// Clean up child zombie process
+void cleanup_child(int signal) {
+    wait(NULL);
+}
+
+
+
+// ////////////////////////////
+// ///// SETUP GUI STRUCT /////
+// ////////////////////////////
+
+// Setup the GUI struct
+struct glmgui * setup_gui_struct(GtkWidget *window, GtkWidget *widget, 
+                                 const GdkRGBA bg_window, const GdkRGBA fg_window, 
+                                 const GdkRGBA bg_widget, const GdkRGBA fg_widget, 
+                                 int xpos, int ypos, int width, int height) {
+    
+    struct glmgui *gui = malloc(sizeof(struct glmgui));
+    
+    gui->win = window;
+    gui->widg = widget;
+    gui->bgwin = bg_window;
+    gui->fgwin = fg_window;
+    gui->bgwidg = bg_widget;
+    gui->fgwidg = fg_widget;
+    gui->x = xpos;
+    gui->y = ypos;
+    gui->width = width;
+    gui->height = height;
+    
+    return gui;
+}
+
+
+
+// Setup the GUI text struct
+struct glmtext * setup_text_struct(GtkWidget *widget, char *font, int size, char *fmt) {
+    
+    struct glmtext *text = malloc(sizeof(struct glmtext));
+    
+    text->widget = widget;
+    text->font = font;
+    text->size = size;
+    text->fmt = fmt;
+    
+    return text;
+}
+

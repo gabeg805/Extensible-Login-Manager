@@ -9,14 +9,9 @@
 // 
 // SYNTAX: 
 // 
-//     Without a 'main' function, include the header file:
+//     Include the header file:
 // 
 //         #include "../hdr/Password.h"
-// 
-//     With a 'main' function, execute the following:
-// 
-//         $ gcc -o Password Password.c Transparency.c FileRW.c `pkg-config gtk+-3.0 --cflags --libs`
-//         $ ./Password
 // 
 // 
 // PURPOSE:
@@ -56,6 +51,8 @@
 //     gabeg Aug 20 2014 <> Moved the code inside Interface.c that displays the 
 //                          password entry box into the main Password.c module 
 // 
+//     gabeg Sep 16 2014 <> Removed unneeded libraries
+// 
 // **********************************************************************************
 
 
@@ -68,7 +65,7 @@
 #include "../hdr/Password.h"
 #include "../hdr/Config.h"
 #include "../hdr/Transparency.h"
-#include "../hdr/FileRW.h"
+#include "../hdr/Utility.h"
 
 #include <gtk/gtk.h>
 #include <string.h>

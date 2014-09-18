@@ -1,3 +1,4 @@
+// * Could change gdkrgba colors to struct
 // 
 // CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
 // 
@@ -9,7 +10,7 @@
 // 
 // SYNTAX: 
 // 
-//     Without a 'main' function, include the header file:
+//     Include the header file:
 // 
 //         #include "../hdr/Transparency.h"
 // 
@@ -44,6 +45,8 @@
 // 
 //     gabeg Aug 10 2014 <> Updated header
 // 
+//     gabeg Sep 16 2014 <> Removed unneeded libraries
+// 
 // **********************************************************************************
 
 
@@ -54,6 +57,7 @@
 
 // Includes
 #include "../hdr/Transparency.h"
+#include "../hdr/Config.h"
 
 #include <gtk/gtk.h>
 
@@ -62,6 +66,7 @@
 void enable_transparency(GtkWidget *widget);
 void set_color_and_opacity(GtkWidget *window, GtkWidget *widget, 
                            const GdkRGBA bg_widget, const GdkRGBA fg_widget);
+void set_stuff(struct glmgui *gui);
 
 gboolean supports_alpha = FALSE;
 
@@ -108,4 +113,13 @@ void set_color_and_opacity(GtkWidget *window, GtkWidget *widget,
     gtk_widget_override_background_color(widget, GTK_STATE_FLAG_NORMAL, &bg_widget);
     gtk_widget_override_color(window, GTK_STATE_FLAG_NORMAL, &fg_window);
     gtk_widget_override_color(widget, GTK_STATE_FLAG_NORMAL, &fg_widget);
+}
+
+void set_stuff(struct glmgui *gui) {    
+    
+    // Set the color scheme
+    gtk_widget_override_background_color(gui->win, GTK_STATE_FLAG_NORMAL, &gui->bgwin);
+    gtk_widget_override_background_color(gui->widg, GTK_STATE_FLAG_NORMAL, &gui->bgwidg);
+    gtk_widget_override_color(gui->win, GTK_STATE_FLAG_NORMAL, &gui->fgwin);
+    gtk_widget_override_color(gui->widg, GTK_STATE_FLAG_NORMAL, &gui->fgwidg);
 }

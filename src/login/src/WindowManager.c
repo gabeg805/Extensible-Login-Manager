@@ -9,14 +9,9 @@
 // 
 // SYNTAX: 
 // 
-//     Without a 'main' function, include the header file:
+//     Include the header file:
 // 
 //         #include "../hdr/WindowManager.h"
-// 
-//     With a 'main' function, execute the following:
-// 
-//         $ gcc -o WindowManager WindowManager.c Transparency.c FileRW.h `pkg-config gtk+-3.0 --cflags --libs`
-//         $ ./WindowManager
 // 
 // 
 // Purpose:
@@ -58,11 +53,13 @@
 // 
 //     gabeg Aug 10 2014 <> Updated header
 // 
-//     gabeg Aug 14 2014 <> Removed 'command_line' function and added it to FileRW.c
+//     gabeg Aug 14 2014 <> Removed 'command_line' function and added it to Utility.c
 // 
 //     gabeg Aug 20 2014 <> Moved the code inside Interface.c that displays the 
 //                          window manager button into the main WindowManager.c 
 //                          module 
+// 
+//     gabeg Sep 16 2014 <> Removed unneeded libraries
 // 
 // **********************************************************************************
 
@@ -75,7 +72,7 @@
 #include "../hdr/WindowManager.h"
 #include "../hdr/Config.h"
 #include "../hdr/Transparency.h"
-#include "../hdr/FileRW.h"
+#include "../hdr/Utility.h"
 
 #include <gtk/gtk.h>
 #include <string.h>

@@ -75,8 +75,15 @@ function loadXSettings {
 ## Start an X session with a window manager
 function main {
     local window_manager=`getWM "$1"`
+    local startdwm="$HOME/.config/dwm/startdwm"
     loadXSettings 
-    exec dbus-launch --exit-with-session "$window_manager"
+    
+    
+    if [ -f "$startdwm" ] && [[ "$window_manager" == 'dwm' ]]; then
+        exec "$startdwm"
+    else
+        exec dbus-launch --exit-with-session "$window_manager"
+    fi
 }
 
 

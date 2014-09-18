@@ -9,14 +9,9 @@
 // 
 // SYNTAX: 
 // 
-//     Without a 'main' function, include the following:
+//     Include the following:
 // 
 //         #include "../hdr/Panel.h"
-// 
-//     With a 'main' function, execute the following:
-// 
-//         $ gcc -o Panel Panel.c Transparency.c `pkg-config gtk+-3.0 gdk-3.0 --cflags --libs` 
-//         $ ./Power
 // 
 // 
 // PURPOSE:
@@ -59,6 +54,8 @@
 // 
 //     gabeg Aug 20 2014 <> Moved the code inside Interface.c that displays the 
 //                          button panel into the main Panel.c module 
+// 
+//     gabeg Sep 16 2014 <> Removed unneeded libraries
 // 
 // **********************************************************************************
 

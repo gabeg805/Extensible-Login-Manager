@@ -17,13 +17,9 @@ extern char *SESSION;
 
 
 // Miscellaneous
-extern int CLOCK_UPDATE_SEC;
 extern int PASSWORD_MAXCHARS;
 extern char *TEXTIMAGE_TEXT;
-extern char *CLOCK_DATE_FMT;
-extern char *CLOCK_TIME_FMT;
 extern char PASSWORD_INVISCHAR;
-
 
 
 // Position
@@ -32,8 +28,6 @@ extern int TEXTIMAGE_XPOS;
 extern int USERNAME_XPOS;
 extern int PASSWORD_XPOS;
 extern int WINDOWMANAGER_XPOS;
-extern int CLOCK_DATE_XPOS;
-extern int CLOCK_TIME_XPOS;
 extern int PANEL_SHUTDOWN_XPOS;
 extern int PANEL_REBOOT_XPOS;
 extern int PANEL_REFRESH_XPOS;
@@ -44,8 +38,6 @@ extern int TEXTIMAGE_YPOS;
 extern int USERNAME_YPOS;
 extern int PASSWORD_YPOS;
 extern int WINDOWMANAGER_YPOS;
-extern int CLOCK_DATE_YPOS;
-extern int CLOCK_TIME_YPOS;
 extern int PANEL_SHUTDOWN_YPOS;
 extern int PANEL_REBOOT_YPOS;
 extern int PANEL_REFRESH_YPOS;
@@ -58,8 +50,6 @@ extern int FRAME_WIDTH;
 extern int USERNAME_WIDTH;
 extern int PASSWORD_WIDTH;
 extern int WINDOWMANAGER_WIDTH;
-extern int CLOCK_DATE_HEIGHT;
-extern int CLOCK_TIME_HEIGHT;
 extern int PANEL_SHUTDOWN_WIDTH;
 extern int PANEL_REBOOT_WIDTH;
 extern int PANEL_REFRESH_WIDTH;
@@ -68,8 +58,6 @@ extern int FRAME_HEIGHT;
 extern int USERNAME_HEIGHT;
 extern int PASSWORD_HEIGHT;
 extern int WINDOWMANAGER_HEIGHT;
-extern int CLOCK_DATE_WIDTH;
-extern int CLOCK_TIME_WIDTH;
 extern int PANEL_SHUTDOWN_HEIGHT;
 extern int PANEL_REBOOT_HEIGHT;
 extern int PANEL_REFRESH_HEIGHT;
@@ -79,8 +67,6 @@ extern int PANEL_REFRESH_HEIGHT;
 // Colors
 const GdkRGBA BG_USERNAME;
 const GdkRGBA BG_PASSWORD;
-const GdkRGBA BG_DATE_CLOCK;
-const GdkRGBA BG_TIME_CLOCK;
 const GdkRGBA BG_SHUTDOWN;
 const GdkRGBA BG_REBOOT;
 const GdkRGBA BG_GLM_DIALOG;
@@ -88,8 +74,6 @@ const GdkRGBA BG_WINDOWMANAGER;
 
 const GdkRGBA FG_USERNAME;
 const GdkRGBA FG_PASSWORD;
-const GdkRGBA FG_DATE_CLOCK;
-const GdkRGBA FG_TIME_CLOCK;
 const GdkRGBA FG_SHUTDOWN;
 const GdkRGBA FG_REBOOT;
 const GdkRGBA FG_GLM_DIALOG;
@@ -101,14 +85,10 @@ const GdkRGBA FG_WINDOWMANAGER;
 extern int TEXTIMAGE_FSIZE;
 extern int USERNAME_FSIZE;
 extern int PASSWORD_FSIZE;
-extern int CLOCK_DATE_FSIZE;
-extern int CLOCK_TIME_FSIZE;
 
 extern char *TEXTIMAGE_FONT;
 extern char *USERNAME_FONT;
 extern char *PASSWORD_FONT;
-extern char *CLOCK_DATE_FONT;
-extern char *CLOCK_TIME_FONT;
 
 
 
@@ -155,6 +135,27 @@ extern char *XINITRC;
 
 extern char *WM_SES_CMD;
 
+
+struct glmgui {
+    GtkWidget *win;
+    GtkWidget *widg;
+    GdkRGBA bgwin;
+    GdkRGBA fgwin;
+    GdkRGBA bgwidg;
+    GdkRGBA fgwidg;
+    int x;
+    int y;
+    int width;
+    int height;
+};
+
+
+struct glmtext {
+    GtkWidget *widget;
+    char *font;
+    int size;
+    char *fmt;
+};
 
 
 #endif

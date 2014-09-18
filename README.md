@@ -82,6 +82,8 @@ manager works, here's how to get them:
     # sudo pacman -S xorg-xsetroot
     # sudo pacman -S xdotool
     # sudo pacman -S xorg-xwininfo
+    
+Also, you'll need to download "pqiv-git" from the AUR!
 
 To install the login manager you want to do the following:
     
@@ -94,10 +96,14 @@ To install the login manager you want to do the following:
     # make
 
 With the last command, the binary generated is the one needed in order to execute the
-login manager on startup. If you want to:
+login manager on startup. 
+
+In case you want to MAKE CHANGES TO SOURCE CODE, to:
     
-    - Change variables (not function parameters) inside the '.c' source files
-            * See below.
+    - Change variable values inside the '.c' source files
+            * I would suggest to only alter the values of the "#define" statements,
+              if you change any other variables then it's up to you to keep track of
+              the implications (dependency-wise).
     
     - Add/remove a function from any of the '.c' files. 
             * Be sure to add/remove the function in the declaration at the top of the

@@ -9,14 +9,9 @@
 // 
 // SYNTAX: 
 // 
-//     Without a 'main' function, include the header file:
+//     Include the header file:
 // 
 //         #include "../hdr/TextImage.h"
-// 
-//     With a 'main' function, execute the following:
-// 
-//         $ gcc -o TextImage TextImage.c Transparency.c `pkg-config gtk+-3.0 cairo --cflags --libs`
-//         $ ./TextImage
 // 
 // 
 // PURPOSE:
@@ -52,6 +47,8 @@
 //     gabeg Aug 02 2014 <> created
 // 
 //     gabeg Aug 10 2014 <> Updated the header
+// 
+//     gabeg Sep 16 2014 <> Removed unneeded libraries
 // 
 // **********************************************************************************
 
@@ -92,7 +89,7 @@ void init_text_root(GtkWidget *window, GtkWidget *area) {
     
     // Add area to the root window
     gtk_container_add(GTK_CONTAINER(window), area);
-    gtk_widget_set_app_paintable(window, TRUE);
+    /* gtk_widget_set_app_paintable(window, TRUE); */
     
     // Attempt to enable window transparency
     enable_transparency(window);

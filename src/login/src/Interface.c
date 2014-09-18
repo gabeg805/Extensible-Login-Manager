@@ -9,14 +9,9 @@
 // 
 // SYNTAX: 
 // 
-//     Without a 'main' function, include the header file:
+//     Include the header file:
 // 
 //         #include "../hdr/Interface.h"
-// 
-//     With a 'main' function, execute the following:
-// 
-//         $ gcc -o Interface Interface.c Username.c Password.c Clock.c Frame.c TextImage.c WindowManager.c Panel.c Transparency.c FileRW.c `pkg-config gtk+-3.0 --cflags --libs`
-//         $ ./Interface
 // 
 // 
 // PURPOSE:
@@ -47,10 +42,12 @@
 //     gabeg Aug 10 2014 <> Updated header
 // 
 //     gabeg Aug 14 2014 <> Updated gcc command to execute in the header to include
-//                          FileRW.c and included Password.c into the main loop
+//                          Utility.c and included Password.c into the main loop
 // 
 //     gabeg Aug 20 2014 <> Moved the login interface code that displays the 
 //                          different modules, into the modules themselves
+// 
+//     gabeg Sep 16 2014 <> Removed unneeded libraries
 // 
 // **********************************************************************************
 
@@ -71,12 +68,9 @@
 #include "../hdr/WindowManager.h"
 #include "../hdr/Panel.h"
 #include "../hdr/Transparency.h"
-#include "../hdr/FileRW.h"
+#include "../hdr/Utility.h"
 
 #include <gtk/gtk.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 
 // Declares

@@ -1,3 +1,4 @@
+// * change line 251
 // 
 // CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
 // 
@@ -9,14 +10,9 @@
 // 
 // SYNTAX: 
 // 
-//     Without a 'main' function, include the header file:
+//     Include the header file:
 // 
 //         #include "../hdr/Username.h"
-// 
-//     With a 'main' function, execute the following:
-// 
-//         $ gcc -o Username Username.c Transparency.c FileRW.c `pkg-config gtk+-3.0 --cflags --libs`
-//         $ ./Username
 // 
 // 
 // PURPOSE:
@@ -54,10 +50,12 @@
 // 	
 //     gabeg Aug 10 2014 <> created
 // 
-//     gabeg Aug 14 2014 <> Updated gcc command in the header to include FileRW.c
+//     gabeg Aug 14 2014 <> Updated gcc command in the header to include Utility.c
 // 
 //     gabeg Aug 20 2014 <> Moved the code inside Interface.c that displays the 
 //                          username menu into the main Username.c module 
+// 
+//     gabeg Sep 16 2014 <> Removed unneeded libraries
 // 
 // **********************************************************************************
 
@@ -71,7 +69,7 @@
 #include "../hdr/Username.h"
 #include "../hdr/Config.h"
 #include "../hdr/Transparency.h"
-#include "../hdr/FileRW.h"
+#include "../hdr/Utility.h"
 
 #include <gtk/gtk.h>
 #include <string.h>
@@ -171,7 +169,7 @@ void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
 char ** get_username(char *file, int size) {
     
     // Initialize username array
-    char **array = (char**)malloc(sizeof(char*)*size);
+    char **array = malloc(sizeof(char*)*size);
     array[0] = "0";
     
     // Open file for reading

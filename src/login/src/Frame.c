@@ -9,14 +9,9 @@
 // 
 // SYNTAX: 
 // 
-//     Without a 'main' function, include the header file:
+//     Include the header file:
 // 
 //         #include "../hdr/Frame.h"
-// 
-//     With a 'main' function, execute the following:
-// 
-//         $ gcc -o Frame Frame.c Transparency.c `pkg-config gtk+-3.0 cairo --cflags --libs`
-//         $ ./Frame
 // 
 // 
 // PURPOSE:
@@ -55,6 +50,8 @@
 // 
 //     gabeg Aug 20 2014 <> Moved the code inside Interface.c that displays the 
 //                          login frame into the main Frame.c module 
+// 
+//     gabeg Sep 16 2014 <> Removed unneeded libraries
 // 
 // **********************************************************************************
 
@@ -95,8 +92,8 @@ void init_frame_root(GtkWidget *window, GtkWidget *area) {
     
     // Add area to window
     gtk_container_add(GTK_CONTAINER(window), area);
-    gtk_widget_set_app_paintable(window, TRUE);
-
+    /* gtk_widget_set_app_paintable(window, TRUE); */
+    
     // Attempt to enable window transparency
     enable_transparency(window);
     

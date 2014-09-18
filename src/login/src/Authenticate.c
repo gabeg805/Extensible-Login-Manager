@@ -9,14 +9,9 @@
 // 
 // SYNTAX: 
 // 
-//     Without a 'main' function, include the header file:
+//     Include the header file:
 // 
 //         #include "../hdr/Authenticate.h"
-// 
-//     With a 'main' function, execute the following:
-// 
-//         $ gcc -o Authenticate Authenticate.c FileRW.c -lpam
-//         $ ./Authenticate
 // 
 // 
 // PURPOSE:
@@ -67,6 +62,8 @@
 // 
 //     gabeg Aug 17 2014 <> Added a function to record user login in UTMP and WTMP
 // 
+//     gabeg Sep 16 2014 <> Removed unneeded libraries
+// 
 // **********************************************************************************
 
 
@@ -77,17 +74,17 @@
 
 // Includes
 #include "../hdr/Config.h"
-#include "../hdr/FileRW.h"
+#include "../hdr/Utility.h"
 
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <signal.h>
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 
@@ -195,7 +192,7 @@ void manage_login_records(const char *username, char *opt) {
 // Check if previous PAM command resulted in Success 
 int is_pam_success(int result, pam_handle_t *pamh) {
     if ( result != PAM_SUCCESS ) {
-        printf("%s\n", pam_strerror(pamh, result));
+        file_write(GLM_LOG, "a+", "%s\n", pam_strerror(pamh, result));
         return 0;
     } 
     
@@ -302,15 +299,15 @@ int login(const char *username, const char *password) {
     result = pam_get_item(pam_handle, PAM_USER, (const void **)&username);
     if (result != PAM_SUCCESS || pw == NULL) return 0;
     
-    
+    // Clean up zombie processes
+    signal(SIGCHLD, cleanup_child);
+        
     // Setup and execute user session
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
         
         // Check if GLM is in preview mode
         if (PREVIEW) 
-            
-            // GLM is in preview mode
             execl(pw->pw_shell, pw->pw_shell, "-c", " ", NULL);
         else {
             
@@ -330,21 +327,17 @@ int login(const char *username, const char *password) {
             chown(GLM_LOG, pw->pw_uid, pw->pw_gid);
                         
             // Set uid and groups for USER
-            if (initgroups(pw->pw_name, pw->pw_gid) == -1)
-                return 0;
-            if (setgid(pw->pw_gid) == -1)
-                return 0;
-            if (setuid(pw->pw_uid) == -1)
-                return 0;
+            if (initgroups(pw->pw_name, pw->pw_gid) == -1) return 0;
+            if (setgid(pw->pw_gid) == -1)                  return 0;
+            if (setuid(pw->pw_uid) == -1)                  return 0;
             
             // Initialize environment variables
             init_env(pam_handle, pw);
             
             // Piece together X session cmd
-            size_t szx = strlen(XINITRC);
-            size_t szs = strlen(SESSION);
-            char cmd[szx+szs+2];
-            snprintf(cmd, szx+szs+2, "%s %s", XINITRC, SESSION);
+            size_t sz = strlen(XINITRC) + strlen(SESSION) + 2;
+            char cmd[sz];
+            snprintf(cmd, sz, "%s %s", XINITRC, SESSION);
             
             
             // Log system login start
@@ -361,8 +354,8 @@ int login(const char *username, const char *password) {
     
     // Wait for child process to finish (wait for logout)
     int status;
-    waitpid(child_pid, &status, 0); // TODO: Handle errors
-        
+    waitpid(child_pid, &status, 0); 
+    
     // Close PAM session
     result = pam_close_session(pam_handle, 0);
     if (!is_pam_success(result, pam_handle)) {

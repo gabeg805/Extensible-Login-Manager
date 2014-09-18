@@ -9,14 +9,9 @@
 // 
 // SYNTAX: 
 // 
-//     Without a 'main' function, include the header file:
+//     Include the header file:
 // 
 //         #include "../hdr/Xsetup.h"
-// 
-//     With a 'main' function, execute the following:
-// 
-//         $ gcc -o Xsetup Xsetup.c Config.c FileRW.h
-//         $ ./Xsetup
 // 
 // 
 // PURPOSE:
@@ -52,6 +47,8 @@
 // 
 //     gabeg Aug 18 2014 <> Added an algorithm to time the start of the compositing 
 //                          manager more approriately
+// 	
+//     gabeg Sep 16 2014 <> Removed unneeded libraries
 // 
 // **********************************************************************************
 
@@ -64,15 +61,12 @@
 // Includes
 #include "../hdr/Xsetup.h"
 #include "../hdr/Config.h"
-#include "../hdr/FileRW.h"
+#include "../hdr/Utility.h"
 
-#include <sys/wait.h>
-#include <sys/types.h>
+#include <time.h>
 #include <unistd.h>
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 
 // Declares
@@ -105,7 +99,8 @@ void start_xserver() {
     // Start X server
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
-        execl(XORG, XORG, "-logverbose", "-logfile", XSERVER_LOG, "-nolisten", "tcp", DISPLAY, "-auth",
+        execl(XORG, XORG, "-logverbose", "-logfile", XSERVER_LOG, 
+              "-nolisten", "tcp", DISPLAY, "-auth",
               XSERVER_AUTH, VT, NULL);
     }
     
@@ -129,19 +124,17 @@ void start_xserver() {
 void start_compman() {
     
     // Log compositing manager start
-    file_write(GLM_LOG, "a+", "%s\n", "Starting compositing manager...");
-    
+    file_write(GLM_LOG, "a+", "%s\n", "Starting compositing manager...");    
     
     // Initialize monotonic clock
     struct timespec start, end; 
     clock_gettime(CLOCK_MONOTONIC, &start);
     
-    
     // Time the logging to X server log file
     long BILLION = 1000000000L;
     int count = 0;
     char *last = NULL;
-    
+    int i = 0;
     while (1) {
         
         // Calculate time between loops
@@ -185,12 +178,13 @@ void start_compman() {
         
         
         // Once a safe amount of time has elapsed, execute the compositing manager
-        if ( (count == 200) || (diff == 2*BILLION) ) {
+        if ( (PREVIEW) || (count == 200) || (diff >= 5*BILLION) ) {
             pid_t new_pid = fork();
             if ( new_pid == 0 )
                 execl(XCOMPMGR, XCOMPMGR, NULL);
             break;
         }
+        ++i;
     }
     
     
@@ -208,7 +202,7 @@ void start_compman() {
 void xsetup() {
     
     // Start X server when not in preview mode
-    if (!PREVIEW) 
+    if ( !PREVIEW ) 
         start_xserver();
     
     // Start compositing manager
