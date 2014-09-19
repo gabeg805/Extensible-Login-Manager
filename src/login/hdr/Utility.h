@@ -20,9 +20,12 @@ int get_open_tty();
 char ** command_line(char *cmd, int size);
 void cleanup_child(int signal);
 struct glmgui * setup_gui_struct(GtkWidget *window, GtkWidget *widget, 
-                                 const GdkRGBA bg_window, const GdkRGBA fg_window, 
-                                 const GdkRGBA bg_widget, const GdkRGBA fg_widget, 
-                                 int xpos, int ypos, int width, int height);
-struct glmtext * setup_text_struct(GtkWidget *widget, char *font, int size, char *fmt);
+                                 struct glmpos *pos,
+                                 struct glmcolor *color,
+                                 struct glmtext *text);
+struct glmpos * setup_pos_struct(int x, int y, int width, int height);
+struct glmcolor * setup_color_struct(const GdkRGBA bg_window, const GdkRGBA fg_window, 
+                                     const GdkRGBA bg_widget, const GdkRGBA fg_widget);
+struct glmtext * setup_text_struct(char *font, int size, char *fmt);
 
 #endif

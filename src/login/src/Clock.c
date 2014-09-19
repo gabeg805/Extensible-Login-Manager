@@ -74,11 +74,11 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define CLOCK_DATE_FMT     "%A, %B %-d"
 #define CLOCK_UPDATE_SEC   30
+#define CLOCK_DATE_FMT     "%A, %B %-d"
 #define CLOCK_TIME_FMT     "%-I:%M %p"
 #define CLOCK_DATE_XPOS    50
-#define CLOCK_TIME_XPOS    86
+#define CLOCK_TIME_XPOS    100
 #define CLOCK_DATE_YPOS    650
 #define CLOCK_TIME_YPOS    575
 #define CLOCK_DATE_WIDTH   400
@@ -98,9 +98,9 @@
 
 
 // Declares
-void setup(struct glmgui *gui, struct glmtext *text);
-void set_label(struct glmtext *text);
-gboolean update(gpointer data);
+static void setup(struct glmgui *gui);
+static void set_label(struct glmgui *gui);
+static gboolean update(gpointer data);
 void display_clock();
 
 
@@ -110,19 +110,19 @@ void display_clock();
 // ///////////////////////
 
 // Setup the window and widget
-void setup(struct glmgui *gui, struct glmtext *text) {
+static void setup(struct glmgui *gui) {
     
     // Set window attributes
-    gtk_window_move(GTK_WINDOW(gui->win), gui->x, gui->y);
-    gtk_window_set_default_size(GTK_WINDOW(gui->win), gui->width, gui->height);
+    gtk_window_move(GTK_WINDOW(gui->win), gui->pos->x, gui->pos->y);
+    gtk_window_set_default_size(GTK_WINDOW(gui->win), gui->pos->width, gui->pos->height);
     
     // Set clock attributes
     set_stuff(gui);
-    set_label(text);
+    set_label(gui);
     
     // Add the clock to the root window 
     gtk_container_add(GTK_CONTAINER(gui->win), gui->widg);
-    g_timeout_add_seconds(CLOCK_UPDATE_SEC, update, text);
+    g_timeout_add_seconds(CLOCK_UPDATE_SEC, update, gui);
     
     // Enable transparency
     enable_transparency(gui->win);
@@ -138,21 +138,20 @@ void setup(struct glmgui *gui, struct glmtext *text) {
 // //////////////////////////
 
 // Set the clock label font and text size
-void set_label(struct glmtext *text) {
+static void set_label(struct glmgui *gui) {
 
     // Obtain current time as seconds elapsed since the Epoch.
-    time_t current_time = time(NULL);
-    char time_string[50];
-    struct tm *tmp;
+    time_t current = time(NULL);
+    char time[50];
+    struct tm *tmp = localtime(&current);
     
     // Convert time
-    tmp = localtime(&current_time);
-    strftime(time_string, sizeof(time_string), text->fmt, tmp);
+    strftime(time, sizeof(time), gui->text->fmt, tmp);
     
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
-    PangoAttribute *attrFont = pango_attr_family_new(text->font);
-    PangoAttribute *attrSize = pango_attr_size_new(text->size);
+    PangoAttribute *attrFont = pango_attr_family_new(gui->text->font);
+    PangoAttribute *attrSize = pango_attr_size_new(gui->text->size);
     
     // Add attributes to the list (and increase the reference counter)
     attrList = pango_attr_list_ref(attrList);
@@ -160,8 +159,8 @@ void set_label(struct glmtext *text) {
     pango_attr_list_insert(attrList, attrFont);
     
     // Set the label text and font
-    gtk_label_set_attributes(GTK_LABEL(text->widget), attrList);
-    gtk_label_set_text(GTK_LABEL(text->widget), time_string);
+    gtk_label_set_attributes(GTK_LABEL(gui->widg), attrList);
+    gtk_label_set_text(GTK_LABEL(gui->widg), time);
 }
 
 
@@ -171,9 +170,9 @@ void set_label(struct glmtext *text) {
 // ////////////////////////
 
 // Refresh the current clock label
-gboolean update(gpointer data) {
-    struct glmtext *text = (struct glmtext *) data;
-    set_label(text);
+static gboolean update(gpointer data) {
+    struct glmgui *gui = (struct glmgui *) data;
+    set_label(gui);
     
     return TRUE;
 }
@@ -188,32 +187,28 @@ gboolean update(gpointer data) {
 void display_clock() {
     
     // Initialize date gui widget
-    struct glmgui *date_gui = setup_gui_struct(gtk_window_new(GTK_WINDOW_TOPLEVEL), 
-                                               gtk_label_new(""), 
-                                               BG_WINDOW, FG_WINDOW, 
-                                               BG_DATE_CLOCK, FG_DATE_CLOCK, 
-                                               CLOCK_DATE_XPOS, CLOCK_DATE_YPOS, 
+    struct glmcolor *date_color = setup_color_struct(BG_WINDOW, FG_WINDOW, BG_DATE_CLOCK, FG_DATE_CLOCK);
+    struct glmtext *date_text = setup_text_struct(CLOCK_DATE_FONT, CLOCK_DATE_FSIZE, CLOCK_DATE_FMT);
+    struct glmpos *date_pos = setup_pos_struct(CLOCK_DATE_XPOS, CLOCK_DATE_YPOS, 
                                                CLOCK_DATE_WIDTH*0, CLOCK_DATE_HEIGHT*0);
     
-    // Initialize time gui widget
-    struct glmgui *time_gui = setup_gui_struct(gtk_window_new(GTK_WINDOW_TOPLEVEL), 
+    struct glmgui *date_gui = setup_gui_struct(gtk_window_new(GTK_WINDOW_TOPLEVEL), 
                                                gtk_label_new(""), 
-                                               BG_WINDOW, FG_WINDOW, 
-                                               BG_TIME_CLOCK, FG_TIME_CLOCK, 
-                                               CLOCK_TIME_XPOS, CLOCK_TIME_YPOS, 
+                                               date_pos, date_color, date_text);
+    
+    // Initialize time gui widget
+    struct glmcolor *time_color = setup_color_struct(BG_WINDOW, FG_WINDOW, BG_TIME_CLOCK, FG_TIME_CLOCK);
+    struct glmtext *time_text = setup_text_struct(CLOCK_TIME_FONT, CLOCK_TIME_FSIZE, CLOCK_TIME_FMT);
+    struct glmpos *time_pos = setup_pos_struct(CLOCK_TIME_XPOS, CLOCK_TIME_YPOS, 
                                                CLOCK_TIME_WIDTH*0, CLOCK_TIME_HEIGHT*0);
     
-    // Initialize date text attributes
-    struct glmtext *date_text = setup_text_struct(date_gui->widg, CLOCK_DATE_FONT, 
-                                                  CLOCK_DATE_FSIZE, CLOCK_DATE_FMT);
-    
-    // Initialize time text attributes
-    struct glmtext *time_text = setup_text_struct(time_gui->widg, CLOCK_TIME_FONT, 
-                                                  CLOCK_TIME_FSIZE, CLOCK_TIME_FMT);
+    struct glmgui *time_gui = setup_gui_struct(gtk_window_new(GTK_WINDOW_TOPLEVEL), 
+                                               gtk_label_new(""), 
+                                               time_pos, time_color, time_text);
     
     // Setup date and time clocks 
-    setup(date_gui, date_text);
-    setup(time_gui, time_text);
+    setup(date_gui);
+    setup(time_gui);
     
     // Display the clock
     gtk_widget_show(date_gui->widg);

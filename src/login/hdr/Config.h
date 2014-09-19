@@ -23,7 +23,6 @@ extern char PASSWORD_INVISCHAR;
 
 
 // Position
-extern int FRAME_XPOS;
 extern int TEXTIMAGE_XPOS;
 extern int USERNAME_XPOS;
 extern int PASSWORD_XPOS;
@@ -33,7 +32,6 @@ extern int PANEL_REBOOT_XPOS;
 extern int PANEL_REFRESH_XPOS;
 extern int PANEL_DIALOG_XPOS;
 
-extern int FRAME_YPOS;
 extern int TEXTIMAGE_YPOS;
 extern int USERNAME_YPOS;
 extern int PASSWORD_YPOS;
@@ -46,7 +44,6 @@ extern int PANEL_DIALOG_YPOS;
 
 
 // Size
-extern int FRAME_WIDTH;
 extern int USERNAME_WIDTH;
 extern int PASSWORD_WIDTH;
 extern int WINDOWMANAGER_WIDTH;
@@ -54,7 +51,6 @@ extern int PANEL_SHUTDOWN_WIDTH;
 extern int PANEL_REBOOT_WIDTH;
 extern int PANEL_REFRESH_WIDTH;
 
-extern int FRAME_HEIGHT;
 extern int USERNAME_HEIGHT;
 extern int PASSWORD_HEIGHT;
 extern int WINDOWMANAGER_HEIGHT;
@@ -139,22 +135,32 @@ extern char *WM_SES_CMD;
 struct glmgui {
     GtkWidget *win;
     GtkWidget *widg;
-    GdkRGBA bgwin;
-    GdkRGBA fgwin;
-    GdkRGBA bgwidg;
-    GdkRGBA fgwidg;
-    int x;
-    int y;
-    int width;
-    int height;
+    struct glmpos *pos;
+    struct glmcolor *color;
+    struct glmtext *text;
 };
 
 
 struct glmtext {
-    GtkWidget *widget;
     char *font;
     int size;
     char *fmt;
+};
+
+
+struct glmcolor {
+    GdkRGBA bgwin;
+    GdkRGBA fgwin;
+    GdkRGBA bgwidg;
+    GdkRGBA fgwidg;
+};
+
+
+struct glmpos {
+    int x;
+    int y;
+    int width;
+    int height;
 };
 
 

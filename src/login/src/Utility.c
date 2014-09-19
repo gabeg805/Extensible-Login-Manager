@@ -91,10 +91,14 @@ int get_open_tty();
 char ** command_line(char *cmd, int size);
 void cleanup_child(int signal);
 struct glmgui * setup_gui_struct(GtkWidget *window, GtkWidget *widget, 
-                                 const GdkRGBA bg_window, const GdkRGBA fg_window, 
-                                 const GdkRGBA bg_widget, const GdkRGBA fg_widget, 
-                                 int xpos, int ypos, int width, int height);
-struct glmtext * setup_text_struct(GtkWidget *widget, char *font, int size, char *fmt);
+                                 struct glmpos *pos,
+                                 struct glmcolor *color,
+                                 struct glmtext *text);
+struct glmpos * setup_pos_struct(int x, int y, int width, int height);
+struct glmcolor * setup_color_struct(const GdkRGBA bg_window, const GdkRGBA fg_window, 
+                                     const GdkRGBA bg_widget, const GdkRGBA fg_widget);
+struct glmtext * setup_text_struct(char *font, int size, char *fmt);
+
 
 
 // /////////////////////////
@@ -294,38 +298,71 @@ void cleanup_child(int signal) {
 
 // Setup the GUI struct
 struct glmgui * setup_gui_struct(GtkWidget *window, GtkWidget *widget, 
-                                 const GdkRGBA bg_window, const GdkRGBA fg_window, 
-                                 const GdkRGBA bg_widget, const GdkRGBA fg_widget, 
-                                 int xpos, int ypos, int width, int height) {
+                                 struct glmpos *pos,
+                                 struct glmcolor *color,
+                                 struct glmtext *text) {
     
+    // Initialize struct
     struct glmgui *gui = malloc(sizeof(struct glmgui));
     
+    // Start storing things in the struct
     gui->win = window;
     gui->widg = widget;
-    gui->bgwin = bg_window;
-    gui->fgwin = fg_window;
-    gui->bgwidg = bg_widget;
-    gui->fgwidg = fg_widget;
-    gui->x = xpos;
-    gui->y = ypos;
-    gui->width = width;
-    gui->height = height;
+    
+    if ( pos != NULL )
+        gui->pos = pos;
+    
+    if ( color != NULL )
+        gui->color = color;
+    
+    if ( text != NULL )
+        gui->text = text;
     
     return gui;
 }
 
 
 
+// Setup the GUI position struct
+struct glmpos * setup_pos_struct(int x, int y, int width, int height) {
+    
+    struct glmpos *pos = malloc(sizeof(struct glmpos));
+    
+    pos->x = x;
+    pos->y = y;
+    pos->width = width;
+    pos->height = height;
+    
+    return pos;
+}
+
+
+
+// Setup the GUI colors struct
+struct glmcolor * setup_color_struct(const GdkRGBA bg_window, const GdkRGBA fg_window, 
+                                     const GdkRGBA bg_widget, const GdkRGBA fg_widget) {
+    
+    struct glmcolor *color = malloc(sizeof(struct glmcolor));
+    
+    color->bgwin = bg_window;
+    color->fgwin = fg_window;
+    color->bgwidg = bg_widget;
+    color->fgwidg = fg_widget;
+    
+    
+    return color;
+}
+
+
+
 // Setup the GUI text struct
-struct glmtext * setup_text_struct(GtkWidget *widget, char *font, int size, char *fmt) {
+struct glmtext * setup_text_struct(char *font, int size, char *fmt) {
     
     struct glmtext *text = malloc(sizeof(struct glmtext));
     
-    text->widget = widget;
     text->font = font;
     text->size = size;
     text->fmt = fmt;
     
     return text;
 }
-

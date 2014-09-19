@@ -118,8 +118,8 @@ void set_color_and_opacity(GtkWidget *window, GtkWidget *widget,
 void set_stuff(struct glmgui *gui) {    
     
     // Set the color scheme
-    gtk_widget_override_background_color(gui->win, GTK_STATE_FLAG_NORMAL, &gui->bgwin);
-    gtk_widget_override_background_color(gui->widg, GTK_STATE_FLAG_NORMAL, &gui->bgwidg);
-    gtk_widget_override_color(gui->win, GTK_STATE_FLAG_NORMAL, &gui->fgwin);
-    gtk_widget_override_color(gui->widg, GTK_STATE_FLAG_NORMAL, &gui->fgwidg);
+    gtk_widget_override_background_color(gui->win, GTK_STATE_FLAG_NORMAL, &gui->color->bgwin);
+    gtk_widget_override_background_color(gui->widg, GTK_STATE_FLAG_NORMAL, &gui->color->bgwidg);
+    gtk_widget_override_color(gui->win, GTK_STATE_FLAG_NORMAL, &gui->color->fgwin);
+    gtk_widget_override_color(gui->widg, GTK_STATE_FLAG_NORMAL, &gui->color->fgwidg);
 }

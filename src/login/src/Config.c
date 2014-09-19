@@ -72,7 +72,6 @@ char PASSWORD_INVISCHAR   = '*';
 
 
 // Position
-int FRAME_XPOS            = 550;
 int TEXTIMAGE_XPOS        = 570;
 int USERNAME_XPOS         = 665;
 int PASSWORD_XPOS         = 570;
@@ -82,7 +81,6 @@ int PANEL_REBOOT_XPOS     = 1366-32*2;
 int PANEL_REFRESH_XPOS    = 1366-32*3;
 int PANEL_DIALOG_XPOS     = 505;
 
-int FRAME_YPOS            = 300;
 int TEXTIMAGE_YPOS        = 330;
 int USERNAME_YPOS         = 197;
 int PASSWORD_YPOS         = 350;
@@ -95,7 +93,6 @@ int PANEL_DIALOG_YPOS     = 310;
 
 
 // Size
-int FRAME_WIDTH            = 265;
 int USERNAME_WIDTH         = 150;
 int PASSWORD_WIDTH         = 230;
 int WINDOWMANAGER_WIDTH    = 30;
@@ -103,7 +100,6 @@ int PANEL_SHUTDOWN_WIDTH   = 32;
 int PANEL_REBOOT_WIDTH     = 32;
 int PANEL_REFRESH_WIDTH    = 32;
 
-int FRAME_HEIGHT            = 100;
 int USERNAME_HEIGHT         = 50;
 int PASSWORD_HEIGHT         = 30;
 int WINDOWMANAGER_HEIGHT    = 30;
