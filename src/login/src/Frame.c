@@ -55,6 +55,10 @@
 // 
 //     gabeg Sep 18 2014 <> Updated code to hold structs, to increase readability 
 // 
+//     gabeg Oct 23 2014 <> Removed check for alpha color support. Removed the "Frame 
+//                          Setup" function and used the universal setup function 
+//                          instead.
+// 
 // **********************************************************************************
 
 
@@ -79,36 +83,10 @@
 #define FRAME_WIDTH    267
 #define FRAME_HEIGHT   102
 
-
 // Declares
-static void setup(struct glmgui *frame);
 static void draw_frame(cairo_t *);
 static gboolean draw_window(GtkWidget *widget);
 void display_frame();
-
-
-
-// ////////////////////////////
-// ///// INITIALIZE FRAME /////
-// ////////////////////////////
-
-// Initialize the root window and all its objects
-static void setup(struct glmgui *gui) {
-    
-    // Set window attributes
-    gtk_window_move(GTK_WINDOW(gui->win), gui->pos->x, gui->pos->y);
-    gtk_window_set_default_size(GTK_WINDOW(gui->win), gui->pos->width, gui->pos->height);
-    
-    // Add area to window
-    gtk_container_add(GTK_CONTAINER(gui->win), gui->widg);
-    
-    // Attempt to enable window transparency
-    enable_transparency(gui->win);
-    
-    // GTK signals
-    g_signal_connect(G_OBJECT(gui->widg), "draw", G_CALLBACK(draw_window), NULL);
-    g_signal_connect(gui->win, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-}
 
 
 
@@ -133,10 +111,7 @@ static void draw_frame(cairo_t *cr) {
     cairo_close_path (cr);
     
     // Check for window transparency
-    if (supports_alpha) 
-        cairo_set_source_rgba(cr, 1, 1, 1, 0.5);
-    else 
-        cairo_set_source_rgb(cr, 1, 1, 1); 
+    cairo_set_source_rgba(cr, 1, 1, 1, 0.5);
     
     // Fill login frame
     cairo_fill_preserve(cr);
@@ -152,14 +127,8 @@ static gboolean draw_window(GtkWidget *widget) {
     // Create Cairo widget for GTK window
     cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widget));
     
-    // Check for window transparency
-    if (supports_alpha)
-        cairo_set_source_rgba(cr, 0, 0, 0, 0);
-    else
-        cairo_set_source_rgb(cr, 1, 1, 1);
-    
-    
     // Draw the window background
+    cairo_set_source_rgba(cr, 0, 0, 0, 0);    
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
     cairo_paint(cr);
     
@@ -180,17 +149,18 @@ static gboolean draw_window(GtkWidget *widget) {
 void display_frame() {
     
     // Initialize date gui widget
-    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *widget = gtk_drawing_area_new();
+    GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *widg = gtk_drawing_area_new();
     
-    // Define structs to hold GUI information
-    struct glmpos *pos = setup_pos_struct(FRAME_XPOS, FRAME_YPOS, FRAME_WIDTH, FRAME_HEIGHT);
-    struct glmgui *gui = setup_gui_struct(window, widget, pos, NULL, NULL);
+    // Setup structs to hold widget information
+    int pos[4] = {FRAME_XPOS, FRAME_YPOS, FRAME_WIDTH, FRAME_HEIGHT};
     
     // Setup frame
-    setup(gui);
+    setters(win, widg, pos, NULL);
+    g_signal_connect(G_OBJECT(widg), "draw", G_CALLBACK(draw_window), NULL);
+    
     
     // Display the login frame
-    gtk_widget_show(gui->widg);
-    gtk_widget_show(gui->win);
+    gtk_widget_show(widg);
+    gtk_widget_show(win);
 }

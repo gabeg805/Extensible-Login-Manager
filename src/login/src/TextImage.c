@@ -50,6 +50,11 @@
 // 
 //     gabeg Sep 16 2014 <> Removed unneeded libraries
 // 
+//     gabeg Oct 23 2014 <> Moved over #define statements from "Config.c" to here. 
+//                          Made "draw_..." functions static and changed the 
+//                          textimage setup function for the main universal setup 
+//                          funtion.
+// 
 // **********************************************************************************
 
 
@@ -61,43 +66,24 @@
 // Includes
 #include "../hdr/TextImage.h"
 #include "../hdr/Config.h"
+#include "../hdr/Utility.h"
 #include "../hdr/Transparency.h"
 
 #include <gtk/gtk.h>
 #include <cairo.h>
 #include <string.h>
 
+#define   TEXT_XPOS    570
+#define   TEXT_YPOS    330
+#define   TEXT_FSIZE   12
+#define   TEXT_STR     "Password:"
+#define   TEXT_FONT    "DejaVu Sans"
+
 
 // Declares
-void init_text_root(GtkWidget *window, GtkWidget *area);
-void draw_text(cairo_t *);
-gboolean draw_text_window(GtkWidget *window);
+static void draw_text(cairo_t *);
+static gboolean draw_text_window(GtkWidget *window);
 void display_text_image();
-
-
-
-// ////////////////////////////////////////
-// ///// INITIALIZE TEXT IMAGE WINDOW /////
-// ////////////////////////////////////////
-
-// Initialize the root window and its objects
-void init_text_root(GtkWidget *window, GtkWidget *area) {
-    
-    // Set window attributes
-    gtk_window_move(GTK_WINDOW(window), TEXTIMAGE_XPOS, TEXTIMAGE_YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), TEXTIMAGE_FSIZE*strlen(TEXTIMAGE_TEXT), TEXTIMAGE_FSIZE+1);
-    
-    // Add area to the root window
-    gtk_container_add(GTK_CONTAINER(window), area);
-    /* gtk_widget_set_app_paintable(window, TRUE); */
-    
-    // Attempt to enable window transparency
-    enable_transparency(window);
-    
-    // GTK signals
-    g_signal_connect(G_OBJECT(area), "draw", G_CALLBACK(draw_text_window), NULL);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);    
-}
 
 
 
@@ -107,11 +93,11 @@ void init_text_root(GtkWidget *window, GtkWidget *area) {
 
 // Draw the text
 void draw_text(cairo_t *cr) {         
-    cairo_select_font_face(cr, TEXTIMAGE_FONT, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, TEXTIMAGE_FSIZE);
+    cairo_select_font_face(cr, TEXT_FONT, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size(cr, TEXT_FSIZE);
     cairo_set_source_rgb(cr, 0, 0, 0);
-    cairo_move_to(cr, 0, TEXTIMAGE_FSIZE);
-    cairo_show_text(cr, TEXTIMAGE_TEXT);
+    cairo_move_to(cr, 0, TEXT_FSIZE);
+    cairo_show_text(cr, TEXT_STR);
 }
 
 
@@ -123,11 +109,7 @@ gboolean draw_text_window(GtkWidget *window) {
     cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(window));
     
     // Check for window transparency
-    if (supports_alpha) 
-        cairo_set_source_rgba(cr, 0, 0, 0, 0); 
-    else 
-        cairo_set_source_rgb(cr, 1, 1, 1); 
-    
+    cairo_set_source_rgba(cr, 0, 0, 0, 0); 
     
     // Draw the window background 
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
@@ -150,13 +132,17 @@ gboolean draw_text_window(GtkWidget *window) {
 void display_text_image() {
     
     // Initialize text image elements
-    GtkWidget *text_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *text = gtk_drawing_area_new();
+    GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *widg = gtk_drawing_area_new();
     
-    // Setup the text image
-    init_text_root(text_window, text);
+    // Define structs to hold widget informationx
+    int pos[4] = {TEXT_XPOS, TEXT_YPOS, TEXT_FSIZE*strlen(TEXT_STR), TEXT_FSIZE+1};
+    
+    // Setup text image
+    setters(win, widg, pos, NULL);
+    g_signal_connect(G_OBJECT(widg), "draw", G_CALLBACK(draw_text_window), NULL);
     
     // Display the password text image
-    gtk_widget_show(text);
-    gtk_widget_show(text_window);
+    gtk_widget_show(widg);
+    gtk_widget_show(win);
 }

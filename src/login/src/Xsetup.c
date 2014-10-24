@@ -126,6 +126,15 @@ void start_compman() {
     // Log compositing manager start
     file_write(GLM_LOG, "a+", "%s\n", "Starting compositing manager...");    
     
+    // Check if composite manager is already running
+    char val[5];
+    FILE *handle = popen("pgrep -c xcompmgr", "r");
+    fgets(val, sizeof(val), handle);
+    pclose(handle);
+    
+    if ( atoi(val) != 0 )
+        return;
+    
     // Initialize monotonic clock
     struct timespec start, end; 
     clock_gettime(CLOCK_MONOTONIC, &start);

@@ -66,7 +66,8 @@
 void enable_transparency(GtkWidget *widget);
 void set_color_and_opacity(GtkWidget *window, GtkWidget *widget, 
                            const GdkRGBA bg_widget, const GdkRGBA fg_widget);
-void set_stuff(struct glmgui *gui);
+void set_stuff(struct glmstruct *gui);
+void set_ass(GtkWidget *win, GtkWidget *widg, const GdkRGBA color[4]);
 
 gboolean supports_alpha = FALSE;
 
@@ -115,11 +116,20 @@ void set_color_and_opacity(GtkWidget *window, GtkWidget *widget,
     gtk_widget_override_color(widget, GTK_STATE_FLAG_NORMAL, &fg_widget);
 }
 
-void set_stuff(struct glmgui *gui) {    
+void set_stuff(struct glmstruct *gui) {    
     
     // Set the color scheme
     gtk_widget_override_background_color(gui->win, GTK_STATE_FLAG_NORMAL, &gui->color->bgwin);
     gtk_widget_override_background_color(gui->widg, GTK_STATE_FLAG_NORMAL, &gui->color->bgwidg);
     gtk_widget_override_color(gui->win, GTK_STATE_FLAG_NORMAL, &gui->color->fgwin);
     gtk_widget_override_color(gui->widg, GTK_STATE_FLAG_NORMAL, &gui->color->fgwidg);
+}
+
+void set_ass(GtkWidget *win, GtkWidget *widg, const GdkRGBA color[4]) {
+    
+    // Set the color scheme
+    gtk_widget_override_background_color(win, GTK_STATE_FLAG_NORMAL, &color[0]);
+    gtk_widget_override_background_color(widg, GTK_STATE_FLAG_NORMAL, &color[1]);
+    gtk_widget_override_color(win, GTK_STATE_FLAG_NORMAL, &color[2]);
+    gtk_widget_override_color(widg, GTK_STATE_FLAG_NORMAL, &color[3]);
 }

@@ -76,13 +76,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define XPOS        665
+#define YPOS        197
+#define WIDTH       0
+#define HEIGHT      0
+#define BG_MENU     (const GdkRGBA) {0, 0, 0, 0}
+#define FG_MENU     (const GdkRGBA) {1, 1, 1, 1}
+#define BG_WINDOW   (const GdkRGBA) {0, 0, 0, 0}
+#define FG_WINDOW   (const GdkRGBA) {0, 0, 0, 0}
+#define FSIZE       23*1024
+#define FONT        "DejaVu Sans"
+
 
 // Declares
-void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu, GtkWidget *label);
-void init_userlabel(GtkWidget *label);
-void usermenu_write_to_file(GtkMenu *item, GtkWidget *label);
-char ** get_username(char *file, int size);
-void set_username_entries(GtkWidget *menu, GtkWidget *label);
+static void init_usermenu_root(struct glmgui *gui, struct glmpos *pos, struct glmcolor *color);
+static void init_userlabel(GtkWidget *label);
+static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label);
+static char ** get_username(char *file, int size);
+static void set_username_entries(GtkWidget *menu, GtkWidget *label);
 void display_username();
 
 
@@ -92,34 +103,35 @@ void display_username();
 // ////////////////////////////////////
 
 // Initialize the root window and its objects
-void init_usermenu_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu, GtkWidget *label) {
+void init_usermenu_root(struct glmgui *gui, struct glmpos *pos, struct glmcolor *color) {
     
     // Set username icon
     if ( !fork() )
-        execl(PQIV, PQIV, "-c", "-i", "-P", "575,190", USERNAME_IMG, NULL);
+        execl(PQIV, PQIV, "-c", "-i", "-P", "575,190", gui->img, NULL);
     
     // Set window attributes
-    gtk_window_move(GTK_WINDOW(window), USERNAME_XPOS, USERNAME_YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), USERNAME_WIDTH*0, USERNAME_HEIGHT*0);
+    gtk_window_move(GTK_WINDOW(gui->win), pos->x, pos->y);
+    gtk_window_set_default_size(GTK_WINDOW(gui->win), pos->width, pos->height);
     
     // Set username menu attributes
-    set_color_and_opacity(window, dropmenu, BG_USERNAME, FG_USERNAME);
-    set_username_entries(menu, label);
+    GtkWidget *menu = gtk_menu_new();
+    set_color_and_opacity(gui->win, gui->widg, color->bgwidg, color->fgwidg);
+    set_username_entries(menu, gui->extra);
     
     // Modify button style
-    init_userlabel(label);
-    gtk_button_set_relief(GTK_BUTTON(dropmenu), GTK_RELIEF_NONE);
+    init_userlabel(gui->extra);
     
     // Attach the window manager menu to the dropdown menu
-    gtk_menu_button_set_popup(GTK_MENU_BUTTON(dropmenu), menu);
-    gtk_container_add(GTK_CONTAINER(dropmenu), label);
-    gtk_container_add(GTK_CONTAINER(window), dropmenu);
+    gtk_menu_button_set_popup(GTK_MENU_BUTTON(gui->widg), menu);
+    gtk_container_add(GTK_CONTAINER(gui->widg), gui->extra);
+    gtk_container_add(GTK_CONTAINER(gui->win), gui->widg);
+    gtk_button_set_relief(GTK_BUTTON(gui->widg), GTK_RELIEF_NONE);
     
     // attempt to enable window transparency
-    enable_transparency(window);
+    enable_transparency(gui->win);
     
     // GTK signals
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(gui->win, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 }
 
 
@@ -129,8 +141,8 @@ void init_userlabel(GtkWidget *label) {
     
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
-    PangoAttribute *attrFont = pango_attr_family_new(USERNAME_FONT);
-    PangoAttribute *attrSize = pango_attr_size_new(USERNAME_FSIZE);
+    PangoAttribute *attrFont = pango_attr_family_new(FONT);
+    PangoAttribute *attrSize = pango_attr_size_new(FSIZE);
     PangoAttribute *attrColor = pango_attr_foreground_new(65535, 65535, 65535);
     
     // Add attributes to the list (and increase the reference counter)
@@ -320,16 +332,18 @@ void set_username_entries(GtkWidget *menu, GtkWidget *label) {
 void display_username() {
     
     // Initialize username menu elements
-    GtkWidget *user_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *user_dropmenu = gtk_menu_button_new();
-    GtkWidget *user_menu = gtk_menu_new();
-    GtkWidget *user_label = gtk_label_new("");
+    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *dropmenu = gtk_menu_button_new();
+    GtkWidget *label = gtk_label_new("");
     
     // Setup username menu
-    init_usermenu_root(user_window, user_dropmenu, user_menu, user_label);
+    struct glmgui *gui = setup_gui_struct(window, dropmenu, label, USERNAME_IMG);
+    struct glmpos *pos = setup_pos_struct(XPOS, YPOS, WIDTH, HEIGHT);
+    struct glmcolor *color = setup_color_struct(BG_WINDOW, FG_WINDOW, BG_MENU, FG_MENU);
+    init_usermenu_root(gui, pos, color);
     
     // Display the username menu
-    gtk_widget_show(user_label);
-    gtk_widget_show(user_dropmenu);
-    gtk_widget_show(user_window);
+    gtk_widget_show(gui->extra);
+    gtk_widget_show(gui->widg);
+    gtk_widget_show(gui->win);
 }

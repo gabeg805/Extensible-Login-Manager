@@ -71,6 +71,7 @@
 // Includes
 #include "../hdr/Utility.h"
 #include "../hdr/Config.h"
+#include "../hdr/Transparency.h"
 
 #include <gtk/gtk.h>
 #include <unistd.h>
@@ -90,15 +91,16 @@ char * get_open_display();
 int get_open_tty();
 char ** command_line(char *cmd, int size);
 void cleanup_child(int signal);
-struct glmgui * setup_gui_struct(GtkWidget *window, GtkWidget *widget, 
-                                 struct glmpos *pos,
-                                 struct glmcolor *color,
-                                 struct glmtext *text);
+struct glmstruct * setup_struct(GtkWidget *window, GtkWidget *widget, 
+                                struct glmpos *pos,
+                                struct glmcolor *color,
+                                struct glmtext *text);
+struct glmgui * setup_gui_struct(GtkWidget *window, GtkWidget *widget, GtkWidget *extra, char *img);
 struct glmpos * setup_pos_struct(int x, int y, int width, int height);
 struct glmcolor * setup_color_struct(const GdkRGBA bg_window, const GdkRGBA fg_window, 
                                      const GdkRGBA bg_widget, const GdkRGBA fg_widget);
-struct glmtext * setup_text_struct(char *font, int size, char *fmt);
-
+struct glmtext * setup_text_struct(GtkWidget *widg, char *font, char *fmt, int size);
+void setters(GtkWidget *win, GtkWidget *widg, int pos[4], const GdkRGBA color[4]);
 
 
 // /////////////////////////
@@ -297,13 +299,13 @@ void cleanup_child(int signal) {
 // ////////////////////////////
 
 // Setup the GUI struct
-struct glmgui * setup_gui_struct(GtkWidget *window, GtkWidget *widget, 
-                                 struct glmpos *pos,
-                                 struct glmcolor *color,
-                                 struct glmtext *text) {
+struct glmstruct * setup_struct(GtkWidget *window, GtkWidget *widget, 
+                                struct glmpos *pos,
+                                struct glmcolor *color,
+                                struct glmtext *text) {
     
     // Initialize struct
-    struct glmgui *gui = malloc(sizeof(struct glmgui));
+    struct glmstruct *gui = malloc(sizeof(struct glmstruct));
     
     // Start storing things in the struct
     gui->win = window;
@@ -323,6 +325,25 @@ struct glmgui * setup_gui_struct(GtkWidget *window, GtkWidget *widget,
 
 
 
+// Setup the GUI widgets struct
+struct glmgui * setup_gui_struct(GtkWidget *window, GtkWidget *widget, GtkWidget *extra, char *img) {
+    
+    // Initialize struct
+    struct glmgui *gui = malloc(sizeof(struct glmgui));
+    
+    // Start storing things in the struct
+    gui->win = window;
+    gui->widg = widget;
+    
+    if ( extra != NULL )
+        gui->extra = extra;
+    
+    if ( img != NULL )
+        gui->img = img;
+    
+    return gui;
+}    
+    
 // Setup the GUI position struct
 struct glmpos * setup_pos_struct(int x, int y, int width, int height) {
     
@@ -356,13 +377,37 @@ struct glmcolor * setup_color_struct(const GdkRGBA bg_window, const GdkRGBA fg_w
 
 
 // Setup the GUI text struct
-struct glmtext * setup_text_struct(char *font, int size, char *fmt) {
+struct glmtext * setup_text_struct(GtkWidget *widg, char *font, char *fmt, int size) {
     
     struct glmtext *text = malloc(sizeof(struct glmtext));
     
+    text->widg = widg;
     text->font = font;
-    text->size = size;
     text->fmt = fmt;
+    text->size = size;
     
     return text;
+}
+
+
+
+// Universal setup function
+void setters(GtkWidget *win, GtkWidget *widg, int pos[4], const GdkRGBA color[4]) {
+    
+    // Set window attributes
+    gtk_window_move(GTK_WINDOW(win), pos[0], pos[1]);
+    gtk_window_set_default_size(GTK_WINDOW(win), pos[2], pos[3]);
+    
+    // Set color scheme for root window
+    if ( color != NULL )
+        set_ass(win, widg, color);
+    
+    // Add entry to window
+    gtk_container_add(GTK_CONTAINER(win), widg);
+    
+    // Enable transparency
+    enable_transparency(win);
+    
+    // GTK signals
+    g_signal_connect(win, "destroy", G_CALLBACK(gtk_main_quit), NULL);    
 }

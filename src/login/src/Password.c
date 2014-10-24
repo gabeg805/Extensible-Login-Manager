@@ -26,8 +26,8 @@
 // 
 // FUNCTIONS:
 // 
-//     init_entry_root        - Initialize the root window
-//     init_entry             - Initialize the entry box
+//     setup        - Initialize the root window
+//     set_entry             - Initialize the entry box
 // 
 //     get_entry_text         - Return user entry text
 // 
@@ -53,6 +53,9 @@
 // 
 //     gabeg Sep 16 2014 <> Removed unneeded libraries
 // 
+//     gabeg Oct 23 2014 <> Removed "Password Setup" function and used the universal 
+//                          setup function instead.
+// 
 // **********************************************************************************
 
 
@@ -72,11 +75,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAXCHARS    30
+#define INVISCHAR   '*'
+#define XPOS        570
+#define YPOS        350
+#define WIDTH       230
+#define HEIGHT      0
+#define BG_ENTRY    (const GdkRGBA) {1, 1, 1, 0.5}
+#define BG_WINDOW   (const GdkRGBA) {0, 0, 0, 0}
+#define FG_WINDOW   (const GdkRGBA) {0, 0, 0, 0}
+#define FG_ENTRY    (const GdkRGBA) {0, 0, 0, 1}
+#define FSIZE       10*1024
+#define FONT        "Inconsolata"
+
 
 // Declares
-void init_entry_root(GtkWidget *window, GtkWidget *entry);
-void init_entry(GtkWidget *entry);
-void get_entry_text(GtkWidget *entry);
+static void set_entry(GtkWidget *entry);
+static void get_entry_text(GtkWidget *entry);
 void display_password_entry();
 
 
@@ -85,45 +100,22 @@ void display_password_entry();
 // ///// INITIALIZE ENTRY BOX /////
 // ////////////////////////////////
 
-// Initialize the root window
-void init_entry_root(GtkWidget *window, GtkWidget *entry) {
-    
-    // Set window attributes
-    gtk_window_move(GTK_WINDOW(window), PASSWORD_XPOS, PASSWORD_YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), PASSWORD_WIDTH, PASSWORD_HEIGHT*0);
-    
-    // Set color scheme for root window
-    set_color_and_opacity(window, entry, BG_PASSWORD, FG_PASSWORD);
-    
-    // Add entry to window
-    gtk_container_add(GTK_CONTAINER(window), entry);
-    
-    // Enable transparency
-    enable_transparency(window);
-    
-    // GTK signals
-    g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(get_entry_text), NULL);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);    
-}
-
-
-
 // Initialize the entry box
-void init_entry(GtkWidget *entry) {
+static void set_entry(GtkWidget *entry) {
     
     // Set entry box attributes
     gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-    gtk_entry_set_invisible_char(GTK_ENTRY(entry), PASSWORD_INVISCHAR);
+    gtk_entry_set_invisible_char(GTK_ENTRY(entry), INVISCHAR);
     
     GtkEntryBuffer *buf = gtk_entry_buffer_new(NULL, -1);
-    gtk_entry_buffer_set_max_length(buf, PASSWORD_MAXCHARS);
+    gtk_entry_buffer_set_max_length(buf, MAXCHARS);
     gtk_entry_set_buffer(GTK_ENTRY(entry), buf);
     
     
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
-    PangoAttribute *attrFont = pango_attr_family_new(PASSWORD_FONT);
-    PangoAttribute *attrSize = pango_attr_size_new(PASSWORD_FSIZE);
+    PangoAttribute *attrFont = pango_attr_family_new(FONT);
+    PangoAttribute *attrSize = pango_attr_size_new(FSIZE);
     PangoAttribute *attrColor = pango_attr_foreground_new(0, 0, 0);
     
     // Add attributes to the list (and increase the reference counter)
@@ -144,7 +136,7 @@ void init_entry(GtkWidget *entry) {
 // //////////////////////////
 
 // Return user entry text
-void get_entry_text(GtkWidget *entry) {
+static void get_entry_text(GtkWidget *entry) {
     
     // Get the text from the entry buffer
     GtkEntryBuffer *buf = gtk_entry_get_buffer(GTK_ENTRY(entry));
@@ -155,7 +147,7 @@ void get_entry_text(GtkWidget *entry) {
     
     // Reset the buffer
     buf = gtk_entry_buffer_new(NULL, -1);
-    gtk_entry_buffer_set_max_length(buf, PASSWORD_MAXCHARS);
+    gtk_entry_buffer_set_max_length(buf, MAXCHARS);
     gtk_entry_set_buffer(GTK_ENTRY(entry), buf);
     
     // Quit the entry widget
@@ -177,14 +169,19 @@ void get_entry_text(GtkWidget *entry) {
 void display_password_entry() {
     
     // Initialize password entry box elements
-    GtkWidget *password_entry_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *password_entry = gtk_entry_new();
+    GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *widg = gtk_entry_new();
+    
+    // Define struct to hold widget information
+    int pos[4] = {XPOS, YPOS, WIDTH, HEIGHT};
+    const GdkRGBA color[4] = {BG_WINDOW, BG_ENTRY, FG_WINDOW, FG_ENTRY};
     
     // Setup password entry box
-    init_entry(password_entry);
-    init_entry_root(password_entry_window, password_entry);
+    setters(win, widg, pos, color);
+    set_entry(widg);
+    g_signal_connect(G_OBJECT(widg), "activate", G_CALLBACK(get_entry_text), NULL);
     
     // Display password entry box
-    gtk_widget_show(password_entry);
-    gtk_widget_show(password_entry_window);
+    gtk_widget_show(widg);
+    gtk_widget_show(win);
 }

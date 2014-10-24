@@ -26,11 +26,11 @@
 // 
 // FUNCTIONS:
 // 
-//     init_clock      - Setup the clock window and widget 
+//     setup           - Setup the clock widget 
 // 
-//     set_clock_label - Set the clock label (font, text size, and format)
+//     set_label       - Set the clock label (font, text size, and format)
 // 
-//     clock_update    - Refresh the clock label
+//     update          - Refresh the clock label (every # secs)
 // 
 //     display_clock   - Display the clock
 // 
@@ -56,6 +56,10 @@
 //     gabeg Sep 16 2014 <> Removed unneeded libraries, and updated the code with 
 //                          structs to remove redundant functions
 // 
+//     gabeg Oct 23 2014 <> Modified allocated structures so that less memory is 
+//                          used. Removed the "Clock Setup" function and used the 
+//                          universal setup function instead.
+// 
 // **********************************************************************************
 
 
@@ -74,62 +78,33 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define CLOCK_UPDATE_SEC   30
-#define CLOCK_DATE_FMT     "%A, %B %-d"
-#define CLOCK_TIME_FMT     "%-I:%M %p"
-#define CLOCK_DATE_XPOS    50
-#define CLOCK_TIME_XPOS    100
-#define CLOCK_DATE_YPOS    650
-#define CLOCK_TIME_YPOS    575
-#define CLOCK_DATE_WIDTH   400
-#define CLOCK_TIME_WIDTH   400
-#define CLOCK_DATE_HEIGHT  50
-#define CLOCK_TIME_HEIGHT  75
-#define BG_DATE_CLOCK      (const GdkRGBA) {0, 0, 0, 0}
-#define BG_TIME_CLOCK      (const GdkRGBA) {0, 0, 0, 0}
-#define FG_DATE_CLOCK      (const GdkRGBA) {1, 1, 1, 1}
-#define FG_TIME_CLOCK      (const GdkRGBA) {1, 1, 1, 1}
-#define BG_WINDOW          (const GdkRGBA) {0, 0, 0, 0}
-#define FG_WINDOW          (const GdkRGBA) {0, 0, 0, 0}
-#define CLOCK_DATE_FSIZE   25*1024
-#define CLOCK_TIME_FSIZE   45*1024
-#define CLOCK_DATE_FONT    "Inconsolata"
-#define CLOCK_TIME_FONT    "Inconsolata"
+#define UPDATE_SEC   30
+#define DATE_FMT     "%A, %B %-d"
+#define TIME_FMT     "%-I:%M %p"
+#define DATE_XPOS    50
+#define TIME_XPOS    110
+#define DATE_YPOS    650
+#define TIME_YPOS    575
+#define DATE_WIDTH   0
+#define TIME_WIDTH   0
+#define DATE_HEIGHT  0
+#define TIME_HEIGHT  0
+#define BG_DATE      (const GdkRGBA) {0, 0, 0, 0}
+#define BG_TIME      (const GdkRGBA) {0, 0, 0, 0}
+#define FG_DATE      (const GdkRGBA) {1, 1, 1, 1}
+#define FG_TIME      (const GdkRGBA) {1, 1, 1, 1}
+#define BG_WINDOW    (const GdkRGBA) {0, 0, 0, 0}
+#define FG_WINDOW    (const GdkRGBA) {0, 0, 0, 0}
+#define DATE_FSIZE   25*1024
+#define TIME_FSIZE   45*1024
+#define DATE_FONT    "Inconsolata"
+#define TIME_FONT    "Inconsolata"
 
 
 // Declares
-static void setup(struct glmgui *gui);
-static void set_label(struct glmgui *gui);
+static void set_label(struct glmtext *gui);
 static gboolean update(gpointer data);
 void display_clock();
-
-
-
-// ///////////////////////
-// ///// SETUP CLOCK /////
-// ///////////////////////
-
-// Setup the window and widget
-static void setup(struct glmgui *gui) {
-    
-    // Set window attributes
-    gtk_window_move(GTK_WINDOW(gui->win), gui->pos->x, gui->pos->y);
-    gtk_window_set_default_size(GTK_WINDOW(gui->win), gui->pos->width, gui->pos->height);
-    
-    // Set clock attributes
-    set_stuff(gui);
-    set_label(gui);
-    
-    // Add the clock to the root window 
-    gtk_container_add(GTK_CONTAINER(gui->win), gui->widg);
-    g_timeout_add_seconds(CLOCK_UPDATE_SEC, update, gui);
-    
-    // Enable transparency
-    enable_transparency(gui->win);
-    
-    // GTK signal
-    g_signal_connect(gui->win, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-}
 
 
 
@@ -138,20 +113,20 @@ static void setup(struct glmgui *gui) {
 // //////////////////////////
 
 // Set the clock label font and text size
-static void set_label(struct glmgui *gui) {
-
+static void set_label(struct glmtext *gui) {
+    
     // Obtain current time as seconds elapsed since the Epoch.
     time_t current = time(NULL);
     char time[50];
     struct tm *tmp = localtime(&current);
     
     // Convert time
-    strftime(time, sizeof(time), gui->text->fmt, tmp);
+    strftime(time, sizeof(time), gui->fmt, tmp);
     
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
-    PangoAttribute *attrFont = pango_attr_family_new(gui->text->font);
-    PangoAttribute *attrSize = pango_attr_size_new(gui->text->size);
+    PangoAttribute *attrFont = pango_attr_family_new(gui->font);
+    PangoAttribute *attrSize = pango_attr_size_new(gui->size);
     
     // Add attributes to the list (and increase the reference counter)
     attrList = pango_attr_list_ref(attrList);
@@ -171,7 +146,7 @@ static void set_label(struct glmgui *gui) {
 
 // Refresh the current clock label
 static gboolean update(gpointer data) {
-    struct glmgui *gui = (struct glmgui *) data;
+    struct glmtext *gui = (struct glmtext *) data;
     set_label(gui);
     
     return TRUE;
@@ -186,33 +161,38 @@ static gboolean update(gpointer data) {
 // Display the date and time clock
 void display_clock() {
     
-    // Initialize date gui widget
-    struct glmcolor *date_color = setup_color_struct(BG_WINDOW, FG_WINDOW, BG_DATE_CLOCK, FG_DATE_CLOCK);
-    struct glmtext *date_text = setup_text_struct(CLOCK_DATE_FONT, CLOCK_DATE_FSIZE, CLOCK_DATE_FMT);
-    struct glmpos *date_pos = setup_pos_struct(CLOCK_DATE_XPOS, CLOCK_DATE_YPOS, 
-                                               CLOCK_DATE_WIDTH*0, CLOCK_DATE_HEIGHT*0);
+    // Initialize date and time widgets
+    GtkWidget *date_win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *time_win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *date_widg = gtk_label_new("");
+    GtkWidget *time_widg = gtk_label_new("");
     
-    struct glmgui *date_gui = setup_gui_struct(gtk_window_new(GTK_WINDOW_TOPLEVEL), 
-                                               gtk_label_new(""), 
-                                               date_pos, date_color, date_text);
     
-    // Initialize time gui widget
-    struct glmcolor *time_color = setup_color_struct(BG_WINDOW, FG_WINDOW, BG_TIME_CLOCK, FG_TIME_CLOCK);
-    struct glmtext *time_text = setup_text_struct(CLOCK_TIME_FONT, CLOCK_TIME_FSIZE, CLOCK_TIME_FMT);
-    struct glmpos *time_pos = setup_pos_struct(CLOCK_TIME_XPOS, CLOCK_TIME_YPOS, 
-                                               CLOCK_TIME_WIDTH*0, CLOCK_TIME_HEIGHT*0);
+    // Define structs to hold widget information
+    int date_pos[4] = {DATE_XPOS, DATE_YPOS, DATE_WIDTH, DATE_HEIGHT};
+    int time_pos[4] = {TIME_XPOS, TIME_YPOS, TIME_WIDTH, TIME_HEIGHT};
     
-    struct glmgui *time_gui = setup_gui_struct(gtk_window_new(GTK_WINDOW_TOPLEVEL), 
-                                               gtk_label_new(""), 
-                                               time_pos, time_color, time_text);
+    const GdkRGBA date_color[4] = {BG_WINDOW, BG_DATE, FG_WINDOW, FG_DATE};
+    const GdkRGBA time_color[4] = {BG_WINDOW, BG_TIME, FG_WINDOW, FG_TIME};
+    
+    struct glmtext *date_text = setup_text_struct(date_widg, DATE_FONT, DATE_FMT, DATE_FSIZE);
+    struct glmtext *time_text = setup_text_struct(time_widg, TIME_FONT, TIME_FMT, TIME_FSIZE);
+    
     
     // Setup date and time clocks 
-    setup(date_gui);
-    setup(time_gui);
+    setters(date_win, date_widg, date_pos, date_color);
+    setters(time_win, time_widg, time_pos, time_color);
+    
+    set_label(date_text);
+    set_label(time_text);
+    
+    g_timeout_add_seconds(UPDATE_SEC, update, time_text);
+    g_timeout_add_seconds(UPDATE_SEC, update, date_text);
+    
     
     // Display the clock
-    gtk_widget_show(date_gui->widg);
-    gtk_widget_show(date_gui->win);
-    gtk_widget_show(time_gui->widg);
-    gtk_widget_show(time_gui->win);
+    gtk_widget_show(date_widg);
+    gtk_widget_show(time_widg);
+    gtk_widget_show(date_win);
+    gtk_widget_show(time_win);
 }
