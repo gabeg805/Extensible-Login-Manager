@@ -270,6 +270,7 @@ int login(const char *username, const char *password) {
     const char *data[2] = {username, password};
     struct pam_conv pam_conv = {conv, data};
     
+    printf("%s\n", password);
     
     // Start PAM
     int result = pam_start(SERVICE, NULL, &pam_conv, &pam_handle);
@@ -310,14 +311,14 @@ int login(const char *username, const char *password) {
     
     // Clean up zombie processes
     signal(SIGCHLD, cleanup_child);
-        
+    
     // Setup and execute user session
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
         
         // Check if GLM is in preview mode
         if (PREVIEW) 
-            execl(pw->pw_shell, pw->pw_shell, "-c", " ", NULL);
+            return 1;
         else {
             
             // Log system login start

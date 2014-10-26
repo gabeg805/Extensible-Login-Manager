@@ -104,8 +104,8 @@
 #define SHUTDOWN_IMG      "/etc/X11/glm/img/interface/shutdown.png"
 #define REBOOT_IMG        "/etc/X11/glm/img/interface/reboot.png"
 #define REFRESH_IMG       "/etc/X11/glm/img/interface/refresh.png"
-#define POWEROFF          "/usr/bin/emacs"
-#define REBOOT            "/usr/bin/urxvt"
+#define POWEROFF          "/usr/bin/poweroff"
+#define REBOOT            "/usr/bin/reboot"
 #define SYSTEMCTL         "/usr/bin/systemctl"
 
 

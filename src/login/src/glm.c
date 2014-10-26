@@ -100,13 +100,13 @@ int main(int argc, char *argv[]) {
         // Authenticate username/password combination
         login_interface(argc, argv);
         
-        if ( login(USERNAME, PASSWORD) )
+        if ( login(USERNAME, PASSWORD) ) 
             loop = 0;
         
         // Free allocated memory
         free(PASSWORD);
         free(USERNAME);
     }
-        
+    
     return 0;
 }
