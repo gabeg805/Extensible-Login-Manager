@@ -26,19 +26,19 @@
 // 
 // FUNCTIONS:
 // 
-//     setup           - Setup the clock widget 
+//     setup_text_struct - Set the GUI text struct 
 // 
-//     set_label       - Set the clock label (font, text size, and format)
+//     set_label         - Set the clock label (font, text size, and format)
 // 
-//     update          - Refresh the clock label (every # secs)
+//     update            - Refresh the clock label (every # secs)
 // 
-//     display_clock   - Display the clock
+//     display_clock     - Display the clock
 // 
 // 
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Setup Clock
+//     * Setup Text Info Struct
 //     * Set Clock Time
 //     * Update Clock
 //     * Display Clock
@@ -69,42 +69,71 @@
 // /////////////////////////////////
 
 // Includes
+#include "../hdr/glm.h"
 #include "../hdr/Clock.h"
-#include "../hdr/Config.h"
-#include "../hdr/Transparency.h"
 #include "../hdr/Utility.h"
-
 #include <gtk/gtk.h>
+#include <assert.h>
 #include <time.h>
 #include <stdlib.h>
 
-#define UPDATE_SEC   30
-#define DATE_FMT     "%A, %B %-d"
-#define TIME_FMT     "%-I:%M %p"
 #define DATE_XPOS    50
-#define TIME_XPOS    110
 #define DATE_YPOS    650
-#define TIME_YPOS    575
 #define DATE_WIDTH   0
-#define TIME_WIDTH   0
 #define DATE_HEIGHT  0
+#define TIME_XPOS    110
+#define TIME_YPOS    575
+#define TIME_WIDTH   0
 #define TIME_HEIGHT  0
+#define BG_WINDOW    (const GdkRGBA) {0, 0, 0, 0}
 #define BG_DATE      (const GdkRGBA) {0, 0, 0, 0}
 #define BG_TIME      (const GdkRGBA) {0, 0, 0, 0}
+#define FG_WINDOW    (const GdkRGBA) {0, 0, 0, 0}
 #define FG_DATE      (const GdkRGBA) {1, 1, 1, 1}
 #define FG_TIME      (const GdkRGBA) {1, 1, 1, 1}
-#define BG_WINDOW    (const GdkRGBA) {0, 0, 0, 0}
-#define FG_WINDOW    (const GdkRGBA) {0, 0, 0, 0}
 #define DATE_FSIZE   25*1024
 #define TIME_FSIZE   45*1024
 #define DATE_FONT    "Inconsolata"
 #define TIME_FONT    "Inconsolata"
+#define DATE_FMT     "%A, %B %-d"
+#define TIME_FMT     "%-I:%M %p"
+#define UPDATE_SEC   30
+
+
+// Definitions
+struct glmtext {
+    GtkWidget *widg;
+    char *font;
+    char *fmt;
+    int size;
+};
 
 
 // Declares
+static struct glmtext * setup_text_struct(GtkWidget *widg, char *font, char *fmt, int size);
 static void set_label(struct glmtext *gui);
 static gboolean update(gpointer data);
 void display_clock();
+
+
+
+// //////////////////////////////////
+// ///// SETUP TEXT INFO STRUCT /////
+// //////////////////////////////////
+
+// Setup the GUI text struct
+static struct glmtext * setup_text_struct(GtkWidget *widg, char *font, char *fmt, int size) {
+    
+    struct glmtext *text = malloc(sizeof(struct glmtext));
+    assert(text);
+    
+    text->widg = widg;
+    text->font = font;
+    text->fmt = fmt;
+    text->size = size;
+    
+    return text;
+}
 
 
 
@@ -180,8 +209,8 @@ void display_clock() {
     
     
     // Setup date and time clocks 
-    setters(date_win, date_widg, date_pos, date_color);
-    setters(time_win, time_widg, time_pos, time_color);
+    setup_widget(date_win, date_widg, date_pos, date_color);
+    setup_widget(time_win, time_widg, time_pos, time_color);
     
     set_label(date_text);
     set_label(time_text);

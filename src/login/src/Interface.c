@@ -58,8 +58,8 @@
 // /////////////////////////////////
 
 // Includes
+#include "../hdr/glm.h"
 #include "../hdr/Interface.h"
-#include "../hdr/Config.h"
 #include "../hdr/Username.h"
 #include "../hdr/Password.h"
 #include "../hdr/Clock.h"
@@ -67,9 +67,7 @@
 #include "../hdr/TextImage.h"
 #include "../hdr/WindowManager.h"
 #include "../hdr/Panel.h"
-#include "../hdr/Transparency.h"
 #include "../hdr/Utility.h"
-
 #include <gtk/gtk.h>
 
 
@@ -87,10 +85,6 @@ void login_interface(int argc, char *argv[]) {
     
     // Initialize GTK toolkit
     gtk_init(&argc, &argv);
-    
-    // Define username
-    USERNAME = file_read(USERNAME_LOG);
-    
     
     // Display login interface items
     if ( INTERFACE ) {

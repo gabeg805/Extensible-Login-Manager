@@ -43,12 +43,16 @@
 // 
 // MODIFICATION HISTORY:
 // 	
-//     gabeg Aug 17 2014 <> created
+//     gabeg Aug 17 2014 <> Created.
 // 
 //     gabeg Aug 18 2014 <> Added an algorithm to time the start of the compositing 
-//                          manager more approriately
+//                          manager more approriately.
 // 	
-//     gabeg Sep 16 2014 <> Removed unneeded libraries
+//     gabeg Sep 16 2014 <> Removed unneeded libraries.
+// 
+//     gabeg Oct 25 2014 <> Changed "start_xserver" and "start_compman" functions to 
+//                          static and trimmed down the header file so it does not 
+//                          contain unnecessary includes. 
 // 
 // **********************************************************************************
 
@@ -59,19 +63,30 @@
 // /////////////////////////////////
 
 // Includes
+#include "../hdr/glm.h"
 #include "../hdr/Xsetup.h"
-#include "../hdr/Config.h"
 #include "../hdr/Utility.h"
-
 #include <time.h>
 #include <unistd.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#define DATE           "/usr/bin/date"
+#define HSETROOT       "/usr/bin/hsetroot"
+#define TAIL           "/usr/bin/tail"
+#define WALLPAPER      "/etc/X11/glm/img/wallpapers/night-sky.jpg"
+#define XCOMPMGR       "/usr/bin/xcompmgr"
+#define XORG           "/usr/bin/Xorg"
+#define XSERVER_AUTH   "/etc/X11/glm/log/glm.auth"
+#define XSERVER_LOG    "/etc/X11/glm/log/xserver.log"
+#define XSETROOT       "/usr/bin/xsetroot"
+
+
 
 // Declares
-void start_xserver();
-void start_compman();
+static void start_xserver();
+static void start_compman();
 void xsetup();
 
 
@@ -210,6 +225,10 @@ void start_compman() {
 // Setup X for login manager
 void xsetup() {
     
+    // Log program start
+    char **date_str = command_line(DATE, 40);
+    file_write(GLM_LOG, "a+", "\n%s %s\n%s %d\n\n", "Date:", date_str[1], "Preview:", PREVIEW);
+    
     // Start X server when not in preview mode
     if ( !PREVIEW ) 
         start_xserver();
@@ -229,4 +248,14 @@ void xsetup() {
     
     // Log that interface is allowed start
     INTERFACE = 1;
+    
+    // Free memory
+    free(date_str[1]);
+    date_str[1] = NULL;
+
+    free(date_str[0]);
+    date_str[0] = NULL;    
+    
+    free(date_str);
+    date_str = NULL;
 }

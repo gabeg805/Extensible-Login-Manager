@@ -27,7 +27,7 @@
 // 
 // Functions:
 // 
-//     init_wm_root           - Initialize the root window
+//     setup_menu             - Setup window manager dropdown menu
 // 
 //     wm_write_to_file       - Write to a file, which window manager to use for the 
 //                              session
@@ -41,7 +41,7 @@
 // File Structure:
 // 
 //     * Includes and Declares
-//     * Initialize Window Manager Button
+//     * Setup Window Manager Button
 //     * Write Window Manager to File
 //     * Add WM Entries to the Menu 
 //     * Display Window Manager
@@ -61,6 +61,10 @@
 // 
 //     gabeg Sep 16 2014 <> Removed unneeded libraries
 // 
+//     gabeg Oct 25 2014 <> Removed window manager setup function and used the 
+//                          universal setup function instead. Included the #define 
+//                          statements so that I don't need a general config file.
+// 
 // **********************************************************************************
 
 
@@ -69,55 +73,52 @@
 // /////////////////////////////////
 
 // Includes
+#include "../hdr/glm.h"
 #include "../hdr/WindowManager.h"
-#include "../hdr/Config.h"
-#include "../hdr/Transparency.h"
 #include "../hdr/Utility.h"
-
 #include <gtk/gtk.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#define XPOS          770
+#define YPOS          315
+#define WIDTH         30
+#define HEIGHT        30
+#define BG_WIN        (const GdkRGBA) {0, 0, 0, 0}
+#define FG_WIN        (const GdkRGBA) {0, 0, 0, 0}
+#define BG_WM         (const GdkRGBA) {0, 0, 0, 0}
+#define FG_WM         (const GdkRGBA) {1, 1, 1, 1}
+#define WM_IMG        "/etc/X11/glm/img/interface/settings.png"
+#define WM_SES_CMD    "ls -1 /usr/share/xsessions/ | sed 's/.desktop//'"
+#define SESSION_LOG   "/etc/X11/glm/log/session.log"
+
 
 // Declares
-void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu);
-void wm_write_to_file(GtkMenu *item);
-void set_wm_entries(GtkWidget *menu);
+static void setup_menu(GtkWidget *widg, GtkWidget *menu);
+static void wm_write_to_file(GtkMenu *item);
+static void set_wm_entries(GtkWidget *menu);
 void display_window_manager();
 
 
 
-// ////////////////////////////////////////////
-// ///// INITIALIZE WINDOW MANAGER BUTTON /////
-// ////////////////////////////////////////////
+// /////////////////////////////////////
+// ///// SETUP WINDOW MANAGER MENU /////
+// /////////////////////////////////////
 
-// Initialize the root window and its objects
-void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
+// Setup window manager dropdown menu button
+static void setup_menu(GtkWidget *widg, GtkWidget *menu) {
     
-    // Set window attributes
-    gtk_window_move(GTK_WINDOW(window), WINDOWMANAGER_XPOS, WINDOWMANAGER_YPOS);
-    gtk_window_set_default_size(GTK_WINDOW(window), WINDOWMANAGER_WIDTH*0, WINDOWMANAGER_HEIGHT*0);
-    
-    // Setup button attributes
-    set_color_and_opacity(window, dropmenu, BG_WINDOWMANAGER, FG_WINDOWMANAGER);
+    // Set entries in window manager dropdown menu
     set_wm_entries(menu);
     
     // Modify button style
-    GtkWidget *image = gtk_image_new_from_file(WINDOWMANAGER_IMG);
-    gtk_button_set_image(GTK_BUTTON(dropmenu), image);
-    gtk_button_set_relief(GTK_BUTTON(dropmenu), GTK_RELIEF_NONE);
-    gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
+    GtkWidget *image = gtk_image_new_from_file(WM_IMG);
+    gtk_button_set_image(GTK_BUTTON(widg), image);
+    gtk_button_set_relief(GTK_BUTTON(widg), GTK_RELIEF_NONE);
     
-    // Attach the window manager menu to the dropdown menu
-    gtk_menu_button_set_popup(GTK_MENU_BUTTON(dropmenu), menu);
-    gtk_container_add(GTK_CONTAINER(window), dropmenu);
-    
-    // Attempt to enable window transparency
-    enable_transparency(window);
-
-    // GTK signals
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    // Make menu popup
+    gtk_menu_button_set_popup(GTK_MENU_BUTTON(widg), menu);
 }
 
 
@@ -127,7 +128,7 @@ void init_wm_root(GtkWidget *window, GtkWidget *dropmenu, GtkWidget *menu) {
 // ////////////////////////////////////////
 
 // Write to a file, which window manager to use for the session
-void wm_write_to_file(GtkMenu *item) {
+static void wm_write_to_file(GtkMenu *item) {
     const gchar *sess = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
     SESSION = (char*)sess;
     file_write(SESSION_LOG, "w", "%s\n", SESSION);
@@ -140,7 +141,7 @@ void wm_write_to_file(GtkMenu *item) {
 // //////////////////////////////////////
 
 // Determine which window manager(s) the system has and add them as entries to the menu
-void set_wm_entries(GtkWidget *menu) {
+static void set_wm_entries(GtkWidget *menu) {
     
     // Initialize WM session items
     GtkWidget *session;
@@ -204,15 +205,20 @@ void set_wm_entries(GtkWidget *menu) {
 void display_window_manager() {
     
     // Initialize window manager elements
-    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *dropmenu = gtk_menu_button_new();
+    GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *widg = gtk_menu_button_new();
     GtkWidget *menu = gtk_menu_new();
+    
+    // Define structs to hold widget information
+    int pos[4] = {XPOS, YPOS, WIDTH, HEIGHT};
+    const GdkRGBA color[4] = {BG_WIN, BG_WM, FG_WIN, FG_WM};
     
     // Setup window manager button
     SESSION = file_read(SESSION_LOG);
-    init_wm_root(window, dropmenu, menu);
+    setup_widget(win, widg, pos, color);
+    setup_menu(widg, menu);
     
     // Display the window manager button
-    gtk_widget_show(dropmenu);
-    gtk_widget_show(window);
+    gtk_widget_show(widg);
+    gtk_widget_show(win);
 }

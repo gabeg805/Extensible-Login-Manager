@@ -57,16 +57,25 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/Config.h"
+#include "../hdr/glm.h"
 #include "../hdr/Xsetup.h"
 #include "../hdr/Username.h"
 #include "../hdr/Password.h"
 #include "../hdr/Interface.h"
 #include "../hdr/Authenticate.h"
 #include "../hdr/Utility.h"
-
 #include <string.h>
 #include <stdlib.h>
+
+char *SERVICE  = "glm";
+char *DISPLAY  = ":0";
+char *USERNAME = "User";
+char *PASSWORD = "Password";
+char *SESSION  = "xterm";
+char *GLM_LOG  = "/etc/X11/glm/log/glm.log";
+int INTERFACE = 0;
+int PREVIEW   = 0;
+int TTY_N     = 4;
 
 
 
@@ -80,11 +89,6 @@ int main(int argc, char *argv[]) {
     // Read input parameters, check for 'Preview' mode
     if ( (argc == 2) && (strcmp(argv[1], "-p") == 0) )
         PREVIEW = 1;
-    
-    // Log program start
-    char **date_str = command_line(DATE, 40);
-    file_write(GLM_LOG, "a+", "\n%s %s\n%s %d\n\n", "Date:", date_str[1], "Preview:", PREVIEW);
-    
     
     // Setup X
     xsetup();

@@ -1,11 +1,8 @@
-#include <gtk/gtk.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-
+// Header guard
 #ifndef USERNAME_H
 #define USERNAME_H
 
+// Public functions
 void display_username();
 
 #endif

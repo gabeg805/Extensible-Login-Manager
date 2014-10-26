@@ -26,8 +26,7 @@
 // 
 // FUNCTIONS:
 // 
-//     setup        - Initialize the root window
-//     set_entry             - Initialize the entry box
+//     setup_entry            - Initialize the entry box
 // 
 //     get_entry_text         - Return user entry text
 // 
@@ -37,7 +36,7 @@
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Initialize Entry Box
+//     * Setup Entry Box
 //     * Get Entry Text
 //     * Display Password Entry Box
 // 
@@ -65,18 +64,14 @@
 // /////////////////////////////////
 
 // Includes
+#include "../hdr/glm.h"
 #include "../hdr/Password.h"
-#include "../hdr/Config.h"
-#include "../hdr/Transparency.h"
 #include "../hdr/Utility.h"
-
 #include <gtk/gtk.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAXCHARS    30
-#define INVISCHAR   '*'
 #define XPOS        570
 #define YPOS        350
 #define WIDTH       230
@@ -87,21 +82,23 @@
 #define FG_ENTRY    (const GdkRGBA) {0, 0, 0, 1}
 #define FSIZE       10*1024
 #define FONT        "Inconsolata"
+#define MAXCHARS    30
+#define INVISCHAR   '*'
 
 
 // Declares
-static void set_entry(GtkWidget *entry);
+static void setup_entry(GtkWidget *entry);
 static void get_entry_text(GtkWidget *entry);
 void display_password_entry();
 
 
 
-// ////////////////////////////////
-// ///// INITIALIZE ENTRY BOX /////
-// ////////////////////////////////
+// ///////////////////////////
+// ///// SETUP ENTRY BOX /////
+// ///////////////////////////
 
 // Initialize the entry box
-static void set_entry(GtkWidget *entry) {
+static void setup_entry(GtkWidget *entry) {
     
     // Set entry box attributes
     gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
@@ -177,8 +174,8 @@ void display_password_entry() {
     const GdkRGBA color[4] = {BG_WINDOW, BG_ENTRY, FG_WINDOW, FG_ENTRY};
     
     // Setup password entry box
-    setters(win, widg, pos, color);
-    set_entry(widg);
+    setup_widget(win, widg, pos, color);
+    setup_entry(widg);
     g_signal_connect(G_OBJECT(widg), "activate", G_CALLBACK(get_entry_text), NULL);
     
     // Display password entry box

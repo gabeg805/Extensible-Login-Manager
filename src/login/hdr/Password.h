@@ -1,12 +1,8 @@
-#include "../hdr/Config.h"
-#include <gtk/gtk.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-
+// Header guard
 #ifndef PASSWORD_H
 #define PASSWORD_H
 
+// Public functions
 void display_password_entry();
 
 #endif

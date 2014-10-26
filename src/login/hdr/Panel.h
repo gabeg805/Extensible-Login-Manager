@@ -1,10 +1,8 @@
-#include "../hdr/Config.h"
-#include <gtk/gtk.h>
-#include <stdlib.h>
-
+// Header guard
 #ifndef PANEL_H
 #define PANEL_H
 
+// Public functions
 void display_panel();
 
 #endif

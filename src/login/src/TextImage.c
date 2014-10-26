@@ -26,8 +26,6 @@
 // 
 // FUNCTIONS:
 // 
-//     init_text_root     - Initialize the root window
-// 
 //     draw_text          - Draw the password text
 //     draw_text_window   - Draw the root window with all its objects
 // 
@@ -37,7 +35,6 @@
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Initialize Text Image Window
 //     * Draw Text Image
 //     * Dislay Text Image
 /// 
@@ -64,20 +61,18 @@
 // /////////////////////////////////
 
 // Includes
+#include "../hdr/glm.h"
 #include "../hdr/TextImage.h"
-#include "../hdr/Config.h"
 #include "../hdr/Utility.h"
-#include "../hdr/Transparency.h"
-
 #include <gtk/gtk.h>
 #include <cairo.h>
 #include <string.h>
 
-#define   TEXT_XPOS    570
-#define   TEXT_YPOS    330
-#define   TEXT_FSIZE   12
-#define   TEXT_STR     "Password:"
-#define   TEXT_FONT    "DejaVu Sans"
+#define XPOS    570
+#define YPOS    330
+#define FSIZE   12
+#define STR     "Password:"
+#define FONT    "DejaVu Sans"
 
 
 // Declares
@@ -92,18 +87,18 @@ void display_text_image();
 // ///////////////////////////
 
 // Draw the text
-void draw_text(cairo_t *cr) {         
-    cairo_select_font_face(cr, TEXT_FONT, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, TEXT_FSIZE);
+static void draw_text(cairo_t *cr) {         
+    cairo_select_font_face(cr, FONT, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size(cr, FSIZE);
     cairo_set_source_rgb(cr, 0, 0, 0);
-    cairo_move_to(cr, 0, TEXT_FSIZE);
-    cairo_show_text(cr, TEXT_STR);
+    cairo_move_to(cr, 0, FSIZE);
+    cairo_show_text(cr, STR);
 }
 
 
 
 // Draw the root window
-gboolean draw_text_window(GtkWidget *window) {
+static gboolean draw_text_window(GtkWidget *window) {
     
     // Create Cairo widget for GTK window
     cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(window));
@@ -136,10 +131,10 @@ void display_text_image() {
     GtkWidget *widg = gtk_drawing_area_new();
     
     // Define structs to hold widget informationx
-    int pos[4] = {TEXT_XPOS, TEXT_YPOS, TEXT_FSIZE*strlen(TEXT_STR), TEXT_FSIZE+1};
+    int pos[4] = {XPOS, YPOS, FSIZE*strlen(STR), FSIZE+1};
     
     // Setup text image
-    setters(win, widg, pos, NULL);
+    setup_widget(win, widg, pos, NULL);
     g_signal_connect(G_OBJECT(widg), "draw", G_CALLBACK(draw_text_window), NULL);
     
     // Display the password text image

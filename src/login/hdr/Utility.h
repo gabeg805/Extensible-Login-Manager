@@ -1,33 +1,19 @@
-#include "../hdr/Config.h"
-
+// Includes
 #include <gtk/gtk.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <signal.h>
 
+// Header guard
 #ifndef UTILITY_H
 #define UTILITY_H
 
+// Public functions 
+void cleanup_child(int signal);
+int get_open_tty();
 void file_write(char *file, char *opt, const char *fmt, ...);
 char * file_read(char *file);
 char * get_open_display();
-int get_open_tty();
 char ** command_line(char *cmd, int size);
-void cleanup_child(int signal);
-struct glmstruct * setup_struct(GtkWidget *window, GtkWidget *widget, 
-                                struct glmpos *pos,
-                                struct glmcolor *color,
-                                struct glmtext *text);
-struct glmgui * setup_gui_struct(GtkWidget *window, GtkWidget *widget, GtkWidget *extra, char *img);
-struct glmpos * setup_pos_struct(int x, int y, int width, int height);
-struct glmcolor * setup_color_struct(const GdkRGBA bg_window, const GdkRGBA fg_window, 
-                                     const GdkRGBA bg_widget, const GdkRGBA fg_widget);
-struct glmtext * setup_text_struct(GtkWidget *widg, char *font, char *fmt, int size);
-void setters(GtkWidget *win, GtkWidget *widg, int pos[4], const GdkRGBA color[4]);
+void enable_transparency(GtkWidget *widget);
+void set_widget_color(GtkWidget *win, GtkWidget *widg, const GdkRGBA color[4]);
+void setup_widget(GtkWidget *win, GtkWidget *widg, int pos[4], const GdkRGBA color[4]);
 
 #endif

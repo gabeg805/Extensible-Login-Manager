@@ -1,4 +1,3 @@
-// * change line 251
 // 
 // CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
 // 
@@ -27,10 +26,12 @@
 // 
 // FUNCTIONS:
 // 
-//     init_usermenu_root     - Initialize user menu root window
-//     init_userlabel         - Initialize user menu label
+//     setup_menu             - Setup user menu 
+//     setup_label            - Setup user menu label
 // 
 //     usermenu_write_to_file - Write username to file
+// 
+//     get_username           - Get username/uid combination from the specified file
 // 
 //     set_username_entries   - Set entries in the user menu
 // 
@@ -40,8 +41,9 @@
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Initialize Username Menu
+//     * Setup Username Menu
 //     * Write User Menu Item to File
+//     * Get Username-UID Combination
 //     * Add Username Entries to the Menu
 //     * Display Username Menu
 // 
@@ -57,6 +59,11 @@
 // 
 //     gabeg Sep 16 2014 <> Removed unneeded libraries
 // 
+//     gabeg Oct 25 2014 <> Removed unnecessary structs to reduce memory usage. Also 
+//                          removed the username setup function and used the 
+//                          universal setup function instead. Added a setup function
+//                          for the username menu.
+// 
 // **********************************************************************************
 
 
@@ -66,31 +73,32 @@
 // /////////////////////////////////
 
 // Includes
+#include "../hdr/glm.h"
 #include "../hdr/Username.h"
-#include "../hdr/Config.h"
-#include "../hdr/Transparency.h"
 #include "../hdr/Utility.h"
-
 #include <gtk/gtk.h>
+#include <assert.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define XPOS        665
-#define YPOS        197
-#define WIDTH       0
-#define HEIGHT      0
-#define BG_MENU     (const GdkRGBA) {0, 0, 0, 0}
-#define FG_MENU     (const GdkRGBA) {1, 1, 1, 1}
-#define BG_WINDOW   (const GdkRGBA) {0, 0, 0, 0}
-#define FG_WINDOW   (const GdkRGBA) {0, 0, 0, 0}
-#define FSIZE       23*1024
-#define FONT        "DejaVu Sans"
-
+#define XPOS           665
+#define YPOS           197
+#define WIDTH          0
+#define HEIGHT         0
+#define BG_WIN         (const GdkRGBA) {0, 0, 0, 0}
+#define BG_MENU        (const GdkRGBA) {0, 0, 0, 0}
+#define FG_WIN         (const GdkRGBA) {0, 0, 0, 0}
+#define FG_MENU        (const GdkRGBA) {1, 1, 1, 1}
+#define FSIZE          23*1024
+#define FONT           "DejaVu Sans"
+#define USERNAME_IMG   "/etc/X11/glm/img/interface/user.png"
+#define USERNAME_LOG   "/etc/X11/glm/log/user.log"
+#define PQIV           "/usr/bin/pqiv"
 
 // Declares
-static void init_usermenu_root(struct glmgui *gui, struct glmpos *pos, struct glmcolor *color);
-static void init_userlabel(GtkWidget *label);
+static void setup_menu(GtkWidget *widg, GtkWidget *label);
+static void setup_label(GtkWidget *label);
 static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label);
 static char ** get_username(char *file, int size);
 static void set_username_entries(GtkWidget *menu, GtkWidget *label);
@@ -98,46 +106,30 @@ void display_username();
 
 
 
-// ////////////////////////////////////
-// ///// INITIALIZE USERNAME MENU /////
-// ////////////////////////////////////
+// ///////////////////////////////
+// ///// SETUP USERNAME MENU /////
+// ///////////////////////////////
 
-// Initialize the root window and its objects
-void init_usermenu_root(struct glmgui *gui, struct glmpos *pos, struct glmcolor *color) {
-    
-    // Set username icon
-    if ( !fork() )
-        execl(PQIV, PQIV, "-c", "-i", "-P", "575,190", gui->img, NULL);
-    
-    // Set window attributes
-    gtk_window_move(GTK_WINDOW(gui->win), pos->x, pos->y);
-    gtk_window_set_default_size(GTK_WINDOW(gui->win), pos->width, pos->height);
+// Setup dropdown menu that displays users
+static void setup_menu(GtkWidget *widg, GtkWidget *label) {
     
     // Set username menu attributes
     GtkWidget *menu = gtk_menu_new();
-    set_color_and_opacity(gui->win, gui->widg, color->bgwidg, color->fgwidg);
-    set_username_entries(menu, gui->extra);
+    set_username_entries(menu, label);
     
     // Modify button style
-    init_userlabel(gui->extra);
+    setup_label(label);
     
     // Attach the window manager menu to the dropdown menu
-    gtk_menu_button_set_popup(GTK_MENU_BUTTON(gui->widg), menu);
-    gtk_container_add(GTK_CONTAINER(gui->widg), gui->extra);
-    gtk_container_add(GTK_CONTAINER(gui->win), gui->widg);
-    gtk_button_set_relief(GTK_BUTTON(gui->widg), GTK_RELIEF_NONE);
-    
-    // attempt to enable window transparency
-    enable_transparency(gui->win);
-    
-    // GTK signals
-    g_signal_connect(gui->win, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    gtk_menu_button_set_popup(GTK_MENU_BUTTON(widg), menu);
+    gtk_container_add(GTK_CONTAINER(widg), label);
+    gtk_button_set_relief(GTK_BUTTON(widg), GTK_RELIEF_NONE);
 }
 
 
 
-// Initialze the label for the user menu
-void init_userlabel(GtkWidget *label) {
+// Setup the label for the dropdown menu
+static void setup_label(GtkWidget *label) {
     
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
@@ -164,7 +156,7 @@ void init_userlabel(GtkWidget *label) {
 // ////////////////////////////////////////
 
 // Write to a file, which user to login as
-void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
+static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
     const gchar *user = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
     USERNAME = (char*)user;
     file_write(USERNAME_LOG, "w", "%s\n", USERNAME);
@@ -178,10 +170,11 @@ void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
 // ////////////////////////////////////////
 
 // Get username/uid combination from the specified file
-char ** get_username(char *file, int size) {
+static char ** get_username(char *file, int size) {
     
     // Initialize username array
     char **array = malloc(sizeof(char*)*size);
+    assert(array);
     array[0] = "0";
     
     // Open file for reading
@@ -216,6 +209,7 @@ char ** get_username(char *file, int size) {
                 if ( (uid == 0) || ((uid >= 1000) && (uid <= 9999)) ) {
                     size_t sz = strlen(user);
                     char *output = malloc(sz+1);
+                    assert(output);
                     snprintf(output, sz+1, user);
                     
                     array[i] = output;
@@ -239,6 +233,7 @@ char ** get_username(char *file, int size) {
     
     size_t sz = strlen(val);
     char *copy = malloc(sz+1);
+    assert(copy);
     snprintf(copy, sz+1, val);
     
     array[0] = copy;
@@ -253,7 +248,7 @@ char ** get_username(char *file, int size) {
 // ////////////////////////////////////////////
 
 // Set user name entries
-void set_username_entries(GtkWidget *menu, GtkWidget *label) {
+static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
     
     // Initialize user menu items
     GtkWidget *user;
@@ -331,19 +326,29 @@ void set_username_entries(GtkWidget *menu, GtkWidget *label) {
 // Display the username menu
 void display_username() {
     
+    // Define username
+    USERNAME = file_read(USERNAME_LOG);
+    
     // Initialize username menu elements
-    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *dropmenu = gtk_menu_button_new();
+    GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *widg = gtk_menu_button_new();
     GtkWidget *label = gtk_label_new("");
     
-    // Setup username menu
-    struct glmgui *gui = setup_gui_struct(window, dropmenu, label, USERNAME_IMG);
-    struct glmpos *pos = setup_pos_struct(XPOS, YPOS, WIDTH, HEIGHT);
-    struct glmcolor *color = setup_color_struct(BG_WINDOW, FG_WINDOW, BG_MENU, FG_MENU);
-    init_usermenu_root(gui, pos, color);
+    // Define structs to hold widget information
+    int pos[4] = {XPOS, YPOS, WIDTH, HEIGHT};
+    const GdkRGBA color[4] = {BG_WIN, BG_MENU, FG_WIN, FG_MENU};
     
+    // Set username icon
+    if ( !fork() )
+        execl(PQIV, PQIV, "-c", "-i", "-P", "575,190", USERNAME_IMG, NULL);
+    
+    
+    // Setup username menu widget
+    setup_widget(win, widg, pos, color);
+    setup_menu(widg, label);
+        
     // Display the username menu
-    gtk_widget_show(gui->extra);
-    gtk_widget_show(gui->widg);
-    gtk_widget_show(gui->win);
+    gtk_widget_show(label);
+    gtk_widget_show(widg);
+    gtk_widget_show(win);
 }

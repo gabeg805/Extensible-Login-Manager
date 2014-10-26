@@ -26,21 +26,22 @@
 // 
 // FUNCTIONS:
 // 
-//     init_shutdown_root      - Initialize shutdown button
-//     init_reboot_root        - Initialize reboot button
-//     init_refresh_login_root - Initialize refresh login button
+//     setup_button    - Initialize refresh login button
+//     setup_dialog    - Initialize refresh login button
 // 
-//     system_shutdown         - Command to shutdown computer
-//     system_reboot           - Command to reboot computer
-//     refresh_login           - Command to refresh the login manager
+//     system_shutdown - Command to shutdown computer
+//     system_reboot   - Command to reboot computer
+//     cancel_glm      - Command to close the refresh login popup
+//     refresh_glm     - Command to refresh the login manager
+//     quit_glm        - Command to quit the login manager
 // 
-//     display_panel           - Display button panel
+//     display_panel   - Display all buttons on the panel
 // 
 // 
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Initialize Panel Buttons 
+//     * Setup Panel Buttons 
 //     * System Commands
 //     * Display Button Panel
 // 
@@ -57,6 +58,12 @@
 // 
 //     gabeg Sep 16 2014 <> Removed unneeded libraries
 // 
+//     gabeg Oct 25 2014 <> Removed structs that were sucking up a lot of memory. 
+//                          Added a setup function for the panel items, and removed 
+//                          the general setup function that was written. Instead of 
+//                          the general setup function, I used the universal setup 
+//                          function.
+// 
 // **********************************************************************************
 
 
@@ -66,11 +73,9 @@
 // /////////////////////////////////
 
 // Includes
+#include "../hdr/glm.h"
 #include "../hdr/Panel.h"
-#include "../hdr/Config.h"
-#include "../hdr/Transparency.h"
 #include "../hdr/Utility.h"
-
 #include <gtk/gtk.h>
 #include <stdlib.h>
 
@@ -91,18 +96,21 @@
 #define BG_SHUTDOWN       (const GdkRGBA) {0, 0, 0, 0}
 #define BG_REBOOT         (const GdkRGBA) {0, 0, 0, 0}
 #define BG_REFRESH        (const GdkRGBA) {0, 0, 0, 0}
-#define BG_WINDOW         (const GdkRGBA) {0, 0, 0, 0}
-#define FG_WINDOW         (const GdkRGBA) {0, 0, 0, 0}
+#define BG_WIN            (const GdkRGBA) {0, 0, 0, 0}
+#define FG_WIN            (const GdkRGBA) {0, 0, 0, 0}
 #define FG_SHUTDOWN       (const GdkRGBA) {1, 1, 1, 1}
 #define FG_REBOOT         (const GdkRGBA) {1, 1, 1, 1}
 #define FG_REFRESH        (const GdkRGBA) {1, 1, 1, 1}
 #define SHUTDOWN_IMG      "/etc/X11/glm/img/interface/shutdown.png"
 #define REBOOT_IMG        "/etc/X11/glm/img/interface/reboot.png"
 #define REFRESH_IMG       "/etc/X11/glm/img/interface/refresh.png"
+#define POWEROFF          "/usr/bin/emacs"
+#define REBOOT            "/usr/bin/urxvt"
+#define SYSTEMCTL         "/usr/bin/systemctl"
 
 
 // Declares
-static void setup_button(struct glmstruct *gui, void (*func)(void), char *pic);
+static void setup_button(GtkWidget *widg, char *pic);
 static void setup_dialog();
 static void system_shutdown();
 static void system_reboot();
@@ -113,34 +121,17 @@ void display_panel();
 
 
 
-// ////////////////////////////////////
-// ///// INITIALIZE PANEL BUTTONS /////
-// ////////////////////////////////////
+// ///////////////////////////////
+// ///// SETUP PANEL BUTTONS /////
+// ///////////////////////////////
 
-// Setup the buttons on the  panel
-static void setup_button(struct glmstruct *gui, void (*func)(void), char *pic) {
-    
-    // Set window attributes
-    gtk_window_move(GTK_WINDOW(gui->win), gui->pos->x, gui->pos->y);
-    gtk_window_set_default_size(GTK_WINDOW(gui->win), gui->pos->width, gui->pos->height);
-    
-    // Set power button attributes
-    set_stuff(gui);
+// Setup panel buttons
+static void setup_button(GtkWidget *widg, char *pic) {
     
     // Modify button style
     GtkWidget *image = gtk_image_new_from_file(pic);
-    gtk_button_set_image(GTK_BUTTON(gui->widg), image);
-    gtk_button_set_relief(GTK_BUTTON(gui->widg), GTK_RELIEF_NONE);
-    
-    // Add the clock to the root window 
-    gtk_container_add(GTK_CONTAINER(gui->win), gui->widg);
-        
-    // Enable transparency
-    enable_transparency(gui->win);
-    
-    // GTK signal
-    g_signal_connect(G_OBJECT(gui->widg), "clicked", G_CALLBACK(func), NULL);
-    g_signal_connect(gui->win, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    gtk_button_set_image(GTK_BUTTON(widg), image);
+    gtk_button_set_relief(GTK_BUTTON(widg), GTK_RELIEF_NONE);
 }
 
 
@@ -153,7 +144,7 @@ static void setup_dialog() {
     GtkWidget *grid = gtk_grid_new();
     GtkWidget *label = gtk_label_new("Choose an action for Gabe's Login Manager.");
     GtkWidget *blank = gtk_label_new(" ");
-
+    
     GtkWidget *refresh_button = gtk_button_new_with_label("Restart");
     GtkWidget *quit_button    = gtk_button_new_with_label("Quit");
     GtkWidget *cancel_button  = gtk_button_new_with_label("Cancel");
@@ -210,7 +201,7 @@ static void system_reboot() {
 
 // Quit the prompt
 static void cancel_glm(GtkWidget *button, GtkWidget *window) {
-    gtk_widget_destroy(window);
+    gtk_widget_hide(window);
 }
 
 
@@ -245,27 +236,34 @@ void display_panel() {
     GtkWidget *reboot   = gtk_button_new();
     GtkWidget *refresh  = gtk_button_new();
     
-    // Setup structs to hold widget information
-    struct glmcolor *shutdown_color = setup_color_struct(BG_WINDOW, FG_WINDOW, BG_SHUTDOWN, FG_SHUTDOWN);
-    struct glmcolor *reboot_color   = setup_color_struct(BG_WINDOW, FG_WINDOW, BG_REBOOT,   FG_REBOOT);
-    struct glmcolor *refresh_color  = setup_color_struct(BG_WINDOW, FG_WINDOW, BG_REFRESH,  FG_REFRESH);
-    struct glmpos *shutdown_pos = setup_pos_struct(SHUTDOWN_XPOS, SHUTDOWN_YPOS, SHUTDOWN_WIDTH, SHUTDOWN_HEIGHT);
-    struct glmpos *reboot_pos   = setup_pos_struct(REBOOT_XPOS, REBOOT_YPOS, REBOOT_WIDTH, REBOOT_HEIGHT);
-    struct glmpos *refresh_pos  = setup_pos_struct(REFRESH_XPOS, REFRESH_YPOS, REFRESH_WIDTH, REFRESH_HEIGHT);    
-    struct glmstruct *shutdown_gui = setup_struct(shutdown_window, shutdown, shutdown_pos, shutdown_color, NULL);
-    struct glmstruct *reboot_gui   = setup_struct(reboot_window,   reboot,   reboot_pos, reboot_color, NULL);
-    struct glmstruct *refresh_gui  = setup_struct(refresh_window,  refresh,  refresh_pos, refresh_color, NULL);
+    // Define structs to hold widget information
+    int shutdown_pos[4] = {SHUTDOWN_XPOS, SHUTDOWN_YPOS, SHUTDOWN_WIDTH, SHUTDOWN_HEIGHT};
+    int reboot_pos[4] = {REBOOT_XPOS, REBOOT_YPOS, REBOOT_WIDTH, REBOOT_HEIGHT};
+    int refresh_pos[4] = {REFRESH_XPOS, REFRESH_YPOS, REFRESH_WIDTH, REFRESH_HEIGHT};
     
-    // Setup buttons on the panel
-    setup_button(shutdown_gui, system_shutdown, SHUTDOWN_IMG);
-    setup_button(reboot_gui, system_reboot, REBOOT_IMG);
-    setup_button(refresh_gui, setup_dialog, REFRESH_IMG);
+    const GdkRGBA shutdown_color[4] = {BG_WIN, BG_SHUTDOWN, FG_WIN, FG_SHUTDOWN};
+    const GdkRGBA reboot_color[4] = {BG_WIN, BG_REBOOT, FG_WIN, FG_REBOOT};
+    const GdkRGBA refresh_color[4] = {BG_WIN, BG_REFRESH, FG_WIN, FG_REFRESH};
+    
+    
+    // Setup widgets
+    setup_widget(shutdown_window, shutdown, shutdown_pos, shutdown_color);
+    setup_widget(reboot_window, reboot, reboot_pos, reboot_color);
+    setup_widget(refresh_window, refresh, refresh_pos, refresh_color);
+    
+    setup_button(shutdown, SHUTDOWN_IMG);
+    setup_button(reboot, REBOOT_IMG);
+    setup_button(refresh, REFRESH_IMG);
+    
+    g_signal_connect(G_OBJECT(shutdown), "clicked", G_CALLBACK(system_shutdown), NULL);
+    g_signal_connect(G_OBJECT(reboot), "clicked", G_CALLBACK(system_reboot), NULL);
+    g_signal_connect(G_OBJECT(refresh), "clicked", G_CALLBACK(setup_dialog), NULL);
     
     // Display the button panel
-    gtk_widget_show(shutdown_gui->widg);
-    gtk_widget_show(shutdown_gui->win);
-    gtk_widget_show(reboot_gui->widg);
-    gtk_widget_show(reboot_gui->win);
-    gtk_widget_show(refresh_gui->widg);
-    gtk_widget_show(refresh_gui->win);
+    gtk_widget_show(shutdown);
+    gtk_widget_show(shutdown_window);
+    gtk_widget_show(reboot);
+    gtk_widget_show(reboot_window);
+    gtk_widget_show(refresh);
+    gtk_widget_show(refresh_window);
 }

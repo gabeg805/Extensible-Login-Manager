@@ -29,11 +29,11 @@
 // 
 //     init_env             - Set environment variables for the authenticated user
 // 
+//     manage_login_records - Write login to utmp/wtmp 
+// 
 //     is_pam_success       - Check if previous PAM command resulted in Success
 // 
 //     conv                 - PAM conversation
-// 
-//     manage_login_records - Write login to utmp/wtmp 
 // 
 //     login                - Authenticate username/password combination with PAM
 // 
@@ -73,9 +73,9 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/Config.h"
+#include "../hdr/glm.h"
+#include "../hdr/Authenticate.h"
 #include "../hdr/Utility.h"
-
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
 #include <sys/wait.h>
@@ -87,12 +87,21 @@
 #include <stdio.h>
 #include <string.h>
 
+#define AWK        "/usr/bin/awk"
+#define GREP       "/usr/bin/grep"
+#define LOGINCTL   "/usr/bin/loginctl"
+#define SESSREG    "/usr/bin/sessreg"
+#define UTMP_ADD   "/run/utmp"
+#define UTMP_DEL   "/var/run/utmp"
+#define WTMP       "/var/log/wtmp"
+#define XINITRC    "/etc/X11/glm/src/x/xinitrc"
+
 
 // Declares
-void init_env(pam_handle_t *pam_handle, struct passwd *pw);
-void manage_login_records(const char *username, char *opt);
-int is_pam_success(int result, pam_handle_t *pamh);
-int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr);
+static void init_env(pam_handle_t *pam_handle, struct passwd *pw);
+static void manage_login_records(const char *username, char *opt);
+static int is_pam_success(int result, pam_handle_t *pamh);
+static int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr);
 int login(const char *username, const char *password);
 
 char TTY[6];
@@ -104,7 +113,7 @@ char TTY[6];
 // ////////////////////////////////////////////
 
 // Set environment variables for USER 
-void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
+static void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
     
     // Define loginctl commands
     char cmd_start[100];
@@ -159,7 +168,7 @@ void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
 // ////////////////////////////////
 
 // Manager utmp/wtmp login records
-void manage_login_records(const char *username, char *opt) {
+static void manage_login_records(const char *username, char *opt) {
     
     // Execute sessreg
     pid_t child_pid = fork();
@@ -206,7 +215,7 @@ int is_pam_success(int result, pam_handle_t *pamh) {
 // ////////////////////////////
 
 // Pam Converstion
-int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr) {
+static int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr) {
     int i;
     
     *resp = calloc(num_msg, sizeof(struct pam_response));

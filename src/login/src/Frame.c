@@ -26,8 +26,6 @@
 // 
 // FUNCTIONS:
 // 
-//     setup           - Setup the login frame widget
-// 
 //     draw_frame      - Draw the login frame
 //     draw_window     - Draw the root window
 // 
@@ -37,7 +35,6 @@
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Initialize Frame
 //     * Draw Frame
 //     * Display Frame
 // 
@@ -68,20 +65,18 @@
 // /////////////////////////////////
 
 // Includes
+#include "../hdr/glm.h"
 #include "../hdr/Frame.h"
-#include "../hdr/Config.h"
-#include "../hdr/Transparency.h"
 #include "../hdr/Utility.h"
-
 #include <gtk/gtk.h>
 #include <cairo.h>
 #include <math.h>
 
 // Add colors
-#define FRAME_XPOS     550
-#define FRAME_YPOS     300
-#define FRAME_WIDTH    267
-#define FRAME_HEIGHT   102
+#define XPOS     550
+#define YPOS     300
+#define WIDTH    267
+#define HEIGHT   102
 
 // Declares
 static void draw_frame(cairo_t *);
@@ -98,16 +93,16 @@ void display_frame();
 static void draw_frame(cairo_t *cr) { 
     
     // Custom shape that could be wrapped in a function 
-    double radius = FRAME_HEIGHT / 5.0;
+    double radius = HEIGHT / 5.0;
     double degrees = M_PI / 180.0;
     
     // Create the rouded rectangle
     cairo_set_line_width (cr, 0);
     cairo_new_sub_path(cr);
-    cairo_arc(cr,   FRAME_WIDTH-radius,   radius,                radius,   -90*degrees,     0*degrees);
-    cairo_arc(cr,   FRAME_WIDTH-radius,   FRAME_HEIGHT-radius,   radius,     0*degrees,    90*degrees);
-    cairo_arc(cr,   radius,               FRAME_HEIGHT-radius,   radius,    90*degrees,   180*degrees);
-    cairo_arc(cr,   radius,               radius,                radius,   180*degrees,   270*degrees);
+    cairo_arc(cr,   WIDTH-radius,   radius,          radius,   -90*degrees,     0*degrees);
+    cairo_arc(cr,   WIDTH-radius,   HEIGHT-radius,   radius,     0*degrees,    90*degrees);
+    cairo_arc(cr,   radius,         HEIGHT-radius,   radius,    90*degrees,   180*degrees);
+    cairo_arc(cr,   radius,         radius,          radius,   180*degrees,   270*degrees);
     cairo_close_path (cr);
     
     // Check for window transparency
@@ -153,10 +148,10 @@ void display_frame() {
     GtkWidget *widg = gtk_drawing_area_new();
     
     // Setup structs to hold widget information
-    int pos[4] = {FRAME_XPOS, FRAME_YPOS, FRAME_WIDTH, FRAME_HEIGHT};
+    int pos[4] = {XPOS, YPOS, WIDTH, HEIGHT};
     
     // Setup frame
-    setters(win, widg, pos, NULL);
+    setup_widget(win, widg, pos, NULL);
     g_signal_connect(G_OBJECT(widg), "draw", G_CALLBACK(draw_window), NULL);
     
     
