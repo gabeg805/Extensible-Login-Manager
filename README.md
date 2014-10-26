@@ -221,3 +221,5 @@ Here's a list of things I want to implement, but haven't had the time to do so y
     
     - use fprintf to stderr and __func__ because log messages are good to have!!
     
+    - when running in "-p", figure out how to stop gtk execution and return control
+      to the terminal
