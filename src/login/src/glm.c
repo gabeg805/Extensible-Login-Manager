@@ -103,5 +103,8 @@ int main(int argc, char *argv[]) {
             loop = 0;
     }
     
+    // Free memory
+    free(USERNAME);
+    
     return 0;
 }
