@@ -60,6 +60,8 @@
 //                          used. Removed the "Clock Setup" function and used the 
 //                          universal setup function instead.
 // 
+//     gabeg Oct 31 2014 <> Changed GTK window type from TOPLEVEL to POPUP. 
+// 
 // **********************************************************************************
 
 
@@ -191,8 +193,8 @@ static gboolean update(gpointer data) {
 void display_clock() {
     
     // Initialize date and time widgets
-    GtkWidget *date_win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *time_win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *date_win  = gtk_window_new(GTK_WINDOW_POPUP);
+    GtkWidget *time_win  = gtk_window_new(GTK_WINDOW_POPUP);
     GtkWidget *date_widg = gtk_label_new("");
     GtkWidget *time_widg = gtk_label_new("");
     

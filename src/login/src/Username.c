@@ -70,6 +70,11 @@
 //                          of forking and running pqiv, I added it to a GTK image
 //                          widget and displayed the widget. 
 // 
+//     gabeg Nov 01 2014 <> Changed the GTK window type for the username icon from
+//                          TOPLEVEL to POPUP. Also changed "command_line" return
+//                          value to be (char *) so altered code to reflect that
+//                          change.
+// 
 // **********************************************************************************
 
 
@@ -335,7 +340,7 @@ static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
 void display_icon() {
     
     // Initialize username icon widget elements
-    GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *win = gtk_window_new(GTK_WINDOW_POPUP);
     GtkWidget *img = gtk_image_new_from_file(USERNAME_IMG);
     
     // Define structs to hold widget information
@@ -356,7 +361,7 @@ void display_icon() {
 void display_username() {
     
     // Define username
-    file_read(USERNAME_LOG, 1, 20, USERNAME);
+    USERNAME = file_read(USERNAME_LOG, 1, 20);
     
     // Initialize username menu elements
     GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);

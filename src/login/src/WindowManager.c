@@ -68,6 +68,9 @@
 //     gabeg Oct 31 2014 <> Modified "set_wm_entries" so that the modified 
 //                          "command_line" function would work.
 // 
+//     gabeg Nov 01 2014 <> Changed "command_line" return value to be (char *) so
+//                          altered code to reflect that change.
+// 
 // **********************************************************************************
 
 
@@ -151,8 +154,7 @@ static void set_wm_entries(GtkWidget *menu) {
     GSList *group = NULL;
     
     // Get all window managers in one string 
-    char wmstr[100];
-    command_line(WM_SES_CMD, 20, sizeof(wmstr), wmstr);
+    char *wmstr = command_line(WM_SES_CMD, 20, 100);
     
     // Break up window manager string into array of strings (based on newline char)
     int k = 0;
@@ -199,6 +201,7 @@ static void set_wm_entries(GtkWidget *menu) {
     
     // Free used memory
     free(wm);
+    free(wmstr);
 }
 
 
@@ -211,7 +214,7 @@ static void set_wm_entries(GtkWidget *menu) {
 void display_window_manager() {
     
     // Define session
-    file_read(SESSION_LOG, 1, 20, SESSION);
+    SESSION = file_read(SESSION_LOG, 1, 20);
     
     // Initialize window manager elements
     GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);

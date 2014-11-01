@@ -67,6 +67,9 @@
 //     gabeg Oct 31 2014 <> Modified "init_env" so that the modified "command_line" 
 //                          function would work.
 // 
+//     gabeg Nov 01 2014 <> Changed "command_line" return value to be (char *) so
+//                          altered code to reflect that change.
+// 
 // **********************************************************************************
 
 
@@ -129,11 +132,8 @@ static void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
     
     
     // Define environment variables
-    char seat[10];
-    char session_id[10];
-    
-    command_line(seat_cmd,       sizeof(seat),       sizeof(seat),       seat);
-    command_line(session_id_cmd, sizeof(session_id), sizeof(session_id), session_id);
+    char *seat       = command_line(seat_cmd,       10, 10);
+    char *session_id = command_line(session_id_cmd, 10, 10);
     
     char vtnr[3];
     char runtime_dir[100];
@@ -151,6 +151,10 @@ static void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
     setenv("XDG_SESSION_ID", session_id, 1);
     setenv("XDG_RUNTIME_DIR", runtime_dir, 1);
     setenv("XAUTHORITY", xauthority, 1);
+    
+    // Free memory
+    free(seat);
+    free(session_id);
 }
 
 

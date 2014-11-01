@@ -47,7 +47,7 @@
 //     gabeg Aug 20 2014 <> Moved the login interface code that displays the 
 //                          different modules, into the modules themselves
 // 
-//     gabeg Sep 16 2014 <> Removed unneeded libraries
+//     gabeg Sep 16 2014 <> Removed unneeded libraries.
 // 
 // **********************************************************************************
 

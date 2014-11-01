@@ -59,6 +59,11 @@
 //                          changed "command_line" so that it does not return a 
 //                          (char **). Also modified the file logging in "xsetup" so 
 //                          that the modified "command_line" would work.
+//
+//     gabeg Nov 01 2014 <> Testing to see if calls to malloc are expensive by
+//                          changing "command_line" to return (char *). It seems
+//                          they're not that expensive so I'm keeping "command_line"
+//                          as returning (char *).
 // 
 // **********************************************************************************
 
@@ -145,11 +150,12 @@ void start_compman() {
     // Check if composite manager is already running
     size_t runsz = 5;
     char *compcmd = "pgrep -c xcompmgr";
-    char val[runsz];
-    command_line(compcmd, runsz, runsz, val);
+    char *val = command_line(compcmd, runsz, runsz);
     
-    if ( atoi(val) != 0 )
+    if ( atoi(val) != 0 ) {
+        free(val);
         return;
+    }
     
     // Initialize monotonic clock
     struct timespec start, end; 
@@ -164,7 +170,7 @@ void start_compman() {
         
         // Calculate time between loops
         clock_gettime(CLOCK_MONOTONIC, &end); 
-        int64_t diff  = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec; 
+        int64_t diff  = BILLION * (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec); 
         
         // Check if server file exists
         if ( access(XSERVER_LOG, F_OK) != 0 )
@@ -172,9 +178,9 @@ void start_compman() {
         
         // Get the last line of X server log file
         size_t linesz = 100;
-        char cmd[linesz], xcheck[linesz]; 
+        char cmd[linesz]; 
         snprintf(cmd, sizeof(cmd), "%s %s %s", TAIL, "-1", XSERVER_LOG);
-        command_line(cmd, linesz, linesz, xcheck);
+        char *xcheck = command_line(cmd, linesz, linesz);
         
         // Make sure file is not empty
         if ( strlen(xcheck) != 0 ) {
@@ -183,6 +189,7 @@ void start_compman() {
             if ( last != NULL ) {
                 if ( strcmp(last, xcheck) == 0 ) 
                     ++count;
+                free(last);
             }
             
             // Define last
@@ -201,6 +208,9 @@ void start_compman() {
     
     // Log status of composite manager
     file_write(GLM_LOG, "a+", "%s\n", "Composite manager is active.");
+    
+    // Free memory
+    free(val);
 }
 
 
@@ -208,14 +218,13 @@ void start_compman() {
 // ///////////////////
 // ///// SETUP X /////
 // ///////////////////
- 
+
 // Setup X for login manager
 void xsetup() {
     
     // Log program start
     size_t datesz = 40;
-    char date_str[datesz];
-    command_line(DATE, datesz, datesz, date_str);
+    char *date_str = command_line(DATE, datesz, datesz);
     file_write(GLM_LOG, "a+", "\n%s %s\n%s %d\n\n", "Date:", date_str, "Preview:", PREVIEW);
     
     // Start X server when not in preview mode
@@ -237,4 +246,7 @@ void xsetup() {
     
     // Log that interface is allowed start
     INTERFACE = 1;
+    
+    // Free memory
+    free(date_str);
 }

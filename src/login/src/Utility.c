@@ -89,6 +89,11 @@
 //                          which counts the number of times a character occurs in a
 //                          string.
 // 
+//     gabeg Nov 01 2014 <> Testing to see if calls to malloc are expensive by
+//                          changing "file_read" and "command_line" to return 
+//                          (char *). It seems they're not that expensive so I'm
+//                          keeping them as returning as returning (char *).
+// 
 // **********************************************************************************
 
 
@@ -117,8 +122,8 @@ int count_char(char *str, char val);
 int get_open_tty();
 int get_open_display();
 void file_write(char *file, char *opt, const char *fmt, ...);
-void file_read(char *file, int ln, int sz, char *var);
-void command_line(char *cmd, size_t sz, size_t sza, char *var);
+char * file_read(char *file, int ln, int sz);
+char * command_line(char *cmd, size_t sz, size_t sza);
 void enable_transparency(GtkWidget *widget);
 void set_widget_color(GtkWidget *win, GtkWidget *widg, const GdkRGBA color[4]);
 void setup_widget(GtkWidget *win, GtkWidget *widg, int pos[4], const GdkRGBA color[4]);
@@ -255,7 +260,7 @@ void file_write(char *file, char *opt, const char *fmt, ...) {
 // /////////////////////
 
 // Read a file's contents
-void file_read(char *file, int ln, int sz, char *var) {
+char * file_read(char *file, int ln, int sz) {
     
     // Store file contents in variable
     FILE *handle = fopen(file, "r");
@@ -279,14 +284,13 @@ void file_read(char *file, int ln, int sz, char *var) {
     // Close file
     fclose(handle);
     
-    // Copy the line into the variable char by char 
-    int len = strlen(temp);
-    int j = 0;
-    while ( j < len ) {
-        var[j] = temp[j];
-        ++j;
-    }
-    var[j] = '\0';
+    // Copy the line int to the return variable
+    size_t len = strlen(temp) + 1;
+    char *copy = malloc(len);
+    assert(copy);
+    snprintf(copy, len, "%s", temp);
+    
+    return copy;
 }
 
 
@@ -296,7 +300,7 @@ void file_read(char *file, int ln, int sz, char *var) {
 // ////////////////////////////////////
 
 // Store command output as a string inside variable
-void command_line(char *cmd, size_t sz, size_t sza, char *var) { 
+char * command_line(char *cmd, size_t sz, size_t sza) { 
     
     // Output arrays
     FILE *handle  = popen(cmd, "r");
@@ -314,15 +318,14 @@ void command_line(char *cmd, size_t sz, size_t sza, char *var) {
     
     // Close process
     pclose(handle);
-
-    // Copy file contents to user supplied variable, char by char
-    int len = strlen(contents);
-    int j = 0;
-    while ( j < len-1 ) {
-        var[j] = contents[j];
-        ++j;
-    }
-    var[j] = '\0';
+    
+    // Copy file contents to the return variable
+    size_t len = strlen(contents) + 1;
+    char *copy = malloc(len);
+    assert(copy);
+    snprintf(copy, len, "%s", contents);
+    
+    return copy;
 }
 
 

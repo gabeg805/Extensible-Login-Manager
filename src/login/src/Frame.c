@@ -56,7 +56,7 @@
 //                          Setup" function and used the universal setup function 
 //                          instead.
 // 
-//     gabeg Oct 31 2014 <> Changed the GTK window from TOPLEVEL to POPUP. 
+//     gabeg Oct 31 2014 <> Changed GTK window type from TOPLEVEL to POPUP. 
 // 
 // **********************************************************************************
 

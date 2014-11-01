@@ -68,9 +68,9 @@
 #include <stdlib.h>
 
 char *SERVICE  = "glm";
-char USERNAME[] = "User";
+char *USERNAME = "User";
 char *PASSWORD = "Password";
-char SESSION[]  = "xterm";
+char *SESSION  = "xterm";
 char *GLM_LOG  = "/etc/X11/glm/log/glm.log";
 int INTERFACE = 0;
 int PREVIEW   = 0;

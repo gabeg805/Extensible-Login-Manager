@@ -43,14 +43,16 @@
 // 	
 //     gabeg Aug 02 2014 <> created
 // 
-//     gabeg Aug 10 2014 <> Updated the header
+//     gabeg Aug 10 2014 <> Updated the header.
 // 
-//     gabeg Sep 16 2014 <> Removed unneeded libraries
+//     gabeg Sep 16 2014 <> Removed unneeded libraries.
 // 
 //     gabeg Oct 23 2014 <> Moved over #define statements from "Config.c" to here. 
 //                          Made "draw_..." functions static and changed the 
 //                          textimage setup function for the main universal setup 
 //                          funtion.
+// 
+//     gabeg Nov 01 2014 <> Changed the GTK window type from TOPLEVEL to POPUP. 
 // 
 // **********************************************************************************
 
@@ -127,7 +129,7 @@ static gboolean draw_text_window(GtkWidget *window) {
 void display_text_image() {
     
     // Initialize text image elements
-    GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *win = gtk_window_new(GTK_WINDOW_POPUP);
     GtkWidget *widg = gtk_drawing_area_new();
     
     // Define structs to hold widget informationx
