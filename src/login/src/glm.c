@@ -68,10 +68,9 @@
 #include <stdlib.h>
 
 char *SERVICE  = "glm";
-char *DISPLAY  = ":0";
-char *USERNAME = "User";
+char USERNAME[] = "User";
 char *PASSWORD = "Password";
-char *SESSION  = "xterm";
+char SESSION[]  = "xterm";
 char *GLM_LOG  = "/etc/X11/glm/log/glm.log";
 int INTERFACE = 0;
 int PREVIEW   = 0;
@@ -100,12 +99,8 @@ int main(int argc, char *argv[]) {
         // Authenticate username/password combination
         login_interface(argc, argv);
         
-        if ( login(USERNAME, PASSWORD) ) 
+        if ( login(USERNAME, PASSWORD) )
             loop = 0;
-        
-        // Free allocated memory
-        free(PASSWORD);
-        free(USERNAME);
     }
     
     return 0;

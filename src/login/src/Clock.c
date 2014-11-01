@@ -191,8 +191,8 @@ static gboolean update(gpointer data) {
 void display_clock() {
     
     // Initialize date and time widgets
-    GtkWidget *date_win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *time_win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *date_win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *time_win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *date_widg = gtk_label_new("");
     GtkWidget *time_widg = gtk_label_new("");
     

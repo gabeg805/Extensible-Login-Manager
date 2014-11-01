@@ -28,14 +28,16 @@
 // 
 //     cleanup_child       - Remove zombie processes
 // 
+//     count_char          - Count number of times a character occurs in a string
+// 
 //     get_open_tty        - Return an open TTY port
+// 
+//     get_open_display    - Search for X display lock files and return a display 
+//                           that is not locked
 // 
 //     file_write          - Write to a file
 // 
 //     file_read           - Read a file's contents
-// 
-//     get_open_display    - Search for X display lock files and return a display 
-//                           that is not locked
 // 
 //     command_line        - Return output of a Linux command
 // 
@@ -50,6 +52,7 @@
 // 
 //     * Includes and Declares
 //     * Remove Zombie Processes
+//     * Character Count In String
 //     * Get Open TTY 
 //     * Write to File
 //     * Read File
@@ -72,6 +75,19 @@
 //     gabeg Oct 25 2014 <> Moved "Transparency" source file functions here and 
 //                          removed the "Transparency" source file. Added the 
 //                          universal widget setup function.
+// 
+//     gabeg Oct 31 2014 <> Modified "get_open_display", "file_read", and 
+//                          "command_line".  In "get_open_display", instead of
+//                          returning a (char *), I return the int value of the
+//                          display. In "file_read" I made it so that you can specify
+//                          a file line to return.  In "command_line", I removed all
+//                          the calls to malloc and just made it return all the
+//                          output as one string. In both modified functions, instead
+//                          of returning a (char *), I return void and have the user
+//                          input a (char *) to be modified. That way malloc does not
+//                          have to be called. I also added a function "count_char"
+//                          which counts the number of times a character occurs in a
+//                          string.
 // 
 // **********************************************************************************
 
@@ -97,11 +113,12 @@
 
 //Declares
 void cleanup_child(int signal);
+int count_char(char *str, char val);
 int get_open_tty();
+int get_open_display();
 void file_write(char *file, char *opt, const char *fmt, ...);
-char * file_read(char *file);
-char * get_open_display();
-char ** command_line(char *cmd, int size);
+void file_read(char *file, int ln, int sz, char *var);
+void command_line(char *cmd, size_t sz, size_t sza, char *var);
 void enable_transparency(GtkWidget *widget);
 void set_widget_color(GtkWidget *win, GtkWidget *widg, const GdkRGBA color[4]);
 void setup_widget(GtkWidget *win, GtkWidget *widg, int pos[4], const GdkRGBA color[4]);
@@ -119,47 +136,98 @@ void cleanup_child(int signal) {
 
 
 
+// /////////////////////////////////////
+// ///// CHARACTER COUNT IN STRING /////
+// /////////////////////////////////////
+
+// Count number of times a character occurs in a string
+int count_char(char *str, char val) {
+    int i = 0;
+    int count = 0;
+    int len = strlen(str);
+    
+    while ( i < len ) {
+        if ( str[i] == val )
+            ++count;
+        ++i;
+    }
+    
+    return count;
+}
+
+
+
 // ////////////////////////
 // ///// GET OPEN TTY /////
 // ////////////////////////
 
 // Return an open TTY port
+// * Find a better way to do this
 int get_open_tty() {
     
     // Look for running process that opens TTY
-    char *cmd = "pgrep -a tty";
-    char **tty = command_line(cmd, 50);
-    int num = atoi(tty[0]);
+    /* char *cmd = "pgrep -a tty | grep -o -E 'tty. '"; */
+    /* char tty[50]; */
+    /* command_line(cmd, sizeof(tty), sizeof(tty), tty); */
+    /* int num = atoi(tty); */
     
-    // Loop through all process command strings
-    int n = 1, i = 1;
-    while ( num != 0 && i <= num ) {
-        char *sep;
-        char *buffer, *orig;
-        buffer = orig = strdup(tty[i]);
+    /* // Loop through all process command strings */
+    /* int n = 1, i = 1; */
+    /* while ( (num != 0) && (i <= num) ) { */
+    /*     char *sep; */
+    /*     char *buffer, *orig; */
+    /*     buffer = orig = strdup(tty[i]); */
         
-        while ( (sep = strsep(&buffer, " ")) != NULL ) {
+    /*     while ( (sep = strsep(&buffer, " ")) != NULL ) { */
             
-            // Check process command for 'tty#'
-            char *ttyrun = strstr(sep, "tty");
-            char *ttycmd = strstr(sep, "getty");
+    /*         // Check process command for 'tty#' */
+    /*         char *ttyrun = strstr(sep, "tty"); */
+    /*         char *ttycmd = strstr(sep, "getty"); */
             
-            if ( (ttyrun != NULL) && (ttycmd == NULL) ) {
-                char val[3];
-                snprintf(val, 3, "%c", sep[3]);
-                n = atoi(val)+1;
-            }
-        }
+    /*         if ( (ttyrun != NULL) && (ttycmd == NULL) )  */
+    /*             n = atoi(&sep[3])+1; */
+    /*     } */
         
-        free(orig);
-        free(tty[i]);
-        i++;
+    /*     free(orig); */
+    /*     free(tty[i]); */
+    /*     i++; */
+    /* } */
+    
+    /* free(tty[0]); */
+    /* free(tty); */
+    int n = 7;
+    return n;
+}
+
+
+
+// //////////////////////////////
+// ///// GET OPEN X DISPLAY ///// 
+// //////////////////////////////
+
+// Return an open display in the form ':0'
+int get_open_display() {
+    
+    // Loop through possible displays
+    int d;
+    char filename[15];
+    /* char display[5]; */
+    
+    for ( d=0; d < 10; d++ ) {
+        
+        // Pieces of the actual file name
+        char *xtmp = "/tmp/.X";
+        char *xlock = "-lock";
+        snprintf(filename, sizeof(filename), "%s%d%s", xtmp, d, xlock);
+        
+        // Check for file existence
+        int result = access(filename, F_OK);
+        
+        if ( result != 0 ) 
+            break;
     }
     
-    free(tty[0]);
-    free(tty);
-    n = 7;
-    return n;
+    return d;
 }
 
 
@@ -187,67 +255,38 @@ void file_write(char *file, char *opt, const char *fmt, ...) {
 // /////////////////////
 
 // Read a file's contents
-char * file_read(char *file) {
+void file_read(char *file, int ln, int sz, char *var) {
     
     // Store file contents in variable
     FILE *handle = fopen(file, "r");
-    char temp[100];
+    char temp[sz];
     
-    fgets(temp, sizeof(temp), handle);
-    fclose(handle);
-    
-    // Remove trailing newline characters
-    char *pos;
-    if ((pos=strchr(temp, '\n')) != NULL)
-        *pos = '\0';        
-    
-    // Allocate memory for command output 
-    size_t sz = strlen(temp) + 1;
-    char *contents = malloc(sz);
-    assert(contents);
-    snprintf(contents, sz, temp);
-    
-    return contents;
-}
-
-
-
-// //////////////////////////////
-// ///// GET OPEN X DISPLAY ///// 
-// //////////////////////////////
-
-// Return an open display in the form ':0'
-char * get_open_display() {
-    
-    // Loop through possible displays
-    int d;
-    char filename[15];
-    char display[5];
-    
-    for ( d=0; d < 10; d++ ) {
+    // Loop through file
+    int i = 0;
+    while (fgets(temp, sz, handle) != NULL ) {
         
-        // Pieces of the actual file name
-        char *xtmp = "/tmp/.X";
-        char *xlock = "-lock";
-        snprintf(filename, sizeof(filename), "%s%d%s", xtmp, d, xlock);
+        // Remove trailing newline characters
+        char *pos;
+        if ((pos=strchr(temp, '\n')) != NULL)
+            *pos = '\0';
         
-        // Check for file existence
-        int result = access(filename, F_OK);
-        
-        if ( result != 0 ) 
+        // Break out of loop
+        ++i;
+        if ( i == ln )
             break;
     }
     
-    // Define open display
-    snprintf(display, sizeof(display), ":%d", d);
+    // Close file
+    fclose(handle);
     
-    // Allocate memory for display output 
-    size_t sz = strlen(display) + 1;
-    char *opendisp = malloc(sz);
-    assert(opendisp);
-    snprintf(opendisp, sz, display);
-    
-    return opendisp;
+    // Copy the line into the variable char by char 
+    int len = strlen(temp);
+    int j = 0;
+    while ( j < len ) {
+        var[j] = temp[j];
+        ++j;
+    }
+    var[j] = '\0';
 }
 
 
@@ -256,50 +295,34 @@ char * get_open_display() {
 // ///// GET LINUX COMMAND OUTPUT ///// 
 // ////////////////////////////////////
 
-// Return command output as a string
-char ** command_line(char *cmd, int size) {
+// Store command output as a string inside variable
+void command_line(char *cmd, size_t sz, size_t sza, char *var) { 
     
     // Output arrays
-    char **array = malloc(sizeof(char*)*size);
-    assert(array);
-    char temp[size];
-    array[0] = "0";
+    FILE *handle  = popen(cmd, "r");
+    char temp[sz];
+    char contents[sza];
+    strcpy(contents, "");
     
-    // Read command output
-    FILE *fp  = popen(cmd, "r");
-    int i = 1;
-    while (fgets(temp, sizeof(temp), fp) != NULL ) {
-        
-        // Remove trailing newline characters
-        char *pos;
-        if ((pos=strchr(temp, '\n')) != NULL)
-            *pos = '\0';
-        
-        // Add string to the array
-        size_t sz = strlen(temp);
-        char *copy = malloc(sz+1);
-        assert(copy);
-        snprintf(copy, sz+1, temp);
-        
-        array[i] = copy;
-        ++i;
+    // Add file contents to contents variable
+    while (fgets(temp, sz, handle) != NULL ) {
+        int lc = strlen(contents);
+        int lt = strlen(temp);
+        if ( sza >  (lc+lt) )
+            strcat(contents, temp);
     }
     
     // Close process
-    pclose(fp);
-    
-    // Put number of array elements into first index
-    char val[5];
-    snprintf(val, sizeof(val), "%d", (i-1));
-    
-    size_t sz = strlen(val) + 1;
-    char *copy = malloc(sz);
-    assert(copy);
-    snprintf(copy, sz, val);
-    
-    array[0] = copy;
-    
-    return array;
+    pclose(handle);
+
+    // Copy file contents to user supplied variable, char by char
+    int len = strlen(contents);
+    int j = 0;
+    while ( j < len-1 ) {
+        var[j] = contents[j];
+        ++j;
+    }
+    var[j] = '\0';
 }
 
 

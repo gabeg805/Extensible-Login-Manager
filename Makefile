@@ -1,6 +1,6 @@
 CC      = gcc
 LIBS    = gtk+-3.0 cairo
-CFLAGS  = -g -Wall -lpam
+CFLAGS  = -g -Wall -lpam -O2
 CFLAGS += `pkg-config $(LIBS) --cflags --libs`
 
 PROGRAM = glm
@@ -19,4 +19,5 @@ $(PROGRAM): $(OBJECTS)
 
 .PHONY: clean
 clean : 
-	-rm -v -f $(OBJECTS)
+	@rm -v -f $(OBJECTS)
+	@rm -v -f $(PROGRAM)

@@ -52,17 +52,20 @@
 // 	
 //     gabeg Aug 02 2014 <> created
 // 
-//     gabeg Aug 10 2014 <> Added program header
+//     gabeg Aug 10 2014 <> Added program header.
 // 
 //     gabeg Aug 13 2014 <> Made login method less shady (stopped using 
-//                          'su USERNAME -c ...' to login)
+//                          'su USERNAME -c ...' to login).
 // 
 //     gabeg Aug 15 2014 <> Added a function to initialize necessary environment 
-//                          variables for the authenticated user
+//                          variables for the authenticated user.
 // 
-//     gabeg Aug 17 2014 <> Added a function to record user login in UTMP and WTMP
+//     gabeg Aug 17 2014 <> Added a function to record user login in UTMP and WTMP.
 // 
-//     gabeg Sep 16 2014 <> Removed unneeded libraries
+//     gabeg Sep 16 2014 <> Removed unneeded libraries.
+// 
+//     gabeg Oct 31 2014 <> Modified "init_env" so that the modified "command_line" 
+//                          function would work.
 // 
 // **********************************************************************************
 
@@ -126,8 +129,12 @@ static void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
     
     
     // Define environment variables
-    char **seat = command_line(seat_cmd, 10);
-    char **session_id = command_line(session_id_cmd, 10);
+    char seat[10];
+    char session_id[10];
+    
+    command_line(seat_cmd,       sizeof(seat),       sizeof(seat),       seat);
+    command_line(session_id_cmd, sizeof(session_id), sizeof(session_id), session_id);
+    
     char vtnr[3];
     char runtime_dir[100];
     char xauthority[100];
@@ -140,25 +147,10 @@ static void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
     setenv("USER", pw->pw_name, 1);
     setenv("SHELL", pw->pw_shell, 1);
     setenv("XDG_VTNR", vtnr, 1);
-    setenv("XDG_SEAT", seat[1], 1);
-    setenv("XDG_SESSION_ID", session_id[1], 1);
+    setenv("XDG_SEAT", seat, 1);
+    setenv("XDG_SESSION_ID", session_id, 1);
     setenv("XDG_RUNTIME_DIR", runtime_dir, 1);
     setenv("XAUTHORITY", xauthority, 1);
-    
-    // Free up the memory
-    free(seat[1]);
-    seat[1] = NULL;
-    free(seat[0]);
-    seat[0] = NULL;
-    free(seat);
-    seat = NULL;
-    
-    free(session_id[1]);
-    session_id[1] = NULL;
-    free(session_id[0]);
-    session_id[0] = NULL;
-    free(session_id);
-    session_id = NULL;
 }
 
 
@@ -270,8 +262,6 @@ int login(const char *username, const char *password) {
     const char *data[2] = {username, password};
     struct pam_conv pam_conv = {conv, data};
     
-    printf("%s\n", password);
-    
     // Start PAM
     int result = pam_start(SERVICE, NULL, &pam_conv, &pam_handle);
     if (!is_pam_success(result, pam_handle)) return 0;
@@ -363,8 +353,10 @@ int login(const char *username, const char *password) {
     
     
     // Wait for child process to finish (wait for logout)
-    int status;
-    waitpid(child_pid, &status, 0); 
+    if (!PREVIEW) {
+        int status;
+        waitpid(child_pid, &status, 0); 
+    }
     
     // Close PAM session
     result = pam_close_session(pam_handle, 0);

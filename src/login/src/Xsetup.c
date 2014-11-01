@@ -54,6 +54,12 @@
 //                          static and trimmed down the header file so it does not 
 //                          contain unnecessary includes. 
 // 
+//     gabeg Oct 31 2014 <> Changed the way DISPLAY is updated since I altered
+//                          "get_open_display". Modified "start_compman" since I
+//                          changed "command_line" so that it does not return a 
+//                          (char **). Also modified the file logging in "xsetup" so 
+//                          that the modified "command_line" would work.
+// 
 // **********************************************************************************
 
 
@@ -101,9 +107,9 @@ void start_xserver() {
     // Log X start
     file_write(GLM_LOG, "a+", "%s\n", "Starting X server...");
     
-    
     // Set the display environment variable
-    DISPLAY = get_open_display();
+    char DISPLAY[3]  = ":0";
+    DISPLAY[1] = get_open_display() + '0';    
     setenv("DISPLAY", DISPLAY, 1);
     
     // Get open tty port
@@ -119,14 +125,9 @@ void start_xserver() {
               XSERVER_AUTH, VT, NULL);
     }
     
-        
+    
     // Log X start
     file_write(GLM_LOG, "a+", "%s\n", "X server is active.");
-    
-    
-    // Free display memory
-    free(DISPLAY);
-    DISPLAY = NULL;
 }
 
 
@@ -142,10 +143,10 @@ void start_compman() {
     file_write(GLM_LOG, "a+", "%s\n", "Starting compositing manager...");    
     
     // Check if composite manager is already running
-    char val[5];
-    FILE *handle = popen("pgrep -c xcompmgr", "r");
-    fgets(val, sizeof(val), handle);
-    pclose(handle);
+    size_t runsz = 5;
+    char *compcmd = "pgrep -c xcompmgr";
+    char val[runsz];
+    command_line(compcmd, runsz, runsz, val);
     
     if ( atoi(val) != 0 )
         return;
@@ -158,7 +159,7 @@ void start_compman() {
     long BILLION = 1000000000L;
     int count = 0;
     char *last = NULL;
-    int i = 0;
+    
     while (1) {
         
         // Calculate time between loops
@@ -170,36 +171,23 @@ void start_compman() {
             continue;
         
         // Get the last line of X server log file
-        char cmd[100];        
+        size_t linesz = 100;
+        char cmd[linesz], xcheck[linesz]; 
         snprintf(cmd, sizeof(cmd), "%s %s %s", TAIL, "-1", XSERVER_LOG);
-        char **xcheck = command_line(cmd, sizeof(cmd));
-        int num = atoi(xcheck[0]);
+        command_line(cmd, linesz, linesz, xcheck);
         
         // Make sure file is not empty
-        if ( num == 1 ) {
+        if ( strlen(xcheck) != 0 ) {
             
             // Increment count and free last
             if ( last != NULL ) {
-                if ( strcmp(last, xcheck[1]) == 0 ) 
+                if ( strcmp(last, xcheck) == 0 ) 
                     ++count;
-                free(last);
             }
             
             // Define last
-            last = strdup(xcheck[1]);
-            
-            // Free memory
-            free(xcheck[1]);
-            xcheck[1] = NULL;
+            last = xcheck;
         }
-        
-        // Free memory
-        free(xcheck[0]);
-        xcheck[0] = NULL;
-        
-        free(xcheck);
-        xcheck = NULL;
-        
         
         // Once a safe amount of time has elapsed, execute the compositing manager
         if ( (PREVIEW) || (count == 200) || (diff >= 5*BILLION) ) {
@@ -208,7 +196,6 @@ void start_compman() {
                 execl(XCOMPMGR, XCOMPMGR, NULL);
             break;
         }
-        ++i;
     }
     
     
@@ -226,8 +213,10 @@ void start_compman() {
 void xsetup() {
     
     // Log program start
-    char **date_str = command_line(DATE, 40);
-    file_write(GLM_LOG, "a+", "\n%s %s\n%s %d\n\n", "Date:", date_str[1], "Preview:", PREVIEW);
+    size_t datesz = 40;
+    char date_str[datesz];
+    command_line(DATE, datesz, datesz, date_str);
+    file_write(GLM_LOG, "a+", "\n%s %s\n%s %d\n\n", "Date:", date_str, "Preview:", PREVIEW);
     
     // Start X server when not in preview mode
     if ( !PREVIEW ) 
@@ -248,14 +237,4 @@ void xsetup() {
     
     // Log that interface is allowed start
     INTERFACE = 1;
-    
-    // Free memory
-    free(date_str[1]);
-    date_str[1] = NULL;
-
-    free(date_str[0]);
-    date_str[0] = NULL;    
-    
-    free(date_str);
-    date_str = NULL;
 }

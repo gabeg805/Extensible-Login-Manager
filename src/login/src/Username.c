@@ -35,12 +35,14 @@
 // 
 //     set_username_entries   - Set entries in the user menu
 // 
+//     display_icon           - Display username icon 
 //     display_username       - Display the username menu
 // 
 // 
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
+//     * Display Username Icon
 //     * Setup Username Menu
 //     * Write User Menu Item to File
 //     * Get Username-UID Combination
@@ -64,6 +66,10 @@
 //                          universal setup function instead. Added a setup function
 //                          for the username menu.
 // 
+//     gabeg Oct 31 2014 <> Changed the way the username icon is displayed. Instead
+//                          of forking and running pqiv, I added it to a GTK image
+//                          widget and displayed the widget. 
+// 
 // **********************************************************************************
 
 
@@ -78,12 +84,15 @@
 #include "../hdr/Utility.h"
 #include <gtk/gtk.h>
 #include <assert.h>
+#include <unistd.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #define XPOS           665
 #define YPOS           197
+#define IMG_XPOS       575
+#define IMG_YPOS       190
 #define WIDTH          0
 #define HEIGHT         0
 #define BG_WIN         (const GdkRGBA) {0, 0, 0, 0}
@@ -94,9 +103,10 @@
 #define FONT           "DejaVu Sans"
 #define USERNAME_IMG   "/etc/X11/glm/img/interface/user.png"
 #define USERNAME_LOG   "/etc/X11/glm/log/user.log"
-#define PQIV           "/usr/bin/pqiv"
+
 
 // Declares
+static void display_icon();
 static void setup_menu(GtkWidget *widg, GtkWidget *label);
 static void setup_label(GtkWidget *label);
 static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label);
@@ -152,14 +162,16 @@ static void setup_label(GtkWidget *label) {
 
 
 // ////////////////////////////////////////
-// ///// WRITE USER MENU ITEM TO FILE ///// 
+// ///// WRITE USER MENU ITEM TO FILE /////
 // ////////////////////////////////////////
 
 // Write to a file, which user to login as
 static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
     const gchar *user = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    USERNAME = (char*)user;
+    
+    snprintf(USERNAME, strlen(user)+1, "%s", (char*)user);
     file_write(USERNAME_LOG, "w", "%s\n", USERNAME);
+    
     gtk_label_set_text(GTK_LABEL(label), USERNAME);
 }
 
@@ -187,7 +199,7 @@ static char ** get_username(char *file, int size) {
         
         // Information on file lines
         int uid;
-        char *user;
+        char *user = NULL;
         char *sep;
         char *buffer, *orig;
         buffer = orig = strdup(line);
@@ -252,12 +264,11 @@ static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
     
     // Initialize user menu items
     GtkWidget *user;
-    GSList *group;
+    GSList *group = NULL;
     
     // Search for login users in passwd files
     int size = 20;
     char *files[] = {"/etc/shadow", "/etc/passwd", NULL};
-    char *userfocus = strdup(USERNAME);
     
     // Set usernames from file
     int num;
@@ -277,7 +288,7 @@ static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
         
         // Compare label with the focus label
         p = 1; 
-        if ( strcmp(allusers[i], userfocus) == 0 ) {
+        if ( strcmp(allusers[i], USERNAME) == 0 ) {
             user = gtk_radio_menu_item_new_with_label(NULL, allusers[i]);
             group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(user));
         } else if ( (q != 0) && (allusers[i] != NULL) )
@@ -312,9 +323,6 @@ static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
     
     free(allusers);
     allusers = NULL;
-    
-    free(userfocus);
-    userfocus = NULL; 
 }
 
 
@@ -323,11 +331,32 @@ static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
 // ///// DISPLAY USERNAME MENU /////
 // /////////////////////////////////
 
+// Display username icon
+void display_icon() {
+    
+    // Initialize username icon widget elements
+    GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *img = gtk_image_new_from_file(USERNAME_IMG);
+    
+    // Define structs to hold widget information
+    int pos[4] = {IMG_XPOS, IMG_YPOS, WIDTH, HEIGHT};
+    const GdkRGBA color[4] = {BG_WIN, BG_MENU, FG_WIN, FG_MENU};
+    
+    // Setup icon widget
+    setup_widget(win, img, pos, color);
+    
+    // Display icon widget
+    gtk_widget_show(img);
+    gtk_widget_show(win);
+}
+
+
+
 // Display the username menu
 void display_username() {
     
     // Define username
-    USERNAME = file_read(USERNAME_LOG);
+    file_read(USERNAME_LOG, 1, 20, USERNAME);
     
     // Initialize username menu elements
     GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -338,15 +367,13 @@ void display_username() {
     int pos[4] = {XPOS, YPOS, WIDTH, HEIGHT};
     const GdkRGBA color[4] = {BG_WIN, BG_MENU, FG_WIN, FG_MENU};
     
-    // Set username icon
-    if ( !fork() )
-        execl(PQIV, PQIV, "-c", "-i", "-P", "575,190", USERNAME_IMG, NULL);
-    
+    // Display username icon
+    display_icon();
     
     // Setup username menu widget
     setup_widget(win, widg, pos, color);
     setup_menu(widg, label);
-        
+    
     // Display the username menu
     gtk_widget_show(label);
     gtk_widget_show(widg);

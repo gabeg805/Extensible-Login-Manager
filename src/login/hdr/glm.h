@@ -4,10 +4,9 @@
 
 // Global variables
 extern char *SERVICE;
-extern char *DISPLAY;
-extern char *USERNAME;
+extern char USERNAME[];
 extern char *PASSWORD;
-extern char *SESSION;
+extern char SESSION[];
 extern char *GLM_LOG;
 extern int INTERFACE;
 extern int PREVIEW;

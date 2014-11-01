@@ -96,7 +96,7 @@ void login_interface(int argc, char *argv[]) {
         display_clock();
         display_frame();
         display_text_image();
-        display_window_manager();        
+        display_window_manager();
         display_username();
         display_panel();
         
@@ -110,7 +110,6 @@ void login_interface(int argc, char *argv[]) {
     
     // Begin GTK main loop
     gtk_main();
-    
     
     // Log interface display is done
     file_write(GLM_LOG, "a+", "%s\n", "Login interface finished.");

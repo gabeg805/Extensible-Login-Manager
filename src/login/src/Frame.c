@@ -56,6 +56,8 @@
 //                          Setup" function and used the universal setup function 
 //                          instead.
 // 
+//     gabeg Oct 31 2014 <> Changed the GTK window from TOPLEVEL to POPUP. 
+// 
 // **********************************************************************************
 
 
@@ -144,7 +146,7 @@ static gboolean draw_window(GtkWidget *widget) {
 void display_frame() {
     
     // Initialize date gui widget
-    GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *win = gtk_window_new(GTK_WINDOW_POPUP);
     GtkWidget *widg = gtk_drawing_area_new();
     
     // Setup structs to hold widget information
@@ -153,7 +155,6 @@ void display_frame() {
     // Setup frame
     setup_widget(win, widg, pos, NULL);
     g_signal_connect(G_OBJECT(widg), "draw", G_CALLBACK(draw_window), NULL);
-    
     
     // Display the login frame
     gtk_widget_show(widg);
