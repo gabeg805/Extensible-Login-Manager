@@ -1,303 +1,2572 @@
-[    13.740] 
-X.Org X Server 1.16.0
-Release Date: 2014-07-16
-[    13.740] X Protocol Version 11, Revision 0
-[    13.740] Build Operating System: Linux 3.15.5-2-ARCH x86_64 
-[    13.740] Current Operating System: Linux archy 3.15.8-1-ARCH #1 SMP PREEMPT Fri Aug 1 08:51:42 CEST 2014 x86_64
-[    13.740] Kernel command line: BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=74426f6c-67d5-4bad-8b57-8d908dd34e29 rw pcie_aspm=force resume=/dev/sda6 resume_offset=479232 quiet rw init=/usr/lib/systemd/systemd
-[    13.740] Build Date: 31 July 2014  11:53:19AM
-[    13.740]  
-[    13.740] Current version of pixman: 0.32.6
-[    13.740] 	Before reporting problems, check http://wiki.x.org
+[    17.199] 
+X.Org X Server 1.16.1
+Release Date: 2014-09-21
+[    17.199] X Protocol Version 11, Revision 0
+[    17.199] Build Operating System: Linux 3.16.1-1-ARCH x86_64 
+[    17.199] Current Operating System: Linux archy 3.17.2-1-ARCH #1 SMP PREEMPT Thu Oct 30 20:49:39 CET 2014 x86_64
+[    17.199] Kernel command line: BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=74426f6c-67d5-4bad-8b57-8d908dd34e29 rw pcie_aspm=force resume=/dev/sda6 resume_offset=479232 quiet rw init=/usr/lib/systemd/systemd
+[    17.200] Build Date: 21 September 2014  10:53:13AM
+[    17.200]  
+[    17.200] Current version of pixman: 0.32.6
+[    17.200] 	Before reporting problems, check http://wiki.x.org
 	to make sure that you have the latest version.
-[    13.740] Markers: (--) probed, (**) from config file, (==) default setting,
+[    17.200] Markers: (--) probed, (**) from config file, (==) default setting,
 	(++) from command line, (!!) notice, (II) informational,
 	(WW) warning, (EE) error, (NI) not implemented, (??) unknown.
-[    13.741] (++) Log file: "/etc/X11/glm/log/xserver.log", Time: Sat Nov  1 15:01:53 2014
-[    13.741] (==) Using config directory: "/etc/X11/xorg.conf.d"
-[    13.741] (==) Using system config directory "/usr/share/X11/xorg.conf.d"
-[    13.741] (==) No Layout section.  Using the first Screen section.
-[    13.741] (==) No screen section available. Using defaults.
-[    13.741] (**) |-->Screen "Default Screen Section" (0)
-[    13.741] (**) |   |-->Monitor "<default monitor>"
-[    13.741] (==) No monitor specified for screen "Default Screen Section".
+[    17.200] (++) Log file: "/etc/X11/glm/log/xserver.log", Time: Sat Nov  8 21:18:19 2014
+[    17.209] (==) Using system config directory "/usr/share/X11/xorg.conf.d"
+[    17.209] (==) No Layout section.  Using the first Screen section.
+[    17.209] (==) No screen section available. Using defaults.
+[    17.209] (**) |-->Screen "Default Screen Section" (0)
+[    17.209] (**) |   |-->Monitor "<default monitor>"
+[    17.210] (==) No monitor specified for screen "Default Screen Section".
 	Using a default monitor configuration.
-[    13.741] (==) Automatically adding devices
-[    13.741] (==) Automatically enabling devices
-[    13.741] (==) Automatically adding GPU devices
-[    13.810] (WW) `fonts.dir' not found (or not valid) in "/usr/share/fonts/100dpi/".
-[    13.810] 	Entry deleted from font path.
-[    13.810] 	(Run 'mkfontdir' on "/usr/share/fonts/100dpi/").
-[    13.810] (WW) `fonts.dir' not found (or not valid) in "/usr/share/fonts/75dpi/".
-[    13.810] 	Entry deleted from font path.
-[    13.810] 	(Run 'mkfontdir' on "/usr/share/fonts/75dpi/").
-[    13.810] (==) FontPath set to:
+[    17.210] (==) Automatically adding devices
+[    17.210] (==) Automatically enabling devices
+[    17.210] (==) Automatically adding GPU devices
+[    17.235] (WW) `fonts.dir' not found (or not valid) in "/usr/share/fonts/100dpi/".
+[    17.235] 	Entry deleted from font path.
+[    17.235] 	(Run 'mkfontdir' on "/usr/share/fonts/100dpi/").
+[    17.235] (WW) `fonts.dir' not found (or not valid) in "/usr/share/fonts/75dpi/".
+[    17.235] 	Entry deleted from font path.
+[    17.235] 	(Run 'mkfontdir' on "/usr/share/fonts/75dpi/").
+[    17.235] (==) FontPath set to:
 	/usr/share/fonts/misc/,
 	/usr/share/fonts/TTF/,
 	/usr/share/fonts/OTF/,
 	/usr/share/fonts/Type1/
-[    13.810] (==) ModulePath set to "/usr/lib/xorg/modules"
-[    13.810] (II) The server relies on udev to provide the list of input devices.
+[    17.235] (==) ModulePath set to "/usr/lib/xorg/modules"
+[    17.235] (II) The server relies on udev to provide the list of input devices.
 	If no devices become available, reconfigure udev or disable AutoAddDevices.
-[    13.810] (II) Loader magic: 0x818d80
-[    13.810] (II) Module ABI versions:
-[    13.810] 	X.Org ANSI C Emulation: 0.4
-[    13.810] 	X.Org Video Driver: 18.0
-[    13.810] 	X.Org XInput driver : 21.0
-[    13.810] 	X.Org Server Extension : 8.0
-[    13.811] (EE) systemd-logind: failed to get session: PID 423 does not belong to any known session
-[    13.812] (II) xfree86: Adding drm device (/dev/dri/card0)
-[    13.814] (--) PCI:*(0:0:2:0) 8086:0116:1028:04d7 rev 9, Mem @ 0xd0000000/4194304, 0xc0000000/268435456, I/O @ 0x00004000/64
-[    13.814] (WW) Open ACPI failed (/var/run/acpid.socket) (No such file or directory)
-[    13.814] (II) LoadModule: "glx"
-[    13.833] (II) Loading /usr/lib/xorg/modules/extensions/libglx.so
-[    13.835] (II) Module glx: vendor="X.Org Foundation"
-[    13.835] 	compiled for 1.16.0, module version = 1.0.0
-[    13.835] 	ABI class: X.Org Server Extension, version 8.0
-[    13.835] (==) AIGLX enabled
-[    13.835] (==) Matched intel as autoconfigured driver 0
-[    13.835] (==) Matched intel as autoconfigured driver 1
-[    13.835] (==) Matched modesetting as autoconfigured driver 2
-[    13.835] (==) Matched fbdev as autoconfigured driver 3
-[    13.835] (==) Matched vesa as autoconfigured driver 4
-[    13.835] (==) Assigned the driver to the xf86ConfigLayout
-[    13.835] (II) LoadModule: "intel"
-[    13.835] (II) Loading /usr/lib/xorg/modules/drivers/intel_drv.so
-[    13.836] (II) Module intel: vendor="X.Org Foundation"
-[    13.836] 	compiled for 1.16.0, module version = 2.99.914
-[    13.836] 	Module class: X.Org Video Driver
-[    13.836] 	ABI class: X.Org Video Driver, version 18.0
-[    13.836] (II) LoadModule: "modesetting"
-[    13.836] (WW) Warning, couldn't open module modesetting
-[    13.836] (II) UnloadModule: "modesetting"
-[    13.836] (II) Unloading modesetting
-[    13.836] (EE) Failed to load module "modesetting" (module does not exist, 0)
-[    13.836] (II) LoadModule: "fbdev"
-[    13.836] (WW) Warning, couldn't open module fbdev
-[    13.837] (II) UnloadModule: "fbdev"
-[    13.837] (II) Unloading fbdev
-[    13.837] (EE) Failed to load module "fbdev" (module does not exist, 0)
-[    13.837] (II) LoadModule: "vesa"
-[    13.837] (II) Loading /usr/lib/xorg/modules/drivers/vesa_drv.so
-[    13.837] (II) Module vesa: vendor="X.Org Foundation"
-[    13.837] 	compiled for 1.16.0, module version = 2.3.2
-[    13.837] 	Module class: X.Org Video Driver
-[    13.837] 	ABI class: X.Org Video Driver, version 18.0
-[    13.837] (II) intel: Driver for Intel(R) Integrated Graphics Chipsets:
+[    17.235] (II) Loader magic: 0x818d80
+[    17.236] (II) Module ABI versions:
+[    17.236] 	X.Org ANSI C Emulation: 0.4
+[    17.236] 	X.Org Video Driver: 18.0
+[    17.236] 	X.Org XInput driver : 21.0
+[    17.236] 	X.Org Server Extension : 8.0
+[    17.237] (EE) systemd-logind: failed to get session: PID 391 does not belong to any known session
+[    17.238] (II) xfree86: Adding drm device (/dev/dri/card0)
+[    17.240] (--) PCI:*(0:0:2:0) 8086:0116:1028:04d7 rev 9, Mem @ 0xd0000000/4194304, 0xc0000000/268435456, I/O @ 0x00004000/64
+[    17.240] (WW) Open ACPI failed (/var/run/acpid.socket) (No such file or directory)
+[    17.240] (II) LoadModule: "glx"
+[    17.270] (II) Loading /usr/lib/xorg/modules/extensions/libglx.so
+[    17.272] (II) Module glx: vendor="X.Org Foundation"
+[    17.272] 	compiled for 1.16.1, module version = 1.0.0
+[    17.272] 	ABI class: X.Org Server Extension, version 8.0
+[    17.272] (==) AIGLX enabled
+[    17.272] (==) Matched intel as autoconfigured driver 0
+[    17.272] (==) Matched intel as autoconfigured driver 1
+[    17.272] (==) Matched modesetting as autoconfigured driver 2
+[    17.272] (==) Matched fbdev as autoconfigured driver 3
+[    17.272] (==) Matched vesa as autoconfigured driver 4
+[    17.272] (==) Assigned the driver to the xf86ConfigLayout
+[    17.272] (II) LoadModule: "intel"
+[    17.272] (II) Loading /usr/lib/xorg/modules/drivers/intel_drv.so
+[    17.272] (II) Module intel: vendor="X.Org Foundation"
+[    17.272] 	compiled for 1.16.1, module version = 2.99.916
+[    17.272] 	Module class: X.Org Video Driver
+[    17.272] 	ABI class: X.Org Video Driver, version 18.0
+[    17.272] (II) LoadModule: "modesetting"
+[    17.273] (WW) Warning, couldn't open module modesetting
+[    17.273] (II) UnloadModule: "modesetting"
+[    17.273] (II) Unloading modesetting
+[    17.273] (EE) Failed to load module "modesetting" (module does not exist, 0)
+[    17.273] (II) LoadModule: "fbdev"
+[    17.273] (WW) Warning, couldn't open module fbdev
+[    17.273] (II) UnloadModule: "fbdev"
+[    17.273] (II) Unloading fbdev
+[    17.273] (EE) Failed to load module "fbdev" (module does not exist, 0)
+[    17.273] (II) LoadModule: "vesa"
+[    17.273] (II) Loading /usr/lib/xorg/modules/drivers/vesa_drv.so
+[    17.274] (II) Module vesa: vendor="X.Org Foundation"
+[    17.274] 	compiled for 1.16.0, module version = 2.3.2
+[    17.274] 	Module class: X.Org Video Driver
+[    17.274] 	ABI class: X.Org Video Driver, version 18.0
+[    17.274] (II) intel: Driver for Intel(R) Integrated Graphics Chipsets:
 	i810, i810-dc100, i810e, i815, i830M, 845G, 854, 852GM/855GM, 865G,
 	915G, E7221 (i915), 915GM, 945G, 945GM, 945GME, Pineview GM,
 	Pineview G, 965G, G35, 965Q, 946GZ, 965GM, 965GME/GLE, G33, Q35, Q33,
 	GM45, 4 Series, G45/G43, Q45/Q43, G41, B43
-[    13.837] (II) intel: Driver for Intel(R) HD Graphics: 2000-6000
-[    13.837] (II) intel: Driver for Intel(R) Iris(TM) Graphics: 5100, 6100
-[    13.837] (II) intel: Driver for Intel(R) Iris(TM) Pro Graphics: 5200, 6200, P6300
-[    13.837] (II) VESA: driver for VESA chipsets: vesa
-[    13.837] (++) using VT number 7
+[    17.274] (II) intel: Driver for Intel(R) HD Graphics: 2000-6000
+[    17.274] (II) intel: Driver for Intel(R) Iris(TM) Graphics: 5100, 6100
+[    17.274] (II) intel: Driver for Intel(R) Iris(TM) Pro Graphics: 5200, 6200, P6300
+[    17.274] (II) VESA: driver for VESA chipsets: vesa
+[    17.274] (++) using VT number 7
 
-[    13.842] (II) intel(0): Using Kernel Mode Setting driver: i915, version 1.6.0 20080730
-[    13.842] (WW) Falling back to old probe method for vesa
-[    13.842] (--) intel(0): Integrated Graphics Chipset: Intel(R) HD Graphics 3000
-[    13.842] (--) intel(0): CPU: x86-64, sse2, sse3, ssse3, sse4.1, sse4.2, avx
-[    13.842] (II) intel(0): Creating default Display subsection in Screen section
+[    17.279] (II) intel(0): Using Kernel Mode Setting driver: i915, version 1.6.0 20140725
+[    17.279] (WW) Falling back to old probe method for vesa
+[    17.279] (--) intel(0): Integrated Graphics Chipset: Intel(R) HD Graphics 3000
+[    17.279] (--) intel(0): CPU: x86-64, sse2, sse3, ssse3, sse4.1, sse4.2, avx
+[    17.279] (II) intel(0): Creating default Display subsection in Screen section
 	"Default Screen Section" for depth/fbbpp 24/32
-[    13.842] (==) intel(0): Depth 24, (--) framebuffer bpp 32
-[    13.842] (==) intel(0): RGB weight 888
-[    13.842] (==) intel(0): Default visual is TrueColor
-[    13.842] (II) intel(0): Output LVDS1 has no monitor section
-[    13.843] (--) intel(0): Found backlight control interface acpi_video0 (type 'firmware') for output LVDS1
-[    13.843] (II) intel(0): Output VGA1 has no monitor section
-[    13.843] (II) intel(0): Output HDMI1 has no monitor section
-[    13.843] (II) intel(0): Output DP1 has no monitor section
-[    13.843] (--) intel(0): Using a maximum size of 256x256 for hardware cursors
-[    13.843] (II) intel(0): Output VIRTUAL1 has no monitor section
-[    13.843] (--) intel(0): Output LVDS1 using initial mode 1366x768 on pipe 0
-[    13.843] (==) intel(0): TearFree disabled
-[    13.843] (==) intel(0): DPI set to (96, 96)
-[    13.843] (II) Loading sub module "dri2"
-[    13.843] (II) LoadModule: "dri2"
-[    13.843] (II) Module "dri2" already built-in
-[    13.843] (II) Loading sub module "present"
-[    13.843] (II) LoadModule: "present"
-[    13.843] (II) Module "present" already built-in
-[    13.843] (II) UnloadModule: "vesa"
-[    13.843] (II) Unloading vesa
-[    13.843] (==) Depth 24 pixmap format is 32 bpp
-[    13.843] (II) intel(0): SNA initialized with Sandybridge (gen6, gt2) backend
-[    13.843] (==) intel(0): Backing store enabled
-[    13.843] (==) intel(0): Silken mouse enabled
-[    13.843] (II) intel(0): HW Cursor enabled
-[    13.843] (II) intel(0): RandR 1.2 enabled, ignore the following RandR disabled message.
-[    13.843] (==) intel(0): DPMS enabled
-[    13.843] (II) intel(0): [DRI2] Setup complete
-[    13.843] (II) intel(0): [DRI2]   DRI driver: i965
-[    13.843] (II) intel(0): [DRI2]   VDPAU driver: i965
-[    13.843] (II) intel(0): direct rendering: DRI2 enabled
-[    13.843] (II) intel(0): hardware support for Present enabled
-[    13.843] (==) intel(0): display hotplug detection enabled
-[    13.843] (--) RandR disabled
-[    13.857] (II) AIGLX: enabled GLX_MESA_copy_sub_buffer
-[    13.857] (II) AIGLX: enabled GLX_ARB_create_context
-[    13.857] (II) AIGLX: enabled GLX_ARB_create_context_profile
-[    13.857] (II) AIGLX: enabled GLX_EXT_create_context_es2_profile
-[    13.857] (II) AIGLX: enabled GLX_INTEL_swap_event
-[    13.857] (II) AIGLX: enabled GLX_SGI_swap_control and GLX_MESA_swap_control
-[    13.857] (II) AIGLX: enabled GLX_EXT_framebuffer_sRGB
-[    13.857] (II) AIGLX: enabled GLX_ARB_fbconfig_float
-[    13.857] (II) AIGLX: GLX_EXT_texture_from_pixmap backed by buffer objects
-[    13.857] (II) AIGLX: enabled GLX_ARB_create_context_robustness
-[    13.858] (II) AIGLX: Loaded and initialized i965
-[    13.858] (II) GLX: Initialized DRI2 GL provider for screen 0
-[    13.859] (II) intel(0): switch to mode 1366x768@60.0 on LVDS1 using pipe 0, position (0, 0), rotation normal, reflection none
-[    13.866] (II) intel(0): Setting screen physical size to 361 x 203
-[    13.977] (II) XKB: Reusing cached keymap
-[    13.979] (II) config/udev: Adding input device Power Button (/dev/input/event3)
-[    13.979] (**) Power Button: Applying InputClass "evdev keyboard catchall"
-[    13.979] (II) LoadModule: "evdev"
-[    13.979] (II) Loading /usr/lib/xorg/modules/input/evdev_drv.so
-[    13.980] (II) Module evdev: vendor="X.Org Foundation"
-[    13.980] 	compiled for 1.16.0, module version = 2.9.0
-[    13.980] 	Module class: X.Org XInput Driver
-[    13.980] 	ABI class: X.Org XInput driver, version 21.0
-[    13.980] (II) Using input driver 'evdev' for 'Power Button'
-[    13.980] (**) Power Button: always reports core events
-[    13.980] (**) evdev: Power Button: Device: "/dev/input/event3"
-[    13.980] (--) evdev: Power Button: Vendor 0 Product 0x1
-[    13.980] (--) evdev: Power Button: Found keys
-[    13.980] (II) evdev: Power Button: Configuring as keyboard
-[    13.980] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXPWRBN:00/input/input3/event3"
-[    13.980] (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD, id 6)
-[    13.980] (**) Option "xkb_rules" "evdev"
-[    13.980] (**) Option "xkb_model" "pc104"
-[    13.980] (**) Option "xkb_layout" "us"
-[    14.006] (II) config/udev: Adding input device Video Bus (/dev/input/event4)
-[    14.006] (**) Video Bus: Applying InputClass "evdev keyboard catchall"
-[    14.006] (II) Using input driver 'evdev' for 'Video Bus'
-[    14.006] (**) Video Bus: always reports core events
-[    14.006] (**) evdev: Video Bus: Device: "/dev/input/event4"
-[    14.006] (--) evdev: Video Bus: Vendor 0 Product 0x6
-[    14.006] (--) evdev: Video Bus: Found keys
-[    14.006] (II) evdev: Video Bus: Configuring as keyboard
-[    14.006] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/LNXVIDEO:00/input/input4/event4"
-[    14.006] (II) XINPUT: Adding extended input device "Video Bus" (type: KEYBOARD, id 7)
-[    14.006] (**) Option "xkb_rules" "evdev"
-[    14.006] (**) Option "xkb_model" "pc104"
-[    14.006] (**) Option "xkb_layout" "us"
-[    14.006] (II) XKB: Reusing cached keymap
-[    14.006] (II) config/udev: Adding input device Power Button (/dev/input/event0)
-[    14.006] (**) Power Button: Applying InputClass "evdev keyboard catchall"
-[    14.006] (II) Using input driver 'evdev' for 'Power Button'
-[    14.006] (**) Power Button: always reports core events
-[    14.006] (**) evdev: Power Button: Device: "/dev/input/event0"
-[    14.006] (--) evdev: Power Button: Vendor 0 Product 0x1
-[    14.006] (--) evdev: Power Button: Found keys
-[    14.006] (II) evdev: Power Button: Configuring as keyboard
-[    14.006] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00/input/input0/event0"
-[    14.006] (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD, id 8)
-[    14.006] (**) Option "xkb_rules" "evdev"
-[    14.006] (**) Option "xkb_model" "pc104"
-[    14.006] (**) Option "xkb_layout" "us"
-[    14.006] (II) XKB: Reusing cached keymap
-[    14.007] (II) config/udev: Adding input device Lid Switch (/dev/input/event2)
-[    14.007] (II) No input driver specified, ignoring this device.
-[    14.007] (II) This device may have been added with another device file.
-[    14.007] (II) config/udev: Adding input device Sleep Button (/dev/input/event1)
-[    14.007] (**) Sleep Button: Applying InputClass "evdev keyboard catchall"
-[    14.007] (II) Using input driver 'evdev' for 'Sleep Button'
-[    14.007] (**) Sleep Button: always reports core events
-[    14.007] (**) evdev: Sleep Button: Device: "/dev/input/event1"
-[    14.007] (--) evdev: Sleep Button: Vendor 0 Product 0x3
-[    14.007] (--) evdev: Sleep Button: Found keys
-[    14.007] (II) evdev: Sleep Button: Configuring as keyboard
-[    14.007] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0E:00/input/input1/event1"
-[    14.007] (II) XINPUT: Adding extended input device "Sleep Button" (type: KEYBOARD, id 9)
-[    14.007] (**) Option "xkb_rules" "evdev"
-[    14.007] (**) Option "xkb_model" "pc104"
-[    14.007] (**) Option "xkb_layout" "us"
-[    14.007] (II) XKB: Reusing cached keymap
-[    14.008] (II) config/udev: Adding input device HDA Digital PCBeep (/dev/input/event6)
-[    14.008] (II) No input driver specified, ignoring this device.
-[    14.008] (II) This device may have been added with another device file.
-[    14.008] (II) config/udev: Adding input device HDA Intel PCH Headphone (/dev/input/event8)
-[    14.008] (II) No input driver specified, ignoring this device.
-[    14.008] (II) This device may have been added with another device file.
-[    14.008] (II) config/udev: Adding input device HDA Intel PCH HDMI/DP,pcm=3 (/dev/input/event9)
-[    14.008] (II) No input driver specified, ignoring this device.
-[    14.008] (II) This device may have been added with another device file.
-[    14.009] (II) config/udev: Adding input device HDA Intel PCH Mic (/dev/input/event7)
-[    14.009] (II) No input driver specified, ignoring this device.
-[    14.009] (II) This device may have been added with another device file.
-[    14.009] (II) config/udev: Adding input device AT Translated Set 2 keyboard (/dev/input/event5)
-[    14.009] (**) AT Translated Set 2 keyboard: Applying InputClass "evdev keyboard catchall"
-[    14.009] (II) Using input driver 'evdev' for 'AT Translated Set 2 keyboard'
-[    14.009] (**) AT Translated Set 2 keyboard: always reports core events
-[    14.009] (**) evdev: AT Translated Set 2 keyboard: Device: "/dev/input/event5"
-[    14.009] (--) evdev: AT Translated Set 2 keyboard: Vendor 0x1 Product 0x1
-[    14.009] (--) evdev: AT Translated Set 2 keyboard: Found keys
-[    14.009] (II) evdev: AT Translated Set 2 keyboard: Configuring as keyboard
-[    14.009] (**) Option "config_info" "udev:/sys/devices/platform/i8042/serio0/input/input5/event5"
-[    14.009] (II) XINPUT: Adding extended input device "AT Translated Set 2 keyboard" (type: KEYBOARD, id 10)
-[    14.009] (**) Option "xkb_rules" "evdev"
-[    14.009] (**) Option "xkb_model" "pc104"
-[    14.009] (**) Option "xkb_layout" "us"
-[    14.009] (II) XKB: Reusing cached keymap
-[    14.010] (II) config/udev: Adding input device SynPS/2 Synaptics TouchPad (/dev/input/event12)
-[    14.010] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "evdev touchpad catchall"
-[    14.010] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "touchpad catchall"
-[    14.010] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "Default clickpad buttons"
-[    14.010] (II) LoadModule: "synaptics"
-[    14.010] (II) Loading /usr/lib/xorg/modules/input/synaptics_drv.so
-[    14.010] (II) Module synaptics: vendor="X.Org Foundation"
-[    14.010] 	compiled for 1.16.0, module version = 1.8.0
-[    14.010] 	Module class: X.Org XInput Driver
-[    14.010] 	ABI class: X.Org XInput driver, version 21.0
-[    14.010] (II) Using input driver 'synaptics' for 'SynPS/2 Synaptics TouchPad'
-[    14.010] (**) SynPS/2 Synaptics TouchPad: always reports core events
-[    14.010] (**) Option "Device" "/dev/input/event12"
-[    14.061] (**) Option "Device" "/dev/input/event12"
-[    14.061] (II) synaptics: SynPS/2 Synaptics TouchPad: ignoring touch events for semi-multitouch device
-[    14.061] (--) synaptics: SynPS/2 Synaptics TouchPad: x-axis range 1472 - 5798 (res 59)
-[    14.061] (--) synaptics: SynPS/2 Synaptics TouchPad: y-axis range 1408 - 4992 (res 99)
-[    14.061] (--) synaptics: SynPS/2 Synaptics TouchPad: pressure range 0 - 255
-[    14.061] (--) synaptics: SynPS/2 Synaptics TouchPad: finger width range 0 - 15
-[    14.061] (--) synaptics: SynPS/2 Synaptics TouchPad: buttons: left right double triple
-[    14.061] (--) synaptics: SynPS/2 Synaptics TouchPad: Vendor 0x2 Product 0x7
-[    14.061] (**) Option "VertEdgeScroll" "on"
-[    14.061] (**) Option "HorizEdgeScroll" "on"
-[    14.061] (**) Option "VertTwoFingerScroll" "on"
-[    14.061] (**) Option "HorizTwoFingerScroll" "on"
-[    14.061] (**) Option "TapButton1" "1"
-[    14.061] (**) Option "TapButton2" "2"
-[    14.061] (**) Option "TapButton3" "3"
-[    14.061] (**) Option "CoastingSpeed" "0"
-[    14.061] (--) synaptics: SynPS/2 Synaptics TouchPad: touchpad found
-[    14.061] (**) SynPS/2 Synaptics TouchPad: always reports core events
-[    14.101] (**) Option "config_info" "udev:/sys/devices/platform/i8042/serio1/input/input7/event12"
-[    14.101] (II) XINPUT: Adding extended input device "SynPS/2 Synaptics TouchPad" (type: TOUCHPAD, id 11)
-[    14.101] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) MinSpeed is now constant deceleration 2.5
-[    14.101] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) MaxSpeed is now 1.75
-[    14.101] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) AccelFactor is now 0.036
-[    14.101] (**) SynPS/2 Synaptics TouchPad: (accel) keeping acceleration scheme 1
-[    14.101] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration profile 1
-[    14.101] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration factor: 2.000
-[    14.101] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration threshold: 4
-[    14.101] (**) Option "Device" "/dev/input/event12"
-[    14.102] (--) synaptics: SynPS/2 Synaptics TouchPad: touchpad found
-[    14.102] (II) config/udev: Adding input device SynPS/2 Synaptics TouchPad (/dev/input/mouse0)
-[    14.102] (**) SynPS/2 Synaptics TouchPad: Ignoring device from InputClass "touchpad ignore duplicates"
-[    14.102] (II) config/udev: Adding input device PC Speaker (/dev/input/event10)
-[    14.102] (II) No input driver specified, ignoring this device.
-[    14.102] (II) This device may have been added with another device file.
-[    14.102] (II) config/udev: Adding input device Dell WMI hotkeys (/dev/input/event11)
-[    14.102] (**) Dell WMI hotkeys: Applying InputClass "evdev keyboard catchall"
-[    14.102] (II) Using input driver 'evdev' for 'Dell WMI hotkeys'
-[    14.102] (**) Dell WMI hotkeys: always reports core events
-[    14.102] (**) evdev: Dell WMI hotkeys: Device: "/dev/input/event11"
-[    14.102] (--) evdev: Dell WMI hotkeys: Vendor 0 Product 0
-[    14.102] (--) evdev: Dell WMI hotkeys: Found keys
-[    14.102] (II) evdev: Dell WMI hotkeys: Configuring as keyboard
-[    14.102] (**) Option "config_info" "udev:/sys/devices/virtual/input/input13/event11"
-[    14.102] (II) XINPUT: Adding extended input device "Dell WMI hotkeys" (type: KEYBOARD, id 12)
-[    14.102] (**) Option "xkb_rules" "evdev"
-[    14.102] (**) Option "xkb_model" "pc104"
-[    14.102] (**) Option "xkb_layout" "us"
-[    14.102] (II) XKB: Reusing cached keymap
+[    17.279] (==) intel(0): Depth 24, (--) framebuffer bpp 32
+[    17.279] (==) intel(0): RGB weight 888
+[    17.279] (==) intel(0): Default visual is TrueColor
+[    17.279] (II) intel(0): Output LVDS1 has no monitor section
+[    17.280] (--) intel(0): Found backlight control interface acpi_video0 (type 'firmware') for output LVDS1
+[    17.280] (II) intel(0): Enabled output LVDS1
+[    17.280] (II) intel(0): Output VGA1 has no monitor section
+[    17.280] (II) intel(0): Enabled output VGA1
+[    17.280] (II) intel(0): Output HDMI1 has no monitor section
+[    17.280] (II) intel(0): Enabled output HDMI1
+[    17.280] (II) intel(0): Output DP1 has no monitor section
+[    17.280] (II) intel(0): Enabled output DP1
+[    17.280] (--) intel(0): Using a maximum size of 256x256 for hardware cursors
+[    17.304] (II) intel(0): Output VIRTUAL1 has no monitor section
+[    17.304] (II) intel(0): Enabled output VIRTUAL1
+[    17.304] (--) intel(0): Output LVDS1 using initial mode 1366x768 on pipe 0
+[    17.304] (==) intel(0): TearFree disabled
+[    17.304] (==) intel(0): DPI set to (96, 96)
+[    17.304] (II) Loading sub module "dri2"
+[    17.304] (II) LoadModule: "dri2"
+[    17.304] (II) Module "dri2" already built-in
+[    17.304] (II) Loading sub module "present"
+[    17.304] (II) LoadModule: "present"
+[    17.304] (II) Module "present" already built-in
+[    17.304] (II) UnloadModule: "vesa"
+[    17.304] (II) Unloading vesa
+[    17.304] (==) Depth 24 pixmap format is 32 bpp
+[    17.304] (II) intel(0): SNA initialized with Sandybridge (gen6, gt2) backend
+[    17.304] (==) intel(0): Backing store enabled
+[    17.304] (==) intel(0): Silken mouse enabled
+[    17.304] (II) intel(0): HW Cursor enabled
+[    17.304] (II) intel(0): RandR 1.2 enabled, ignore the following RandR disabled message.
+[    17.304] (==) intel(0): DPMS enabled
+[    17.304] (II) intel(0): [DRI2] Setup complete
+[    17.305] (II) intel(0): [DRI2]   DRI driver: i965
+[    17.305] (II) intel(0): [DRI2]   VDPAU driver: i965
+[    17.305] (II) intel(0): direct rendering: DRI2 enabled
+[    17.305] (II) intel(0): hardware support for Present enabled
+[    17.305] (==) intel(0): display hotplug detection enabled
+[    17.305] (--) RandR disabled
+[    17.317] (II) AIGLX: enabled GLX_MESA_copy_sub_buffer
+[    17.318] (II) AIGLX: enabled GLX_ARB_create_context
+[    17.318] (II) AIGLX: enabled GLX_ARB_create_context_profile
+[    17.318] (II) AIGLX: enabled GLX_EXT_create_context_es2_profile
+[    17.318] (II) AIGLX: enabled GLX_INTEL_swap_event
+[    17.318] (II) AIGLX: enabled GLX_SGI_swap_control and GLX_MESA_swap_control
+[    17.318] (II) AIGLX: enabled GLX_EXT_framebuffer_sRGB
+[    17.318] (II) AIGLX: enabled GLX_ARB_fbconfig_float
+[    17.318] (II) AIGLX: GLX_EXT_texture_from_pixmap backed by buffer objects
+[    17.318] (II) AIGLX: enabled GLX_ARB_create_context_robustness
+[    17.318] (II) AIGLX: Loaded and initialized i965
+[    17.318] (II) GLX: Initialized DRI2 GL provider for screen 0
+[    17.320] (II) intel(0): switch to mode 1366x768@60.0 on LVDS1 using pipe 0, position (0, 0), rotation normal, reflection none
+[    17.326] (II) intel(0): Setting screen physical size to 361 x 203
+[    17.402] (II) XKB: Reusing cached keymap
+[    17.405] (II) config/udev: Adding input device Power Button (/dev/input/event3)
+[    17.405] (**) Power Button: Applying InputClass "evdev keyboard catchall"
+[    17.405] (II) LoadModule: "evdev"
+[    17.405] (II) Loading /usr/lib/xorg/modules/input/evdev_drv.so
+[    17.405] (II) Module evdev: vendor="X.Org Foundation"
+[    17.405] 	compiled for 1.16.0, module version = 2.9.0
+[    17.406] 	Module class: X.Org XInput Driver
+[    17.406] 	ABI class: X.Org XInput driver, version 21.0
+[    17.406] (II) Using input driver 'evdev' for 'Power Button'
+[    17.406] (**) Power Button: always reports core events
+[    17.406] (**) evdev: Power Button: Device: "/dev/input/event3"
+[    17.406] (--) evdev: Power Button: Vendor 0 Product 0x1
+[    17.406] (--) evdev: Power Button: Found keys
+[    17.406] (II) evdev: Power Button: Configuring as keyboard
+[    17.406] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXPWRBN:00/input/input3/event3"
+[    17.406] (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD, id 6)
+[    17.406] (**) Option "xkb_rules" "evdev"
+[    17.406] (**) Option "xkb_model" "pc104"
+[    17.406] (**) Option "xkb_layout" "us"
+[    17.433] (II) config/udev: Adding input device Video Bus (/dev/input/event4)
+[    17.433] (**) Video Bus: Applying InputClass "evdev keyboard catchall"
+[    17.433] (II) Using input driver 'evdev' for 'Video Bus'
+[    17.433] (**) Video Bus: always reports core events
+[    17.433] (**) evdev: Video Bus: Device: "/dev/input/event4"
+[    17.433] (--) evdev: Video Bus: Vendor 0 Product 0x6
+[    17.433] (--) evdev: Video Bus: Found keys
+[    17.433] (II) evdev: Video Bus: Configuring as keyboard
+[    17.433] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/LNXVIDEO:00/input/input4/event4"
+[    17.433] (II) XINPUT: Adding extended input device "Video Bus" (type: KEYBOARD, id 7)
+[    17.433] (**) Option "xkb_rules" "evdev"
+[    17.433] (**) Option "xkb_model" "pc104"
+[    17.433] (**) Option "xkb_layout" "us"
+[    17.433] (II) XKB: Reusing cached keymap
+[    17.434] (II) config/udev: Adding input device Power Button (/dev/input/event0)
+[    17.434] (**) Power Button: Applying InputClass "evdev keyboard catchall"
+[    17.434] (II) Using input driver 'evdev' for 'Power Button'
+[    17.434] (**) Power Button: always reports core events
+[    17.434] (**) evdev: Power Button: Device: "/dev/input/event0"
+[    17.434] (--) evdev: Power Button: Vendor 0 Product 0x1
+[    17.434] (--) evdev: Power Button: Found keys
+[    17.434] (II) evdev: Power Button: Configuring as keyboard
+[    17.434] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00/input/input0/event0"
+[    17.434] (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD, id 8)
+[    17.434] (**) Option "xkb_rules" "evdev"
+[    17.434] (**) Option "xkb_model" "pc104"
+[    17.434] (**) Option "xkb_layout" "us"
+[    17.434] (II) XKB: Reusing cached keymap
+[    17.434] (II) config/udev: Adding input device Lid Switch (/dev/input/event2)
+[    17.434] (II) No input driver specified, ignoring this device.
+[    17.434] (II) This device may have been added with another device file.
+[    17.435] (II) config/udev: Adding input device Sleep Button (/dev/input/event1)
+[    17.435] (**) Sleep Button: Applying InputClass "evdev keyboard catchall"
+[    17.435] (II) Using input driver 'evdev' for 'Sleep Button'
+[    17.435] (**) Sleep Button: always reports core events
+[    17.435] (**) evdev: Sleep Button: Device: "/dev/input/event1"
+[    17.435] (--) evdev: Sleep Button: Vendor 0 Product 0x3
+[    17.435] (--) evdev: Sleep Button: Found keys
+[    17.435] (II) evdev: Sleep Button: Configuring as keyboard
+[    17.435] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0E:00/input/input1/event1"
+[    17.435] (II) XINPUT: Adding extended input device "Sleep Button" (type: KEYBOARD, id 9)
+[    17.435] (**) Option "xkb_rules" "evdev"
+[    17.435] (**) Option "xkb_model" "pc104"
+[    17.435] (**) Option "xkb_layout" "us"
+[    17.435] (II) XKB: Reusing cached keymap
+[    17.435] (II) config/udev: Adding input device Laptop_Integrated_Webcam_HD (/dev/input/event13)
+[    17.435] (**) Laptop_Integrated_Webcam_HD: Applying InputClass "evdev keyboard catchall"
+[    17.435] (II) Using input driver 'evdev' for 'Laptop_Integrated_Webcam_HD'
+[    17.435] (**) Laptop_Integrated_Webcam_HD: always reports core events
+[    17.435] (**) evdev: Laptop_Integrated_Webcam_HD: Device: "/dev/input/event13"
+[    17.435] (--) evdev: Laptop_Integrated_Webcam_HD: Vendor 0x1bcf Product 0x2980
+[    17.435] (--) evdev: Laptop_Integrated_Webcam_HD: Found keys
+[    17.435] (II) evdev: Laptop_Integrated_Webcam_HD: Configuring as keyboard
+[    17.435] (**) Option "config_info" "udev:/sys/devices/pci0000:00/0000:00:1a.0/usb1/1-1/1-1.4/1-1.4:1.0/input/input14/event13"
+[    17.435] (II) XINPUT: Adding extended input device "Laptop_Integrated_Webcam_HD" (type: KEYBOARD, id 10)
+[    17.435] (**) Option "xkb_rules" "evdev"
+[    17.435] (**) Option "xkb_model" "pc104"
+[    17.435] (**) Option "xkb_layout" "us"
+[    17.435] (II) XKB: Reusing cached keymap
+[    17.436] (II) config/udev: Adding input device HDA Digital PCBeep (/dev/input/event6)
+[    17.436] (II) No input driver specified, ignoring this device.
+[    17.436] (II) This device may have been added with another device file.
+[    17.436] (II) config/udev: Adding input device HDA Intel PCH HDMI/DP,pcm=3 (/dev/input/event9)
+[    17.436] (II) No input driver specified, ignoring this device.
+[    17.436] (II) This device may have been added with another device file.
+[    17.436] (II) config/udev: Adding input device HDA Intel PCH Mic (/dev/input/event7)
+[    17.436] (II) No input driver specified, ignoring this device.
+[    17.436] (II) This device may have been added with another device file.
+[    17.436] (II) config/udev: Adding input device HDA Intel PCH Headphone (/dev/input/event8)
+[    17.436] (II) No input driver specified, ignoring this device.
+[    17.436] (II) This device may have been added with another device file.
+[    17.436] (II) config/udev: Adding input device AT Translated Set 2 keyboard (/dev/input/event5)
+[    17.436] (**) AT Translated Set 2 keyboard: Applying InputClass "evdev keyboard catchall"
+[    17.436] (II) Using input driver 'evdev' for 'AT Translated Set 2 keyboard'
+[    17.437] (**) AT Translated Set 2 keyboard: always reports core events
+[    17.437] (**) evdev: AT Translated Set 2 keyboard: Device: "/dev/input/event5"
+[    17.437] (--) evdev: AT Translated Set 2 keyboard: Vendor 0x1 Product 0x1
+[    17.437] (--) evdev: AT Translated Set 2 keyboard: Found keys
+[    17.437] (II) evdev: AT Translated Set 2 keyboard: Configuring as keyboard
+[    17.437] (**) Option "config_info" "udev:/sys/devices/platform/i8042/serio0/input/input5/event5"
+[    17.437] (II) XINPUT: Adding extended input device "AT Translated Set 2 keyboard" (type: KEYBOARD, id 11)
+[    17.437] (**) Option "xkb_rules" "evdev"
+[    17.437] (**) Option "xkb_model" "pc104"
+[    17.437] (**) Option "xkb_layout" "us"
+[    17.437] (II) XKB: Reusing cached keymap
+[    17.437] (II) config/udev: Adding input device SynPS/2 Synaptics TouchPad (/dev/input/event12)
+[    17.437] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "evdev touchpad catchall"
+[    17.437] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "touchpad catchall"
+[    17.437] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "Default clickpad buttons"
+[    17.437] (II) LoadModule: "synaptics"
+[    17.437] (II) Loading /usr/lib/xorg/modules/input/synaptics_drv.so
+[    17.437] (II) Module synaptics: vendor="X.Org Foundation"
+[    17.437] 	compiled for 1.16.0, module version = 1.8.1
+[    17.437] 	Module class: X.Org XInput Driver
+[    17.437] 	ABI class: X.Org XInput driver, version 21.0
+[    17.437] (II) Using input driver 'synaptics' for 'SynPS/2 Synaptics TouchPad'
+[    17.437] (**) SynPS/2 Synaptics TouchPad: always reports core events
+[    17.437] (**) Option "Device" "/dev/input/event12"
+[    17.492] (**) Option "Device" "/dev/input/event12"
+[    17.492] (II) synaptics: SynPS/2 Synaptics TouchPad: ignoring touch events for semi-multitouch device
+[    17.492] (--) synaptics: SynPS/2 Synaptics TouchPad: x-axis range 1472 - 5798 (res 59)
+[    17.492] (--) synaptics: SynPS/2 Synaptics TouchPad: y-axis range 1408 - 4992 (res 99)
+[    17.492] (--) synaptics: SynPS/2 Synaptics TouchPad: pressure range 0 - 255
+[    17.492] (--) synaptics: SynPS/2 Synaptics TouchPad: finger width range 0 - 15
+[    17.492] (--) synaptics: SynPS/2 Synaptics TouchPad: buttons: left right double triple
+[    17.492] (--) synaptics: SynPS/2 Synaptics TouchPad: Vendor 0x2 Product 0x7
+[    17.492] (**) Option "TapButton1" "1"
+[    17.492] (**) Option "TapButton2" "2"
+[    17.492] (**) Option "TapButton3" "3"
+[    17.492] (--) synaptics: SynPS/2 Synaptics TouchPad: touchpad found
+[    17.492] (**) SynPS/2 Synaptics TouchPad: always reports core events
+[    17.511] (**) Option "config_info" "udev:/sys/devices/platform/i8042/serio1/input/input12/event12"
+[    17.511] (II) XINPUT: Adding extended input device "SynPS/2 Synaptics TouchPad" (type: TOUCHPAD, id 12)
+[    17.511] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) MinSpeed is now constant deceleration 2.5
+[    17.511] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) MaxSpeed is now 1.75
+[    17.511] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) AccelFactor is now 0.036
+[    17.511] (**) SynPS/2 Synaptics TouchPad: (accel) keeping acceleration scheme 1
+[    17.511] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration profile 1
+[    17.511] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration factor: 2.000
+[    17.511] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration threshold: 4
+[    17.511] (**) Option "Device" "/dev/input/event12"
+[    17.511] (--) synaptics: SynPS/2 Synaptics TouchPad: touchpad found
+[    17.512] (II) config/udev: Adding input device SynPS/2 Synaptics TouchPad (/dev/input/mouse0)
+[    17.512] (**) SynPS/2 Synaptics TouchPad: Ignoring device from InputClass "touchpad ignore duplicates"
+[    17.512] (II) config/udev: Adding input device PC Speaker (/dev/input/event10)
+[    17.512] (II) No input driver specified, ignoring this device.
+[    17.512] (II) This device may have been added with another device file.
+[    17.512] (II) config/udev: Adding input device Dell WMI hotkeys (/dev/input/event11)
+[    17.512] (**) Dell WMI hotkeys: Applying InputClass "evdev keyboard catchall"
+[    17.512] (II) Using input driver 'evdev' for 'Dell WMI hotkeys'
+[    17.512] (**) Dell WMI hotkeys: always reports core events
+[    17.512] (**) evdev: Dell WMI hotkeys: Device: "/dev/input/event11"
+[    17.512] (--) evdev: Dell WMI hotkeys: Vendor 0 Product 0
+[    17.512] (--) evdev: Dell WMI hotkeys: Found keys
+[    17.512] (II) evdev: Dell WMI hotkeys: Configuring as keyboard
+[    17.512] (**) Option "config_info" "udev:/sys/devices/virtual/input/input13/event11"
+[    17.512] (II) XINPUT: Adding extended input device "Dell WMI hotkeys" (type: KEYBOARD, id 13)
+[    17.512] (**) Option "xkb_rules" "evdev"
+[    17.512] (**) Option "xkb_model" "pc104"
+[    17.512] (**) Option "xkb_layout" "us"
+[    17.512] (II) XKB: Reusing cached keymap
+[    17.637] (II) config/udev: removing device Laptop_Integrated_Webcam_HD
+[    17.650] (II) evdev: Laptop_Integrated_Webcam_HD: Close
+[    17.650] (II) UnloadModule: "evdev"
+[  4146.428] GetModeLine - scrn: 0 clock: 70000
+[  4146.428] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.428]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.430] GetModeLine - scrn: 0 clock: 70000
+[  4146.430] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.430]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.457] GetModeLine - scrn: 0 clock: 70000
+[  4146.457] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.457]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.473] GetModeLine - scrn: 0 clock: 70000
+[  4146.473] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.473]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.494] GetModeLine - scrn: 0 clock: 70000
+[  4146.494] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.494]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.498] GetModeLine - scrn: 0 clock: 70000
+[  4146.498] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.498]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.509] GetModeLine - scrn: 0 clock: 70000
+[  4146.509] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.509]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.512] GetModeLine - scrn: 0 clock: 70000
+[  4146.512] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.512]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.524] GetModeLine - scrn: 0 clock: 70000
+[  4146.524] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.524]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.541] GetModeLine - scrn: 0 clock: 70000
+[  4146.542] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.542]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.558] GetModeLine - scrn: 0 clock: 70000
+[  4146.558] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.558]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.575] GetModeLine - scrn: 0 clock: 70000
+[  4146.575] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.575]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.591] GetModeLine - scrn: 0 clock: 70000
+[  4146.591] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.591]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.608] GetModeLine - scrn: 0 clock: 70000
+[  4146.608] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.608]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.625] GetModeLine - scrn: 0 clock: 70000
+[  4146.625] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.625]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.641] GetModeLine - scrn: 0 clock: 70000
+[  4146.641] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.641]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.658] GetModeLine - scrn: 0 clock: 70000
+[  4146.658] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.658]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.675] GetModeLine - scrn: 0 clock: 70000
+[  4146.675] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.675]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.692] GetModeLine - scrn: 0 clock: 70000
+[  4146.692] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.692]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.709] GetModeLine - scrn: 0 clock: 70000
+[  4146.709] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.709]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.725] GetModeLine - scrn: 0 clock: 70000
+[  4146.725] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.725]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.741] GetModeLine - scrn: 0 clock: 70000
+[  4146.741] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.741]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.764] GetModeLine - scrn: 0 clock: 70000
+[  4146.764] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.764]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.775] GetModeLine - scrn: 0 clock: 70000
+[  4146.775] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.775]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.792] GetModeLine - scrn: 0 clock: 70000
+[  4146.792] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.792]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.809] GetModeLine - scrn: 0 clock: 70000
+[  4146.809] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.809]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.880] GetModeLine - scrn: 0 clock: 70000
+[  4146.880] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.880]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.884] GetModeLine - scrn: 0 clock: 70000
+[  4146.884] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.884]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4146.979] GetModeLine - scrn: 0 clock: 70000
+[  4146.979] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4146.979]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.057] GetModeLine - scrn: 0 clock: 70000
+[  4147.057] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.057]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.133] GetModeLine - scrn: 0 clock: 70000
+[  4147.133] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.133]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.192] GetModeLine - scrn: 0 clock: 70000
+[  4147.192] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.192]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.258] GetModeLine - scrn: 0 clock: 70000
+[  4147.258] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.258]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.306] GetModeLine - scrn: 0 clock: 70000
+[  4147.306] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.306]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.326] GetModeLine - scrn: 0 clock: 70000
+[  4147.326] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.326]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.511] GetModeLine - scrn: 0 clock: 70000
+[  4147.511] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.511]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.557] GetModeLine - scrn: 0 clock: 70000
+[  4147.558] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.558]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.659] GetModeLine - scrn: 0 clock: 70000
+[  4147.659] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.659]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.766] GetModeLine - scrn: 0 clock: 70000
+[  4147.766] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.766]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.807] GetModeLine - scrn: 0 clock: 70000
+[  4147.807] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.807]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.814] GetModeLine - scrn: 0 clock: 70000
+[  4147.814] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.814]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.820] GetModeLine - scrn: 0 clock: 70000
+[  4147.820] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.820]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.825] GetModeLine - scrn: 0 clock: 70000
+[  4147.825] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.825]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.841] GetModeLine - scrn: 0 clock: 70000
+[  4147.841] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.841]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.853] GetModeLine - scrn: 0 clock: 70000
+[  4147.853] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.853]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.864] GetModeLine - scrn: 0 clock: 70000
+[  4147.864] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.864]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.880] GetModeLine - scrn: 0 clock: 70000
+[  4147.880] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.880]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.896] GetModeLine - scrn: 0 clock: 70000
+[  4147.896] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.896]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.913] GetModeLine - scrn: 0 clock: 70000
+[  4147.913] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.913]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.931] GetModeLine - scrn: 0 clock: 70000
+[  4147.931] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.931]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.948] GetModeLine - scrn: 0 clock: 70000
+[  4147.948] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.948]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.966] GetModeLine - scrn: 0 clock: 70000
+[  4147.966] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.966]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4147.980] GetModeLine - scrn: 0 clock: 70000
+[  4147.980] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4147.980]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4148.199] GetModeLine - scrn: 0 clock: 70000
+[  4148.199] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4148.199]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4148.270] GetModeLine - scrn: 0 clock: 70000
+[  4148.270] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4148.270]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4148.277] GetModeLine - scrn: 0 clock: 70000
+[  4148.277] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4148.277]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4148.317] GetModeLine - scrn: 0 clock: 70000
+[  4148.317] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4148.317]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.699] GetModeLine - scrn: 0 clock: 70000
+[  4152.699] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.699]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.712] GetModeLine - scrn: 0 clock: 70000
+[  4152.712] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.712]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.728] GetModeLine - scrn: 0 clock: 70000
+[  4152.728] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.728]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.744] GetModeLine - scrn: 0 clock: 70000
+[  4152.744] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.744]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.761] GetModeLine - scrn: 0 clock: 70000
+[  4152.761] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.761]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.777] GetModeLine - scrn: 0 clock: 70000
+[  4152.777] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.777]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.793] GetModeLine - scrn: 0 clock: 70000
+[  4152.793] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.793]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.811] GetModeLine - scrn: 0 clock: 70000
+[  4152.811] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.811]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.825] GetModeLine - scrn: 0 clock: 70000
+[  4152.825] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.825]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.841] GetModeLine - scrn: 0 clock: 70000
+[  4152.841] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.841]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.858] GetModeLine - scrn: 0 clock: 70000
+[  4152.858] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.858]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.874] GetModeLine - scrn: 0 clock: 70000
+[  4152.874] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.874]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.890] GetModeLine - scrn: 0 clock: 70000
+[  4152.890] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.890]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.907] GetModeLine - scrn: 0 clock: 70000
+[  4152.907] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.907]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.923] GetModeLine - scrn: 0 clock: 70000
+[  4152.923] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.923]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.940] GetModeLine - scrn: 0 clock: 70000
+[  4152.940] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.940]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.954] GetModeLine - scrn: 0 clock: 70000
+[  4152.954] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.954]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.970] GetModeLine - scrn: 0 clock: 70000
+[  4152.970] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.970]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4152.987] GetModeLine - scrn: 0 clock: 70000
+[  4152.987] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4152.987]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4153.003] GetModeLine - scrn: 0 clock: 70000
+[  4153.003] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4153.003]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4153.021] GetModeLine - scrn: 0 clock: 70000
+[  4153.021] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4153.021]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4153.035] GetModeLine - scrn: 0 clock: 70000
+[  4153.036] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4153.036]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4153.051] GetModeLine - scrn: 0 clock: 70000
+[  4153.051] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4153.051]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4153.067] GetModeLine - scrn: 0 clock: 70000
+[  4153.067] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4153.067]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4153.116] GetModeLine - scrn: 0 clock: 70000
+[  4153.116] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4153.116]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4155.434] GetModeLine - scrn: 0 clock: 70000
+[  4155.434] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4155.434]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4155.511] GetModeLine - scrn: 0 clock: 70000
+[  4155.511] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4155.511]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4155.636] GetModeLine - scrn: 0 clock: 70000
+[  4155.636] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4155.636]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4155.750] GetModeLine - scrn: 0 clock: 70000
+[  4155.750] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4155.750]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4155.866] GetModeLine - scrn: 0 clock: 70000
+[  4155.866] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4155.866]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4155.975] GetModeLine - scrn: 0 clock: 70000
+[  4155.975] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4155.975]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.083] GetModeLine - scrn: 0 clock: 70000
+[  4156.083] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.083]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.149] GetModeLine - scrn: 0 clock: 70000
+[  4156.149] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.149]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.250] GetModeLine - scrn: 0 clock: 70000
+[  4156.250] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.250]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.365] GetModeLine - scrn: 0 clock: 70000
+[  4156.365] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.365]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.416] GetModeLine - scrn: 0 clock: 70000
+[  4156.416] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.416]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.428] GetModeLine - scrn: 0 clock: 70000
+[  4156.429] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.429]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.432] GetModeLine - scrn: 0 clock: 70000
+[  4156.432] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.432]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.440] GetModeLine - scrn: 0 clock: 70000
+[  4156.440] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.440]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.458] GetModeLine - scrn: 0 clock: 70000
+[  4156.458] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.458]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.475] GetModeLine - scrn: 0 clock: 70000
+[  4156.475] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.475]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.483] GetModeLine - scrn: 0 clock: 70000
+[  4156.483] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.483]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.500] GetModeLine - scrn: 0 clock: 70000
+[  4156.500] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.500]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.517] GetModeLine - scrn: 0 clock: 70000
+[  4156.517] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.517]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.533] GetModeLine - scrn: 0 clock: 70000
+[  4156.533] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.533]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.550] GetModeLine - scrn: 0 clock: 70000
+[  4156.550] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.550]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.567] GetModeLine - scrn: 0 clock: 70000
+[  4156.567] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.567]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.583] GetModeLine - scrn: 0 clock: 70000
+[  4156.583] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.583]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.600] GetModeLine - scrn: 0 clock: 70000
+[  4156.600] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.600]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.617] GetModeLine - scrn: 0 clock: 70000
+[  4156.617] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.617]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.633] GetModeLine - scrn: 0 clock: 70000
+[  4156.633] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.633]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.650] GetModeLine - scrn: 0 clock: 70000
+[  4156.650] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.650]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.667] GetModeLine - scrn: 0 clock: 70000
+[  4156.667] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.667]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.684] GetModeLine - scrn: 0 clock: 70000
+[  4156.684] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.684]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.700] GetModeLine - scrn: 0 clock: 70000
+[  4156.700] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.700]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.717] GetModeLine - scrn: 0 clock: 70000
+[  4156.717] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.717]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.734] GetModeLine - scrn: 0 clock: 70000
+[  4156.734] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.734]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.750] GetModeLine - scrn: 0 clock: 70000
+[  4156.751] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.751]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.767] GetModeLine - scrn: 0 clock: 70000
+[  4156.767] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.767]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.784] GetModeLine - scrn: 0 clock: 70000
+[  4156.784] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.784]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.801] GetModeLine - scrn: 0 clock: 70000
+[  4156.801] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.801]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.817] GetModeLine - scrn: 0 clock: 70000
+[  4156.817] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.817]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.834] GetModeLine - scrn: 0 clock: 70000
+[  4156.834] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.834]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.853] GetModeLine - scrn: 0 clock: 70000
+[  4156.853] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.853]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.868] GetModeLine - scrn: 0 clock: 70000
+[  4156.868] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.868]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.884] GetModeLine - scrn: 0 clock: 70000
+[  4156.884] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.884]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.901] GetModeLine - scrn: 0 clock: 70000
+[  4156.901] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.901]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.917] GetModeLine - scrn: 0 clock: 70000
+[  4156.918] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.918]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.935] GetModeLine - scrn: 0 clock: 70000
+[  4156.935] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.935]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.951] GetModeLine - scrn: 0 clock: 70000
+[  4156.951] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.951]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.968] GetModeLine - scrn: 0 clock: 70000
+[  4156.968] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.968]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4156.984] GetModeLine - scrn: 0 clock: 70000
+[  4156.984] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4156.984]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.002] GetModeLine - scrn: 0 clock: 70000
+[  4157.002] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.002]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.018] GetModeLine - scrn: 0 clock: 70000
+[  4157.018] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.018]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.034] GetModeLine - scrn: 0 clock: 70000
+[  4157.034] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.034]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.051] GetModeLine - scrn: 0 clock: 70000
+[  4157.051] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.051]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.069] GetModeLine - scrn: 0 clock: 70000
+[  4157.069] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.069]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.085] GetModeLine - scrn: 0 clock: 70000
+[  4157.085] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.085]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.101] GetModeLine - scrn: 0 clock: 70000
+[  4157.101] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.101]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.118] GetModeLine - scrn: 0 clock: 70000
+[  4157.118] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.118]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.135] GetModeLine - scrn: 0 clock: 70000
+[  4157.135] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.135]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.152] GetModeLine - scrn: 0 clock: 70000
+[  4157.152] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.152]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.168] GetModeLine - scrn: 0 clock: 70000
+[  4157.168] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.168]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.185] GetModeLine - scrn: 0 clock: 70000
+[  4157.185] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.185]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.202] GetModeLine - scrn: 0 clock: 70000
+[  4157.202] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.202]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.218] GetModeLine - scrn: 0 clock: 70000
+[  4157.218] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.218]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.235] GetModeLine - scrn: 0 clock: 70000
+[  4157.235] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.235]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.252] GetModeLine - scrn: 0 clock: 70000
+[  4157.252] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.252]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.270] GetModeLine - scrn: 0 clock: 70000
+[  4157.270] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.270]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.285] GetModeLine - scrn: 0 clock: 70000
+[  4157.285] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.285]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.302] GetModeLine - scrn: 0 clock: 70000
+[  4157.302] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.302]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.318] GetModeLine - scrn: 0 clock: 70000
+[  4157.318] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.318]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.335] GetModeLine - scrn: 0 clock: 70000
+[  4157.335] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.335]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.352] GetModeLine - scrn: 0 clock: 70000
+[  4157.352] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.352]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.368] GetModeLine - scrn: 0 clock: 70000
+[  4157.368] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.368]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.385] GetModeLine - scrn: 0 clock: 70000
+[  4157.385] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.385]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.403] GetModeLine - scrn: 0 clock: 70000
+[  4157.403] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.403]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.420] GetModeLine - scrn: 0 clock: 70000
+[  4157.420] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.420]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.435] GetModeLine - scrn: 0 clock: 70000
+[  4157.435] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.435]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.452] GetModeLine - scrn: 0 clock: 70000
+[  4157.452] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.452]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.469] GetModeLine - scrn: 0 clock: 70000
+[  4157.469] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.469]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.486] GetModeLine - scrn: 0 clock: 70000
+[  4157.486] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.486]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.503] GetModeLine - scrn: 0 clock: 70000
+[  4157.503] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.503]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.519] GetModeLine - scrn: 0 clock: 70000
+[  4157.519] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.519]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.535] GetModeLine - scrn: 0 clock: 70000
+[  4157.536] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.536]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.552] GetModeLine - scrn: 0 clock: 70000
+[  4157.552] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.552]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.569] GetModeLine - scrn: 0 clock: 70000
+[  4157.569] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.569]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.586] GetModeLine - scrn: 0 clock: 70000
+[  4157.586] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.586]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.610] GetModeLine - scrn: 0 clock: 70000
+[  4157.610] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.610]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4157.677] GetModeLine - scrn: 0 clock: 70000
+[  4157.677] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4157.677]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.191] GetModeLine - scrn: 0 clock: 70000
+[  4205.191] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.191]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.198] GetModeLine - scrn: 0 clock: 70000
+[  4205.198] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.198]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.203] GetModeLine - scrn: 0 clock: 70000
+[  4205.203] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.203]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.207] GetModeLine - scrn: 0 clock: 70000
+[  4205.208] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.208]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.217] GetModeLine - scrn: 0 clock: 70000
+[  4205.218] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.218]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.235] GetModeLine - scrn: 0 clock: 70000
+[  4205.235] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.235]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.250] GetModeLine - scrn: 0 clock: 70000
+[  4205.250] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.250]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.267] GetModeLine - scrn: 0 clock: 70000
+[  4205.267] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.267]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.283] GetModeLine - scrn: 0 clock: 70000
+[  4205.284] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.284]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.300] GetModeLine - scrn: 0 clock: 70000
+[  4205.300] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.300]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.319] GetModeLine - scrn: 0 clock: 70000
+[  4205.319] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.319]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.334] GetModeLine - scrn: 0 clock: 70000
+[  4205.334] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.334]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.350] GetModeLine - scrn: 0 clock: 70000
+[  4205.350] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.350]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.368] GetModeLine - scrn: 0 clock: 70000
+[  4205.368] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.368]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.384] GetModeLine - scrn: 0 clock: 70000
+[  4205.384] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.384]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4205.401] GetModeLine - scrn: 0 clock: 70000
+[  4205.401] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4205.401]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4206.519] GetModeLine - scrn: 0 clock: 70000
+[  4206.519] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4206.519]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4255.688] GetModeLine - scrn: 0 clock: 70000
+[  4255.688] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4255.688]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4255.689] GetModeLine - scrn: 0 clock: 70000
+[  4255.690] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4255.690]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4255.701] GetModeLine - scrn: 0 clock: 70000
+[  4255.702] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4255.702]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4255.703] GetModeLine - scrn: 0 clock: 70000
+[  4255.703] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4255.703]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4255.720] GetModeLine - scrn: 0 clock: 70000
+[  4255.720] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4255.720]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4255.736] GetModeLine - scrn: 0 clock: 70000
+[  4255.736] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4255.736]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4255.753] GetModeLine - scrn: 0 clock: 70000
+[  4255.753] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4255.753]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4255.770] GetModeLine - scrn: 0 clock: 70000
+[  4255.770] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4255.770]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4255.786] GetModeLine - scrn: 0 clock: 70000
+[  4255.786] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4255.786]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4255.803] GetModeLine - scrn: 0 clock: 70000
+[  4255.803] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4255.803]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4255.820] GetModeLine - scrn: 0 clock: 70000
+[  4255.820] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4255.820]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4255.914] GetModeLine - scrn: 0 clock: 70000
+[  4255.914] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4255.914]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4256.168] GetModeLine - scrn: 0 clock: 70000
+[  4256.168] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4256.168]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4256.238] GetModeLine - scrn: 0 clock: 70000
+[  4256.238] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4256.238]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4256.262] GetModeLine - scrn: 0 clock: 70000
+[  4256.263] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4256.263]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4258.206] GetModeLine - scrn: 0 clock: 70000
+[  4258.206] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4258.206]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4258.258] GetModeLine - scrn: 0 clock: 70000
+[  4258.258] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4258.258]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4258.545] GetModeLine - scrn: 0 clock: 70000
+[  4258.545] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4258.545]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4260.692] GetModeLine - scrn: 0 clock: 70000
+[  4260.692] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4260.692]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4260.737] GetModeLine - scrn: 0 clock: 70000
+[  4260.737] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4260.737]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4260.772] GetModeLine - scrn: 0 clock: 70000
+[  4260.772] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4260.772]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4260.802] GetModeLine - scrn: 0 clock: 70000
+[  4260.802] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4260.802]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4262.358] GetModeLine - scrn: 0 clock: 70000
+[  4262.358] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4262.358]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4263.091] GetModeLine - scrn: 0 clock: 70000
+[  4263.091] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4263.091]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4268.030] GetModeLine - scrn: 0 clock: 70000
+[  4268.030] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4268.030]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4268.061] GetModeLine - scrn: 0 clock: 70000
+[  4268.061] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4268.061]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4272.140] GetModeLine - scrn: 0 clock: 70000
+[  4272.140] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4272.140]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4272.148] GetModeLine - scrn: 0 clock: 70000
+[  4272.148] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4272.148]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4272.160] GetModeLine - scrn: 0 clock: 70000
+[  4272.160] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4272.160]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4272.723] GetModeLine - scrn: 0 clock: 70000
+[  4272.723] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4272.723]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4273.357] GetModeLine - scrn: 0 clock: 70000
+[  4273.357] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4273.357]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4273.364] GetModeLine - scrn: 0 clock: 70000
+[  4273.364] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4273.364]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4273.584] GetModeLine - scrn: 0 clock: 70000
+[  4273.584] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4273.584]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  4273.609] GetModeLine - scrn: 0 clock: 70000
+[  4273.609] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  4273.609]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5262.505] GetModeLine - scrn: 0 clock: 70000
+[  5262.505] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5262.505]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5262.520] GetModeLine - scrn: 0 clock: 70000
+[  5262.520] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5262.520]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5262.529] GetModeLine - scrn: 0 clock: 70000
+[  5262.529] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5262.529]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5262.559] GetModeLine - scrn: 0 clock: 70000
+[  5262.559] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5262.559]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5262.571] GetModeLine - scrn: 0 clock: 70000
+[  5262.571] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5262.571]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5262.580] GetModeLine - scrn: 0 clock: 70000
+[  5262.580] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5262.580]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5262.802] GetModeLine - scrn: 0 clock: 70000
+[  5262.802] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5262.802]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5262.825] GetModeLine - scrn: 0 clock: 70000
+[  5262.825] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5262.825]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5262.848] GetModeLine - scrn: 0 clock: 70000
+[  5262.848] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5262.848]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5262.860] GetModeLine - scrn: 0 clock: 70000
+[  5262.860] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5262.860]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5262.902] GetModeLine - scrn: 0 clock: 70000
+[  5262.902] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5262.902]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5262.923] GetModeLine - scrn: 0 clock: 70000
+[  5262.923] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5262.923]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5267.232] GetModeLine - scrn: 0 clock: 70000
+[  5267.232] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5267.232]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5267.247] GetModeLine - scrn: 0 clock: 70000
+[  5267.248] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5267.248]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5267.269] GetModeLine - scrn: 0 clock: 70000
+[  5267.269] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5267.269]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5267.275] GetModeLine - scrn: 0 clock: 70000
+[  5267.275] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5267.275]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5267.282] GetModeLine - scrn: 0 clock: 70000
+[  5267.282] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5267.282]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5267.301] GetModeLine - scrn: 0 clock: 70000
+[  5267.301] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5267.301]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  5267.350] GetModeLine - scrn: 0 clock: 70000
+[  5267.350] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  5267.350]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  6262.154] GetModeLine - scrn: 0 clock: 70000
+[  6262.154] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  6262.154]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  6388.303] GetModeLine - scrn: 0 clock: 70000
+[  6388.303] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  6388.303]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  6389.173] GetModeLine - scrn: 0 clock: 70000
+[  6389.173] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  6389.173]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  6389.182] GetModeLine - scrn: 0 clock: 70000
+[  6389.182] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  6389.182]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  6389.202] GetModeLine - scrn: 0 clock: 70000
+[  6389.202] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  6389.202]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7434.690] GetModeLine - scrn: 0 clock: 70000
+[  7434.690] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7434.690]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7434.735] GetModeLine - scrn: 0 clock: 70000
+[  7434.735] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7434.735]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7435.187] GetModeLine - scrn: 0 clock: 70000
+[  7435.187] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7435.187]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7435.263] GetModeLine - scrn: 0 clock: 70000
+[  7435.263] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7435.263]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7435.419] GetModeLine - scrn: 0 clock: 70000
+[  7435.419] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7435.419]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7435.467] GetModeLine - scrn: 0 clock: 70000
+[  7435.467] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7435.467]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7435.487] GetModeLine - scrn: 0 clock: 70000
+[  7435.487] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7435.487]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7435.492] GetModeLine - scrn: 0 clock: 70000
+[  7435.492] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7435.492]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7435.510] GetModeLine - scrn: 0 clock: 70000
+[  7435.510] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7435.510]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7435.613] GetModeLine - scrn: 0 clock: 70000
+[  7435.613] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7435.613]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7435.647] GetModeLine - scrn: 0 clock: 70000
+[  7435.647] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7435.647]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7435.685] GetModeLine - scrn: 0 clock: 70000
+[  7435.686] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7435.686]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7435.696] GetModeLine - scrn: 0 clock: 70000
+[  7435.696] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7435.696]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7437.053] GetModeLine - scrn: 0 clock: 70000
+[  7437.053] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7437.053]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7438.397] GetModeLine - scrn: 0 clock: 70000
+[  7438.397] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7438.397]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7443.965] GetModeLine - scrn: 0 clock: 70000
+[  7444.117] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7444.117]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7444.124] GetModeLine - scrn: 0 clock: 70000
+[  7444.124] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7444.125]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.167] GetModeLine - scrn: 0 clock: 70000
+[  7445.167] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.167]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.231] GetModeLine - scrn: 0 clock: 70000
+[  7445.231] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.231]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.245] GetModeLine - scrn: 0 clock: 70000
+[  7445.245] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.245]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.248] GetModeLine - scrn: 0 clock: 70000
+[  7445.248] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.248]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.251] GetModeLine - scrn: 0 clock: 70000
+[  7445.251] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.251]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.258] GetModeLine - scrn: 0 clock: 70000
+[  7445.258] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.258]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.267] GetModeLine - scrn: 0 clock: 70000
+[  7445.267] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.267]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.284] GetModeLine - scrn: 0 clock: 70000
+[  7445.284] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.284]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.301] GetModeLine - scrn: 0 clock: 70000
+[  7445.301] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.301]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.317] GetModeLine - scrn: 0 clock: 70000
+[  7445.317] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.317]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.334] GetModeLine - scrn: 0 clock: 70000
+[  7445.334] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.334]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.351] GetModeLine - scrn: 0 clock: 70000
+[  7445.351] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.351]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.368] GetModeLine - scrn: 0 clock: 70000
+[  7445.368] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.368]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.384] GetModeLine - scrn: 0 clock: 70000
+[  7445.384] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.384]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.401] GetModeLine - scrn: 0 clock: 70000
+[  7445.401] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.401]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.476] GetModeLine - scrn: 0 clock: 70000
+[  7445.476] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.476]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.554] GetModeLine - scrn: 0 clock: 70000
+[  7445.554] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.554]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.584] GetModeLine - scrn: 0 clock: 70000
+[  7445.584] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.584]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7445.648] GetModeLine - scrn: 0 clock: 70000
+[  7445.648] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7445.648]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7447.670] GetModeLine - scrn: 0 clock: 70000
+[  7447.670] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7447.670]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7447.824] GetModeLine - scrn: 0 clock: 70000
+[  7447.824] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7447.824]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7458.968] GetModeLine - scrn: 0 clock: 70000
+[  7458.968] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7458.968]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7458.976] GetModeLine - scrn: 0 clock: 70000
+[  7458.976] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7458.976]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7458.984] GetModeLine - scrn: 0 clock: 70000
+[  7458.984] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7458.984]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7459.000] GetModeLine - scrn: 0 clock: 70000
+[  7459.000] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7459.000]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7459.017] GetModeLine - scrn: 0 clock: 70000
+[  7459.017] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7459.017]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7459.034] GetModeLine - scrn: 0 clock: 70000
+[  7459.034] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7459.034]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7459.080] GetModeLine - scrn: 0 clock: 70000
+[  7459.080] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7459.080]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7459.087] GetModeLine - scrn: 0 clock: 70000
+[  7459.087] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7459.087]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7459.663] GetModeLine - scrn: 0 clock: 70000
+[  7459.663] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7459.663]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7460.019] GetModeLine - scrn: 0 clock: 70000
+[  7460.019] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7460.019]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7460.034] GetModeLine - scrn: 0 clock: 70000
+[  7460.034] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7460.034]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7460.070] GetModeLine - scrn: 0 clock: 70000
+[  7460.070] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7460.070]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7460.107] GetModeLine - scrn: 0 clock: 70000
+[  7460.107] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7460.107]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7460.625] GetModeLine - scrn: 0 clock: 70000
+[  7460.625] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7460.625]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7462.551] GetModeLine - scrn: 0 clock: 70000
+[  7462.551] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7462.551]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7462.790] GetModeLine - scrn: 0 clock: 70000
+[  7462.790] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7462.790]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7463.093] GetModeLine - scrn: 0 clock: 70000
+[  7463.093] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7463.093]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7463.320] GetModeLine - scrn: 0 clock: 70000
+[  7463.320] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7463.320]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7463.341] GetModeLine - scrn: 0 clock: 70000
+[  7463.341] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7463.341]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7463.667] GetModeLine - scrn: 0 clock: 70000
+[  7463.667] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7463.667]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7463.862] GetModeLine - scrn: 0 clock: 70000
+[  7463.862] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7463.862]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7463.888] GetModeLine - scrn: 0 clock: 70000
+[  7463.888] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7463.888]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7464.037] GetModeLine - scrn: 0 clock: 70000
+[  7464.038] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7464.038]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7464.063] GetModeLine - scrn: 0 clock: 70000
+[  7464.063] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7464.063]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7464.078] GetModeLine - scrn: 0 clock: 70000
+[  7464.078] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7464.078]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7465.660] GetModeLine - scrn: 0 clock: 70000
+[  7465.660] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7465.660]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7465.699] GetModeLine - scrn: 0 clock: 70000
+[  7465.699] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7465.699]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7465.716] GetModeLine - scrn: 0 clock: 70000
+[  7465.716] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7465.716]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7465.731] GetModeLine - scrn: 0 clock: 70000
+[  7465.731] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7465.731]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7465.782] GetModeLine - scrn: 0 clock: 70000
+[  7465.782] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7465.782]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  7465.796] GetModeLine - scrn: 0 clock: 70000
+[  7465.796] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  7465.796]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8361.713] GetModeLine - scrn: 0 clock: 70000
+[  8361.713] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8361.713]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8361.726] GetModeLine - scrn: 0 clock: 70000
+[  8361.726] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8361.727]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.213] GetModeLine - scrn: 0 clock: 70000
+[  8362.213] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.213]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.214] GetModeLine - scrn: 0 clock: 70000
+[  8362.214] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.214]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.216] GetModeLine - scrn: 0 clock: 70000
+[  8362.216] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.216]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.217] GetModeLine - scrn: 0 clock: 70000
+[  8362.217] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.217]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.232] GetModeLine - scrn: 0 clock: 70000
+[  8362.232] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.232]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.249] GetModeLine - scrn: 0 clock: 70000
+[  8362.250] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.250]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.266] GetModeLine - scrn: 0 clock: 70000
+[  8362.266] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.266]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.283] GetModeLine - scrn: 0 clock: 70000
+[  8362.283] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.283]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.299] GetModeLine - scrn: 0 clock: 70000
+[  8362.300] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.300]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.316] GetModeLine - scrn: 0 clock: 70000
+[  8362.316] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.316]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.333] GetModeLine - scrn: 0 clock: 70000
+[  8362.333] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.333]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.350] GetModeLine - scrn: 0 clock: 70000
+[  8362.350] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.350]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.366] GetModeLine - scrn: 0 clock: 70000
+[  8362.367] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.367]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.383] GetModeLine - scrn: 0 clock: 70000
+[  8362.383] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.383]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.770] GetModeLine - scrn: 0 clock: 70000
+[  8362.771] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.771]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.818] GetModeLine - scrn: 0 clock: 70000
+[  8362.818] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.818]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8362.987] GetModeLine - scrn: 0 clock: 70000
+[  8362.987] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8362.987]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8363.024] GetModeLine - scrn: 0 clock: 70000
+[  8363.024] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8363.024]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8363.398] GetModeLine - scrn: 0 clock: 70000
+[  8363.398] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8363.398]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8363.423] GetModeLine - scrn: 0 clock: 70000
+[  8363.423] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8363.423]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8363.441] GetModeLine - scrn: 0 clock: 70000
+[  8363.441] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8363.441]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8363.672] GetModeLine - scrn: 0 clock: 70000
+[  8363.672] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8363.672]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8363.692] GetModeLine - scrn: 0 clock: 70000
+[  8363.692] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8363.692]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8363.713] GetModeLine - scrn: 0 clock: 70000
+[  8363.713] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8363.713]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8363.737] GetModeLine - scrn: 0 clock: 70000
+[  8363.737] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8363.737]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8363.810] GetModeLine - scrn: 0 clock: 70000
+[  8363.810] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8363.810]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8363.818] GetModeLine - scrn: 0 clock: 70000
+[  8363.818] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8363.818]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8363.837] GetModeLine - scrn: 0 clock: 70000
+[  8363.837] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8363.837]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  8364.443] GetModeLine - scrn: 0 clock: 70000
+[  8364.443] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  8364.443]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9293.265] GetModeLine - scrn: 0 clock: 70000
+[  9293.265] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9293.265]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9293.278] GetModeLine - scrn: 0 clock: 70000
+[  9293.278] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9293.278]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9293.690] GetModeLine - scrn: 0 clock: 70000
+[  9293.690] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9293.690]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9295.374] GetModeLine - scrn: 0 clock: 70000
+[  9295.374] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9295.374]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9295.865] GetModeLine - scrn: 0 clock: 70000
+[  9295.865] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9295.865]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9295.867] GetModeLine - scrn: 0 clock: 70000
+[  9295.867] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9295.867]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9295.910] GetModeLine - scrn: 0 clock: 70000
+[  9295.910] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9295.910]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9295.948] GetModeLine - scrn: 0 clock: 70000
+[  9295.949] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9295.949]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9295.951] GetModeLine - scrn: 0 clock: 70000
+[  9295.951] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9295.951]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9295.991] GetModeLine - scrn: 0 clock: 70000
+[  9295.992] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9295.992]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9295.994] GetModeLine - scrn: 0 clock: 70000
+[  9295.994] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9295.994]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.008] GetModeLine - scrn: 0 clock: 70000
+[  9296.008] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.008]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.010] GetModeLine - scrn: 0 clock: 70000
+[  9296.010] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.010]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.022] GetModeLine - scrn: 0 clock: 70000
+[  9296.022] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.022]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.038] GetModeLine - scrn: 0 clock: 70000
+[  9296.039] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.039]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.055] GetModeLine - scrn: 0 clock: 70000
+[  9296.055] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.055]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.072] GetModeLine - scrn: 0 clock: 70000
+[  9296.072] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.072]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.088] GetModeLine - scrn: 0 clock: 70000
+[  9296.088] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.088]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.153] GetModeLine - scrn: 0 clock: 70000
+[  9296.153] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.153]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.156] GetModeLine - scrn: 0 clock: 70000
+[  9296.156] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.156]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.285] GetModeLine - scrn: 0 clock: 70000
+[  9296.285] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.285]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.287] GetModeLine - scrn: 0 clock: 70000
+[  9296.287] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.287]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.422] GetModeLine - scrn: 0 clock: 70000
+[  9296.422] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.422]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.427] GetModeLine - scrn: 0 clock: 70000
+[  9296.427] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.427]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.474] GetModeLine - scrn: 0 clock: 70000
+[  9296.474] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.474]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.480] GetModeLine - scrn: 0 clock: 70000
+[  9296.481] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.481]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.611] GetModeLine - scrn: 0 clock: 70000
+[  9296.611] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.611]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.723] GetModeLine - scrn: 0 clock: 70000
+[  9296.723] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.723]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.839] GetModeLine - scrn: 0 clock: 70000
+[  9296.839] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.839]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9296.970] GetModeLine - scrn: 0 clock: 70000
+[  9296.970] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9296.970]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9297.134] GetModeLine - scrn: 0 clock: 70000
+[  9297.134] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9297.134]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9297.174] GetModeLine - scrn: 0 clock: 70000
+[  9297.174] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9297.174]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9297.664] GetModeLine - scrn: 0 clock: 70000
+[  9297.665] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9297.665]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.231] GetModeLine - scrn: 0 clock: 70000
+[  9298.231] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.231]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.577] GetModeLine - scrn: 0 clock: 70000
+[  9298.577] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.577]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.598] GetModeLine - scrn: 0 clock: 70000
+[  9298.598] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.598]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.614] GetModeLine - scrn: 0 clock: 70000
+[  9298.614] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.614]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.627] GetModeLine - scrn: 0 clock: 70000
+[  9298.627] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.627]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.643] GetModeLine - scrn: 0 clock: 70000
+[  9298.643] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.643]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.659] GetModeLine - scrn: 0 clock: 70000
+[  9298.659] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.659]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.675] GetModeLine - scrn: 0 clock: 70000
+[  9298.675] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.675]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.690] GetModeLine - scrn: 0 clock: 70000
+[  9298.690] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.690]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.707] GetModeLine - scrn: 0 clock: 70000
+[  9298.707] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.707]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.722] GetModeLine - scrn: 0 clock: 70000
+[  9298.722] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.722]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.738] GetModeLine - scrn: 0 clock: 70000
+[  9298.739] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.739]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.755] GetModeLine - scrn: 0 clock: 70000
+[  9298.755] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.755]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9298.770] GetModeLine - scrn: 0 clock: 70000
+[  9298.770] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9298.770]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.598] GetModeLine - scrn: 0 clock: 70000
+[  9299.598] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.598]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.617] GetModeLine - scrn: 0 clock: 70000
+[  9299.617] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.617]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.633] GetModeLine - scrn: 0 clock: 70000
+[  9299.633] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.633]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.651] GetModeLine - scrn: 0 clock: 70000
+[  9299.651] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.651]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.665] GetModeLine - scrn: 0 clock: 70000
+[  9299.665] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.665]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.680] GetModeLine - scrn: 0 clock: 70000
+[  9299.680] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.680]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.695] GetModeLine - scrn: 0 clock: 70000
+[  9299.695] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.695]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.710] GetModeLine - scrn: 0 clock: 70000
+[  9299.710] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.710]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.726] GetModeLine - scrn: 0 clock: 70000
+[  9299.726] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.726]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.741] GetModeLine - scrn: 0 clock: 70000
+[  9299.741] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.741]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.757] GetModeLine - scrn: 0 clock: 70000
+[  9299.757] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.757]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.773] GetModeLine - scrn: 0 clock: 70000
+[  9299.773] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.773]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.790] GetModeLine - scrn: 0 clock: 70000
+[  9299.790] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.790]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.829] GetModeLine - scrn: 0 clock: 70000
+[  9299.829] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.829]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.845] GetModeLine - scrn: 0 clock: 70000
+[  9299.845] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.845]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.859] GetModeLine - scrn: 0 clock: 70000
+[  9299.859] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.859]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.873] GetModeLine - scrn: 0 clock: 70000
+[  9299.874] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.874]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.889] GetModeLine - scrn: 0 clock: 70000
+[  9299.889] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.889]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.905] GetModeLine - scrn: 0 clock: 70000
+[  9299.905] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.905]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.920] GetModeLine - scrn: 0 clock: 70000
+[  9299.920] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.920]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.936] GetModeLine - scrn: 0 clock: 70000
+[  9299.936] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.936]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.952] GetModeLine - scrn: 0 clock: 70000
+[  9299.952] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.952]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.969] GetModeLine - scrn: 0 clock: 70000
+[  9299.969] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.969]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9299.984] GetModeLine - scrn: 0 clock: 70000
+[  9299.984] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9299.985]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.001] GetModeLine - scrn: 0 clock: 70000
+[  9300.001] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.001]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.244] GetModeLine - scrn: 0 clock: 70000
+[  9300.244] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.244]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.258] GetModeLine - scrn: 0 clock: 70000
+[  9300.258] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.258]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.274] GetModeLine - scrn: 0 clock: 70000
+[  9300.274] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.274]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.370] GetModeLine - scrn: 0 clock: 70000
+[  9300.370] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.370]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.382] GetModeLine - scrn: 0 clock: 70000
+[  9300.382] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.382]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.401] GetModeLine - scrn: 0 clock: 70000
+[  9300.401] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.401]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.522] GetModeLine - scrn: 0 clock: 70000
+[  9300.522] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.522]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.601] GetModeLine - scrn: 0 clock: 70000
+[  9300.601] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.601]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.677] GetModeLine - scrn: 0 clock: 70000
+[  9300.677] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.677]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.684] GetModeLine - scrn: 0 clock: 70000
+[  9300.684] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.684]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.691] GetModeLine - scrn: 0 clock: 70000
+[  9300.691] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.691]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.698] GetModeLine - scrn: 0 clock: 70000
+[  9300.698] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.698]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.706] GetModeLine - scrn: 0 clock: 70000
+[  9300.706] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.706]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.717] GetModeLine - scrn: 0 clock: 70000
+[  9300.717] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.717]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.733] GetModeLine - scrn: 0 clock: 70000
+[  9300.733] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.733]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.750] GetModeLine - scrn: 0 clock: 70000
+[  9300.750] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.750]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.766] GetModeLine - scrn: 0 clock: 70000
+[  9300.766] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.766]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.783] GetModeLine - scrn: 0 clock: 70000
+[  9300.783] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.783]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.800] GetModeLine - scrn: 0 clock: 70000
+[  9300.800] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.800]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9300.816] GetModeLine - scrn: 0 clock: 70000
+[  9300.817] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9300.817]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9301.412] GetModeLine - scrn: 0 clock: 70000
+[  9301.412] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9301.412]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9301.433] GetModeLine - scrn: 0 clock: 70000
+[  9301.433] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9301.433]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9301.457] GetModeLine - scrn: 0 clock: 70000
+[  9301.457] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9301.457]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9301.481] GetModeLine - scrn: 0 clock: 70000
+[  9301.481] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9301.481]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9301.521] GetModeLine - scrn: 0 clock: 70000
+[  9301.521] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9301.521]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9302.041] GetModeLine - scrn: 0 clock: 70000
+[  9302.041] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9302.041]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9302.163] GetModeLine - scrn: 0 clock: 70000
+[  9302.163] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9302.163]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9302.766] GetModeLine - scrn: 0 clock: 70000
+[  9302.766] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9302.766]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9302.849] GetModeLine - scrn: 0 clock: 70000
+[  9302.849] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9302.849]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9302.933] GetModeLine - scrn: 0 clock: 70000
+[  9302.933] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9302.933]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9303.920] GetModeLine - scrn: 0 clock: 70000
+[  9303.920] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9303.920]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9305.189] GetModeLine - scrn: 0 clock: 70000
+[  9305.189] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9305.189]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9305.269] GetModeLine - scrn: 0 clock: 70000
+[  9305.269] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9305.269]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9305.757] GetModeLine - scrn: 0 clock: 70000
+[  9305.758] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9305.758]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9305.852] GetModeLine - scrn: 0 clock: 70000
+[  9305.852] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9305.852]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9306.795] GetModeLine - scrn: 0 clock: 70000
+[  9306.795] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9306.795]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9306.900] GetModeLine - scrn: 0 clock: 70000
+[  9306.900] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9306.900]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9307.215] GetModeLine - scrn: 0 clock: 70000
+[  9307.215] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9307.215]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9307.722] GetModeLine - scrn: 0 clock: 70000
+[  9307.722] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9307.722]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9307.813] GetModeLine - scrn: 0 clock: 70000
+[  9307.813] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9307.813]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9307.818] GetModeLine - scrn: 0 clock: 70000
+[  9307.818] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9307.818]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9307.931] GetModeLine - scrn: 0 clock: 70000
+[  9307.931] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9307.931]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9311.488] GetModeLine - scrn: 0 clock: 70000
+[  9311.488] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9311.488]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9311.587] GetModeLine - scrn: 0 clock: 70000
+[  9311.587] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9311.587]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9311.608] GetModeLine - scrn: 0 clock: 70000
+[  9311.608] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9311.608]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9311.727] GetModeLine - scrn: 0 clock: 70000
+[  9311.727] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9311.727]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9311.903] GetModeLine - scrn: 0 clock: 70000
+[  9312.101] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.101]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.104] GetModeLine - scrn: 0 clock: 70000
+[  9312.104] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.104]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.118] GetModeLine - scrn: 0 clock: 70000
+[  9312.118] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.118]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.146] GetModeLine - scrn: 0 clock: 70000
+[  9312.146] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.146]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.210] GetModeLine - scrn: 0 clock: 70000
+[  9312.210] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.210]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.249] GetModeLine - scrn: 0 clock: 70000
+[  9312.249] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.249]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.299] GetModeLine - scrn: 0 clock: 70000
+[  9312.299] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.299]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.367] GetModeLine - scrn: 0 clock: 70000
+[  9312.367] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.367]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.399] GetModeLine - scrn: 0 clock: 70000
+[  9312.399] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.399]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.437] GetModeLine - scrn: 0 clock: 70000
+[  9312.437] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.437]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.440] GetModeLine - scrn: 0 clock: 70000
+[  9312.440] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.440]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.524] GetModeLine - scrn: 0 clock: 70000
+[  9312.524] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.524]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.697] GetModeLine - scrn: 0 clock: 70000
+[  9312.697] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.697]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.767] GetModeLine - scrn: 0 clock: 70000
+[  9312.767] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.767]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9312.798] GetModeLine - scrn: 0 clock: 70000
+[  9312.798] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9312.798]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.553] GetModeLine - scrn: 0 clock: 70000
+[  9313.553] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.553]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.684] GetModeLine - scrn: 0 clock: 70000
+[  9313.684] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.684]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.730] GetModeLine - scrn: 0 clock: 70000
+[  9313.730] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.730]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.746] GetModeLine - scrn: 0 clock: 70000
+[  9313.746] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.746]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.761] GetModeLine - scrn: 0 clock: 70000
+[  9313.761] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.761]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.776] GetModeLine - scrn: 0 clock: 70000
+[  9313.776] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.776]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.793] GetModeLine - scrn: 0 clock: 70000
+[  9313.793] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.793]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.809] GetModeLine - scrn: 0 clock: 70000
+[  9313.809] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.809]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.825] GetModeLine - scrn: 0 clock: 70000
+[  9313.825] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.825]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.841] GetModeLine - scrn: 0 clock: 70000
+[  9313.842] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.842]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.857] GetModeLine - scrn: 0 clock: 70000
+[  9313.857] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.857]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.873] GetModeLine - scrn: 0 clock: 70000
+[  9313.873] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.873]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.889] GetModeLine - scrn: 0 clock: 70000
+[  9313.889] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.889]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.905] GetModeLine - scrn: 0 clock: 70000
+[  9313.905] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.905]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9313.921] GetModeLine - scrn: 0 clock: 70000
+[  9313.921] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9313.921]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.456] GetModeLine - scrn: 0 clock: 70000
+[  9314.456] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.456]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.472] GetModeLine - scrn: 0 clock: 70000
+[  9314.472] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.472]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.488] GetModeLine - scrn: 0 clock: 70000
+[  9314.488] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.488]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.504] GetModeLine - scrn: 0 clock: 70000
+[  9314.504] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.504]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.521] GetModeLine - scrn: 0 clock: 70000
+[  9314.521] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.521]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.536] GetModeLine - scrn: 0 clock: 70000
+[  9314.536] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.536]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.552] GetModeLine - scrn: 0 clock: 70000
+[  9314.553] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.553]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.625] GetModeLine - scrn: 0 clock: 70000
+[  9314.625] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.625]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.633] GetModeLine - scrn: 0 clock: 70000
+[  9314.633] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.633]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.744] GetModeLine - scrn: 0 clock: 70000
+[  9314.744] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.744]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.834] GetModeLine - scrn: 0 clock: 70000
+[  9314.834] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.834]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.925] GetModeLine - scrn: 0 clock: 70000
+[  9314.925] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.925]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.934] GetModeLine - scrn: 0 clock: 70000
+[  9314.934] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.934]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.942] GetModeLine - scrn: 0 clock: 70000
+[  9314.943] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.943]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.950] GetModeLine - scrn: 0 clock: 70000
+[  9314.950] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.950]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.958] GetModeLine - scrn: 0 clock: 70000
+[  9314.958] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.958]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.967] GetModeLine - scrn: 0 clock: 70000
+[  9314.967] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.967]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9314.984] GetModeLine - scrn: 0 clock: 70000
+[  9314.984] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9314.984]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9315.001] GetModeLine - scrn: 0 clock: 70000
+[  9315.001] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9315.001]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9315.017] GetModeLine - scrn: 0 clock: 70000
+[  9315.017] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9315.017]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9315.034] GetModeLine - scrn: 0 clock: 70000
+[  9315.034] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9315.034]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9315.051] GetModeLine - scrn: 0 clock: 70000
+[  9315.051] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9315.051]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9315.068] GetModeLine - scrn: 0 clock: 70000
+[  9315.068] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9315.068]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9315.237] GetModeLine - scrn: 0 clock: 70000
+[  9315.237] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9315.237]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9315.256] GetModeLine - scrn: 0 clock: 70000
+[  9315.256] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9315.256]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9315.795] GetModeLine - scrn: 0 clock: 70000
+[  9315.795] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9315.795]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9315.815] GetModeLine - scrn: 0 clock: 70000
+[  9315.815] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9315.815]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9315.935] GetModeLine - scrn: 0 clock: 70000
+[  9315.935] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9315.935]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9317.031] GetModeLine - scrn: 0 clock: 70000
+[  9317.031] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9317.031]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9317.071] GetModeLine - scrn: 0 clock: 70000
+[  9317.071] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9317.071]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9317.176] GetModeLine - scrn: 0 clock: 70000
+[  9317.176] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9317.176]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9317.196] GetModeLine - scrn: 0 clock: 70000
+[  9317.196] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9317.196]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9319.777] GetModeLine - scrn: 0 clock: 70000
+[  9319.777] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9319.777]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9319.841] GetModeLine - scrn: 0 clock: 70000
+[  9319.841] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9319.841]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9319.879] GetModeLine - scrn: 0 clock: 70000
+[  9319.879] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9319.879]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9320.045] GetModeLine - scrn: 0 clock: 70000
+[  9320.045] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9320.045]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9320.067] GetModeLine - scrn: 0 clock: 70000
+[  9320.067] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9320.067]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9320.147] GetModeLine - scrn: 0 clock: 70000
+[  9320.147] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9320.147]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9320.177] GetModeLine - scrn: 0 clock: 70000
+[  9320.177] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9320.178]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9320.221] GetModeLine - scrn: 0 clock: 70000
+[  9320.221] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9320.221]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9320.473] GetModeLine - scrn: 0 clock: 70000
+[  9320.473] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9320.473]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9320.756] GetModeLine - scrn: 0 clock: 70000
+[  9320.756] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9320.756]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9321.088] GetModeLine - scrn: 0 clock: 70000
+[  9321.088] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9321.088]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9321.157] GetModeLine - scrn: 0 clock: 70000
+[  9321.157] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9321.157]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9321.195] GetModeLine - scrn: 0 clock: 70000
+[  9321.195] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9321.195]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9321.206] GetModeLine - scrn: 0 clock: 70000
+[  9321.206] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9321.206]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9321.774] GetModeLine - scrn: 0 clock: 70000
+[  9321.774] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9321.774]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9321.793] GetModeLine - scrn: 0 clock: 70000
+[  9321.793] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9321.793]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9321.809] GetModeLine - scrn: 0 clock: 70000
+[  9321.809] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9321.809]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9321.842] GetModeLine - scrn: 0 clock: 70000
+[  9321.842] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9321.842]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9323.073] GetModeLine - scrn: 0 clock: 70000
+[  9323.074] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9323.074]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9323.186] GetModeLine - scrn: 0 clock: 70000
+[  9323.186] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9323.186]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9324.021] GetModeLine - scrn: 0 clock: 70000
+[  9324.021] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9324.021]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9324.054] GetModeLine - scrn: 0 clock: 70000
+[  9324.054] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9324.054]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9324.114] GetModeLine - scrn: 0 clock: 70000
+[  9324.114] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9324.114]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9324.132] GetModeLine - scrn: 0 clock: 70000
+[  9324.132] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9324.132]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9324.190] GetModeLine - scrn: 0 clock: 70000
+[  9324.190] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9324.190]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9324.246] GetModeLine - scrn: 0 clock: 70000
+[  9324.246] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9324.246]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9324.314] GetModeLine - scrn: 0 clock: 70000
+[  9324.314] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9324.314]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9325.230] GetModeLine - scrn: 0 clock: 70000
+[  9325.230] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9325.230]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9325.289] GetModeLine - scrn: 0 clock: 70000
+[  9325.289] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9325.289]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9325.508] GetModeLine - scrn: 0 clock: 70000
+[  9325.508] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9325.508]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9325.978] GetModeLine - scrn: 0 clock: 70000
+[  9325.978] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9325.978]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9326.086] GetModeLine - scrn: 0 clock: 70000
+[  9326.086] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9326.086]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9326.097] GetModeLine - scrn: 0 clock: 70000
+[  9326.098] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9326.098]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9326.237] GetModeLine - scrn: 0 clock: 70000
+[  9326.237] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9326.237]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9332.471] GetModeLine - scrn: 0 clock: 70000
+[  9332.471] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9332.471]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9332.494] GetModeLine - scrn: 0 clock: 70000
+[  9332.494] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9332.494]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.136] GetModeLine - scrn: 0 clock: 70000
+[  9333.136] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.136]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.159] GetModeLine - scrn: 0 clock: 70000
+[  9333.159] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.159]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.182] GetModeLine - scrn: 0 clock: 70000
+[  9333.182] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.182]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.210] GetModeLine - scrn: 0 clock: 70000
+[  9333.210] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.210]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.268] GetModeLine - scrn: 0 clock: 70000
+[  9333.268] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.268]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.272] GetModeLine - scrn: 0 clock: 70000
+[  9333.272] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.272]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.274] GetModeLine - scrn: 0 clock: 70000
+[  9333.274] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.274]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.387] GetModeLine - scrn: 0 clock: 70000
+[  9333.387] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.387]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.553] GetModeLine - scrn: 0 clock: 70000
+[  9333.553] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.553]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.566] GetModeLine - scrn: 0 clock: 70000
+[  9333.566] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.566]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.885] GetModeLine - scrn: 0 clock: 70000
+[  9333.885] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.885]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.900] GetModeLine - scrn: 0 clock: 70000
+[  9333.900] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.900]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.917] GetModeLine - scrn: 0 clock: 70000
+[  9333.917] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.917]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.933] GetModeLine - scrn: 0 clock: 70000
+[  9333.933] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.933]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.948] GetModeLine - scrn: 0 clock: 70000
+[  9333.949] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.949]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.964] GetModeLine - scrn: 0 clock: 70000
+[  9333.964] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.964]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9333.980] GetModeLine - scrn: 0 clock: 70000
+[  9333.980] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9333.980]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.000] GetModeLine - scrn: 0 clock: 70000
+[  9334.000] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.000]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.014] GetModeLine - scrn: 0 clock: 70000
+[  9334.014] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.014]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.029] GetModeLine - scrn: 0 clock: 70000
+[  9334.030] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.030]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.046] GetModeLine - scrn: 0 clock: 70000
+[  9334.046] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.046]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.062] GetModeLine - scrn: 0 clock: 70000
+[  9334.062] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.062]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.077] GetModeLine - scrn: 0 clock: 70000
+[  9334.077] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.077]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.093] GetModeLine - scrn: 0 clock: 70000
+[  9334.093] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.093]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.109] GetModeLine - scrn: 0 clock: 70000
+[  9334.109] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.109]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.284] GetModeLine - scrn: 0 clock: 70000
+[  9334.284] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.284]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.296] GetModeLine - scrn: 0 clock: 70000
+[  9334.296] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.296]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.311] GetModeLine - scrn: 0 clock: 70000
+[  9334.311] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.311]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.320] GetModeLine - scrn: 0 clock: 70000
+[  9334.320] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.320]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.331] GetModeLine - scrn: 0 clock: 70000
+[  9334.331] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.331]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.347] GetModeLine - scrn: 0 clock: 70000
+[  9334.347] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.347]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.363] GetModeLine - scrn: 0 clock: 70000
+[  9334.363] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.363]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.379] GetModeLine - scrn: 0 clock: 70000
+[  9334.379] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.379]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.396] GetModeLine - scrn: 0 clock: 70000
+[  9334.396] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.396]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.412] GetModeLine - scrn: 0 clock: 70000
+[  9334.412] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.412]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.427] GetModeLine - scrn: 0 clock: 70000
+[  9334.427] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.427]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.444] GetModeLine - scrn: 0 clock: 70000
+[  9334.444] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.444]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.462] GetModeLine - scrn: 0 clock: 70000
+[  9334.462] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.462]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.475] GetModeLine - scrn: 0 clock: 70000
+[  9334.475] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.475]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.489] GetModeLine - scrn: 0 clock: 70000
+[  9334.489] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.489]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.505] GetModeLine - scrn: 0 clock: 70000
+[  9334.505] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.505]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.554] GetModeLine - scrn: 0 clock: 70000
+[  9334.554] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.554]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.653] GetModeLine - scrn: 0 clock: 70000
+[  9334.653] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.653]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.678] GetModeLine - scrn: 0 clock: 70000
+[  9334.678] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.678]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.735] GetModeLine - scrn: 0 clock: 70000
+[  9334.735] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.735]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.745] GetModeLine - scrn: 0 clock: 70000
+[  9334.745] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.745]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.756] GetModeLine - scrn: 0 clock: 70000
+[  9334.756] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.756]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.763] GetModeLine - scrn: 0 clock: 70000
+[  9334.763] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.763]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.772] GetModeLine - scrn: 0 clock: 70000
+[  9334.772] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.772]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.781] GetModeLine - scrn: 0 clock: 70000
+[  9334.781] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.781]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.798] GetModeLine - scrn: 0 clock: 70000
+[  9334.798] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.798]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.814] GetModeLine - scrn: 0 clock: 70000
+[  9334.814] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.814]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.831] GetModeLine - scrn: 0 clock: 70000
+[  9334.831] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.831]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.848] GetModeLine - scrn: 0 clock: 70000
+[  9334.848] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.848]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.865] GetModeLine - scrn: 0 clock: 70000
+[  9334.865] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.865]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.881] GetModeLine - scrn: 0 clock: 70000
+[  9334.881] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.881]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.898] GetModeLine - scrn: 0 clock: 70000
+[  9334.898] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.898]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.915] GetModeLine - scrn: 0 clock: 70000
+[  9334.915] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.915]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.931] GetModeLine - scrn: 0 clock: 70000
+[  9334.931] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.932]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.948] GetModeLine - scrn: 0 clock: 70000
+[  9334.948] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.948]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.965] GetModeLine - scrn: 0 clock: 70000
+[  9334.965] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.965]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.982] GetModeLine - scrn: 0 clock: 70000
+[  9334.982] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.982]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9334.999] GetModeLine - scrn: 0 clock: 70000
+[  9334.999] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9334.999]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9335.015] GetModeLine - scrn: 0 clock: 70000
+[  9335.015] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9335.015]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9335.032] GetModeLine - scrn: 0 clock: 70000
+[  9335.032] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9335.032]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9335.048] GetModeLine - scrn: 0 clock: 70000
+[  9335.048] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9335.048]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9335.228] GetModeLine - scrn: 0 clock: 70000
+[  9335.228] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9335.228]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9335.251] GetModeLine - scrn: 0 clock: 70000
+[  9335.251] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9335.251]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9335.294] GetModeLine - scrn: 0 clock: 70000
+[  9335.294] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9335.294]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9335.315] GetModeLine - scrn: 0 clock: 70000
+[  9335.315] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9335.315]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9335.322] GetModeLine - scrn: 0 clock: 70000
+[  9335.322] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9335.322]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9335.898] GetModeLine - scrn: 0 clock: 70000
+[  9335.899] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9335.899]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9335.946] GetModeLine - scrn: 0 clock: 70000
+[  9335.946] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9335.946]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9335.970] GetModeLine - scrn: 0 clock: 70000
+[  9335.970] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9335.970]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9336.000] GetModeLine - scrn: 0 clock: 70000
+[  9336.000] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9336.000]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9336.273] GetModeLine - scrn: 0 clock: 70000
+[  9336.273] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9336.273]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9336.335] GetModeLine - scrn: 0 clock: 70000
+[  9336.335] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9336.335]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9336.820] GetModeLine - scrn: 0 clock: 70000
+[  9336.820] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9336.820]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9337.056] GetModeLine - scrn: 0 clock: 70000
+[  9337.056] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9337.057]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9337.489] GetModeLine - scrn: 0 clock: 70000
+[  9337.489] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9337.489]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9337.495] GetModeLine - scrn: 0 clock: 70000
+[  9337.495] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9337.495]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9337.573] GetModeLine - scrn: 0 clock: 70000
+[  9337.574] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9337.574]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9337.575] GetModeLine - scrn: 0 clock: 70000
+[  9337.575] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9337.575]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9337.605] GetModeLine - scrn: 0 clock: 70000
+[  9337.605] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9337.605]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9337.606] GetModeLine - scrn: 0 clock: 70000
+[  9337.606] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9337.606]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9337.622] GetModeLine - scrn: 0 clock: 70000
+[  9337.622] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9337.622]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9337.668] GetModeLine - scrn: 0 clock: 70000
+[  9337.668] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9337.668]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9337.760] GetModeLine - scrn: 0 clock: 70000
+[  9337.760] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9337.760]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9337.838] GetModeLine - scrn: 0 clock: 70000
+[  9337.838] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9337.838]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9337.901] GetModeLine - scrn: 0 clock: 70000
+[  9337.901] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9337.901]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9337.928] GetModeLine - scrn: 0 clock: 70000
+[  9337.928] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9337.928]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9338.291] GetModeLine - scrn: 0 clock: 70000
+[  9338.291] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9338.291]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9338.603] GetModeLine - scrn: 0 clock: 70000
+[  9338.603] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9338.603]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9338.613] GetModeLine - scrn: 0 clock: 70000
+[  9338.613] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9338.613]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9338.650] GetModeLine - scrn: 0 clock: 70000
+[  9338.650] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9338.650]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9339.952] GetModeLine - scrn: 0 clock: 70000
+[  9339.952] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9339.952]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9339.971] GetModeLine - scrn: 0 clock: 70000
+[  9339.971] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9339.971]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9340.065] GetModeLine - scrn: 0 clock: 70000
+[  9340.065] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9340.065]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9340.219] GetModeLine - scrn: 0 clock: 70000
+[  9340.219] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9340.219]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9340.254] GetModeLine - scrn: 0 clock: 70000
+[  9340.254] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9340.254]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9340.282] GetModeLine - scrn: 0 clock: 70000
+[  9340.282] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9340.282]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9340.481] GetModeLine - scrn: 0 clock: 70000
+[  9340.481] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9340.481]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9341.454] GetModeLine - scrn: 0 clock: 70000
+[  9341.454] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9341.454]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9341.474] GetModeLine - scrn: 0 clock: 70000
+[  9341.474] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9341.474]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9341.545] GetModeLine - scrn: 0 clock: 70000
+[  9341.545] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9341.545]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9341.562] GetModeLine - scrn: 0 clock: 70000
+[  9341.562] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9341.562]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9341.650] GetModeLine - scrn: 0 clock: 70000
+[  9341.650] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9341.650]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9341.717] GetModeLine - scrn: 0 clock: 70000
+[  9341.717] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9341.717]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9341.782] GetModeLine - scrn: 0 clock: 70000
+[  9341.782] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9341.782]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9342.035] GetModeLine - scrn: 0 clock: 70000
+[  9342.035] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9342.035]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9342.059] GetModeLine - scrn: 0 clock: 70000
+[  9342.059] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9342.059]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9342.129] GetModeLine - scrn: 0 clock: 70000
+[  9342.129] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9342.129]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9346.741] GetModeLine - scrn: 0 clock: 70000
+[  9346.741] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9346.741]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9346.748] GetModeLine - scrn: 0 clock: 70000
+[  9346.748] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9346.748]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9346.771] GetModeLine - scrn: 0 clock: 70000
+[  9346.771] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9346.771]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9346.807] GetModeLine - scrn: 0 clock: 70000
+[  9346.807] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9346.807]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9346.818] GetModeLine - scrn: 0 clock: 70000
+[  9346.818] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9346.818]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9346.831] GetModeLine - scrn: 0 clock: 70000
+[  9346.831] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9346.831]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9346.853] GetModeLine - scrn: 0 clock: 70000
+[  9346.854] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9346.854]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9346.863] GetModeLine - scrn: 0 clock: 70000
+[  9346.863] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9346.863]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9346.900] GetModeLine - scrn: 0 clock: 70000
+[  9346.900] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9346.900]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9347.386] GetModeLine - scrn: 0 clock: 70000
+[  9347.386] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9347.386]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9347.891] GetModeLine - scrn: 0 clock: 70000
+[  9347.891] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9347.891]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9347.905] GetModeLine - scrn: 0 clock: 70000
+[  9347.905] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9347.905]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9347.916] GetModeLine - scrn: 0 clock: 70000
+[  9347.916] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9347.916]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9348.542] GetModeLine - scrn: 0 clock: 70000
+[  9348.542] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9348.542]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9348.630] GetModeLine - scrn: 0 clock: 70000
+[  9348.630] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9348.630]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9348.638] GetModeLine - scrn: 0 clock: 70000
+[  9348.638] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9348.638]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9348.660] GetModeLine - scrn: 0 clock: 70000
+[  9348.660] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9348.660]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9421.180] GetModeLine - scrn: 0 clock: 70000
+[  9421.180] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9421.180]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9421.192] GetModeLine - scrn: 0 clock: 70000
+[  9421.192] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9421.192]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9421.206] GetModeLine - scrn: 0 clock: 70000
+[  9421.206] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9421.206]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9421.215] GetModeLine - scrn: 0 clock: 70000
+[  9421.215] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9421.215]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9421.226] GetModeLine - scrn: 0 clock: 70000
+[  9421.226] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9421.226]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9421.248] GetModeLine - scrn: 0 clock: 70000
+[  9421.248] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9421.248]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9421.259] GetModeLine - scrn: 0 clock: 70000
+[  9421.259] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9421.259]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9428.124] GetModeLine - scrn: 0 clock: 70000
+[  9428.124] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9428.124]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9428.153] GetModeLine - scrn: 0 clock: 70000
+[  9428.153] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9428.153]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9428.172] GetModeLine - scrn: 0 clock: 70000
+[  9428.172] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9428.172]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9428.195] GetModeLine - scrn: 0 clock: 70000
+[  9428.195] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9428.195]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9429.424] GetModeLine - scrn: 0 clock: 70000
+[  9429.424] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9429.425]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9429.469] GetModeLine - scrn: 0 clock: 70000
+[  9429.469] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9429.469]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9429.592] GetModeLine - scrn: 0 clock: 70000
+[  9429.593] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9429.593]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9429.836] GetModeLine - scrn: 0 clock: 70000
+[  9429.836] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9429.836]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9429.849] GetModeLine - scrn: 0 clock: 70000
+[  9429.849] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9429.849]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9429.896] GetModeLine - scrn: 0 clock: 70000
+[  9429.896] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9429.896]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9429.903] GetModeLine - scrn: 0 clock: 70000
+[  9429.903] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9429.903]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9429.919] GetModeLine - scrn: 0 clock: 70000
+[  9429.919] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9429.919]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9430.236] GetModeLine - scrn: 0 clock: 70000
+[  9430.236] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9430.236]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9430.343] GetModeLine - scrn: 0 clock: 70000
+[  9430.344] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9430.344]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9431.256] GetModeLine - scrn: 0 clock: 70000
+[  9431.256] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9431.256]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9431.316] GetModeLine - scrn: 0 clock: 70000
+[  9431.316] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9431.316]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9431.342] GetModeLine - scrn: 0 clock: 70000
+[  9431.342] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9431.342]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9434.935] GetModeLine - scrn: 0 clock: 70000
+[  9434.935] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9434.935]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9435.187] GetModeLine - scrn: 0 clock: 70000
+[  9435.187] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9435.187]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9435.203] GetModeLine - scrn: 0 clock: 70000
+[  9435.204] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9435.204]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9435.238] GetModeLine - scrn: 0 clock: 70000
+[  9435.239] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9435.239]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9436.704] GetModeLine - scrn: 0 clock: 70000
+[  9436.704] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9436.704]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9437.995] GetModeLine - scrn: 0 clock: 70000
+[  9437.995] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9437.995]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9743.782] GetModeLine - scrn: 0 clock: 70000
+[  9743.783] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9743.783]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9743.803] GetModeLine - scrn: 0 clock: 70000
+[  9743.803] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9743.803]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9743.821] GetModeLine - scrn: 0 clock: 70000
+[  9743.821] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9743.821]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9744.171] GetModeLine - scrn: 0 clock: 70000
+[  9744.171] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9744.171]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9744.220] GetModeLine - scrn: 0 clock: 70000
+[  9744.220] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9744.220]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9744.576] GetModeLine - scrn: 0 clock: 70000
+[  9744.576] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9744.576]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9744.937] GetModeLine - scrn: 0 clock: 70000
+[  9744.937] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9744.937]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9744.974] GetModeLine - scrn: 0 clock: 70000
+[  9744.975] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9744.975]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9744.986] GetModeLine - scrn: 0 clock: 70000
+[  9744.986] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9744.986]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9744.999] GetModeLine - scrn: 0 clock: 70000
+[  9744.999] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9744.999]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9745.100] GetModeLine - scrn: 0 clock: 70000
+[  9745.100] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9745.100]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9745.436] GetModeLine - scrn: 0 clock: 70000
+[  9745.436] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9745.436]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9745.529] GetModeLine - scrn: 0 clock: 70000
+[  9745.530] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9745.530]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9745.554] GetModeLine - scrn: 0 clock: 70000
+[  9745.554] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9745.554]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9746.116] GetModeLine - scrn: 0 clock: 70000
+[  9746.116] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9746.116]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9746.140] GetModeLine - scrn: 0 clock: 70000
+[  9746.140] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9746.140]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9746.148] GetModeLine - scrn: 0 clock: 70000
+[  9746.148] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9746.148]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9746.155] GetModeLine - scrn: 0 clock: 70000
+[  9746.155] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9746.155]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9746.169] GetModeLine - scrn: 0 clock: 70000
+[  9746.169] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9746.169]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9772.197] GetModeLine - scrn: 0 clock: 70000
+[  9772.197] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9772.197]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9772.269] GetModeLine - scrn: 0 clock: 70000
+[  9772.269] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9772.269]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9772.366] GetModeLine - scrn: 0 clock: 70000
+[  9772.366] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9772.366]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9772.683] GetModeLine - scrn: 0 clock: 70000
+[  9772.683] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9772.683]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9772.847] GetModeLine - scrn: 0 clock: 70000
+[  9772.847] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9772.847]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9772.980] GetModeLine - scrn: 0 clock: 70000
+[  9772.980] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9772.980]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9773.301] GetModeLine - scrn: 0 clock: 70000
+[  9773.301] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9773.301]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9773.432] GetModeLine - scrn: 0 clock: 70000
+[  9773.432] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9773.432]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9773.452] GetModeLine - scrn: 0 clock: 70000
+[  9773.452] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9773.452]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9775.672] GetModeLine - scrn: 0 clock: 70000
+[  9775.673] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9775.673]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9775.694] GetModeLine - scrn: 0 clock: 70000
+[  9775.694] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9775.694]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9775.704] GetModeLine - scrn: 0 clock: 70000
+[  9775.704] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9775.704]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9775.736] GetModeLine - scrn: 0 clock: 70000
+[  9775.736] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9775.736]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9775.748] GetModeLine - scrn: 0 clock: 70000
+[  9775.748] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9775.748]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10
+[  9775.758] GetModeLine - scrn: 0 clock: 70000
+[  9775.758] GetModeLine - hdsp: 1366 hbeg: 1402 hend: 1450 httl: 1492
+[  9775.758]               vdsp: 768 vbeg: 771 vend: 776 vttl: 782 flags: 10

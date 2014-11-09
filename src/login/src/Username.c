@@ -75,6 +75,9 @@
 //                          value to be (char *) so altered code to reflect that
 //                          change.
 // 
+//     gabeg Nov 08 2014 <> Made the username button have "relief". Changed the
+//                          relief value from GTK_RELIEF_NONE to GTK_RELIEF_NORMAL
+// 
 // **********************************************************************************
 
 
@@ -105,6 +108,7 @@
 #define FG_WIN         (const GdkRGBA) {0, 0, 0, 0}
 #define FG_MENU        (const GdkRGBA) {1, 1, 1, 1}
 #define FSIZE          23*1024
+#define COLOR_SCALE    256
 #define FONT           "DejaVu Sans"
 #define USERNAME_IMG   "/etc/X11/glm/img/interface/user.png"
 #define USERNAME_LOG   "/etc/X11/glm/log/user.log"
@@ -138,7 +142,7 @@ static void setup_menu(GtkWidget *widg, GtkWidget *label) {
     // Attach the window manager menu to the dropdown menu
     gtk_menu_button_set_popup(GTK_MENU_BUTTON(widg), menu);
     gtk_container_add(GTK_CONTAINER(widg), label);
-    gtk_button_set_relief(GTK_BUTTON(widg), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(widg), GTK_RELIEF_NORMAL);
 }
 
 
@@ -150,7 +154,7 @@ static void setup_label(GtkWidget *label) {
     PangoAttrList *attrList = pango_attr_list_new();
     PangoAttribute *attrFont = pango_attr_family_new(FONT);
     PangoAttribute *attrSize = pango_attr_size_new(FSIZE);
-    PangoAttribute *attrColor = pango_attr_foreground_new(65535, 65535, 65535);
+    PangoAttribute *attrColor = pango_attr_foreground_new(COLOR_SCALE*160, COLOR_SCALE*160, COLOR_SCALE*160);
     
     // Add attributes to the list (and increase the reference counter)
     attrList = pango_attr_list_ref(attrList);

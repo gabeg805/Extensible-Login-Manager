@@ -54,6 +54,8 @@
 // 
 //     gabeg Nov 01 2014 <> Changed the GTK window type from TOPLEVEL to POPUP. 
 // 
+//     gabeg Nov 08 2014 <> Moved the position of the text image 
+// 
 // **********************************************************************************
 
 
@@ -71,7 +73,7 @@
 #include <string.h>
 
 #define XPOS    570
-#define YPOS    330
+#define YPOS    325
 #define FSIZE   12
 #define STR     "Password:"
 #define FONT    "DejaVu Sans"

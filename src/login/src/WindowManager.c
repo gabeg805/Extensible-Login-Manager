@@ -71,6 +71,8 @@
 //     gabeg Nov 01 2014 <> Changed "command_line" return value to be (char *) so
 //                          altered code to reflect that change.
 // 
+//     gabeg Nov 08 2014 <> Moved the position of the window manager button 
+// 
 // **********************************************************************************
 
 
@@ -88,9 +90,9 @@
 #include <stdlib.h>
 
 #define XPOS          770
-#define YPOS          315
-#define WIDTH         30
-#define HEIGHT        30
+#define YPOS          310
+#define WIDTH         0
+#define HEIGHT        0
 #define BG_WIN        (const GdkRGBA) {0, 0, 0, 0}
 #define FG_WIN        (const GdkRGBA) {0, 0, 0, 0}
 #define BG_WM         (const GdkRGBA) {0, 0, 0, 0}
@@ -155,6 +157,8 @@ static void set_wm_entries(GtkWidget *menu) {
     
     // Get all window managers in one string 
     char *wmstr = command_line(WM_SES_CMD, 20, 100);
+
+    FILE *handle = fopen("/home/gabeg/dusk", "w");
     
     // Break up window manager string into array of strings (based on newline char)
     int k = 0;
@@ -177,9 +181,10 @@ static void set_wm_entries(GtkWidget *menu) {
         if ( strcmp(allwm[i], SESSION) == 0 ) {
             sesh = gtk_radio_menu_item_new_with_label(NULL, allwm[i]);
             group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(sesh));
-        } else if ( (q != 0) && (allwm[i] != NULL) )
-            sesh = gtk_radio_menu_item_new_with_label(group, allwm[i]);
-        else
+        } else if ( (q != 0) && (allwm[i] != NULL) ) {
+            if ( strcmp(allwm[i], "") != 0 )
+                sesh = gtk_radio_menu_item_new_with_label(group, allwm[i]);
+        } else
             p = 0;
         
         // Setup the menu items
@@ -199,6 +204,8 @@ static void set_wm_entries(GtkWidget *menu) {
             i = 0;
     }
     
+    fclose(handle);
+
     // Free used memory
     free(wm);
     free(wmstr);

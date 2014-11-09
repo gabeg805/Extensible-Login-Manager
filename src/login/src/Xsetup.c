@@ -225,7 +225,7 @@ void xsetup() {
     // Log program start
     size_t datesz = 40;
     char *date_str = command_line(DATE, datesz, datesz);
-    file_write(GLM_LOG, "a+", "\n%s %s\n%s %d\n\n", "Date:", date_str, "Preview:", PREVIEW);
+    file_write(GLM_LOG, "a+", "\n%s %s%s %d\n\n", "Date:", date_str, "Preview:", PREVIEW);
     
     // Start X server when not in preview mode
     if ( !PREVIEW ) 
