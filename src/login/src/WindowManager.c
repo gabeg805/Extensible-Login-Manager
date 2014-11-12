@@ -157,8 +157,6 @@ static void set_wm_entries(GtkWidget *menu) {
     
     // Get all window managers in one string 
     char *wmstr = command_line(WM_SES_CMD, 20, 100);
-
-    FILE *handle = fopen("/home/gabeg/dusk", "w");
     
     // Break up window manager string into array of strings (based on newline char)
     int k = 0;
@@ -204,8 +202,6 @@ static void set_wm_entries(GtkWidget *menu) {
             i = 0;
     }
     
-    fclose(handle);
-
     // Free used memory
     free(wm);
     free(wmstr);
