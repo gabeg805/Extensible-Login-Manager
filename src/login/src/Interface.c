@@ -49,6 +49,9 @@
 // 
 //     gabeg Sep 16 2014 <> Removed unneeded libraries.
 // 
+//     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
+//                          header file.
+// 
 // **********************************************************************************
 
 
@@ -58,21 +61,7 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/glm.h"
 #include "../hdr/Interface.h"
-#include "../hdr/Username.h"
-#include "../hdr/Password.h"
-#include "../hdr/Clock.h"
-#include "../hdr/Frame.h"
-#include "../hdr/TextImage.h"
-#include "../hdr/WindowManager.h"
-#include "../hdr/Panel.h"
-#include "../hdr/Utility.h"
-#include <gtk/gtk.h>
-
-
-// Declares
-void login_interface(int argc, char *argv[]);
 
 
 
@@ -101,7 +90,7 @@ void login_interface(int argc, char *argv[]) {
         display_panel();
         
         // Denote that interface has already begun
-        INTERFACE = 0;
+        INTERFACE = false;
     }
     
     

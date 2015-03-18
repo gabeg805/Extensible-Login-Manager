@@ -78,6 +78,11 @@
 //     gabeg Nov 08 2014 <> Made the username button have "relief". Changed the
 //                          relief value from GTK_RELIEF_NONE to GTK_RELIEF_NORMAL
 // 
+//     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
+//                          header file. Included the new functions that read in from
+//                          the preferences file, "set_pref_pos", "set_pref_txt", and
+//                          "set_pref_decor".
+// 
 // **********************************************************************************
 
 
@@ -87,32 +92,7 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/glm.h"
 #include "../hdr/Username.h"
-#include "../hdr/Utility.h"
-#include <gtk/gtk.h>
-#include <assert.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#define XPOS           665
-#define YPOS           197
-#define IMG_XPOS       575
-#define IMG_YPOS       190
-#define WIDTH          0
-#define HEIGHT         0
-#define BG_WIN         (const GdkRGBA) {0, 0, 0, 0}
-#define BG_MENU        (const GdkRGBA) {0, 0, 0, 0}
-#define FG_WIN         (const GdkRGBA) {0, 0, 0, 0}
-#define FG_MENU        (const GdkRGBA) {1, 1, 1, 1}
-#define FSIZE          23*1024
-#define COLOR_SCALE    256
-#define FONT           "DejaVu Sans"
-#define USERNAME_IMG   "/etc/X11/glm/img/interface/user.png"
-#define USERNAME_LOG   "/etc/X11/glm/log/user.log"
-
 
 // Declares
 static void display_icon();
@@ -121,7 +101,13 @@ static void setup_label(GtkWidget *label);
 static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label);
 static char ** get_username(char *file, int size);
 static void set_username_entries(GtkWidget *menu, GtkWidget *label);
-void display_username();
+
+static struct glmpos USR_POS;
+static struct glmtxt USR_TXT;
+static struct glmdecor USR_DECOR;
+
+static struct glmpos IMG_POS;
+static struct glmdecor IMG_DECOR;
 
 
 
@@ -152,9 +138,9 @@ static void setup_label(GtkWidget *label) {
     
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
-    PangoAttribute *attrFont = pango_attr_family_new(FONT);
-    PangoAttribute *attrSize = pango_attr_size_new(FSIZE);
-    PangoAttribute *attrColor = pango_attr_foreground_new(COLOR_SCALE*160, COLOR_SCALE*160, COLOR_SCALE*160);
+    PangoAttribute *attrFont = pango_attr_family_new(USR_TXT.font);
+    PangoAttribute *attrSize = pango_attr_size_new(USR_TXT.size);
+    PangoAttribute *attrColor = pango_attr_foreground_new(USR_TXT.red, USR_TXT.green, USR_TXT.blue);
     
     // Add attributes to the list (and increase the reference counter)
     attrList = pango_attr_list_ref(attrList);
@@ -343,19 +329,23 @@ static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
 // Display username icon
 void display_icon() {
     
+    // Allocate memory for strings
+    IMG_DECOR.img_file = malloc(READ_CHAR_LEN);
+    
+    // Define values from preference file
+    set_pref_pos(USER_IMG_PREF, &IMG_POS);
+    set_pref_decor(USER_IMG_PREF, &IMG_DECOR);
+    
     // Initialize username icon widget elements
     GtkWidget *win = gtk_window_new(GTK_WINDOW_POPUP);
-    GtkWidget *img = gtk_image_new_from_file(USERNAME_IMG);
-    
-    // Define structs to hold widget information
-    int pos[4] = {IMG_XPOS, IMG_YPOS, WIDTH, HEIGHT};
-    const GdkRGBA color[4] = {BG_WIN, BG_MENU, FG_WIN, FG_MENU};
+    GtkWidget *widg = gtk_image_new_from_file(IMG_DECOR.img_file);
     
     // Setup icon widget
-    setup_widget(win, img, pos, color);
+    set_widget_color(win, widg, IMG_DECOR);
+    setup_widget(win, widg, IMG_POS);
     
     // Display icon widget
-    gtk_widget_show(img);
+    gtk_widget_show(widg);
     gtk_widget_show(win);
 }
 
@@ -363,6 +353,15 @@ void display_icon() {
 
 // Display the username menu
 void display_username() {
+    
+    // Allocate memory for strings
+    USR_TXT.font       = malloc(READ_CHAR_LEN);
+    USR_DECOR.img_file = malloc(READ_CHAR_LEN);
+    
+    // Define values from preference file
+    set_pref_pos(USER_PREF, &USR_POS);
+    set_pref_txt(USER_PREF, &USR_TXT);
+    set_pref_decor(USER_PREF, &USR_DECOR);
     
     // Define username
     USERNAME = file_read(USERNAME_LOG, 1, 20);
@@ -372,15 +371,12 @@ void display_username() {
     GtkWidget *widg = gtk_menu_button_new();
     GtkWidget *label = gtk_label_new("");
     
-    // Define structs to hold widget information
-    int pos[4] = {XPOS, YPOS, WIDTH, HEIGHT};
-    const GdkRGBA color[4] = {BG_WIN, BG_MENU, FG_WIN, FG_MENU};
-    
     // Display username icon
     display_icon();
     
     // Setup username menu widget
-    setup_widget(win, widg, pos, color);
+    set_widget_color(win, widg, USR_DECOR);
+    setup_widget(win, widg, USR_POS);
     setup_menu(widg, label);
     
     // Display the username menu

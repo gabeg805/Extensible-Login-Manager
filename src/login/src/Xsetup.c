@@ -65,6 +65,9 @@
 //                          they're not that expensive so I'm keeping "command_line"
 //                          as returning (char *).
 // 
+//     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
+//                          header file.
+// 
 // **********************************************************************************
 
 
@@ -74,31 +77,11 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/glm.h"
 #include "../hdr/Xsetup.h"
-#include "../hdr/Utility.h"
-#include <time.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-#define DATE           "/usr/bin/date"
-#define HSETROOT       "/usr/bin/hsetroot"
-#define TAIL           "/usr/bin/tail"
-#define WALLPAPER      "/etc/X11/glm/img/wallpapers/night-sky.jpg"
-#define XCOMPMGR       "/usr/bin/xcompmgr"
-#define XORG           "/usr/bin/Xorg"
-#define XSERVER_AUTH   "/etc/X11/glm/log/glm.auth"
-#define XSERVER_LOG    "/etc/X11/glm/log/xserver.log"
-#define XSETROOT       "/usr/bin/xsetroot"
-
-
-
-// Declares
+// Private functions
 static void start_xserver();
 static void start_compman();
-void xsetup();
 
 
 
@@ -245,7 +228,7 @@ void xsetup() {
     system(xcmd);
     
     // Log that interface is allowed start
-    INTERFACE = 1;
+    INTERFACE = true;
     
     // Free memory
     free(date_str);

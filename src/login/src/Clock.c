@@ -62,6 +62,11 @@
 // 
 //     gabeg Oct 31 2014 <> Changed GTK window type from TOPLEVEL to POPUP. 
 // 
+//     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
+//                          header file. Included the new functions that read in from
+//                          the preferences file, "set_pref_pos", "set_pref_txt", and
+//                          "set_pref_decor".
+// 
 // **********************************************************************************
 
 
@@ -71,71 +76,19 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/glm.h"
 #include "../hdr/Clock.h"
-#include "../hdr/Utility.h"
-#include <gtk/gtk.h>
-#include <assert.h>
-#include <time.h>
-#include <stdlib.h>
 
-#define DATE_XPOS    50
-#define DATE_YPOS    650
-#define DATE_WIDTH   0
-#define DATE_HEIGHT  0
-#define TIME_XPOS    110
-#define TIME_YPOS    575
-#define TIME_WIDTH   0
-#define TIME_HEIGHT  0
-#define BG_WINDOW    (const GdkRGBA) {0, 0, 0, 0}
-#define BG_DATE      (const GdkRGBA) {0, 0, 0, 0}
-#define BG_TIME      (const GdkRGBA) {0, 0, 0, 0}
-#define FG_WINDOW    (const GdkRGBA) {0, 0, 0, 0}
-#define FG_DATE      (const GdkRGBA) {1, 1, 1, 1}
-#define FG_TIME      (const GdkRGBA) {1, 1, 1, 1}
-#define DATE_FSIZE   25*1024
-#define TIME_FSIZE   45*1024
-#define DATE_FONT    "Inconsolata"
-#define TIME_FONT    "Inconsolata"
-#define DATE_FMT     "%A, %B %-d"
-#define TIME_FMT     "%-I:%M %p"
-#define UPDATE_SEC   30
-
-
-// Definitions
-struct glmtext {
-    GtkWidget *widg;
-    char *font;
-    char *fmt;
-    int size;
-};
-
-
-// Declares
-static struct glmtext * setup_text_struct(GtkWidget *widg, char *font, char *fmt, int size);
-static void set_label(struct glmtext *gui);
+// Private functions
+static void set_label(struct glmtxt_w *gui);
 static gboolean update(gpointer data);
-void display_clock();
 
+static struct glmpos DATE_POS;
+static struct glmtxt DATE_TXT;
+static struct glmdecor DATE_DECOR;
 
-
-// //////////////////////////////////
-// ///// SETUP TEXT INFO STRUCT /////
-// //////////////////////////////////
-
-// Setup the GUI text struct
-static struct glmtext * setup_text_struct(GtkWidget *widg, char *font, char *fmt, int size) {
-    
-    struct glmtext *text = malloc(sizeof(struct glmtext));
-    assert(text);
-    
-    text->widg = widg;
-    text->font = font;
-    text->fmt = fmt;
-    text->size = size;
-    
-    return text;
-}
+static struct glmpos TIME_POS;
+static struct glmtxt TIME_TXT;
+static struct glmdecor TIME_DECOR;
 
 
 
@@ -144,7 +97,7 @@ static struct glmtext * setup_text_struct(GtkWidget *widg, char *font, char *fmt
 // //////////////////////////
 
 // Set the clock label font and text size
-static void set_label(struct glmtext *gui) {
+static void set_label(struct glmtxt_w *gui) {
     
     // Obtain current time as seconds elapsed since the Epoch.
     time_t current = time(NULL);
@@ -152,12 +105,12 @@ static void set_label(struct glmtext *gui) {
     struct tm *tmp = localtime(&current);
     
     // Convert time
-    strftime(time, sizeof(time), gui->fmt, tmp);
+    strftime(time, sizeof(time), gui->txt.fmt, tmp);
     
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
-    PangoAttribute *attrFont = pango_attr_family_new(gui->font);
-    PangoAttribute *attrSize = pango_attr_size_new(gui->size);
+    PangoAttribute *attrFont = pango_attr_family_new(gui->txt.font);
+    PangoAttribute *attrSize = pango_attr_size_new(gui->txt.size);
     
     // Add attributes to the list (and increase the reference counter)
     attrList = pango_attr_list_ref(attrList);
@@ -177,7 +130,7 @@ static void set_label(struct glmtext *gui) {
 
 // Refresh the current clock label
 static gboolean update(gpointer data) {
-    struct glmtext *gui = (struct glmtext *) data;
+    struct glmtxt_w *gui = (struct glmtxt_w *) data;
     set_label(gui);
     
     return TRUE;
@@ -192,33 +145,55 @@ static gboolean update(gpointer data) {
 // Display the date and time clock
 void display_clock() {
     
+    // Allocate memory for strings
+    DATE_TXT.font = malloc(READ_CHAR_LEN);
+    DATE_TXT.fmt  = malloc(READ_CHAR_LEN);
+    
+    TIME_TXT.font = malloc(READ_CHAR_LEN);
+    TIME_TXT.fmt  = malloc(READ_CHAR_LEN);
+    
+    // Define values in preference file    
+    set_pref_pos(CLOCK_DATE_PREF, &DATE_POS);
+    set_pref_txt(CLOCK_DATE_PREF, &DATE_TXT);
+    set_pref_decor(CLOCK_DATE_PREF, &DATE_DECOR);
+    
+    set_pref_pos(CLOCK_TIME_PREF, &TIME_POS);
+    set_pref_txt(CLOCK_TIME_PREF, &TIME_TXT);
+    set_pref_decor(CLOCK_TIME_PREF, &TIME_DECOR);
+    
+    // !@#)(!@*# CAN SHORTEN THIS INTO ANOTHER FUNC Q)(@$#)(@*
+    
     // Initialize date and time widgets
     GtkWidget *date_win  = gtk_window_new(GTK_WINDOW_POPUP);
-    GtkWidget *time_win  = gtk_window_new(GTK_WINDOW_POPUP);
     GtkWidget *date_widg = gtk_label_new("");
+    
+    GtkWidget *time_win  = gtk_window_new(GTK_WINDOW_POPUP);
     GtkWidget *time_widg = gtk_label_new("");
     
     
-    // Define structs to hold widget information
-    int date_pos[4] = {DATE_XPOS, DATE_YPOS, DATE_WIDTH, DATE_HEIGHT};
-    int time_pos[4] = {TIME_XPOS, TIME_YPOS, TIME_WIDTH, TIME_HEIGHT};
+    // Pack together widget with text formatting struct
+    struct glmtxt_w *date_pack = malloc( sizeof(struct glmtxt_w) );
+    struct glmtxt_w *time_pack = malloc( sizeof(struct glmtxt_w) );
     
-    const GdkRGBA date_color[4] = {BG_WINDOW, BG_DATE, FG_WINDOW, FG_DATE};
-    const GdkRGBA time_color[4] = {BG_WINDOW, BG_TIME, FG_WINDOW, FG_TIME};
+    date_pack->widg = date_widg;
+    date_pack->txt  = DATE_TXT;
     
-    struct glmtext *date_text = setup_text_struct(date_widg, DATE_FONT, DATE_FMT, DATE_FSIZE);
-    struct glmtext *time_text = setup_text_struct(time_widg, TIME_FONT, TIME_FMT, TIME_FSIZE);
+    time_pack->widg = time_widg;
+    time_pack->txt  = TIME_TXT;
     
     
     // Setup date and time clocks 
-    setup_widget(date_win, date_widg, date_pos, date_color);
-    setup_widget(time_win, time_widg, time_pos, time_color);
+    set_widget_color(date_win, date_widg, DATE_DECOR);
+    set_widget_color(time_win, time_widg, TIME_DECOR);
     
-    set_label(date_text);
-    set_label(time_text);
+    setup_widget(date_win, date_widg, DATE_POS);
+    setup_widget(time_win, time_widg, TIME_POS);
     
-    g_timeout_add_seconds(UPDATE_SEC, update, time_text);
-    g_timeout_add_seconds(UPDATE_SEC, update, date_text);
+    set_label(date_pack);
+    set_label(time_pack);
+    
+    g_timeout_add_seconds(UPDATE_SEC, update, date_pack);
+    g_timeout_add_seconds(UPDATE_SEC, update, time_pack);
     
     
     // Display the clock

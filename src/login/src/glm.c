@@ -48,6 +48,10 @@
 // 
 //     gabeg Sep 16 2014 <> Removed unneeded libraries
 // 
+//     gabeg Mar 17 2015 <> Added the stdbool.h library to utilize boolean values. I
+//                          know it's a type definition, but it makes the code look
+//                          a little cleaner.
+// 
 // **********************************************************************************
 
 
@@ -58,23 +62,15 @@
 
 // Includes
 #include "../hdr/glm.h"
-#include "../hdr/Xsetup.h"
-#include "../hdr/Username.h"
-#include "../hdr/Password.h"
-#include "../hdr/Interface.h"
-#include "../hdr/Authenticate.h"
-#include "../hdr/Utility.h"
-#include <string.h>
-#include <stdlib.h>
 
 char *SERVICE  = "glm";
 char *USERNAME = "User";
 char *PASSWORD = "Password";
 char *SESSION  = "xterm";
 char *GLM_LOG  = "/etc/X11/glm/log/glm.log";
-int INTERFACE = 0;
-int PREVIEW   = 0;
-int TTY_N     = 4;
+int TTY_N      = 4;
+bool INTERFACE = false;
+bool PREVIEW   = false;
 
 
 
@@ -87,20 +83,21 @@ int main(int argc, char *argv[]) {
     
     // Read input parameters, check for 'Preview' mode
     if ( (argc == 2) && (strcmp(argv[1], "-p") == 0) )
-        PREVIEW = 1;
+        PREVIEW = true;    
     
     // Setup X
     xsetup();
     
     // Start the login loop
-    int loop = 1;
+    bool loop = true;
+    
     while (loop) {
         
         // Authenticate username/password combination
         login_interface(argc, argv);
         
         if ( login(USERNAME, PASSWORD) )
-            loop = 0;
+            loop = false;
     }
     
     // Free memory

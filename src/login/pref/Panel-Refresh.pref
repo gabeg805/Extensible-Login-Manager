@@ -1,0 +1,12 @@
+xpos: 1270
+ypos: 736
+img-file: /etc/X11/glm/img/interface/refresh.png
+bg-red: 0
+bg-green: 0
+bg-blue: 0
+bg-alpha: 0
+fg-red: 1
+fg-green: 1
+fg-blue: 1
+fg-alpha: 1
+div: 1

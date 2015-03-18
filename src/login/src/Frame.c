@@ -58,6 +58,10 @@
 // 
 //     gabeg Oct 31 2014 <> Changed GTK window type from TOPLEVEL to POPUP. 
 // 
+//     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
+//                          header file. Included the new functions that read in from
+//                          the preferences file, "set_pref_pos".
+// 
 // **********************************************************************************
 
 
@@ -67,23 +71,14 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/glm.h"
 #include "../hdr/Frame.h"
-#include "../hdr/Utility.h"
-#include <gtk/gtk.h>
-#include <cairo.h>
-#include <math.h>
 
-// Add colors
-#define XPOS     550
-#define YPOS     300
-#define WIDTH    267
-#define HEIGHT   102
-
-// Declares
+// Private functions
 static void draw_frame(cairo_t *);
 static gboolean draw_window(GtkWidget *widget);
-void display_frame();
+
+// Declares
+static struct glmpos POS;
 
 
 
@@ -95,16 +90,16 @@ void display_frame();
 static void draw_frame(cairo_t *cr) { 
     
     // Custom shape that could be wrapped in a function 
-    double radius = HEIGHT / 5.0;
-    double degrees = M_PI / 180.0;
+    double rad = POS.height / 5.0;
+    double deg = M_PI / 180.0;
     
     // Create the rouded rectangle
     cairo_set_line_width (cr, 0);
     cairo_new_sub_path(cr);
-    cairo_arc(cr,   WIDTH-radius,   radius,          radius,   -90*degrees,     0*degrees);
-    cairo_arc(cr,   WIDTH-radius,   HEIGHT-radius,   radius,     0*degrees,    90*degrees);
-    cairo_arc(cr,   radius,         HEIGHT-radius,   radius,    90*degrees,   180*degrees);
-    cairo_arc(cr,   radius,         radius,          radius,   180*degrees,   270*degrees);
+    cairo_arc(cr, POS.width-rad, rad,            rad, -90*deg,   0*deg);
+    cairo_arc(cr, POS.width-rad, POS.height-rad, rad,   0*deg,  90*deg);
+    cairo_arc(cr, rad,           POS.height-rad, rad,  90*deg, 180*deg);
+    cairo_arc(cr, rad,           rad,            rad, 180*deg, 270*deg);
     cairo_close_path (cr);
     
     // Check for window transparency
@@ -145,15 +140,15 @@ static gboolean draw_window(GtkWidget *widget) {
 // Display the login frame
 void display_frame() {
     
+    // Define values from the preferences file
+    set_pref_pos(FRAME_PREF, &POS);
+    
     // Initialize date gui widget
     GtkWidget *win = gtk_window_new(GTK_WINDOW_POPUP);
     GtkWidget *widg = gtk_drawing_area_new();
     
-    // Setup structs to hold widget information
-    int pos[4] = {XPOS, YPOS, WIDTH, HEIGHT};
-    
     // Setup frame
-    setup_widget(win, widg, pos, NULL);
+    setup_widget(win, widg, POS);
     g_signal_connect(G_OBJECT(widg), "draw", G_CALLBACK(draw_window), NULL);
     
     // Display the login frame

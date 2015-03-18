@@ -73,6 +73,11 @@
 // 
 //     gabeg Nov 08 2014 <> Moved the position of the window manager button 
 // 
+//     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
+//                          header file. Included the new functions that read in from
+//                          the preferences file, "set_pref_pos" and 
+//                          "set_pref_decor".
+// 
 // **********************************************************************************
 
 
@@ -81,32 +86,15 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/glm.h"
 #include "../hdr/WindowManager.h"
-#include "../hdr/Utility.h"
-#include <gtk/gtk.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#define XPOS          770
-#define YPOS          310
-#define WIDTH         0
-#define HEIGHT        0
-#define BG_WIN        (const GdkRGBA) {0, 0, 0, 0}
-#define FG_WIN        (const GdkRGBA) {0, 0, 0, 0}
-#define BG_WM         (const GdkRGBA) {0, 0, 0, 0}
-#define FG_WM         (const GdkRGBA) {1, 1, 1, 1}
-#define WM_IMG        "/etc/X11/glm/img/interface/settings.png"
-#define WM_SES_CMD    "ls -1 /usr/share/xsessions/ | sed 's/.desktop//'"
-#define SESSION_LOG   "/etc/X11/glm/log/session.log"
-
 
 // Declares
 static void setup_menu(GtkWidget *widg, GtkWidget *menu);
 static void wm_write_to_file(GtkMenu *item);
 static void set_wm_entries(GtkWidget *menu);
-void display_window_manager();
+
+static struct glmpos POS;
+static struct glmdecor DECOR;
 
 
 
@@ -121,7 +109,7 @@ static void setup_menu(GtkWidget *widg, GtkWidget *menu) {
     set_wm_entries(menu);
     
     // Modify button style
-    GtkWidget *image = gtk_image_new_from_file(WM_IMG);
+    GtkWidget *image = gtk_image_new_from_file(DECOR.img_file);
     gtk_button_set_image(GTK_BUTTON(widg), image);
     gtk_button_set_relief(GTK_BUTTON(widg), GTK_RELIEF_NONE);
     
@@ -216,6 +204,13 @@ static void set_wm_entries(GtkWidget *menu) {
 // Display the window manager button
 void display_window_manager() {
     
+    // Allocate memory for strings
+    DECOR.img_file = malloc(READ_CHAR_LEN);
+    
+    // Define values from preference file
+    set_pref_pos(WM_PREF, &POS);
+    set_pref_decor(WM_PREF, &DECOR);
+    
     // Define session
     SESSION = file_read(SESSION_LOG, 1, 20);
     
@@ -224,12 +219,9 @@ void display_window_manager() {
     GtkWidget *widg = gtk_menu_button_new();
     GtkWidget *menu = gtk_menu_new();
     
-    // Define structs to hold widget information
-    int pos[4] = {XPOS, YPOS, WIDTH, HEIGHT};
-    const GdkRGBA color[4] = {BG_WIN, BG_WM, FG_WIN, FG_WM};
-    
     // Setup window manager button
-    setup_widget(win, widg, pos, color);
+    set_widget_color(win, widg, DECOR);
+    setup_widget(win, widg, POS);
     setup_menu(widg, menu);
     
     // Display the window manager button

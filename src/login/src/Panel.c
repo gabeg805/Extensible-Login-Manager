@@ -64,6 +64,11 @@
 //                          the general setup function, I used the universal setup 
 //                          function.
 // 
+//     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
+//                          header file. Included the new functions that read in from
+//                          the preferences file, "set_pref_pos" and 
+//                          "set_pref_decor".
+// 
 // **********************************************************************************
 
 
@@ -73,41 +78,7 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/glm.h"
 #include "../hdr/Panel.h"
-#include "../hdr/Utility.h"
-#include <gtk/gtk.h>
-#include <stdlib.h>
-
-#define SHUTDOWN_XPOS     1366-32*1
-#define REBOOT_XPOS       1366-32*2
-#define REFRESH_XPOS      1366-32*3
-#define DIALOG_XPOS       505
-#define SHUTDOWN_YPOS     768-32
-#define REBOOT_YPOS       768-32
-#define REFRESH_YPOS      768-32
-#define DIALOG_YPOS       310
-#define SHUTDOWN_WIDTH    0
-#define REBOOT_WIDTH      0
-#define REFRESH_WIDTH     0
-#define SHUTDOWN_HEIGHT   0
-#define REBOOT_HEIGHT     0
-#define REFRESH_HEIGHT    0
-#define BG_SHUTDOWN       (const GdkRGBA) {0, 0, 0, 0}
-#define BG_REBOOT         (const GdkRGBA) {0, 0, 0, 0}
-#define BG_REFRESH        (const GdkRGBA) {0, 0, 0, 0}
-#define BG_WIN            (const GdkRGBA) {0, 0, 0, 0}
-#define FG_WIN            (const GdkRGBA) {0, 0, 0, 0}
-#define FG_SHUTDOWN       (const GdkRGBA) {1, 1, 1, 1}
-#define FG_REBOOT         (const GdkRGBA) {1, 1, 1, 1}
-#define FG_REFRESH        (const GdkRGBA) {1, 1, 1, 1}
-#define SHUTDOWN_IMG      "/etc/X11/glm/img/interface/shutdown.png"
-#define REBOOT_IMG        "/etc/X11/glm/img/interface/reboot.png"
-#define REFRESH_IMG       "/etc/X11/glm/img/interface/refresh.png"
-#define POWEROFF          "/usr/bin/poweroff"
-#define REBOOT            "/usr/bin/reboot"
-#define SYSTEMCTL         "/usr/bin/systemctl"
-
 
 // Declares
 static void setup_button(GtkWidget *widg, char *pic);
@@ -117,7 +88,15 @@ static void system_reboot();
 static void cancel_glm();
 static void refresh_glm();
 static void quit_glm();
-void display_panel();
+
+static struct glmpos SHUT_POS;
+static struct glmpos REB_POS;
+static struct glmpos REF_POS;
+static struct glmpos DIA_POS;
+
+static struct glmdecor SHUT_DECOR;
+static struct glmdecor REB_DECOR;
+static struct glmdecor REF_DECOR;
 
 
 
@@ -158,7 +137,7 @@ static void setup_dialog() {
     gtk_grid_attach(GTK_GRID(grid), quit_button,      4, 2, 1, 1);
     
     // Add grid to window
-    gtk_window_move(GTK_WINDOW(window), DIALOG_XPOS, DIALOG_YPOS);
+    gtk_window_move(GTK_WINDOW(window), DIA_POS.x, DIA_POS.y);
     gtk_container_add(GTK_CONTAINER(window), grid);
     
     // Show widgets
@@ -226,42 +205,55 @@ static void quit_glm() {
 // Display button panel 
 void display_panel() {
     
+    // Allocate memory for strings
+    SHUT_DECOR.img_file = malloc(READ_CHAR_LEN);
+    REB_DECOR.img_file  = malloc(READ_CHAR_LEN);
+    REF_DECOR.img_file  = malloc(READ_CHAR_LEN);
+    
+    // Define variables in preferences file
+    set_pref_pos(PANEL_SHUT_PREF, &SHUT_POS);
+    set_pref_pos(PANEL_REB_PREF,  &REB_POS);
+    set_pref_pos(PANEL_REF_PREF,  &REF_POS);
+    set_pref_pos(PANEL_DIA_PREF,  &DIA_POS);
+    
+    set_pref_decor(PANEL_SHUT_PREF, &SHUT_DECOR);
+    set_pref_decor(PANEL_REB_PREF,  &REB_DECOR);
+    set_pref_decor(PANEL_REF_PREF,  &REF_DECOR);
+    
+    // #)@(#*$@#)($* CAN MAKE THIS INTO MULTIPLE FUNCTIONS @)#(*$@#)
+    
     // Initialize button panel items
-    GtkWidget *shutdown_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *reboot_window   = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *refresh_window  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *shutdown = gtk_button_new();
-    GtkWidget *reboot   = gtk_button_new();
-    GtkWidget *refresh  = gtk_button_new();
-    
-    // Define structs to hold widget information
-    int shutdown_pos[4] = {SHUTDOWN_XPOS, SHUTDOWN_YPOS, SHUTDOWN_WIDTH, SHUTDOWN_HEIGHT};
-    int reboot_pos[4]   = {REBOOT_XPOS,   REBOOT_YPOS,   REBOOT_WIDTH,   REBOOT_HEIGHT};
-    int refresh_pos[4]  = {REFRESH_XPOS,  REFRESH_YPOS,  REFRESH_WIDTH,  REFRESH_HEIGHT};
-    
-    const GdkRGBA shutdown_color[4] = {BG_WIN, BG_SHUTDOWN, FG_WIN, FG_SHUTDOWN};
-    const GdkRGBA reboot_color[4]   = {BG_WIN, BG_REBOOT,   FG_WIN, FG_REBOOT};
-    const GdkRGBA refresh_color[4]  = {BG_WIN, BG_REFRESH,  FG_WIN, FG_REFRESH};
+    GtkWidget *shut_win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *reb_win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *ref_win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget *shut = gtk_button_new();
+    GtkWidget *reb  = gtk_button_new();
+    GtkWidget *ref  = gtk_button_new();
     
     
     // Setup widgets
-    setup_widget(shutdown_window, shutdown, shutdown_pos, shutdown_color);
-    setup_widget(reboot_window,   reboot,   reboot_pos,   reboot_color);
-    setup_widget(refresh_window,  refresh,  refresh_pos,  refresh_color);
+    set_widget_color(shut_win, shut, SHUT_DECOR);
+    set_widget_color(reb_win,  reb,  REB_DECOR);
+    set_widget_color(ref_win,  ref,  REF_DECOR);
     
-    setup_button(shutdown, SHUTDOWN_IMG);
-    setup_button(reboot,   REBOOT_IMG);
-    setup_button(refresh,  REFRESH_IMG);
+    setup_widget(shut_win, shut, SHUT_POS);
+    setup_widget(reb_win,  reb,  REB_POS);
+    setup_widget(ref_win,  ref,  REF_POS);
     
-    g_signal_connect(G_OBJECT(shutdown), "clicked", G_CALLBACK(system_shutdown), NULL);
-    g_signal_connect(G_OBJECT(reboot),   "clicked", G_CALLBACK(system_reboot),   NULL);
-    g_signal_connect(G_OBJECT(refresh),  "clicked", G_CALLBACK(setup_dialog),    NULL);
+    setup_button(shut, SHUT_DECOR.img_file);
+    setup_button(reb,  REB_DECOR.img_file);
+    setup_button(ref,  REF_DECOR.img_file);
+    
+    g_signal_connect(G_OBJECT(shut), "clicked", G_CALLBACK(system_shutdown), NULL);
+    g_signal_connect(G_OBJECT(reb),   "clicked", G_CALLBACK(system_reboot),   NULL);
+    g_signal_connect(G_OBJECT(ref),  "clicked", G_CALLBACK(setup_dialog),    NULL);
+    
     
     // Display the button panel
-    gtk_widget_show(shutdown);
-    gtk_widget_show(reboot);
-    gtk_widget_show(refresh);
-    gtk_widget_show(shutdown_window);
-    gtk_widget_show(reboot_window);
-    gtk_widget_show(refresh_window);
+    gtk_widget_show(shut);
+    gtk_widget_show(reb);
+    gtk_widget_show(ref);
+    gtk_widget_show(shut_win);
+    gtk_widget_show(reb_win);
+    gtk_widget_show(ref_win);
 }

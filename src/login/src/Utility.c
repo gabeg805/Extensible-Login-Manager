@@ -94,6 +94,13 @@
 //                          (char *). It seems they're not that expensive so I'm
 //                          keeping them as returning as returning (char *).
 // 
+//     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
+//                          header file. Also added new funtions that read in key 
+//                          value pairs from a preferences file. In doing so I remove
+//                          all the preprocessor define statements and just put all 
+//                          the variables I need into glm structures. This hopefully 
+//                          makes the code look cleaner.
+// 
 // **********************************************************************************
 
 
@@ -104,29 +111,6 @@
 
 // Includes
 #include "../hdr/Utility.h"
-#include <gtk/gtk.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <assert.h>
-#include <signal.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-
-
-//Declares
-void cleanup_child(int signal);
-int count_char(char *str, char val);
-int get_open_tty();
-int get_open_display();
-void file_write(char *file, char *opt, const char *fmt, ...);
-char * file_read(char *file, int ln, int sz);
-char * command_line(char *cmd, size_t sz, size_t sza);
-void enable_transparency(GtkWidget *widget);
-void set_widget_color(GtkWidget *win, GtkWidget *widg, const GdkRGBA color[4]);
-void setup_widget(GtkWidget *win, GtkWidget *widg, int pos[4], const GdkRGBA color[4]);
 
 
 
@@ -351,14 +335,34 @@ void enable_transparency(GtkWidget *widget) {
 // ///// SET WIDGET COLOR AND OPACITY /////
 // ////////////////////////////////////////
 
-// Setup widget color
-void set_widget_color(GtkWidget *win, GtkWidget *widg, const GdkRGBA color[4]) {
+// Set the color of a widget 
+void set_widget_color(GtkWidget *win, GtkWidget *widg, struct glmdecor decor) {
     
-    // Set the color scheme
-    gtk_widget_override_background_color(win, GTK_STATE_FLAG_NORMAL, &color[0]);
-    gtk_widget_override_background_color(widg, GTK_STATE_FLAG_NORMAL, &color[1]);
-    gtk_widget_override_color(win, GTK_STATE_FLAG_NORMAL, &color[2]);
-    gtk_widget_override_color(widg, GTK_STATE_FLAG_NORMAL, &color[3]);
+    // Define background and foreground window color
+    const GdkRGBA bg_win = {0, 0, 0, 0};
+    const GdkRGBA fg_win = {0, 0, 0, 0};
+    
+    // Define background and foreground widget color
+    double bg_red = (double) decor.bg_red   / decor.div,
+        bg_green  = (double) decor.bg_green / decor.div,
+        bg_blue   = (double) decor.bg_blue  / decor.div,
+        bg_alpha  = (double) decor.bg_alpha / decor.div;
+    
+    double fg_red = (double) decor.fg_red   / decor.div,
+        fg_green  = (double) decor.fg_green / decor.div,
+        fg_blue   = (double) decor.fg_blue  / decor.div,
+        fg_alpha  = (double) decor.fg_alpha / decor.div;
+    
+    const GdkRGBA bg_widg = {bg_red, bg_green, bg_blue, bg_alpha};
+    const GdkRGBA fg_widg = {fg_red, fg_green, fg_blue, fg_alpha};
+    
+    // Make window invisible
+    gtk_widget_override_background_color(win, GTK_STATE_FLAG_NORMAL, &bg_win);
+    gtk_widget_override_color(win, GTK_STATE_FLAG_NORMAL, &fg_win);
+    
+    // Set widget color and transparency
+    gtk_widget_override_background_color(widg, GTK_STATE_FLAG_NORMAL, &bg_widg);
+    gtk_widget_override_color(widg, GTK_STATE_FLAG_NORMAL, &fg_widg);
 }
 
 
@@ -368,15 +372,11 @@ void set_widget_color(GtkWidget *win, GtkWidget *widg, const GdkRGBA color[4]) {
 // ////////////////////////
 
 // Universal setup function
-void setup_widget(GtkWidget *win, GtkWidget *widg, int pos[4], const GdkRGBA color[4]) {
+void setup_widget(GtkWidget *win, GtkWidget *widg, struct glmpos pos) {
     
     // Set window attributes
-    gtk_window_move(GTK_WINDOW(win), pos[0], pos[1]);
-    gtk_window_set_default_size(GTK_WINDOW(win), pos[2], pos[3]);
-    
-    // Set color scheme for root window
-    if ( color != NULL )
-        set_widget_color(win, widg, color);
+    gtk_window_move(GTK_WINDOW(win), pos.x, pos.y);
+    gtk_window_set_default_size(GTK_WINDOW(win), pos.width, pos.height);
     
     // Add entry to window
     gtk_container_add(GTK_CONTAINER(win), widg);
@@ -386,4 +386,195 @@ void setup_widget(GtkWidget *win, GtkWidget *widg, int pos[4], const GdkRGBA col
     
     // GTK signals
     g_signal_connect(win, "destroy", G_CALLBACK(gtk_main_quit), NULL);    
+}
+
+
+
+void read_pref_char(char *ret, int n, int m, char *file, char *key) {
+    
+    // File variables
+    FILE *handle = fopen(file, "r");
+    char temp[n];
+    
+    // Compare attribute name with length of key
+    int count = 0,
+        len = strlen(key);
+    
+    // Array indicies
+    int i = 0,
+        j = 0;
+    
+    // Loop through line by line the contents of the preference file
+    while ( fgets(temp, sizeof(temp), handle) != NULL ) {
+        
+        // Reset to 0
+        count = 0;
+        i = 0; 
+        j = 0;
+        
+        bool sep = false,
+            found = false;
+        
+        // Loop through each char of the line
+        while ( temp[i] != 0 ) {
+            
+            // Compare attribute name to given key
+            if ( !sep || !found ) {
+                
+                if ( temp[i] == ':' )
+                    sep = true;
+                
+                if ( !found && (i < len) && (temp[i] == key[i]) )
+                    ++count;
+                
+                if ( count == len )
+                    found = true;
+                
+            } else {
+                
+                // Attribute found, store value of attribute
+                if ( (j == 0) && (temp[i] == ' ') )
+                    ;
+                else {
+                    // Keep space for null terminater and ignore newlines
+                    if ( (j < (m-1)) && (temp[i] != '\n') ) {
+                        
+                        // If match found then clear memory
+                        if ( j == 0 )
+                            memset(ret, 0, m);
+                        
+                        // Add char to the return array
+                        ret[j] = temp[i];
+                        ++j;
+                    }
+                }
+            }
+            
+            ++i;
+        }
+        
+        // Attribute was found so return the value
+        if ( found )
+            break;
+    }
+    
+    // Close the file
+    fclose(handle);
+    
+    // Set default value to 0 if key not found
+    if ( j == 0 )
+        ret = NULL;
+}
+
+
+
+void read_pref_int(int *ret, int n, char *file, char *key) {
+    
+    // File variables
+    FILE *handle = fopen(file, "r");
+    char temp[n];
+    
+    // Compare attribute name with length of key
+    int count = 0,
+        len = strlen(key);
+    
+    // Array indicies
+    int i = 0,
+        j = 0;
+    
+    // Loop through line by line the contents of the preference file
+    while ( fgets(temp, sizeof(temp), handle) != NULL ) {
+        
+        // Reset to 0
+        count = 0;
+        i = 0;
+        j = 0;
+        
+        bool sep = false,
+            found = false;
+        
+        // Loop through each char of the line
+        while ( temp[i] != 0 ) {
+            
+            // Compare attribute name to given key
+            if ( !sep || !found ) {
+                
+                if ( temp[i] == ':' )
+                    sep = true;
+                
+                if ( !found && (i < len) && (temp[i] == key[i]) )
+                    ++count;
+                
+                if ( count == len )
+                    found = true;
+                
+            } else {
+                
+                // Attribute found, store value of attribute
+                if ( (j == 0) && (temp[i] == ' ') )
+                    ;
+                else {
+                    if ( temp[i] != '\n' ) {
+                        *ret = (*ret * 10) + (temp[i] - '0');
+                        ++j;
+                    }
+                }
+            }
+            
+            ++i;
+        }
+        
+        // Attribute was found so return the value
+        if ( found )
+            break;
+    }
+    
+    // Close the file
+    fclose(handle);
+    
+    // Set default value to 0 if key not found
+    if ( j == 0 )
+        *ret = 0;
+}
+
+
+void set_pref_pos(char *file, struct glmpos *pos) {
+    read_pref_int(&pos->x,      READ_INT_LEN, file, "xpos");
+    read_pref_int(&pos->y,      READ_INT_LEN, file, "ypos");
+    read_pref_int(&pos->width,  READ_INT_LEN, file, "width");
+    read_pref_int(&pos->height, READ_INT_LEN, file, "height");
+}
+
+void set_pref_txt(char *file, struct glmtxt *txt) {
+    read_pref_int(&txt->size,     READ_CHAR_LEN, file, "size");
+    read_pref_int(&txt->maxchars, READ_CHAR_LEN, file, "maxchars");
+    
+    read_pref_char(txt->text,     READ_CHAR_LEN, READ_INT_LEN, file, "text");
+    read_pref_char(txt->font,     READ_CHAR_LEN, READ_INT_LEN, file, "font");
+    read_pref_char(txt->fmt,      READ_CHAR_LEN, READ_INT_LEN, file, "fmt");
+    read_pref_char(&txt->invis,   READ_CHAR_LEN, READ_INT_LEN, file, "invis");
+    
+    read_pref_int(&txt->red,      READ_CHAR_LEN, file, "txt-red");
+    read_pref_int(&txt->green,    READ_CHAR_LEN, file, "txt-green");
+    read_pref_int(&txt->blue,     READ_CHAR_LEN, file, "txt-blue");
+}
+
+void set_pref_decor(char *file, struct glmdecor *decor) {
+    read_pref_char(decor->img_file, READ_PATH_LEN, READ_CHAR_LEN, file, "img-file");
+    
+    read_pref_int(&decor->bg_red,   READ_INT_LEN,  file, "bg-red");
+    read_pref_int(&decor->bg_green, READ_INT_LEN,  file, "bg-green");
+    read_pref_int(&decor->bg_blue,  READ_INT_LEN,  file, "bg-blue");
+    read_pref_int(&decor->bg_alpha, READ_INT_LEN,  file, "bg-alpha");
+    
+    read_pref_int(&decor->fg_red,   READ_INT_LEN,  file, "fg-red");
+    read_pref_int(&decor->fg_green, READ_INT_LEN,  file, "fg-green");
+    read_pref_int(&decor->fg_blue,  READ_INT_LEN,  file, "fg-blue");
+    read_pref_int(&decor->fg_alpha, READ_INT_LEN,  file, "fg-alpha");
+    
+    read_pref_int(&decor->div,      READ_INT_LEN,  file, "div");
+    
+    // Set default value to 1
+    if ( decor->div == 0 )
+        decor->div = 1;
 }

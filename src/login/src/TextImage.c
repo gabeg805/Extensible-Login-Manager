@@ -56,6 +56,10 @@
 // 
 //     gabeg Nov 08 2014 <> Moved the position of the text image 
 // 
+//     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
+//                          header file. Included the new functions that read in from
+//                          the preferences file, "set_pref_pos" and "set_pref_txt".
+// 
 // **********************************************************************************
 
 
@@ -65,24 +69,15 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/glm.h"
 #include "../hdr/TextImage.h"
-#include "../hdr/Utility.h"
-#include <gtk/gtk.h>
-#include <cairo.h>
-#include <string.h>
 
-#define XPOS    570
-#define YPOS    325
-#define FSIZE   12
-#define STR     "Password:"
-#define FONT    "DejaVu Sans"
-
-
-// Declares
+// Private functions
 static void draw_text(cairo_t *);
 static gboolean draw_text_window(GtkWidget *window);
-void display_text_image();
+
+// Declares
+static struct glmpos POS;
+static struct glmtxt TXT;
 
 
 
@@ -92,11 +87,11 @@ void display_text_image();
 
 // Draw the text
 static void draw_text(cairo_t *cr) {         
-    cairo_select_font_face(cr, FONT, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, FSIZE);
-    cairo_set_source_rgb(cr, 0, 0, 0);
-    cairo_move_to(cr, 0, FSIZE);
-    cairo_show_text(cr, STR);
+    cairo_select_font_face(cr, TXT.font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size(cr, TXT.size);
+    cairo_set_source_rgb(cr, TXT.red, TXT.green, TXT.blue);
+    cairo_move_to(cr, 0, TXT.size);
+    cairo_show_text(cr, TXT.text);
 }
 
 
@@ -130,15 +125,20 @@ static gboolean draw_text_window(GtkWidget *window) {
 // Dislay the text image
 void display_text_image() {
     
+    // Allocate memory for strings
+    TXT.text = malloc(READ_CHAR_LEN);
+    TXT.font = malloc(READ_CHAR_LEN);
+    
+    // Define values from preference file    
+    set_pref_pos(TEXT_PREF, &POS);
+    set_pref_txt(TEXT_PREF, &TXT);
+    
     // Initialize text image elements
     GtkWidget *win = gtk_window_new(GTK_WINDOW_POPUP);
     GtkWidget *widg = gtk_drawing_area_new();
     
-    // Define structs to hold widget informationx
-    int pos[4] = {XPOS, YPOS, FSIZE*strlen(STR), FSIZE+1};
-    
     // Setup text image
-    setup_widget(win, widg, pos, NULL);
+    setup_widget(win, widg, POS);
     g_signal_connect(G_OBJECT(widg), "draw", G_CALLBACK(draw_text_window), NULL);
     
     // Display the password text image

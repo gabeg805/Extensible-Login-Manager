@@ -70,6 +70,9 @@
 //     gabeg Nov 01 2014 <> Changed "command_line" return value to be (char *) so
 //                          altered code to reflect that change.
 // 
+//     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
+//                          header file.
+// 
 // **********************************************************************************
 
 
@@ -79,36 +82,13 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/glm.h"
 #include "../hdr/Authenticate.h"
-#include "../hdr/Utility.h"
-#include <security/pam_appl.h>
-#include <security/pam_misc.h>
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <signal.h>
-#include <unistd.h>
-#include <pwd.h>
-#include <grp.h>
-#include <stdio.h>
-#include <string.h>
 
-#define AWK        "/usr/bin/awk"
-#define GREP       "/usr/bin/grep"
-#define LOGINCTL   "/usr/bin/loginctl"
-#define SESSREG    "/usr/bin/sessreg"
-#define UTMP_ADD   "/run/utmp"
-#define UTMP_DEL   "/var/run/utmp"
-#define WTMP       "/var/log/wtmp"
-#define XINITRC    "/etc/X11/glm/src/x/xinitrc"
-
-
-// Declares
+// Private functions
 static void init_env(pam_handle_t *pam_handle, struct passwd *pw);
 static void manage_login_records(const char *username, char *opt);
 static int is_pam_success(int result, pam_handle_t *pamh);
 static int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr);
-int login(const char *username, const char *password);
 
 char TTY[6];
 
