@@ -1,6 +1,6 @@
 CC      = gcc
 LIBS    = gtk+-3.0 cairo
-CFLAGS  = -g -Wall -lpam -O2
+CFLAGS  = -g -Wall -lpam
 CFLAGS += `pkg-config $(LIBS) --cflags --libs`
 
 PROGRAM = glm

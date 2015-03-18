@@ -100,23 +100,23 @@ login manager on startup.
 
 In case you want to MAKE CHANGES TO SOURCE CODE, to:
     
-    - Change variable values inside the '.c' source files
+    - Change variable values inside the '.pref' files or the '.h' header files
             * I would suggest to only alter the values of the "#define" statements,
               if you change any other variables then it's up to you to keep track of
               the implications (dependency-wise).
     
     - Add/remove a function from any of the '.c' files. 
             * Be sure to add/remove the function in the declaration at the top of the
-              '.c' file, as well as in the '.h' header file. After that, see below.
+              '.c' or '.h' source file. After that, see below.
     
     - Rename a file.
             * Be sure to change the names of source, header, and object files (they 
               all depend on one another). 
             
             * Change the '#include' statement at the top of the files that depend on 
-              the one you changed. A simple way to check is to look at all the source
-              files (.c) for the filename:
-                    # grep -i "FILENAME" *.c
+              the one you changed. A simple way to check is to look at all the header
+              files (.h) for the filename:
+                    # grep -i "FILENAME" *.h
             
             * Change the header guard in the header file. This means that if you want
               to rename, say, 'Clock', to 'Timepiece', then in the header file where 
@@ -133,8 +133,7 @@ In case you want to MAKE CHANGES TO SOURCE CODE, to:
                Once you're done with the final step, see below.
 
                
-After you have done everything you needed to, run the 'make' command. 
-Note: Being in the location where the 'Makefile' is, is crucial when running 'make'.
+After you have done everything, be sure to run the 'make' command!
 
 
 
