@@ -26,10 +26,10 @@
 // 
 // FUNCTIONS:
 // 
-//     draw_frame      - Draw the login frame
-//     draw_window     - Draw the root window
+//     draw_frame    - Draw the login frame.
+//     draw_window   - Draw the root window.
 // 
-//     display_frame   - Display the login frame
+//     display_frame - Display the login frame.
 // 
 // 
 // FILE STRUCTURE:
@@ -62,6 +62,10 @@
 //                          header file. Included the new functions that read in from
 //                          the preferences file, "set_pref_pos".
 // 
+//     gabeg Mar 19 2015 <> Utilized the universal setup function and also enabled 
+//                          a method to have the application write verbosely to the  
+//                          log, in the event that a problem arises.
+// 
 // **********************************************************************************
 
 
@@ -74,11 +78,11 @@
 #include "../hdr/Frame.h"
 
 // Private functions
-static void draw_frame(cairo_t *);
+static void draw_frame(cairo_t *cr);
 static gboolean draw_window(GtkWidget *widget);
 
 // Declares
-static struct glmpos POS;
+static struct glmapp APP;
 
 
 
@@ -90,16 +94,18 @@ static struct glmpos POS;
 static void draw_frame(cairo_t *cr) { 
     
     // Custom shape that could be wrapped in a function 
-    double rad = POS.height / 5.0;
-    double deg = M_PI / 180.0;
+    double width = APP.pos.width,
+        height   = APP.pos.height,
+        rad      = height / 5.0,
+        deg      = M_PI / 180.0;
     
     // Create the rouded rectangle
     cairo_set_line_width (cr, 0);
     cairo_new_sub_path(cr);
-    cairo_arc(cr, POS.width-rad, rad,            rad, -90*deg,   0*deg);
-    cairo_arc(cr, POS.width-rad, POS.height-rad, rad,   0*deg,  90*deg);
-    cairo_arc(cr, rad,           POS.height-rad, rad,  90*deg, 180*deg);
-    cairo_arc(cr, rad,           rad,            rad, 180*deg, 270*deg);
+    cairo_arc(cr, width-rad, rad,        rad, -90*deg,   0*deg);
+    cairo_arc(cr, width-rad, height-rad, rad,   0*deg,  90*deg);
+    cairo_arc(cr, rad,       height-rad, rad,  90*deg, 180*deg);
+    cairo_arc(cr, rad,       rad,        rad, 180*deg, 270*deg);
     cairo_close_path (cr);
     
     // Check for window transparency
@@ -114,10 +120,10 @@ static void draw_frame(cairo_t *cr) {
 
 
 // Draw the root window 
-static gboolean draw_window(GtkWidget *widget) {
+static gboolean draw_window(GtkWidget *widg) {
     
     // Create Cairo widget for GTK window
-    cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widget));
+    cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widg));
     
     // Draw the window background
     cairo_set_source_rgba(cr, 0, 0, 0, 0);    
@@ -140,18 +146,18 @@ static gboolean draw_window(GtkWidget *widget) {
 // Display the login frame
 void display_frame() {
     
-    // Define values from the preferences file
-    set_pref_pos(FRAME_PREF, &POS);
+    // Log function start
+    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying login frame...",
+               __FILE__, __FUNCTION__, __LINE__);
     
-    // Initialize date gui widget
-    GtkWidget *win = gtk_window_new(GTK_WINDOW_POPUP);
-    GtkWidget *widg = gtk_drawing_area_new();
+    // Define the application widget
+    APP.win  = gtk_window_new(GTK_WINDOW_POPUP);
+    APP.widg = gtk_drawing_area_new(); 
     
-    // Setup frame
-    setup_widget(win, widg, POS);
-    g_signal_connect(G_OBJECT(widg), "draw", G_CALLBACK(draw_window), NULL);
+    // Create the login frame
+    setup_widget(FRAME_PREF, &APP, "draw", (void *)draw_window);
     
-    // Display the login frame
-    gtk_widget_show(widg);
-    gtk_widget_show(win);
+    // Log function completion
+    file_write(GLM_LOG, "a+", "Done\n");
 }
+

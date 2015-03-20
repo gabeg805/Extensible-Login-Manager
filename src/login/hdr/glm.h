@@ -20,7 +20,7 @@ extern char *USERNAME;
 extern char *PASSWORD;
 extern char *SESSION;
 extern char *GLM_LOG;
-extern int TTY_N;
+extern int  TTYN;
 extern bool INTERFACE;
 extern bool PREVIEW;
 

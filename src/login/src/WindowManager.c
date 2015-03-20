@@ -27,21 +27,21 @@
 // 
 // Functions:
 // 
-//     setup_menu             - Setup window manager dropdown menu
+//     setup_menu             - Setup window manager dropdown menu.
 // 
 //     wm_write_to_file       - Write to a file, which window manager to use for the 
-//                              session
+//                              session.
 // 
 //     set_wm_entries         - Determine which window manager(s) the system has and add 
-//                              them as entries to the menu
+//                              them as entries to the menu.
 // 
-//     display_window_manager - Display the window manager button
+//     display_window_manager - Display the window manager button.
 // 
 // 
 // File Structure:
 // 
 //     * Includes and Declares
-//     * Setup Window Manager Button
+//     * Setup Window Manager Menu
 //     * Write Window Manager to File
 //     * Add WM Entries to the Menu 
 //     * Display Window Manager
@@ -78,6 +78,10 @@
 //                          the preferences file, "set_pref_pos" and 
 //                          "set_pref_decor".
 // 
+//     gabeg Mar 19 2015 <> Utilized the universal setup function and also enabled 
+//                          a method to have the application write verbosely to the  
+//                          log, in the event that a problem arises.
+// 
 // **********************************************************************************
 
 
@@ -89,12 +93,9 @@
 #include "../hdr/WindowManager.h"
 
 // Declares
-static void setup_menu(GtkWidget *widg, GtkWidget *menu);
+static void setup_menu(struct glmapp app);
 static void wm_write_to_file(GtkMenu *item);
 static void set_wm_entries(GtkWidget *menu);
-
-static struct glmpos POS;
-static struct glmdecor DECOR;
 
 
 
@@ -103,18 +104,19 @@ static struct glmdecor DECOR;
 // /////////////////////////////////////
 
 // Setup window manager dropdown menu button
-static void setup_menu(GtkWidget *widg, GtkWidget *menu) {
+static void setup_menu(struct glmapp app) {
     
     // Set entries in window manager dropdown menu
+    GtkWidget *menu = gtk_menu_new();
     set_wm_entries(menu);
     
     // Modify button style
-    GtkWidget *image = gtk_image_new_from_file(DECOR.img_file);
-    gtk_button_set_image(GTK_BUTTON(widg), image);
-    gtk_button_set_relief(GTK_BUTTON(widg), GTK_RELIEF_NONE);
+    GtkWidget *icon = gtk_image_new_from_file(app.decor.img_file);
+    gtk_button_set_image(GTK_BUTTON(app.widg), icon);
+    gtk_button_set_relief(GTK_BUTTON(app.widg), GTK_RELIEF_NONE);
     
     // Make menu popup
-    gtk_menu_button_set_popup(GTK_MENU_BUTTON(widg), menu);
+    gtk_menu_button_set_popup(GTK_MENU_BUTTON(app.widg), menu);
 }
 
 
@@ -204,27 +206,25 @@ static void set_wm_entries(GtkWidget *menu) {
 // Display the window manager button
 void display_window_manager() {
     
-    // Allocate memory for strings
-    DECOR.img_file = malloc(READ_CHAR_LEN);
-    
-    // Define values from preference file
-    set_pref_pos(WM_PREF, &POS);
-    set_pref_decor(WM_PREF, &DECOR);
+    // Log function start
+    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying window manager menu button...", 
+               __FILE__, __FUNCTION__, __LINE__);
     
     // Define session
     SESSION = file_read(SESSION_LOG, 1, 20);
     
-    // Initialize window manager elements
-    GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *widg = gtk_menu_button_new();
-    GtkWidget *menu = gtk_menu_new();
+    // Allocate application attributes
+    static struct glmapp app;
+    app.decor.img_file = malloc(READ_CHAR_LEN);
     
-    // Setup window manager button
-    set_widget_color(win, widg, DECOR);
-    setup_widget(win, widg, POS);
-    setup_menu(widg, menu);
+    // Define the application widget
+    app.win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    app.widg = gtk_menu_button_new();
     
-    // Display the window manager button
-    gtk_widget_show(widg);
-    gtk_widget_show(win);
+    // Create the window manager menu button
+    setup_widget(WM_PREF, &app, NULL, NULL);
+    setup_menu(app);
+    
+    // Log function completion
+    file_write(GLM_LOG, "a+", "Done\n");
 }

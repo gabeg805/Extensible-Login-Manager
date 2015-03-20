@@ -21,7 +21,7 @@
 #define READ_PATH_LEN    100
 
 // Definitions
-struct glmpos { // Widget position and dimensions
+struct glmpos { // Widget position and size
     int x;
     int y;
     int width;
@@ -58,24 +58,32 @@ struct glmdecor { // Widget decoration
     int div;
 };
 
+struct glmapp { // Widget application
+    GtkWidget *win;
+    GtkWidget *widg;
+    struct glmpos pos;
+    struct glmtxt txt;
+    struct glmdecor decor;
+};
+
 
 // Public functions 
 void cleanup_child(int signal);
 int count_char(char *str, char val);
-int get_open_tty();
-int get_open_display();
 void file_write(char *file, char *opt, const char *fmt, ...);
 char * file_read(char *file, int ln, int sz);
 char * command_line(char *cmd, size_t sz, size_t sza);
-void enable_transparency(GtkWidget *widget);
+
 void read_pref_char(char *ret, int n, int m, char *file, char *key);
 void read_pref_int(int *ret, int n, char *file, char *key);
-    
+
 void set_pref_pos(char *file, struct glmpos *pos);
 void set_pref_txt(char *file, struct glmtxt *txt);
 void set_pref_decor(char *file, struct glmdecor *decor);
 
-void set_widget_color(GtkWidget *win, GtkWidget *widg, struct glmdecor decor);
-void setup_widget(GtkWidget *win, GtkWidget *widg, struct glmpos pos);
+void set_widget_pos(struct glmapp *app);
+void set_widget_color(struct glmapp *app);
+void enable_transparency(GtkWidget *widget);
+void setup_widget(char *file, struct glmapp *app, char *event, void (*func)(GtkWidget *widg));
 
 #endif

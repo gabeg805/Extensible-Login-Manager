@@ -1,6 +1,6 @@
 xpos: 110
 ypos: 575
-size: 46080
+size: 45
 font: Inconsolata
 fmt: %-I:%M %p
 bg-red: 0

@@ -12,10 +12,13 @@ OBJECTS = $(addprefix ./src/login/obj/, $(addsuffix .o, $(NAMES)))
 all: $(PROGRAM)
 
 ./src/login/obj/%.o: ./src/login/src/%.c 
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC) $(CFLAGS) \
+		-o $@ \
+		-c $<
 
 $(PROGRAM): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $(PROGRAM) $(OBJECTS)
+	$(CC) $(CFLAGS) \
+		-o $(PROGRAM) $(OBJECTS)
 
 .PHONY: clean
 clean : 

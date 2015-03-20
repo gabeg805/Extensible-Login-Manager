@@ -26,26 +26,27 @@
 // 
 // FUNCTIONS:
 // 
-//     cleanup_child       - Remove zombie processes
+//     cleanup_child       - Remove zombie processes.
 // 
-//     count_char          - Count number of times a character occurs in a string
+//     count_char          - Count number of times a character occurs in a string.
 // 
-//     get_open_tty        - Return an open TTY port
+//     file_write          - Write to a file.
 // 
-//     get_open_display    - Search for X display lock files and return a display 
-//                           that is not locked
+//     file_read           - Read a file's contents.
 // 
-//     file_write          - Write to a file
+//     command_line        - Return output of a Linux command.
 // 
-//     file_read           - Read a file's contents
+//     read_pref_char      - Read the preference file and output a string.
+//     read_pref_int       - Read the preference file and output an int.
 // 
-//     command_line        - Return output of a Linux command
+//     set_pref_pos        - Set position values defined in the preference file.
+//     set_pref_txt        - Set text values defined in the preference file.
+//     set_pref_decor      - Set decoration values defined in the preference file.
 // 
-//     enable_transparency - Enable widget transparency
-// 
-//     set_widget_color    - Set a widget's color and opacity 
-// 
-//     setup_widget        - Setup widget and window
+//     set_widget_pos      - Set the size and position of the widget.
+//     set_widget_color    - Set the color and opacity of the widget.
+//     enable_transparency - Enable widget transparency.
+//     setup_app           - Setup the application.
 // 
 // 
 // FILE STRUCTURE:
@@ -53,14 +54,12 @@
 //     * Includes and Declares
 //     * Remove Zombie Processes
 //     * Character Count In String
-//     * Get Open TTY 
 //     * Write to File
 //     * Read File
-//     * Get Open X Display
 //     * Get Linux Command Output
-//     * Enable Widget Transparency
-//     * Set Widget Color and Opacity
-//     * Setup Widget
+//     * Read Preference File
+//     * Set Preference Values
+//     * Application Setup 
 // 
 // 
 // MODIFICATION HISTORY:
@@ -100,6 +99,11 @@
 //                          all the preprocessor define statements and just put all 
 //                          the variables I need into glm structures. This hopefully 
 //                          makes the code look cleaner.
+// 
+//     gabeg Mar 19 2015 <> Attempted to make code look cleaner by creating a 
+//                          universal setup function for each application by 
+//                          incorporating a struct 'glmapp' that holds everything an
+//                          app will need.
 // 
 // **********************************************************************************
 
@@ -142,81 +146,6 @@ int count_char(char *str, char val) {
     }
     
     return count;
-}
-
-
-
-// ////////////////////////
-// ///// GET OPEN TTY /////
-// ////////////////////////
-
-// Return an open TTY port
-// * Find a better way to do this
-int get_open_tty() {
-    
-    // Look for running process that opens TTY
-    /* char *cmd = "pgrep -a tty | grep -o -E 'tty. '"; */
-    /* char tty[50]; */
-    /* command_line(cmd, sizeof(tty), sizeof(tty), tty); */
-    /* int num = atoi(tty); */
-    
-    /* // Loop through all process command strings */
-    /* int n = 1, i = 1; */
-    /* while ( (num != 0) && (i <= num) ) { */
-    /*     char *sep; */
-    /*     char *buffer, *orig; */
-    /*     buffer = orig = strdup(tty[i]); */
-        
-    /*     while ( (sep = strsep(&buffer, " ")) != NULL ) { */
-            
-    /*         // Check process command for 'tty#' */
-    /*         char *ttyrun = strstr(sep, "tty"); */
-    /*         char *ttycmd = strstr(sep, "getty"); */
-            
-    /*         if ( (ttyrun != NULL) && (ttycmd == NULL) )  */
-    /*             n = atoi(&sep[3])+1; */
-    /*     } */
-        
-    /*     free(orig); */
-    /*     free(tty[i]); */
-    /*     i++; */
-    /* } */
-    
-    /* free(tty[0]); */
-    /* free(tty); */
-    int n = 7;
-    return n;
-}
-
-
-
-// //////////////////////////////
-// ///// GET OPEN X DISPLAY ///// 
-// //////////////////////////////
-
-// Return an open display in the form ':0'
-int get_open_display() {
-    
-    // Loop through possible displays
-    int d;
-    char filename[15];
-    /* char display[5]; */
-    
-    for ( d=0; d < 10; d++ ) {
-        
-        // Pieces of the actual file name
-        char *xtmp = "/tmp/.X";
-        char *xlock = "-lock";
-        snprintf(filename, sizeof(filename), "%s%d%s", xtmp, d, xlock);
-        
-        // Check for file existence
-        int result = access(filename, F_OK);
-        
-        if ( result != 0 ) 
-            break;
-    }
-    
-    return d;
 }
 
 
@@ -314,82 +243,12 @@ char * command_line(char *cmd, size_t sz, size_t sza) {
 
 
 
-// //////////////////////////////////////
-// ///// ENABLE WIDGET TRANSPARENCY /////
-// //////////////////////////////////////
 
-// Enable widget transparency
-void enable_transparency(GtkWidget *widget) {
-    
-    // To check if the display supports alpha channels, get the visual 
-    GdkScreen *screen = gtk_widget_get_screen(widget);
-    GdkVisual *visual = gdk_screen_get_rgba_visual(screen);
-    
-    // Set widget visual
-    gtk_widget_set_visual(widget, visual);
-}
+// ////////////////////////////////
+// ///// READ PREFERENCE FILE /////
+// ////////////////////////////////
 
-
-
-// ////////////////////////////////////////
-// ///// SET WIDGET COLOR AND OPACITY /////
-// ////////////////////////////////////////
-
-// Set the color of a widget 
-void set_widget_color(GtkWidget *win, GtkWidget *widg, struct glmdecor decor) {
-    
-    // Define background and foreground window color
-    const GdkRGBA bg_win = {0, 0, 0, 0};
-    const GdkRGBA fg_win = {0, 0, 0, 0};
-    
-    // Define background and foreground widget color
-    double bg_red = (double) decor.bg_red   / decor.div,
-        bg_green  = (double) decor.bg_green / decor.div,
-        bg_blue   = (double) decor.bg_blue  / decor.div,
-        bg_alpha  = (double) decor.bg_alpha / decor.div;
-    
-    double fg_red = (double) decor.fg_red   / decor.div,
-        fg_green  = (double) decor.fg_green / decor.div,
-        fg_blue   = (double) decor.fg_blue  / decor.div,
-        fg_alpha  = (double) decor.fg_alpha / decor.div;
-    
-    const GdkRGBA bg_widg = {bg_red, bg_green, bg_blue, bg_alpha};
-    const GdkRGBA fg_widg = {fg_red, fg_green, fg_blue, fg_alpha};
-    
-    // Make window invisible
-    gtk_widget_override_background_color(win, GTK_STATE_FLAG_NORMAL, &bg_win);
-    gtk_widget_override_color(win, GTK_STATE_FLAG_NORMAL, &fg_win);
-    
-    // Set widget color and transparency
-    gtk_widget_override_background_color(widg, GTK_STATE_FLAG_NORMAL, &bg_widg);
-    gtk_widget_override_color(widg, GTK_STATE_FLAG_NORMAL, &fg_widg);
-}
-
-
-
-// ////////////////////////
-// ///// SETUP WIDGET /////
-// ////////////////////////
-
-// Universal setup function
-void setup_widget(GtkWidget *win, GtkWidget *widg, struct glmpos pos) {
-    
-    // Set window attributes
-    gtk_window_move(GTK_WINDOW(win), pos.x, pos.y);
-    gtk_window_set_default_size(GTK_WINDOW(win), pos.width, pos.height);
-    
-    // Add entry to window
-    gtk_container_add(GTK_CONTAINER(win), widg);
-    
-    // Enable transparency
-    enable_transparency(win);
-    
-    // GTK signals
-    g_signal_connect(win, "destroy", G_CALLBACK(gtk_main_quit), NULL);    
-}
-
-
-
+// Read the preference file and output a string
 void read_pref_char(char *ret, int n, int m, char *file, char *key) {
     
     // File variables
@@ -468,6 +327,7 @@ void read_pref_char(char *ret, int n, int m, char *file, char *key) {
 
 
 
+// Read preference file and output an int
 void read_pref_int(int *ret, int n, char *file, char *key) {
     
     // File variables
@@ -515,6 +375,9 @@ void read_pref_int(int *ret, int n, char *file, char *key) {
                     ;
                 else {
                     if ( temp[i] != '\n' ) {
+                        if ( j == 0 )
+                            *ret = 0;
+                        
                         *ret = (*ret * 10) + (temp[i] - '0');
                         ++j;
                     }
@@ -538,6 +401,12 @@ void read_pref_int(int *ret, int n, char *file, char *key) {
 }
 
 
+
+// /////////////////////////////////
+// ///// SET PREFERENCE VALUES /////
+// /////////////////////////////////
+
+// Set preference position values
 void set_pref_pos(char *file, struct glmpos *pos) {
     read_pref_int(&pos->x,      READ_INT_LEN, file, "xpos");
     read_pref_int(&pos->y,      READ_INT_LEN, file, "ypos");
@@ -545,6 +414,9 @@ void set_pref_pos(char *file, struct glmpos *pos) {
     read_pref_int(&pos->height, READ_INT_LEN, file, "height");
 }
 
+
+
+// Set preference text values
 void set_pref_txt(char *file, struct glmtxt *txt) {
     read_pref_int(&txt->size,     READ_CHAR_LEN, file, "size");
     read_pref_int(&txt->maxchars, READ_CHAR_LEN, file, "maxchars");
@@ -559,6 +431,9 @@ void set_pref_txt(char *file, struct glmtxt *txt) {
     read_pref_int(&txt->blue,     READ_CHAR_LEN, file, "txt-blue");
 }
 
+
+
+// Set preference decoration values
 void set_pref_decor(char *file, struct glmdecor *decor) {
     read_pref_char(decor->img_file, READ_PATH_LEN, READ_CHAR_LEN, file, "img-file");
     
@@ -577,4 +452,95 @@ void set_pref_decor(char *file, struct glmdecor *decor) {
     // Set default value to 1
     if ( decor->div == 0 )
         decor->div = 1;
+}
+
+
+
+// /////////////////////////////
+// ///// APPLICATION SETUP /////
+// /////////////////////////////
+
+// Set widget position 
+void set_widget_pos(struct glmapp *app) {
+    
+    // Set window attributes
+    gtk_window_move(GTK_WINDOW(app->win), app->pos.x, app->pos.y);
+    gtk_window_set_default_size(GTK_WINDOW(app->win), app->pos.width, app->pos.height);
+}
+
+
+
+// Set the color of a widget 
+void set_widget_color(struct glmapp *app) {
+    
+    /* if ( decor == NULL ) */
+    /*     return; */
+    
+    // Define background and foreground window color
+    const GdkRGBA bg_win = {0, 0, 0, 0};
+    const GdkRGBA fg_win = {0, 0, 0, 0};
+    
+    // Define background and foreground widget color
+    double bg_red = (double) app->decor.bg_red   / app->decor.div,
+        bg_green  = (double) app->decor.bg_green / app->decor.div,
+        bg_blue   = (double) app->decor.bg_blue  / app->decor.div,
+        bg_alpha  = (double) app->decor.bg_alpha / app->decor.div;
+    
+    double fg_red = (double) app->decor.fg_red   / app->decor.div,
+        fg_green  = (double) app->decor.fg_green / app->decor.div,
+        fg_blue   = (double) app->decor.fg_blue  / app->decor.div,
+        fg_alpha  = (double) app->decor.fg_alpha / app->decor.div;
+    
+    const GdkRGBA bg_widg = {bg_red, bg_green, bg_blue, bg_alpha};
+    const GdkRGBA fg_widg = {fg_red, fg_green, fg_blue, fg_alpha};
+    
+    // Make window invisible
+    gtk_widget_override_background_color(app->win, GTK_STATE_FLAG_NORMAL, &bg_win);
+    gtk_widget_override_color(           app->win, GTK_STATE_FLAG_NORMAL, &fg_win);
+    
+    // Set widget color and transparency
+    gtk_widget_override_background_color(app->widg, GTK_STATE_FLAG_NORMAL, &bg_widg);
+    gtk_widget_override_color(           app->widg, GTK_STATE_FLAG_NORMAL, &fg_widg);
+}
+
+
+
+// Enable widget transparency
+void enable_transparency(GtkWidget *widg) {
+    
+    // To check if the display supports alpha channels, get the visual 
+    GdkScreen *screen = gtk_widget_get_screen(widg);
+    GdkVisual *visual = gdk_screen_get_rgba_visual(screen);
+    
+    // Set widget visual
+    gtk_widget_set_visual(widg, visual);
+}
+
+
+
+// Setup the widget
+void setup_widget(char *file, struct glmapp *app, char *event, void (*func)(GtkWidget *widg)) {
+    
+    // Define variables in preferences file
+    set_pref_pos(  file, &app->pos);
+    set_pref_txt(  file, &app->txt);
+    set_pref_decor(file, &app->decor);
+    
+    // Setup the widget
+    set_widget_pos(app);
+    set_widget_color(app);
+    enable_transparency(app->win);
+    
+    // Add widget to the application window
+    gtk_container_add(GTK_CONTAINER(app->win), app->widg);
+    
+    // Application signals    
+    g_signal_connect(app->win, "destroy", G_CALLBACK(gtk_main_quit), NULL);    
+    
+    if ( event != NULL )
+        g_signal_connect(G_OBJECT(app->widg), event, G_CALLBACK(func), NULL);
+    
+    // Display the login frame
+    gtk_widget_show(app->widg);
+    gtk_widget_show(app->win);
 }

@@ -119,7 +119,7 @@ static void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
     char runtime_dir[100];
     char xauthority[100];
     
-    snprintf(vtnr, sizeof(vtnr), "%d", TTY_N);
+    snprintf(vtnr, sizeof(vtnr), "%d", TTYN);
     snprintf(runtime_dir, sizeof(runtime_dir), "%s/%d", "/run/user", pw->pw_uid);
     snprintf(xauthority, sizeof(xauthority), "%s/%s", pw->pw_dir, ".Xauthority");
     
@@ -251,7 +251,7 @@ int login(const char *username, const char *password) {
     if (!is_pam_success(result, pam_handle)) return 0;
     
     // Set PAM items
-    snprintf(TTY, sizeof(TTY), "%s%d", "tty", TTY_N);
+    snprintf(TTY, sizeof(TTY), "%s%d", "tty", TTYN);
     
     result = pam_set_item(pam_handle, PAM_USER, username);
     if (!is_pam_success(result, pam_handle)) return 0;

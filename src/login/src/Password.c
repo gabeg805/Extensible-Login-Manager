@@ -26,11 +26,11 @@
 // 
 // FUNCTIONS:
 // 
-//     setup_entry            - Initialize the entry box
+//     setup_entry            - Setup the entry box.
 // 
-//     get_entry_text         - Return user entry text
+//     get_entry_text         - Return user entry text.
 // 
-//     display_password_entry - Display password entry box
+//     display_password_entry - Display password entry box.
 // 
 // 
 // FILE STRUCTURE:
@@ -60,6 +60,10 @@
 //                          the preferences file, "set_pref_pos", "set_pref_txt", and
 //                          "set_pref_decor".
 // 
+//     gabeg Mar 19 2015 <> Utilized the universal setup function and also enabled 
+//                          a method to have the application write verbosely to the  
+//                          log, in the event that a problem arises.
+// 
 // **********************************************************************************
 
 
@@ -72,12 +76,11 @@
 #include "../hdr/Password.h"
 
 // Private functions
-static void setup_entry(GtkWidget *entry);
-static void get_entry_text(GtkWidget *entry);
+static void setup_entry();
+static void get_entry_text(GtkWidget *widg);
 
-static struct glmpos POS;
-static struct glmtxt TXT;
-static struct glmdecor DECOR;
+// Application (if error, could be cuz of static)
+static struct glmapp APP;
 
 
 
@@ -85,23 +88,23 @@ static struct glmdecor DECOR;
 // ///// SETUP ENTRY BOX /////
 // ///////////////////////////
 
-// Initialize the entry box
-static void setup_entry(GtkWidget *entry) {
+// Setup the entry box
+static void setup_entry() {
     
     // Set entry box attributes
-    gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-    gtk_entry_set_invisible_char(GTK_ENTRY(entry), TXT.invis);
+    gtk_entry_set_visibility(GTK_ENTRY(APP.widg), FALSE);
+    gtk_entry_set_invisible_char(GTK_ENTRY(APP.widg), APP.txt.invis);
     
     GtkEntryBuffer *buf = gtk_entry_buffer_new(NULL, -1);
-    gtk_entry_buffer_set_max_length(buf, TXT.maxchars);
-    gtk_entry_set_buffer(GTK_ENTRY(entry), buf);
+    gtk_entry_buffer_set_max_length(buf, APP.txt.maxchars);
+    gtk_entry_set_buffer(GTK_ENTRY(APP.widg), buf);
     
     
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
-    PangoAttribute *attrFont = pango_attr_family_new(TXT.font);
-    PangoAttribute *attrSize = pango_attr_size_new(TXT.size);
-    PangoAttribute *attrColor = pango_attr_foreground_new(TXT.red, TXT.green, TXT.blue);
+    PangoAttribute *attrFont = pango_attr_family_new(APP.txt.font);
+    PangoAttribute *attrSize = pango_attr_size_new( (long)1024 * APP.txt.size );
+    PangoAttribute *attrColor = pango_attr_foreground_new(APP.txt.red, APP.txt.green, APP.txt.blue);
     
     // Add attributes to the list (and increase the reference counter)
     attrList = pango_attr_list_ref(attrList);
@@ -111,7 +114,7 @@ static void setup_entry(GtkWidget *entry) {
     pango_attr_list_insert(attrList, attrColor);
     
     // Set the attributes
-    gtk_entry_set_attributes(GTK_ENTRY(entry), attrList);
+    gtk_entry_set_attributes(GTK_ENTRY(APP.widg), attrList);
 }
 
 
@@ -121,10 +124,10 @@ static void setup_entry(GtkWidget *entry) {
 // //////////////////////////
 
 // Return user entry text
-static void get_entry_text(GtkWidget *entry) {
+static void get_entry_text(GtkWidget *widg) {
     
     // Get the text from the entry buffer
-    GtkEntryBuffer *buf = gtk_entry_get_buffer(GTK_ENTRY(entry));
+    GtkEntryBuffer *buf = gtk_entry_get_buffer(GTK_ENTRY(APP.widg));
     const gchar *text =	gtk_entry_buffer_get_text(buf);
     
     // Check the length (make sure enter wasn't accidentally hit)
@@ -132,12 +135,12 @@ static void get_entry_text(GtkWidget *entry) {
     
     // Reset the buffer
     buf = gtk_entry_buffer_new(NULL, -1);
-    gtk_entry_buffer_set_max_length(buf, TXT.maxchars);
-    gtk_entry_set_buffer(GTK_ENTRY(entry), buf);
+    gtk_entry_buffer_set_max_length(buf, APP.txt.maxchars);
+    gtk_entry_set_buffer(GTK_ENTRY(APP.widg), buf);
     
     // Quit the entry widget
     if ( len != 0 ) {
-        gtk_widget_destroy(entry);
+        gtk_widget_destroy(APP.widg);
         gtk_main_quit();
         
         PASSWORD = (char*)text;
@@ -153,25 +156,21 @@ static void get_entry_text(GtkWidget *entry) {
 // Display the password entry box
 void display_password_entry() {
     
-    // Allocate memory for strings
-    TXT.font = malloc(READ_CHAR_LEN);
+    // Log function start
+    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying password entry box...", 
+               __FILE__, __FUNCTION__, __LINE__);
     
-    // Define values in preference file    
-    set_pref_pos(PASS_PREF, &POS);
-    set_pref_txt(PASS_PREF, &TXT);
-    set_pref_decor(PASS_PREF, &DECOR);
+    // Allocate application attributes
+    APP.txt.font = malloc(READ_CHAR_LEN);
     
-    // Initialize password entry box elements
-    GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *widg = gtk_entry_new();
+    // Define the application widget
+    APP.win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    APP.widg = gtk_entry_new();
     
-    // Setup password entry box
-    set_widget_color(win, widg, DECOR);
-    setup_widget(win, widg, POS);
-    setup_entry(widg);
-    g_signal_connect(G_OBJECT(widg), "activate", G_CALLBACK(get_entry_text), NULL);
+    // Create the password entry box
+    setup_widget(PASS_PREF, &APP, "activate", get_entry_text);
+    setup_entry();
     
-    // Display password entry box
-    gtk_widget_show(widg);
-    gtk_widget_show(win);
+    // Log function completion
+    file_write(GLM_LOG, "a+", "Done\n");
 }

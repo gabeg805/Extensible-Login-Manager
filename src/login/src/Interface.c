@@ -26,7 +26,7 @@
 // 
 // FUNCTIONS:
 // 
-//     login_interface - Display the login interface
+//     login_interface - Display the login interface.
 // 
 // 
 // FILE STRUCTURE:
@@ -51,6 +51,9 @@
 // 
 //     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
 //                          header file.
+// 
+//     gabeg Mar 19 2015 <> Enabled a method to have the application write verbosely 
+//                          to the log, in the event that a problem arises.
 // 
 // **********************************************************************************
 
@@ -78,8 +81,9 @@ void login_interface(int argc, char *argv[]) {
     // Display login interface items
     if ( INTERFACE ) {
         
-        // Log interface display
-        file_write(GLM_LOG, "a+", "%s\n", "Displaying login interface...");
+        // Log function start
+        file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying login interface...\n", 
+                   __FILE__, __FUNCTION__, __LINE__);
         
         // Display interface items
         display_clock();
@@ -97,9 +101,10 @@ void login_interface(int argc, char *argv[]) {
     // Display entry box (and define password)
     display_password_entry();
     
+    // Log function completion
+    file_write(GLM_LOG, "a+", "%s: (%s:%d): Done displaying login interface.\n",
+               __FILE__, __FUNCTION__, __LINE__);
+    
     // Begin GTK main loop
     gtk_main();
-    
-    // Log interface display is done
-    file_write(GLM_LOG, "a+", "%s\n", "Login interface finished.");
 }

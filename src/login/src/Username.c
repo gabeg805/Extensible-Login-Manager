@@ -26,28 +26,27 @@
 // 
 // FUNCTIONS:
 // 
-//     setup_menu             - Setup user menu 
-//     setup_label            - Setup user menu label
+//     setup_menu             - Setup user menu.
+//     setup_label            - Setup user menu label.
 // 
-//     usermenu_write_to_file - Write username to file
+//     usermenu_write_to_file - Write username to file.
 // 
-//     get_username           - Get username/uid combination from the specified file
+//     get_username           - Get username/uid combination from the specified file.
 // 
-//     set_username_entries   - Set entries in the user menu
+//     set_username_entries   - Set entries in the user menu.
 // 
-//     display_icon           - Display username icon 
-//     display_username       - Display the username menu
+//     display_icon           - Display username icon.
+//     display_username       - Display the username menu.
 // 
 // 
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
-//     * Display Username Icon
 //     * Setup Username Menu
 //     * Write User Menu Item to File
 //     * Get Username-UID Combination
 //     * Add Username Entries to the Menu
-//     * Display Username Menu
+//     * Display Username 
 // 
 // 
 // MODIFICATION HISTORY:
@@ -83,6 +82,10 @@
 //                          the preferences file, "set_pref_pos", "set_pref_txt", and
 //                          "set_pref_decor".
 // 
+//     gabeg Mar 19 2015 <> Utilized the universal setup function and also enabled 
+//                          a method to have the application write verbosely to the  
+//                          log, in the event that a problem arises.
+// 
 // **********************************************************************************
 
 
@@ -95,19 +98,13 @@
 #include "../hdr/Username.h"
 
 // Declares
-static void display_icon();
-static void setup_menu(GtkWidget *widg, GtkWidget *label);
-static void setup_label(GtkWidget *label);
+static void setup_menu(struct glmapp app);
+static void setup_label(GtkWidget *label, struct glmtxt txt);
 static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label);
 static char ** get_username(char *file, int size);
 static void set_username_entries(GtkWidget *menu, GtkWidget *label);
-
-static struct glmpos USR_POS;
-static struct glmtxt USR_TXT;
-static struct glmdecor USR_DECOR;
-
-static struct glmpos IMG_POS;
-static struct glmdecor IMG_DECOR;
+static void display_icon();
+static void display_usr_menu();
 
 
 
@@ -116,31 +113,35 @@ static struct glmdecor IMG_DECOR;
 // ///////////////////////////////
 
 // Setup dropdown menu that displays users
-static void setup_menu(GtkWidget *widg, GtkWidget *label) {
+static void setup_menu(struct glmapp app) {
+    
+    // Define label and menu widgets
+    GtkWidget *label = gtk_label_new("");
+    GtkWidget *menu = gtk_menu_new();
     
     // Set username menu attributes
-    GtkWidget *menu = gtk_menu_new();
     set_username_entries(menu, label);
-    
-    // Modify button style
-    setup_label(label);
+    setup_label(label, app.txt);
     
     // Attach the window manager menu to the dropdown menu
-    gtk_menu_button_set_popup(GTK_MENU_BUTTON(widg), menu);
-    gtk_container_add(GTK_CONTAINER(widg), label);
-    gtk_button_set_relief(GTK_BUTTON(widg), GTK_RELIEF_NORMAL);
+    gtk_menu_button_set_popup(GTK_MENU_BUTTON(app.widg), menu);
+    gtk_container_add(GTK_CONTAINER(app.widg), label);
+    gtk_button_set_relief(GTK_BUTTON(app.widg), GTK_RELIEF_NORMAL);
+    
+    // Display the label
+    gtk_widget_show(label);
 }
 
 
 
 // Setup the label for the dropdown menu
-static void setup_label(GtkWidget *label) {
+static void setup_label(GtkWidget *label, struct glmtxt txt) {
     
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
-    PangoAttribute *attrFont = pango_attr_family_new(USR_TXT.font);
-    PangoAttribute *attrSize = pango_attr_size_new(USR_TXT.size);
-    PangoAttribute *attrColor = pango_attr_foreground_new(USR_TXT.red, USR_TXT.green, USR_TXT.blue);
+    PangoAttribute *attrFont = pango_attr_family_new(txt.font);
+    PangoAttribute *attrSize = pango_attr_size_new( (long)1024 * txt.size );
+    PangoAttribute *attrColor = pango_attr_foreground_new(txt.red, txt.green, txt.blue);
     
     // Add attributes to the list (and increase the reference counter)
     attrList = pango_attr_list_ref(attrList);
@@ -322,65 +323,65 @@ static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
 
 
 
-// /////////////////////////////////
-// ///// DISPLAY USERNAME MENU /////
-// /////////////////////////////////
+// ////////////////////////////
+// ///// DISPLAY USERNAME /////
+// ////////////////////////////
 
 // Display username icon
-void display_icon() {
+static void display_icon() {
     
-    // Allocate memory for strings
-    IMG_DECOR.img_file = malloc(READ_CHAR_LEN);
+    // Log function start
+    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying Username icon...", 
+               __FILE__, __FUNCTION__, __LINE__);
     
-    // Define values from preference file
-    set_pref_pos(USER_IMG_PREF, &IMG_POS);
-    set_pref_decor(USER_IMG_PREF, &IMG_DECOR);
+    // Allocate application attributes
+    struct glmapp app;
+    app.decor.img_file = malloc(READ_CHAR_LEN);
     
-    // Initialize username icon widget elements
-    GtkWidget *win = gtk_window_new(GTK_WINDOW_POPUP);
-    GtkWidget *widg = gtk_image_new_from_file(IMG_DECOR.img_file);
+    // Define the application widget
+    app.win  = gtk_window_new(GTK_WINDOW_POPUP);
+    app.widg = gtk_image_new();
     
-    // Setup icon widget
-    set_widget_color(win, widg, IMG_DECOR);
-    setup_widget(win, widg, IMG_POS);
+    // Create the username icon
+    setup_widget(USER_IMG_PREF, &app, NULL, NULL);
+    gtk_image_set_from_file(GTK_IMAGE(app.widg), app.decor.img_file);
     
-    // Display icon widget
-    gtk_widget_show(widg);
-    gtk_widget_show(win);
+    // Log function completion
+    file_write(GLM_LOG, "a+", "Done\n");
 }
 
 
 
 // Display the username menu
-void display_username() {
+static void display_usr_menu() {
     
-    // Allocate memory for strings
-    USR_TXT.font       = malloc(READ_CHAR_LEN);
-    USR_DECOR.img_file = malloc(READ_CHAR_LEN);
-    
-    // Define values from preference file
-    set_pref_pos(USER_PREF, &USR_POS);
-    set_pref_txt(USER_PREF, &USR_TXT);
-    set_pref_decor(USER_PREF, &USR_DECOR);
+    // Log function start
+    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying Username menu button...", 
+               __FILE__, __FUNCTION__, __LINE__);
     
     // Define username
     USERNAME = file_read(USERNAME_LOG, 1, 20);
     
-    // Initialize username menu elements
-    GtkWidget *win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    GtkWidget *widg = gtk_menu_button_new();
-    GtkWidget *label = gtk_label_new("");
+    // Allocate application attributes
+    struct glmapp app;
+    app.txt.font       = malloc(READ_CHAR_LEN);
+    app.decor.img_file = malloc(READ_CHAR_LEN);
     
-    // Display username icon
+    // Define the application widget
+    app.win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    app.widg = gtk_menu_button_new();
+    
+    // Create the login frame
+    setup_widget(USER_PREF, &app, NULL, NULL);
+    setup_menu(app);
+    
+    // Log function completion
+    file_write(GLM_LOG, "a+", "Done\n");
+}
+
+
+// Display username bundle
+void display_username() {
     display_icon();
-    
-    // Setup username menu widget
-    set_widget_color(win, widg, USR_DECOR);
-    setup_widget(win, widg, USR_POS);
-    setup_menu(widg, label);
-    
-    // Display the username menu
-    gtk_widget_show(label);
-    gtk_widget_show(widg);
-    gtk_widget_show(win);
+    display_usr_menu();
 }

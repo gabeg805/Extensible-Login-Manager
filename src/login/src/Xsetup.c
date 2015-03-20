@@ -26,16 +26,23 @@
 // 
 // FUNCTIONS:
 // 
-//     start_xserver - Start the X server
+//     set_open_display - Search for X display lock files and return a display 
+//                        that is not locked.
 // 
-//     start_compman - Start the compositing manager
+//     set_open_tty     - Return an open TTY port.
 // 
-//     xsetup        - Setup X 
+//     start_xserver    - Start the X server.
+// 
+//     start_compman    - Start the compositing manager.
+// 
+//     xsetup           - Setup X.
 // 
 // 
 // FILE STRUCTURE:
 // 
 //     * Includes and Declares
+//     * Set Open X Display
+//     * Set Open TTY
 //     * Start X Server
 //     * Start Compositing Manager
 //     * Setup X 
@@ -68,6 +75,10 @@
 //     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
 //                          header file.
 // 
+//     gabeg Mar 19 2015 <> Utilized the universal setup function and also enabled 
+//                          a method to have the application write verbosely to the  
+//                          log, in the event that a problem arises.
+// 
 // **********************************************************************************
 
 
@@ -83,6 +94,86 @@
 static void start_xserver();
 static void start_compman();
 
+char DISPLAY[4];
+char VT[6];
+
+
+
+// //////////////////////////////
+// ///// SET OPEN X DISPLAY ///// 
+// //////////////////////////////
+
+// Return an open display in the form ':0'
+void set_open_display() {
+    
+    // Log function start
+    file_write(GLM_LOG, "a+", "%s: (%s:%d): Searching for an open display...", 
+               __FILE__, __FUNCTION__, __LINE__);
+    
+    // Used display file name
+    char *xtmp = "/tmp/.X";
+    char *xlock = "-lock";
+    char file[15];
+    
+    // Loop through possible open displays
+    int d;
+    bool open = false;
+    
+    for ( d=0; d < 10; d++ ) {
+        
+        // Piece together the file name
+        snprintf(file, sizeof(file), "%s%d%s", xtmp, d, xlock);
+        
+        // Check if the file exists (display in use, if exists)
+        if ( access(file, F_OK) ) {
+            open = true;
+            break;
+        }
+    }
+    
+    // Found open display
+    if ( open ) {
+        
+        // Set the display environment variable
+        snprintf(DISPLAY, sizeof(DISPLAY), ":%d", d);
+        setenv("DISPLAY", DISPLAY, 1);
+        
+        // Log function completion
+        file_write(GLM_LOG, "a+", "Done.\n%s: (%s:%d): Display '%s' is open.\n", 
+                   __FILE__, __FUNCTION__, __LINE__, DISPLAY);
+    } else {
+        
+        // Log function end
+        file_write(GLM_LOG, "a+", 
+                   "Error.\n%s (%s:%d): An open display could not be found. Exiting...\n", 
+                   __FILE__, __FUNCTION__, __LINE__);
+        exit(1);
+    }
+}
+
+
+
+// ////////////////////////
+// ///// SET OPEN TTY /////
+// ////////////////////////
+
+// Return an open TTY port
+// * Find a better way to do this
+void set_open_tty() {
+    
+    // Log function start
+    file_write(GLM_LOG, "a+", "%s: (%s:%d): Determining TTY...", 
+               __FILE__, __FUNCTION__, __LINE__);
+    
+    // Choosing 7 as the default virtual terminal
+    TTYN = 7;
+    snprintf(VT, sizeof(VT), "%s%d", "vt", TTYN);
+    
+    // Log function completion
+    file_write(GLM_LOG, "a+", "Done.\n%s: (%s:%d): TTY number is '%d'.\n", 
+               __FILE__, __FUNCTION__, __LINE__, TTYN);
+}
+
 
 
 // //////////////////////////
@@ -92,18 +183,15 @@ static void start_compman();
 // Start the X server
 void start_xserver() {
     
-    // Log X start
-    file_write(GLM_LOG, "a+", "%s\n", "Starting X server...");
+    // Log function start
+    file_write(GLM_LOG, "a+", "%s: (%s:%d): Starting X server...\n", 
+               __FILE__, __FUNCTION__, __LINE__);
     
     // Set the display environment variable
-    char DISPLAY[3]  = ":0";
-    DISPLAY[1] = get_open_display() + '0';    
-    setenv("DISPLAY", DISPLAY, 1);
+    set_open_display();
     
     // Get open tty port
-    TTY_N = get_open_tty();
-    char VT[6];
-    snprintf(VT, sizeof(VT), "%s%d", "vt", TTY_N);
+    set_open_tty();
     
     // Start X server
     pid_t child_pid = fork();
@@ -113,9 +201,9 @@ void start_xserver() {
               XSERVER_AUTH, VT, NULL);
     }
     
-    
-    // Log X start
-    file_write(GLM_LOG, "a+", "%s\n", "X server is active.");
+    // Log function completion
+    file_write(GLM_LOG, "a+", "%s: (%s:%d): X server is active.\n", 
+               __FILE__, __FUNCTION__, __LINE__);
 }
 
 
@@ -127,8 +215,10 @@ void start_xserver() {
 // Start compositing manager (for transparency)
 void start_compman() {
     
-    // Log compositing manager start
-    file_write(GLM_LOG, "a+", "%s\n", "Starting compositing manager...");    
+    // Log function start
+    file_write(GLM_LOG, "a+", "%s: (%s:%d): Starting compositing manager...", 
+               __FILE__, __FUNCTION__, __LINE__);
+
     
     // Check if composite manager is already running
     size_t runsz = 5;
@@ -136,6 +226,10 @@ void start_compman() {
     char *val = command_line(compcmd, runsz, runsz);
     
     if ( atoi(val) != 0 ) {
+        
+        // Log status of composite manager
+        file_write(GLM_LOG, "a+", "Already running.\n");
+        
         free(val);
         return;
     }
@@ -188,9 +282,8 @@ void start_compman() {
         }
     }
     
-    
-    // Log status of composite manager
-    file_write(GLM_LOG, "a+", "%s\n", "Composite manager is active.");
+    // Log function completion
+    file_write(GLM_LOG, "a+", "Done.\n");
     
     // Free memory
     free(val);
@@ -204,11 +297,6 @@ void start_compman() {
 
 // Setup X for login manager
 void xsetup() {
-    
-    // Log program start
-    size_t datesz = 40;
-    char *date_str = command_line(DATE, datesz, datesz);
-    file_write(GLM_LOG, "a+", "\n%s %s%s %d\n\n", "Date:", date_str, "Preview:", PREVIEW);
     
     // Start X server when not in preview mode
     if ( !PREVIEW ) 
@@ -229,7 +317,4 @@ void xsetup() {
     
     // Log that interface is allowed start
     INTERFACE = true;
-    
-    // Free memory
-    free(date_str);
 }

@@ -68,7 +68,7 @@ char *USERNAME = "User";
 char *PASSWORD = "Password";
 char *SESSION  = "xterm";
 char *GLM_LOG  = "/etc/X11/glm/log/glm.log";
-int TTY_N      = 4;
+int  TTYN      = 1;
 bool INTERFACE = false;
 bool PREVIEW   = false;
 
@@ -85,19 +85,22 @@ int main(int argc, char *argv[]) {
     if ( (argc == 2) && (strcmp(argv[1], "-p") == 0) )
         PREVIEW = true;    
     
+    // Log program start
+    time_t t;
+    time(&t);
+    file_write(GLM_LOG, "a+", "\nDate: %s", ctime(&t));
+    
     // Setup X
     xsetup();
     
     // Start the login loop
-    bool loop = true;
-    
-    while (loop) {
+    while (true) {
         
         // Authenticate username/password combination
         login_interface(argc, argv);
         
         if ( login(USERNAME, PASSWORD) )
-            loop = false;
+            break;
     }
     
     // Free memory
