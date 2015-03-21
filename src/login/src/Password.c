@@ -71,7 +71,7 @@
 //                          a method to have the application write verbosely to the  
 //                          log, in the event that a problem arises.
 // 
-//     gabeg Mar 21 2015 <> Altered the pango foreground color to auto-scale by 255
+//     gabeg Mar 21 2015 <> Altered the pango foreground color to auto-scale by 256
 //                          so that the user does not have to. Note: The pango color
 //                          color is strange.
 // 
@@ -115,9 +115,9 @@ static void setup_entry() {
     PangoAttrList *attrList = pango_attr_list_new();
     PangoAttribute *attrFont = pango_attr_family_new(APP.txt.font);
     PangoAttribute *attrSize = pango_attr_size_new( (long)1024 * APP.txt.size );
-    PangoAttribute *attrColor = pango_attr_foreground_new( (long)255 * APP.txt.red, 
-                                                           (long)255 * APP.txt.green, 
-                                                           (long)255 * APP.txt.blue);
+    PangoAttribute *attrColor = pango_attr_foreground_new( (long)256 * APP.txt.red, 
+                                                           (long)256 * APP.txt.green, 
+                                                           (long)256 * APP.txt.blue);
     
     // Add attributes to the list (and increase the reference counter)
     attrList = pango_attr_list_ref(attrList);
