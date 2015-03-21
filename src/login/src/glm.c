@@ -1,5 +1,12 @@
 // 
-// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CONTRIBUTORS: 
+// 
+//     * Gabriel Gonzalez (gabeg@bu.edu) 
+// 
+// 
+// LICENSE: 
+// 
+//     The MIT License (MIT)
 // 
 // 
 // NAME:
@@ -21,9 +28,11 @@
 //     screen.
 // 
 // 
-// KEYWORDS:
+// OPTIONS:
 // 
-//     N/A
+//     -p
+//         Starts the login manager in preview mode, which does not paint a new X 
+//         window.
 // 
 // 
 // FUNCTIONS:

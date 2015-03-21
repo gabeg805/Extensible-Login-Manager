@@ -1,5 +1,12 @@
 // 
-// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CONTRIBUTORS: 
+// 
+//     * Gabriel Gonzalez (gabeg@bu.edu) 
+// 
+// 
+// LICENSE: 
+// 
+//     The MIT License (MIT)
 // 
 // 
 // NAME:
@@ -19,7 +26,7 @@
 //     Create and display the image of the word 'Password:'.
 // 
 // 
-// KEYWORDS:
+// OPTIONS:
 // 
 //     N/A
 // 
@@ -81,6 +88,7 @@ static gboolean draw_window(GtkWidget *window);
 
 // Application
 static struct glmapp APP;
+
 
 
 // ///////////////////////////

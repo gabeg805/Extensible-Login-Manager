@@ -1,5 +1,12 @@
 // 
-// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CONTRIBUTORS: 
+// 
+//     * Gabriel Gonzalez (gabeg@bu.edu) 
+// 
+// 
+// LICENSE: 
+// 
+//     The MIT License (MIT)
 // 
 // 
 // NAME:
@@ -14,18 +21,18 @@
 //         #include "../hdr/WindowManager.h"
 // 
 // 
-// Purpose:
+// PURPOSE:
 // 
 //     Display a button for the user to choose between possible window managers for 
 //     their login session.
 // 
 // 
-// Keywords:
+// OPTIONS:
 // 
 //     N/A
 // 
 // 
-// Functions:
+// FUNCTIONS:
 // 
 //     setup_menu             - Setup window manager dropdown menu.
 // 
@@ -38,7 +45,7 @@
 //     display_window_manager - Display the window manager button.
 // 
 // 
-// File Structure:
+// FILE STRUCTURE:
 // 
 //     * Includes and Declares
 //     * Setup Window Manager Menu
@@ -47,7 +54,7 @@
 //     * Display Window Manager
 // 
 // 
-// Modification History:
+// MODIFICATION HISTORY:
 // 	
 //     gabeg Aug 02 2014 <> created
 // 
@@ -83,6 +90,7 @@
 //                          log, in the event that a problem arises.
 // 
 // **********************************************************************************
+
 
 
 // /////////////////////////////////
@@ -213,7 +221,7 @@ void display_window_manager() {
     // Define session
     SESSION = file_read(SESSION_LOG, 1, 20);
     
-    // Allocate application attributes
+    // Allocate space for application attributes
     static struct glmapp app;
     app.decor.img_file = malloc(READ_CHAR_LEN);
     

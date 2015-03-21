@@ -1,5 +1,12 @@
 // 
-// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CONTRIBUTORS: 
+// 
+//     * Gabriel Gonzalez (gabeg@bu.edu) 
+// 
+// 
+// LICENSE: 
+// 
+//     The MIT License (MIT)
 // 
 // 
 // NAME:
@@ -19,7 +26,7 @@
 //     Display a clock that updates every thirty seconds.
 // 
 // 
-// KEYWORDS:
+// OPTIONS:
 // 
 //     N/A
 // 

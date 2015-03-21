@@ -2,9 +2,9 @@ xpos: 665
 ypos: 197
 size: 23
 font: DejaVu Sans
-txt-red: 40960
-txt-green: 40960
-txt-blue: 40960
+txt-red: 160
+txt-green: 160
+txt-blue: 160
 bg-red: 0
 bg-green: 0
 bg-blue: 0

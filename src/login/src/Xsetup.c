@@ -1,5 +1,12 @@
 // 
-// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CONTRIBUTORS: 
+// 
+//     * Gabriel Gonzalez (gabeg@bu.edu) 
+// 
+// 
+// LICENSE: 
+// 
+//     The MIT License (MIT)
 // 
 // 
 // NAME:
@@ -19,7 +26,7 @@
 //     Sets up an X server along side a compositing manager to enable transparency.
 // 
 // 
-// KEYWORDS:
+// OPTIONS:
 // 
 //     N/A
 // 
@@ -91,6 +98,8 @@
 #include "../hdr/Xsetup.h"
 
 // Private functions
+static void set_open_display();
+static void set_open_tty();
 static void start_xserver();
 static void start_compman();
 
@@ -104,7 +113,7 @@ char VT[6];
 // //////////////////////////////
 
 // Return an open display in the form ':0'
-void set_open_display() {
+static void set_open_display() {
     
     // Log function start
     file_write(GLM_LOG, "a+", "%s: (%s:%d): Searching for an open display...", 
@@ -159,7 +168,7 @@ void set_open_display() {
 
 // Return an open TTY port
 // * Find a better way to do this
-void set_open_tty() {
+static void set_open_tty() {
     
     // Log function start
     file_write(GLM_LOG, "a+", "%s: (%s:%d): Determining TTY...", 
@@ -181,7 +190,7 @@ void set_open_tty() {
 // //////////////////////////
 
 // Start the X server
-void start_xserver() {
+static void start_xserver() {
     
     // Log function start
     file_write(GLM_LOG, "a+", "%s: (%s:%d): Starting X server...\n", 
@@ -213,7 +222,7 @@ void start_xserver() {
 // /////////////////////////////////////
 
 // Start compositing manager (for transparency)
-void start_compman() {
+static void start_compman() {
     
     // Log function start
     file_write(GLM_LOG, "a+", "%s: (%s:%d): Starting compositing manager...", 
@@ -239,7 +248,6 @@ void start_compman() {
     clock_gettime(CLOCK_MONOTONIC, &start);
     
     // Time the logging to X server log file
-    long BILLION = 1000000000L;
     int count = 0;
     char *last = NULL;
     
@@ -247,7 +255,7 @@ void start_compman() {
         
         // Calculate time between loops
         clock_gettime(CLOCK_MONOTONIC, &end); 
-        int64_t diff  = BILLION * (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec); 
+        int64_t diff  = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec); 
         
         // Check if server file exists
         if ( access(XSERVER_LOG, F_OK) != 0 )
@@ -274,7 +282,7 @@ void start_compman() {
         }
         
         // Once a safe amount of time has elapsed, execute the compositing manager
-        if ( (PREVIEW) || (count == 200) || (diff >= 5*BILLION) ) {
+        if ( PREVIEW || (count == 200) || (diff >= 5) ) {
             pid_t new_pid = fork();
             if ( new_pid == 0 )
                 execl(XCOMPMGR, XCOMPMGR, NULL);

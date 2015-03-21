@@ -1,5 +1,12 @@
 // 
-// CREATED BY: Gabriel Gonzalez (contact me at gabeg@bu.edu) 
+// CONTRIBUTORS: 
+// 
+//     * Gabriel Gonzalez (gabeg@bu.edu) 
+// 
+// 
+// LICENSE: 
+// 
+//     The MIT License (MIT)
 // 
 // 
 // NAME:
@@ -20,7 +27,7 @@
 //     specified in '~/.xinitrc'.
 // 
 // 
-// KEYWORDS:
+// OPTIONS:
 // 
 //     N/A
 // 
