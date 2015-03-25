@@ -82,9 +82,11 @@
 //     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
 //                          header file.
 // 
-//     gabeg Mar 19 2015 <> Utilized the universal setup function and also enabled 
+//     gabeg Mar 19 2015 <> Utilized the universal-setup function and also enabled 
 //                          a method to have the application write verbosely to the  
 //                          log, in the event that a problem arises.
+// 
+//     gabeg Mar 25 2015 <> Utilized the execute-preference-command function.
 // 
 // **********************************************************************************
 
@@ -115,9 +117,12 @@ char VT[6];
 // Return an open display in the form ':0'
 static void set_open_display() {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Log function start
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Searching for an open display...", 
-               __FILE__, __FUNCTION__, __LINE__);
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Searching for an open display...", 
+                 __FILE__, __FUNCTION__, __LINE__);
     
     // Used display file name
     char *xtmp = "/tmp/.X";
@@ -148,16 +153,21 @@ static void set_open_display() {
         setenv("DISPLAY", DISPLAY, 1);
         
         // Log function completion
-        file_write(GLM_LOG, "a+", "Done.\n%s: (%s:%d): Display '%s' is open.\n", 
-                   __FILE__, __FUNCTION__, __LINE__, DISPLAY);
+        if ( VERBOSE )
+            file_log("Done.\n%s: (%s:%d): Display '%s' is open.\n", 
+                     __FILE__, __FUNCTION__, __LINE__, DISPLAY);
     } else {
         
         // Log function end
-        file_write(GLM_LOG, "a+", 
-                   "Error.\n%s (%s:%d): An open display could not be found. Exiting...\n", 
-                   __FILE__, __FUNCTION__, __LINE__);
+        if ( VERBOSE )
+            file_log("Error.\n%s (%s:%d): An open display could not be found. Exiting...\n", 
+                     __FILE__, __FUNCTION__, __LINE__);
         exit(1);
     }
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -170,17 +180,26 @@ static void set_open_display() {
 // * Find a better way to do this
 static void set_open_tty() {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Log function start
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Determining TTY...", 
-               __FILE__, __FUNCTION__, __LINE__);
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Determining TTY...", 
+                 __FILE__, __FUNCTION__, __LINE__);
     
     // Choosing 7 as the default virtual terminal
     TTYN = 7;
     snprintf(VT, sizeof(VT), "%s%d", "vt", TTYN);
     
     // Log function completion
-    file_write(GLM_LOG, "a+", "Done.\n%s: (%s:%d): TTY number is '%d'.\n", 
-               __FILE__, __FUNCTION__, __LINE__, TTYN);
+    if ( VERBOSE )
+        file_log("Done.\n%s: (%s:%d): TTY number is '%d'.\n", 
+                 __FILE__, __FUNCTION__, __LINE__, TTYN);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+
 }
 
 
@@ -192,9 +211,12 @@ static void set_open_tty() {
 // Start the X server
 static void start_xserver() {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Log function start
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Starting X server...\n", 
-               __FILE__, __FUNCTION__, __LINE__);
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Starting X server...\n", 
+                 __FILE__, __FUNCTION__, __LINE__);
     
     // Set the display environment variable
     set_open_display();
@@ -211,8 +233,13 @@ static void start_xserver() {
     }
     
     // Log function completion
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): X server is active.\n", 
-               __FILE__, __FUNCTION__, __LINE__);
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): X server is active.\n", 
+                 __FILE__, __FUNCTION__, __LINE__);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -224,9 +251,12 @@ static void start_xserver() {
 // Start compositing manager (for transparency)
 static void start_compman() {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Log function start
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Starting compositing manager...", 
-               __FILE__, __FUNCTION__, __LINE__);
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Starting compositing manager...", 
+                 __FILE__, __FUNCTION__, __LINE__);
 
     
     // Check if composite manager is already running
@@ -237,13 +267,17 @@ static void start_compman() {
     if ( atoi(val) != 0 ) {
         
         // Log status of composite manager
-        file_write(GLM_LOG, "a+", "Already running.\n");
+        if ( VERBOSE )
+            file_log("Already running.\n");
         
         free(val);
         return;
     }
     
     // Initialize monotonic clock
+    double diff = 0,
+        ds = 0,
+        dn = 0;
     struct timespec start, end; 
     clock_gettime(CLOCK_MONOTONIC, &start);
     
@@ -255,7 +289,9 @@ static void start_compman() {
         
         // Calculate time between loops
         clock_gettime(CLOCK_MONOTONIC, &end); 
-        int64_t diff  = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec); 
+        ds   = (double)(end.tv_sec - start.tv_sec);
+        dn   = (double)(end.tv_nsec - start.tv_nsec) / 1e9;
+        diff = ds + dn; 
         
         // Check if server file exists
         if ( access(XSERVER_LOG, F_OK) != 0 )
@@ -291,10 +327,15 @@ static void start_compman() {
     }
     
     // Log function completion
-    file_write(GLM_LOG, "a+", "Done.\n");
+    if ( VERBOSE )
+        file_log("Done.\n");
     
     // Free memory
     free(val);
+    
+    if ( BENCHTIME ) 
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -306,23 +347,26 @@ static void start_compman() {
 // Setup X for login manager
 void xsetup() {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Start X server when not in preview mode
     if ( !PREVIEW ) 
         start_xserver();
     
     // Start compositing manager
-    start_compman();        
+    start_compman();
     
     // Set background 
-    char hcmd[75];
-    snprintf(hcmd, sizeof(hcmd), "%s %s %s", HSETROOT, "-fill", WALLPAPER);
-    system(hcmd);
+    exec_pref_cmd(X_PREF, 1);
+    
     
     // Cursor and background attributes
-    char xcmd[50];
-    snprintf(xcmd, sizeof(xcmd), "%s %s %s", XSETROOT, "-cursor_name", "left_ptr");
-    system(xcmd);
+    exec_pref_cmd(X_PREF, 2);
     
     // Log that interface is allowed start
     INTERFACE = true;
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }

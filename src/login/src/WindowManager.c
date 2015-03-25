@@ -114,6 +114,8 @@ static void set_wm_entries(GtkWidget *menu);
 // Setup window manager dropdown menu button
 static void setup_menu(struct glmapp app) {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Set entries in window manager dropdown menu
     GtkWidget *menu = gtk_menu_new();
     set_wm_entries(menu);
@@ -125,6 +127,10 @@ static void setup_menu(struct glmapp app) {
     
     // Make menu popup
     gtk_menu_button_set_popup(GTK_MENU_BUTTON(app.widg), menu);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -135,9 +141,16 @@ static void setup_menu(struct glmapp app) {
 
 // Write to a file, which window manager to use for the session
 static void wm_write_to_file(GtkMenu *item) {
+    
+    double bmtime = benchmark_runtime(0);
+    
     const gchar *sess = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
     snprintf(SESSION, strlen(sess)+1, "%s", (char*)sess);
     file_write(SESSION_LOG, "w", "%s\n", SESSION);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -148,6 +161,8 @@ static void wm_write_to_file(GtkMenu *item) {
 
 // Determine which window manager(s) the system has and add them as entries to the menu
 static void set_wm_entries(GtkWidget *menu) {
+    
+    double bmtime = benchmark_runtime(0);
     
     // Initialize WM session items
     GtkWidget *sesh;
@@ -203,6 +218,10 @@ static void set_wm_entries(GtkWidget *menu) {
     // Free used memory
     free(wm);
     free(wmstr);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -214,16 +233,18 @@ static void set_wm_entries(GtkWidget *menu) {
 // Display the window manager button
 void display_window_manager() {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Log function start
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying window manager menu button...", 
-               __FILE__, __FUNCTION__, __LINE__);
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Displaying window manager menu button...", 
+                 __FILE__, __FUNCTION__, __LINE__);
     
     // Define session
     SESSION = file_read(SESSION_LOG, 1, 20);
     
-    // Allocate space for application attributes
+    // Allocate space for application 
     static struct glmapp app;
-    app.decor.img_file = malloc(READ_CHAR_LEN);
     
     // Define the application widget
     app.win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -234,5 +255,10 @@ void display_window_manager() {
     setup_menu(app);
     
     // Log function completion
-    file_write(GLM_LOG, "a+", "Done\n");
+    if ( VERBOSE )
+        file_log("Done\n");
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }

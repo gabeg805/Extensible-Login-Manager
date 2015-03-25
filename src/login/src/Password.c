@@ -75,6 +75,8 @@
 //                          so that the user does not have to. Note: The pango color
 //                          color is strange.
 // 
+//     gabeg Mar 25 2015 <> No longer have to malloc for the application txt struct.
+// 
 // **********************************************************************************
 
 
@@ -102,9 +104,11 @@ static struct glmapp APP;
 // Setup the entry box
 static void setup_entry() {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Set entry box attributes
     gtk_entry_set_visibility(GTK_ENTRY(APP.widg), FALSE);
-    gtk_entry_set_invisible_char(GTK_ENTRY(APP.widg), APP.txt.invis);
+    gtk_entry_set_invisible_char(GTK_ENTRY(APP.widg), APP.txt.invis[0]);
     
     GtkEntryBuffer *buf = gtk_entry_buffer_new(NULL, -1);
     gtk_entry_buffer_set_max_length(buf, APP.txt.maxchars);
@@ -128,6 +132,10 @@ static void setup_entry() {
     
     // Set the attributes
     gtk_entry_set_attributes(GTK_ENTRY(APP.widg), attrList);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -138,6 +146,8 @@ static void setup_entry() {
 
 // Return user entry text
 static void get_entry_text(GtkWidget *widg) {
+    
+    double bmtime = benchmark_runtime(0);
     
     // Get the text from the entry buffer
     GtkEntryBuffer *buf = gtk_entry_get_buffer(GTK_ENTRY(APP.widg));
@@ -158,6 +168,10 @@ static void get_entry_text(GtkWidget *widg) {
         
         PASSWORD = (char*)text;
     }
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 } 
 
 
@@ -169,12 +183,12 @@ static void get_entry_text(GtkWidget *widg) {
 // Display the password entry box
 void display_password_entry() {
     
-    // Log function start
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying password entry box...", 
-               __FILE__, __FUNCTION__, __LINE__);
+    double bmtime = benchmark_runtime(0);
     
-    // Allocate application attributes
-    APP.txt.font = malloc(READ_CHAR_LEN);
+    // Log function start
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Displaying password entry box...", 
+                 __FILE__, __FUNCTION__, __LINE__);
     
     // Define the application widget
     APP.win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -185,5 +199,10 @@ void display_password_entry() {
     setup_entry();
     
     // Log function completion
-    file_write(GLM_LOG, "a+", "Done\n");
+    if ( VERBOSE )
+        file_log("Done\n");
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }

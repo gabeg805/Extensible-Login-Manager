@@ -80,6 +80,8 @@ char *GLM_LOG  = "/etc/X11/glm/log/glm.log";
 int  TTYN      = 1;
 bool INTERFACE = false;
 bool PREVIEW   = false;
+bool VERBOSE   = false;
+bool BENCHTIME = false;
 
 
 
@@ -90,14 +92,15 @@ bool PREVIEW   = false;
 // Display Gabe's Login Manager 
 int main(int argc, char *argv[]) {
     
-    // Read input parameters, check for 'Preview' mode
-    if ( (argc == 2) && (strcmp(argv[1], "-p") == 0) )
-        PREVIEW = true;    
+    // Read input cli arguments
+    cli_parse(argc, argv);
     
     // Log program start
-    time_t t;
-    time(&t);
-    file_write(GLM_LOG, "a+", "\nDate: %s", ctime(&t));
+    if ( VERBOSE || BENCHTIME ) {
+        time_t t;
+        time(&t);
+        file_log("\nDate: %s", ctime(&t));
+    }
     
     // Setup X
     xsetup();

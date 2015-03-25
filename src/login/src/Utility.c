@@ -33,10 +33,13 @@
 // 
 // FUNCTIONS:
 // 
+//     cli_parse           - Parse the command line arguments.
+// 
 //     cleanup_child       - Remove zombie processes.
 // 
 //     count_char          - Count number of times a character occurs in a string.
 // 
+//     file_log            - Write to the GLM log file.
 //     file_write          - Write to a file.
 // 
 //     file_read           - Read a file's contents.
@@ -58,6 +61,7 @@
 // 
 // FILE STRUCTURE:
 // 
+//     * Parse Input Options
 //     * Includes and Declares
 //     * Remove Zombie Processes
 //     * Character Count In String
@@ -112,6 +116,17 @@
 //                          incorporating a struct 'glmapp' that holds everything an
 //                          app will need.
 // 
+//     gabeg Mar 25 2015 <> Modified the "read_pref_char" function so that it 
+//                          allocates memory if it finds a match, that way the user 
+//                          doesn't have to manually malloc. Also, the function takes
+//                          in less arguments than before. Modified the 
+//                          "read_pref_int" function so that it utilizes the 
+//                          "read_pref_char" function, that way I don't repeat 
+//                          essentially the same code, then I just convert the string
+//                          it finds to an int. Added a function that reads and 
+//                          executes commands from the preference file, called 
+//                          "exec_pref_cmd". 
+// 
 // **********************************************************************************
 
 
@@ -122,6 +137,31 @@
 
 // Includes
 #include "../hdr/Utility.h"
+
+
+
+// ///////////////////////////////
+// ///// PARSE INPUT OPTIONS /////
+// ///////////////////////////////
+
+// Parse the command line arguments
+void cli_parse(int argc, char **argv) {
+    
+    int i = 0;
+    
+    while ( i < argc ) {
+        if ( (strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "--preview") == 0) )
+            PREVIEW = true;
+        
+        if ( (strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "--verbose") == 0) )
+            VERBOSE = true;
+        
+        if ( (strcmp(argv[i], "-t") == 0) || (strcmp(argv[i], "--time") == 0) )
+            BENCHTIME = true;
+        
+        ++i;
+    }
+}
 
 
 
@@ -160,6 +200,26 @@ int count_char(char *str, char val) {
 // /////////////////////////
 // ///// WRITE TO FILE /////
 // /////////////////////////
+
+// Log to the GLM log file
+void file_log(const char *fmt, ...) {
+    
+    // Default values for logging
+    char *file = GLM_LOG;
+    char *opt = "a+";
+    
+    // Write to file
+    FILE *handle = fopen(file, opt);
+    va_list args;
+    
+    va_start(args, fmt);
+    vfprintf(handle, fmt, args);
+    va_end(args);
+    
+    fclose(handle);
+}
+
+
 
 // Write to a file
 void file_write(char *file, char *opt, const char *fmt, ...) {
@@ -256,63 +316,70 @@ char * command_line(char *cmd, size_t sz, size_t sza) {
 // ////////////////////////////////
 
 // Read the preference file and output a string
-void read_pref_char(char *ret, int n, int m, char *file, char *key) {
+char * read_pref_char(char *file, char *key, int n) {
     
     // File variables
     FILE *handle = fopen(file, "r");
-    char temp[n];
+    char line[n];
+    char *ret = NULL;
     
-    // Compare attribute name with length of key
-    int count = 0,
-        len = strlen(key);
+    // Length of various strings
+    int count    = 0,
+        len_key  = strlen(key),
+        len_line = 0;
     
     // Array indicies
     int i = 0,
         j = 0;
     
     // Loop through line by line the contents of the preference file
-    while ( fgets(temp, sizeof(temp), handle) != NULL ) {
+    while ( fgets(line, sizeof(line), handle) != NULL ) {
         
         // Reset to 0
         count = 0;
         i = 0; 
         j = 0;
         
-        bool sep = false,
+        bool sep  = false,
             found = false;
         
         // Loop through each char of the line
-        while ( temp[i] != 0 ) {
+        while ( line[i] != 0 ) {
             
             // Compare attribute name to given key
             if ( !sep || !found ) {
                 
-                if ( temp[i] == ':' )
+                if ( line[i] == ':' )
                     sep = true;
                 
-                if ( !found && (i < len) && (temp[i] == key[i]) )
+                if ( !found && (i < len_key) && (line[i] == key[i]) )
                     ++count;
                 
-                if ( count == len )
+                if ( count == len_key )
                     found = true;
                 
             } else {
                 
-                // Attribute found, store value of attribute
-                if ( (j == 0) && (temp[i] == ' ') )
+                // Attribute found, ignore leading space and trailing newline
+                if ( 
+                     ( (j == 0) && ((line[i] == ' ') || (line[i] == '\t') || (line[i] == '\n')) ) 
+                     || 
+                     ( (i == len_line-2) && (line[i] == '\n') )
+                   )
                     ;
                 else {
-                    // Keep space for null terminater and ignore newlines
-                    if ( (j < (m-1)) && (temp[i] != '\n') ) {
-                        
-                        // If match found then clear memory
-                        if ( j == 0 )
-                            memset(ret, 0, m);
-                        
-                        // Add char to the return array
-                        ret[j] = temp[i];
-                        ++j;
+                    
+                    // Allocate and clear memory for return variable
+                    if ( j == 0 ) {
+                        // Create your own strlen to ignore leading spaces
+                        len_line = strlen(line) + 1; 
+                        ret = malloc(len_line);
+                        memset(ret, 0, len_line);
                     }
+                    
+                    // Store value of attribute
+                    ret[j] = line[i];
+                    ++j;
                 }
             }
             
@@ -327,84 +394,43 @@ void read_pref_char(char *ret, int n, int m, char *file, char *key) {
     // Close the file
     fclose(handle);
     
-    // Set default value to 0 if key not found
-    if ( j == 0 )
-        ret = NULL;
+    return ret;
 }
 
 
 
 // Read preference file and output an int
-void read_pref_int(int *ret, int n, char *file, char *key) {
+int read_pref_int(char *file, char *key) {
+    char *val = read_pref_char(file, key, READ_INT_LEN);
     
-    // File variables
-    FILE *handle = fopen(file, "r");
-    char temp[n];
+    if ( val == NULL )
+        return 0;
     
-    // Compare attribute name with length of key
-    int count = 0,
-        len = strlen(key);
+    return atoi(val);
+}
+
+
+
+// Execute a command found in the preferences file
+void exec_pref_cmd(char *file, int n) {
     
-    // Array indicies
-    int i = 0,
-        j = 0;
+    // Get the command string from the preferences file
+    char key[6];
+    snprintf(key, sizeof(key), "cmd%d", n);
+    char *cmd = read_pref_char(file, key, READ_PATH_LEN);
     
-    // Loop through line by line the contents of the preference file
-    while ( fgets(temp, sizeof(temp), handle) != NULL ) {
-        
-        // Reset to 0
-        count = 0;
-        i = 0;
-        j = 0;
-        
-        bool sep = false,
-            found = false;
-        
-        // Loop through each char of the line
-        while ( temp[i] != 0 ) {
-            
-            // Compare attribute name to given key
-            if ( !sep || !found ) {
-                
-                if ( temp[i] == ':' )
-                    sep = true;
-                
-                if ( !found && (i < len) && (temp[i] == key[i]) )
-                    ++count;
-                
-                if ( count == len )
-                    found = true;
-                
-            } else {
-                
-                // Attribute found, store value of attribute
-                if ( (j == 0) && (temp[i] == ' ') )
-                    ;
-                else {
-                    if ( temp[i] != '\n' ) {
-                        if ( j == 0 )
-                            *ret = 0;
-                        
-                        *ret = (*ret * 10) + (temp[i] - '0');
-                        ++j;
-                    }
-                }
-            }
-            
-            ++i;
-        }
-        
-        // Attribute was found so return the value
-        if ( found )
-            break;
+    // Clean up zombie processes
+    signal(SIGCHLD, cleanup_child);
+    
+    // Execute the command
+    pid_t pid = fork();
+    
+    if ( pid == 0 ) {
+        system(cmd);
+        exit(0);
     }
     
-    // Close the file
-    fclose(handle);
     
-    // Set default value to 0 if key not found
-    if ( j == 0 )
-        *ret = 0;
 }
 
 
@@ -415,46 +441,46 @@ void read_pref_int(int *ret, int n, char *file, char *key) {
 
 // Set preference position values
 void set_pref_pos(char *file, struct glmpos *pos) {
-    read_pref_int(&pos->x,      READ_INT_LEN, file, "xpos");
-    read_pref_int(&pos->y,      READ_INT_LEN, file, "ypos");
-    read_pref_int(&pos->width,  READ_INT_LEN, file, "width");
-    read_pref_int(&pos->height, READ_INT_LEN, file, "height");
+    pos->x      = read_pref_int(file, "xpos");
+    pos->y      = read_pref_int(file, "ypos");
+    pos->width  = read_pref_int(file, "width");
+    pos->height = read_pref_int(file, "height");
 }
 
 
 
 // Set preference text values
 void set_pref_txt(char *file, struct glmtxt *txt) {
-    read_pref_int(&txt->size,     READ_CHAR_LEN, file, "size");
-    read_pref_int(&txt->maxchars, READ_CHAR_LEN, file, "maxchars");
+    txt->size     = read_pref_int(file, "size");
+    txt->maxchars = read_pref_int(file, "maxchars");
     
-    read_pref_char(txt->text,     READ_CHAR_LEN, READ_INT_LEN, file, "text");
-    read_pref_char(txt->font,     READ_CHAR_LEN, READ_INT_LEN, file, "font");
-    read_pref_char(txt->fmt,      READ_CHAR_LEN, READ_INT_LEN, file, "fmt");
-    read_pref_char(&txt->invis,   READ_CHAR_LEN, READ_INT_LEN, file, "invis");
+    txt->text  = read_pref_char(file, "text",  READ_CHAR_LEN);
+    txt->font  = read_pref_char(file, "font",  READ_CHAR_LEN);
+    txt->fmt   = read_pref_char(file, "fmt",   READ_CHAR_LEN);
+    txt->invis = read_pref_char(file, "invis", READ_CHAR_LEN);
     
-    read_pref_int(&txt->red,      READ_CHAR_LEN, file, "txt-red");
-    read_pref_int(&txt->green,    READ_CHAR_LEN, file, "txt-green");
-    read_pref_int(&txt->blue,     READ_CHAR_LEN, file, "txt-blue");
+    txt->red   = read_pref_int(file, "txt-red");
+    txt->green = read_pref_int(file, "txt-green");
+    txt->blue  = read_pref_int(file, "txt-blue");
 }
 
 
 
 // Set preference decoration values
 void set_pref_decor(char *file, struct glmdecor *decor) {
-    read_pref_char(decor->img_file, READ_PATH_LEN, READ_CHAR_LEN, file, "img-file");
+    decor->img_file = read_pref_char(file, "img-file", READ_PATH_LEN);
     
-    read_pref_int(&decor->bg_red,   READ_INT_LEN,  file, "bg-red");
-    read_pref_int(&decor->bg_green, READ_INT_LEN,  file, "bg-green");
-    read_pref_int(&decor->bg_blue,  READ_INT_LEN,  file, "bg-blue");
-    read_pref_int(&decor->bg_alpha, READ_INT_LEN,  file, "bg-alpha");
+    decor->bg_red   = read_pref_int(file, "bg-red");
+    decor->bg_green = read_pref_int(file, "bg-green");
+    decor->bg_blue  = read_pref_int(file, "bg-blue");
+    decor->bg_alpha = read_pref_int(file, "bg-alpha");
     
-    read_pref_int(&decor->fg_red,   READ_INT_LEN,  file, "fg-red");
-    read_pref_int(&decor->fg_green, READ_INT_LEN,  file, "fg-green");
-    read_pref_int(&decor->fg_blue,  READ_INT_LEN,  file, "fg-blue");
-    read_pref_int(&decor->fg_alpha, READ_INT_LEN,  file, "fg-alpha");
+    decor->fg_red   = read_pref_int(file, "fg-red");
+    decor->fg_green = read_pref_int(file, "fg-green");
+    decor->fg_blue  = read_pref_int(file, "fg-blue");
+    decor->fg_alpha = read_pref_int(file, "fg-alpha");
     
-    read_pref_int(&decor->div,      READ_INT_LEN,  file, "div");
+    decor->div = read_pref_int(file, "div");
     
     // Set default value to 1
     if ( decor->div == 0 )
@@ -467,10 +493,8 @@ void set_pref_decor(char *file, struct glmdecor *decor) {
 // ///// APPLICATION SETUP /////
 // /////////////////////////////
 
-// Set widget position 
+// Set widget position and size
 void set_widget_pos(struct glmapp *app) {
-    
-    // Set window attributes
     gtk_window_move(GTK_WINDOW(app->win), app->pos.x, app->pos.y);
     gtk_window_set_default_size(GTK_WINDOW(app->win), app->pos.width, app->pos.height);
 }
@@ -528,9 +552,11 @@ void enable_transparency(GtkWidget *widg) {
 // Setup the widget
 void setup_widget(char *file, struct glmapp *app, char *event, void (*func)(GtkWidget *widg)) {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Define variables in preferences file
-    set_pref_pos(  file, &app->pos);
-    set_pref_txt(  file, &app->txt);
+    set_pref_pos(file,   &app->pos);
+    set_pref_txt(file,   &app->txt);
     set_pref_decor(file, &app->decor);
     
     // Setup the widget
@@ -550,4 +576,8 @@ void setup_widget(char *file, struct glmapp *app, char *event, void (*func)(GtkW
     // Display the login frame
     gtk_widget_show(app->widg);
     gtk_widget_show(app->win);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }

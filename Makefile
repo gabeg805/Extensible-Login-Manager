@@ -4,7 +4,7 @@ CFLAGS  = -g -Wall -lpam
 CFLAGS += `pkg-config $(LIBS) --cflags --libs`
 
 PROGRAM = glm
-NAMES   = $(PROGRAM) Username Password Clock Frame TextImage WindowManager Panel Authenticate Interface Xsetup Utility  
+NAMES   = $(PROGRAM) Username Password Clock Frame TextImage WindowManager Panel Authenticate Interface Xsetup Utility Benchmark
 SOURCES = $(addprefix ./src/login/src/, $(addsuffix .c, $(NAMES)))
 HEADERS = $(addprefix ./src/login/hdr/, $(addsuffix .h, $(NAMES)))
 OBJECTS = $(addprefix ./src/login/obj/, $(addsuffix .o, $(NAMES)))
@@ -18,7 +18,7 @@ all: $(PROGRAM)
 
 $(PROGRAM): $(OBJECTS)
 	$(CC) $(CFLAGS) \
-		-o $(PROGRAM) $(OBJECTS)
+		-o $(PROGRAM) $(OBJECTS) 
 
 .PHONY: clean
 clean : 

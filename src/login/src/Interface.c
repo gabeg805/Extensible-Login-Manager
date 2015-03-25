@@ -82,6 +82,8 @@
 // Display the login interface
 void login_interface(int argc, char *argv[]) {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Initialize GTK toolkit
     gtk_init(&argc, &argv);
     
@@ -89,8 +91,9 @@ void login_interface(int argc, char *argv[]) {
     if ( INTERFACE ) {
         
         // Log function start
-        file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying login interface...\n", 
-                   __FILE__, __FUNCTION__, __LINE__);
+        if ( VERBOSE )
+            file_log("%s: (%s:%d): Displaying login interface...\n", 
+                     __FILE__, __FUNCTION__, __LINE__);
         
         // Display interface items
         display_clock();
@@ -109,8 +112,13 @@ void login_interface(int argc, char *argv[]) {
     display_password_entry();
     
     // Log function completion
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Done displaying login interface.\n",
-               __FILE__, __FUNCTION__, __LINE__);
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Done displaying login interface.\n",
+                 __FILE__, __FUNCTION__, __LINE__);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
     
     // Begin GTK main loop
     gtk_main();

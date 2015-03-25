@@ -75,6 +75,8 @@
 //                          a method to have the application write verbosely to the  
 //                          log, in the event that a problem arises.
 // 
+//     gabeg Mar 25 2015 <> No longer have to malloc for the application txt struct.
+// 
 // **********************************************************************************
 
 
@@ -100,6 +102,8 @@ static void display_item(char *file);
 // Set the clock label font and text size
 static void set_label(struct glmapp *app) {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Obtain current time as seconds elapsed since the Epoch.
     time_t current = time(NULL);
     char time[50];
@@ -121,6 +125,10 @@ static void set_label(struct glmapp *app) {
     // Set the label text and font
     gtk_label_set_attributes(GTK_LABEL(app->widg), attrList);
     gtk_label_set_text(GTK_LABEL(app->widg), time);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -146,14 +154,15 @@ static gboolean update(gpointer data) {
 // Display a piece of the time
 static void display_item(char *file) {
     
-    // Log function start
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying clock item...", 
-               __FILE__, __FUNCTION__, __LINE__);
+    double bmtime = benchmark_runtime(0);
     
-    // Allocate items for the application 
+    // Log function start
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Displaying clock item...", 
+                 __FILE__, __FUNCTION__, __LINE__);
+    
+    // Allocate space for the application 
     struct glmapp *app = malloc( sizeof(struct glmapp) );
-    app->txt.font = malloc(READ_CHAR_LEN);
-    app->txt.fmt  = malloc(READ_CHAR_LEN);
     
     // Define the application widget
     app->win  = gtk_window_new(GTK_WINDOW_POPUP);
@@ -165,7 +174,12 @@ static void display_item(char *file) {
     g_timeout_add_seconds(UPDATE_SEC, update, app);
     
     // Log function end
-    file_write(GLM_LOG, "a+", "Done.\n");
+    if ( VERBOSE )
+        file_log("Done.\n");
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 

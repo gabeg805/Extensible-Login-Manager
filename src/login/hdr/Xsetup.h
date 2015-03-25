@@ -13,15 +13,14 @@
 #include <unistd.h>
 
 // Defines
+#define X_PREF    "/etc/X11/glm/src/login/pref/Xsetup.pref"
+
 #define DATE           "/usr/bin/date"
-#define HSETROOT       "/usr/bin/hsetroot"
 #define TAIL           "/usr/bin/tail"
-#define WALLPAPER      "/etc/X11/glm/img/wallpapers/night-sky.jpg"
 #define XCOMPMGR       "/usr/bin/xcompmgr"
 #define XORG           "/usr/bin/Xorg"
 #define XSERVER_AUTH   "/etc/X11/glm/log/glm.auth"
 #define XSERVER_LOG    "/etc/X11/glm/log/xserver.log"
-#define XSETROOT       "/usr/bin/xsetroot"
 
 // Public functions
 void xsetup();

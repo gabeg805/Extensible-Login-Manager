@@ -1,68 +1,53 @@
 
-Date: Thu Mar 19 23:23:11 2015
-src/login/src/Xsetup.c: (start_compman:220): Starting compositing manager...Already running.
-src/login/src/Interface.c: (login_interface:86): Displaying login interface...
-src/login/src/Clock.c: (display_item:144): Displaying clock item...Done.
-src/login/src/Clock.c: (display_item:144): Displaying clock item...Done.
-src/login/src/Frame.c: (display_frame:151): Displaying login frame...Done
-src/login/src/TextImage.c: (display_text_image:130): Displaying text image...Done
-src/login/src/WindowManager.c: (display_window_manager:211): Displaying window manager menu button...Done
-src/login/src/Username.c: (display_icon:335): Displaying Username icon...Done
-src/login/src/Username.c: (display_usr_menu:360): Displaying Username menu button...Done
-src/login/src/Panel.c: (display_item:226): Displaying panel item...Done
-src/login/src/Panel.c: (display_item:226): Displaying panel item...Done
-src/login/src/Panel.c: (display_item:226): Displaying panel item...Done
-src/login/src/Password.c: (display_password_entry:161): Displaying password entry box...Done
-src/login/src/Interface.c: (login_interface:106): Done displaying login interface.
-
-Date: Fri Mar 20 22:39:04 2015
-src/login/src/Xsetup.c: (start_xserver:188): Starting X server...
-src/login/src/Xsetup.c: (set_open_display:111): Searching for an open display...Done.
-src/login/src/Xsetup.c: (set_open_display:143): Display ':0' is open.
-src/login/src/Xsetup.c: (set_open_tty:166): Determining TTY...Done.
-src/login/src/Xsetup.c: (set_open_tty:174): TTY number is '7'.
-src/login/src/Xsetup.c: (start_xserver:206): X server is active.
-src/login/src/Xsetup.c: (start_compman:220): Starting compositing manager...Done.
-src/login/src/Interface.c: (login_interface:86): Displaying login interface...
-src/login/src/Clock.c: (display_item:144): Displaying clock item...Done.
-src/login/src/Clock.c: (display_item:144): Displaying clock item...Done.
-src/login/src/Frame.c: (display_frame:151): Displaying login frame...Done
-src/login/src/TextImage.c: (display_text_image:130): Displaying text image...Done
-src/login/src/WindowManager.c: (display_window_manager:211): Displaying window manager menu button...Done
-src/login/src/Username.c: (display_icon:335): Displaying Username icon...Done
-src/login/src/Username.c: (display_usr_menu:360): Displaying Username menu button...Done
-src/login/src/Panel.c: (display_item:226): Displaying panel item...Done
-src/login/src/Panel.c: (display_item:226): Displaying panel item...Done
-src/login/src/Panel.c: (display_item:226): Displaying panel item...Done
-src/login/src/Password.c: (display_password_entry:161): Displaying password entry box...Done
-src/login/src/Interface.c: (login_interface:106): Done displaying login interface.
+Date: Tue Mar 24 18:25:44 2015
+src/login/src/Xsetup.c: (set_open_display: Runtime): 0.000045
+src/login/src/Xsetup.c: (set_open_tty: Runtime): 0.000002
+src/login/src/Xsetup.c: (start_xserver: Runtime): 0.000846
+src/login/src/Xsetup.c: (start_compman: Runtime): 1.730362
+src/login/src/Xsetup.c: (xsetup: Runtime): 1.859468
+src/login/src/Utility.c: (setup_widget: Runtime): 0.342406
+src/login/src/Clock.c: (set_label: Runtime): 0.000088
+src/login/src/Clock.c: (display_item: Runtime): 0.751414
+src/login/src/Utility.c: (setup_widget: Runtime): 0.011449
+src/login/src/Clock.c: (set_label: Runtime): 0.000059
+src/login/src/Clock.c: (display_item: Runtime): 0.011824
+src/login/src/Utility.c: (setup_widget: Runtime): 0.010709
+src/login/src/Frame.c: (display_frame: Runtime): 0.010911
+src/login/src/Utility.c: (setup_widget: Runtime): 0.004488
+src/login/src/TextImage.c: (display_text_image: Runtime): 0.004639
+src/login/src/Utility.c: (setup_widget: Runtime): 0.016421
+src/login/src/WindowManager.c: (set_wm_entries: Runtime): 0.102836
+src/login/src/WindowManager.c: (setup_menu: Runtime): 0.174441
+src/login/src/WindowManager.c: (display_window_manager: Runtime): 0.935786
+src/login/src/Utility.c: (setup_widget: Runtime): 0.012632
+src/login/src/Username.c: (display_icon: Runtime): 0.029735
+src/login/src/Utility.c: (setup_widget: Runtime): 0.010603
+src/login/src/Username.c: (get_username: Runtime): 0.000100
+src/login/src/Username.c: (set_username_entries: Runtime): 0.036425
+src/login/src/Username.c: (setup_label: Runtime): 0.000023
+src/login/src/Username.c: (setup_menu: Runtime): 0.037089
+src/login/src/Username.c: (display_usr_menu: Runtime): 0.061309
+src/login/src/Utility.c: (setup_widget: Runtime): 0.022748
+src/login/src/Panel.c: (setup_button: Runtime): 0.009324
+src/login/src/Panel.c: (display_item: Runtime): 0.032376
+src/login/src/Utility.c: (setup_widget: Runtime): 0.002118
+src/login/src/Panel.c: (setup_button: Runtime): 0.012812
+src/login/src/Panel.c: (display_item: Runtime): 0.015193
+src/login/src/Utility.c: (setup_widget: Runtime): 0.002256
+src/login/src/Panel.c: (setup_button: Runtime): 0.013255
+src/login/src/Panel.c: (display_item: Runtime): 0.015702
+src/login/src/Utility.c: (setup_widget: Runtime): 0.059803
+src/login/src/Password.c: (setup_entry: Runtime): 0.000072
+src/login/src/Password.c: (display_password_entry: Runtime): 0.068290
+src/login/src/Interface.c: (login_interface: Runtime): 3.793112
+src/login/src/Frame.c: (draw_frame: Runtime): 0.010700
+src/login/src/Frame.c: (draw_window: Runtime): 0.010805
+src/login/src/TextImage.c: (draw_text: Runtime): 0.023798
+src/login/src/TextImage.c: (draw_window: Runtime): 0.023897
+src/login/src/Password.c: (get_entry_text: Runtime): 0.000601
 Setting up user session...
 User session 'dwm' is active.
 Successfully logged in as 'gabeg'.
 
-
-Date: Fri Mar 20 22:59:07 2015
-src/login/src/Xsetup.c: (start_xserver:188): Starting X server...
-src/login/src/Xsetup.c: (set_open_display:111): Searching for an open display...Done.
-src/login/src/Xsetup.c: (set_open_display:143): Display ':0' is open.
-src/login/src/Xsetup.c: (set_open_tty:166): Determining TTY...Done.
-src/login/src/Xsetup.c: (set_open_tty:174): TTY number is '7'.
-src/login/src/Xsetup.c: (start_xserver:206): X server is active.
-src/login/src/Xsetup.c: (start_compman:220): Starting compositing manager...Done.
-src/login/src/Interface.c: (login_interface:86): Displaying login interface...
-src/login/src/Clock.c: (display_item:144): Displaying clock item...Done.
-src/login/src/Clock.c: (display_item:144): Displaying clock item...Done.
-src/login/src/Frame.c: (display_frame:151): Displaying login frame...Done
-src/login/src/TextImage.c: (display_text_image:130): Displaying text image...Done
-src/login/src/WindowManager.c: (display_window_manager:211): Displaying window manager menu button...Done
-src/login/src/Username.c: (display_icon:335): Displaying Username icon...Done
-src/login/src/Username.c: (display_usr_menu:360): Displaying Username menu button...Done
-src/login/src/Panel.c: (display_item:226): Displaying panel item...Done
-src/login/src/Panel.c: (display_item:226): Displaying panel item...Done
-src/login/src/Panel.c: (display_item:226): Displaying panel item...Done
-src/login/src/Password.c: (display_password_entry:161): Displaying password entry box...Done
-src/login/src/Interface.c: (login_interface:106): Done displaying login interface.
-Setting up user session...
-User session 'dwm' is active.
-Successfully logged in as 'gabeg'.
-
+Authentication failure
+Authentication failure

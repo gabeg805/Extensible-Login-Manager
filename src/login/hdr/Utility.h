@@ -3,6 +3,8 @@
 #define UTILITY_H
 
 // Includes
+#include "../hdr/Benchmark.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -20,6 +22,18 @@
 #define READ_CHAR_LEN    50
 #define READ_PATH_LEN    100
 
+// Global variables
+extern char *SERVICE;
+extern char *USERNAME;
+extern char *PASSWORD;
+extern char *SESSION;
+extern char *GLM_LOG;
+extern int  TTYN;
+extern bool INTERFACE;
+extern bool PREVIEW;
+extern bool VERBOSE;
+extern bool BENCHTIME;
+
 // Definitions
 struct glmpos { // Widget position and size
     int x;
@@ -35,7 +49,7 @@ struct glmtxt { // Text attributes
     char *text;
     char *font;
     char *fmt;
-    char invis;
+    char *invis;
     
     int red;
     int green;
@@ -68,14 +82,17 @@ struct glmapp { // Widget application
 
 
 // Public functions 
+void cli_parse(int argc, char **argv);
 void cleanup_child(int signal);
 int count_char(char *str, char val);
+void file_log(const char *fmt, ...);
 void file_write(char *file, char *opt, const char *fmt, ...);
 char * file_read(char *file, int ln, int sz);
 char * command_line(char *cmd, size_t sz, size_t sza);
 
-void read_pref_char(char *ret, int n, int m, char *file, char *key);
-void read_pref_int(int *ret, int n, char *file, char *key);
+char * read_pref_char(char *file, char *key, int n);
+int read_pref_int(char *file, char *key);
+void exec_pref_cmd(char *file, int n);
 
 void set_pref_pos(char *file, struct glmpos *pos);
 void set_pref_txt(char *file, struct glmtxt *txt);

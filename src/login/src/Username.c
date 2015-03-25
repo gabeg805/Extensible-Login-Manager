@@ -97,6 +97,8 @@
 //                          so that the user does not have to. Note: The pango color
 //                          color is strange.
 // 
+//     gabeg Mar 25 2015 <> No longer have to malloc for the application txt struct.
+// 
 // **********************************************************************************
 
 
@@ -126,6 +128,8 @@ static void display_usr_menu();
 // Setup dropdown menu that displays users
 static void setup_menu(struct glmapp app) {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Define label and menu widgets
     GtkWidget *label = gtk_label_new("");
     GtkWidget *menu = gtk_menu_new();
@@ -141,12 +145,18 @@ static void setup_menu(struct glmapp app) {
     
     // Display the label
     gtk_widget_show(label);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
 
 // Setup the label for the dropdown menu
 static void setup_label(GtkWidget *label, struct glmtxt txt) {
+    
+    double bmtime = benchmark_runtime(0);
     
     // Define text attributes
     PangoAttrList *attrList = pango_attr_list_new();
@@ -166,6 +176,10 @@ static void setup_label(GtkWidget *label, struct glmtxt txt) {
     // Set label text
     gtk_label_set_text(GTK_LABEL(label), USERNAME);
     gtk_label_set_attributes(GTK_LABEL(label), attrList);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -176,12 +190,19 @@ static void setup_label(GtkWidget *label, struct glmtxt txt) {
 
 // Write to a file, which user to login as
 static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
+    
+    double bmtime = benchmark_runtime(0);
+    
     const gchar *user = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
     
     snprintf(USERNAME, strlen(user)+1, "%s", (char*)user);
     file_write(USERNAME_LOG, "w", "%s\n", USERNAME);
     
     gtk_label_set_text(GTK_LABEL(label), USERNAME);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -192,6 +213,8 @@ static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
 
 // Get username/uid combination from the specified file
 static char ** get_username(char *file, int size) {
+    
+    double bmtime = benchmark_runtime(0);
     
     // Initialize username array
     char **array = malloc(sizeof(char*)*size);
@@ -259,6 +282,10 @@ static char ** get_username(char *file, int size) {
     
     array[0] = copy;
     
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    
     return array;
 }
 
@@ -270,6 +297,8 @@ static char ** get_username(char *file, int size) {
 
 // Set user name entries
 static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
+    
+    double bmtime = benchmark_runtime(0);
     
     // Initialize user menu items
     GtkWidget *user;
@@ -332,6 +361,10 @@ static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
     
     free(allusers);
     allusers = NULL;
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -343,13 +376,15 @@ static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
 // Display username icon
 static void display_icon() {
     
-    // Log function start
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying Username icon...", 
-               __FILE__, __FUNCTION__, __LINE__);
+    double bmtime = benchmark_runtime(0);
     
-    // Allocate application attributes
+    // Log function start
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Displaying Username icon...", 
+                 __FILE__, __FUNCTION__, __LINE__);
+    
+    // Allocate space for the application 
     struct glmapp app;
-    app.decor.img_file = malloc(READ_CHAR_LEN);
     
     // Define the application widget
     app.win  = gtk_window_new(GTK_WINDOW_POPUP);
@@ -360,7 +395,12 @@ static void display_icon() {
     gtk_image_set_from_file(GTK_IMAGE(app.widg), app.decor.img_file);
     
     // Log function completion
-    file_write(GLM_LOG, "a+", "Done\n");
+    if ( VERBOSE )
+        file_log("Done\n");
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -368,17 +408,18 @@ static void display_icon() {
 // Display the username menu
 static void display_usr_menu() {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Log function start
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying Username menu button...", 
-               __FILE__, __FUNCTION__, __LINE__);
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Displaying Username menu button...", 
+                 __FILE__, __FUNCTION__, __LINE__);
     
     // Define username
     USERNAME = file_read(USERNAME_LOG, 1, 20);
     
-    // Allocate application attributes
+    // Allocate space for the application 
     struct glmapp app;
-    app.txt.font       = malloc(READ_CHAR_LEN);
-    app.decor.img_file = malloc(READ_CHAR_LEN);
     
     // Define the application widget
     app.win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -389,7 +430,12 @@ static void display_usr_menu() {
     setup_menu(app);
     
     // Log function completion
-    file_write(GLM_LOG, "a+", "Done\n");
+    if ( VERBOSE )
+        file_log("Done\n");
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 

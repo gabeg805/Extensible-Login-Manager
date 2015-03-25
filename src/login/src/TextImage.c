@@ -71,6 +71,8 @@
 //                          a method to have the application write verbosely to the  
 //                          log, in the event that a problem arises.
 // 
+//     gabeg Mar 25 2015 <> No longer have to malloc for the application txt struct.
+// 
 // **********************************************************************************
 
 
@@ -97,17 +99,26 @@ static struct glmapp APP;
 
 // Draw the text
 static void draw_text(cairo_t *cr) {         
+    
+    double bmtime = benchmark_runtime(0);
+    
     cairo_select_font_face(cr, APP.txt.font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
     cairo_set_font_size(cr, APP.txt.size);
     cairo_set_source_rgb(cr, APP.txt.red, APP.txt.green, APP.txt.blue);
     cairo_move_to(cr, 0, APP.txt.size);
     cairo_show_text(cr, APP.txt.text);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
 
 // Draw the root window
 static gboolean draw_window(GtkWidget *widg) {
+    
+    double bmtime = benchmark_runtime(0);
     
     // Create Cairo widget for GTK window
     cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widg));
@@ -121,6 +132,10 @@ static gboolean draw_window(GtkWidget *widg) {
     draw_text(cr);
     cairo_destroy(cr);
     
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    
     return FALSE;
 }
 
@@ -133,13 +148,12 @@ static gboolean draw_window(GtkWidget *widg) {
 // Dislay the text image
 void display_text_image() {
     
-    // Log function start
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying text image...", 
-               __FILE__, __FUNCTION__, __LINE__);
+    double bmtime = benchmark_runtime(0);
     
-    // Allocate application attributes
-    APP.txt.text = malloc(READ_CHAR_LEN);
-    APP.txt.font = malloc(READ_CHAR_LEN);
+    // Log function start
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Displaying text image...", 
+                 __FILE__, __FUNCTION__, __LINE__);
     
     // Define the application widget
     APP.win  = gtk_window_new(GTK_WINDOW_POPUP);
@@ -149,5 +163,10 @@ void display_text_image() {
     setup_widget(TEXT_PREF, &APP, "draw", (void *)draw_window);
     
     // Log function completion
-    file_write(GLM_LOG, "a+", "Done\n");
+    if ( VERBOSE )
+        file_log("Done\n");
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }

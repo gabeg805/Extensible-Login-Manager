@@ -1,0 +1,18 @@
+// Header guard
+#ifndef BENCHMARK_H
+#define BENCHMARK_H
+
+// Includes
+#include <time.h>
+
+// Public functions
+double benchmark_runtime(double start) {
+    struct timespec t;
+    clock_gettime(CLOCK_MONOTONIC, &t);
+    
+    double time = (double)(t.tv_sec + t.tv_nsec);
+    if ( start != 0 )
+        return (time - start);
+    else
+        return time;
+}

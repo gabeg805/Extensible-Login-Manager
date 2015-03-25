@@ -112,9 +112,16 @@ static void display_item();
 
 // Setup panel buttons and style
 static void setup_button(GtkWidget *widg, char *img) {
+    
+    double bmtime = benchmark_runtime(0);
+    
     GtkWidget *icon = gtk_image_new_from_file(img);
     gtk_button_set_image(GTK_BUTTON(widg), icon);
     gtk_button_set_relief(GTK_BUTTON(widg), GTK_RELIEF_NONE);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -166,9 +173,12 @@ static void quit_glm() {
 // Display the GLM dialog
 static void display_dialog() {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Log function start
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying GLM dialog...", 
-               __FILE__, __FUNCTION__, __LINE__);
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Displaying GLM dialog...", 
+                 __FILE__, __FUNCTION__, __LINE__);
     
     // Declare the widget position, text, and decoration structs
     struct glmpos pos;
@@ -216,7 +226,12 @@ static void display_dialog() {
     g_signal_connect(window,                   "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
     // Log function completion
-    file_write(GLM_LOG, "a+", "Done\n");
+    if ( VERBOSE )
+        file_log("Done\n");
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -228,13 +243,15 @@ static void display_dialog() {
 // Display items in the button panel
 static void display_item(char *file, void (*func)() ) {
     
-    // Log function start
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying panel item...", 
-               __FILE__, __FUNCTION__, __LINE__);
+    double bmtime = benchmark_runtime(0);
     
-    // Allocate application attributes 
+    // Log function start
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Displaying panel item...", 
+                 __FILE__, __FUNCTION__, __LINE__);
+    
+    // Allocate space for the application 
     struct glmapp app; 
-    app.decor.img_file = malloc(READ_CHAR_LEN);
     
     // Define the application widget
     app.win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -245,7 +262,12 @@ static void display_item(char *file, void (*func)() ) {
     setup_button(app.widg, app.decor.img_file);
     
     // Log function completion
-    file_write(GLM_LOG, "a+", "Done\n");
+    if ( VERBOSE )
+        file_log("Done\n");
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 

@@ -100,6 +100,8 @@ static struct glmapp APP;
 // Draw the login frame
 static void draw_frame(cairo_t *cr) { 
     
+    double bmtime = benchmark_runtime(0);
+    
     // Custom shape that could be wrapped in a function 
     double width = APP.pos.width,
         height   = APP.pos.height,
@@ -121,6 +123,10 @@ static void draw_frame(cairo_t *cr) {
     // Fill login frame
     cairo_fill_preserve(cr);
     cairo_stroke (cr);
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -128,6 +134,8 @@ static void draw_frame(cairo_t *cr) {
 
 // Draw the root window 
 static gboolean draw_window(GtkWidget *widg) {
+    
+    double bmtime = benchmark_runtime(0);
     
     // Create Cairo widget for GTK window
     cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widg));
@@ -141,6 +149,10 @@ static gboolean draw_window(GtkWidget *widg) {
     draw_frame(cr);
     cairo_destroy(cr);
     
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    
     return FALSE;
 }
 
@@ -153,9 +165,12 @@ static gboolean draw_window(GtkWidget *widg) {
 // Display the login frame
 void display_frame() {
     
+    double bmtime = benchmark_runtime(0);
+    
     // Log function start
-    file_write(GLM_LOG, "a+", "%s: (%s:%d): Displaying login frame...",
-               __FILE__, __FUNCTION__, __LINE__);
+    if ( VERBOSE )
+        file_log("%s: (%s:%d): Displaying login frame...",
+                 __FILE__, __FUNCTION__, __LINE__);
     
     // Define the application widget
     APP.win  = gtk_window_new(GTK_WINDOW_POPUP);
@@ -165,6 +180,11 @@ void display_frame() {
     setup_widget(FRAME_PREF, &APP, "draw", (void *)draw_window);
     
     // Log function completion
-    file_write(GLM_LOG, "a+", "Done\n");
+    if ( VERBOSE )
+        file_log("Done\n");
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
