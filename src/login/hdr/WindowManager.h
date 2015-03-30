@@ -12,7 +12,7 @@
 #include <gtk/gtk.h>
 
 // Defines
-#define WM_PREF    "/etc/X11/glm/src/login/pref/WindowManager.pref"
+#define WM_CONFIG    "/etc/X11/glm/src/login/config/WindowManager.config"
 
 #define WM_SES_CMD    "ls -1 /usr/share/xsessions/ | sed 's/.desktop//'"
 #define SESSION_LOG   "/etc/X11/glm/log/session.log"

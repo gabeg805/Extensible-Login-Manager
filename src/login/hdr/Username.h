@@ -14,8 +14,8 @@
 #include <gtk/gtk.h>
 
 // Defines
-#define USER_PREF        "/etc/X11/glm/src/login/pref/Username-User.pref"
-#define USER_IMG_PREF    "/etc/X11/glm/src/login/pref/Username-Image.pref"
+#define USER_CONFIG        "/etc/X11/glm/src/login/config/Username-User.config"
+#define USER_IMG_CONFIG    "/etc/X11/glm/src/login/config/Username-Image.config"
 
 #define USERNAME_LOG   "/etc/X11/glm/log/user.log"
 

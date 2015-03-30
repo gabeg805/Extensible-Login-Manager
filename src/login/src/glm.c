@@ -30,9 +30,16 @@
 // 
 // OPTIONS:
 // 
-//     -p
+//     -p, --preview
 //         Starts the login manager in preview mode, which does not paint a new X 
 //         window.
+// 
+//     -v, --verbose
+//         Print information regarding chronological function execution.
+// 
+//     -t, --time
+//         Time the execution of each function and print out verbose style function
+//         information next to the function runtime.
 // 
 // 
 // FUNCTIONS:

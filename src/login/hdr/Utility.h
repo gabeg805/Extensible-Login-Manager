@@ -90,13 +90,13 @@ void file_write(char *file, char *opt, const char *fmt, ...);
 char * file_read(char *file, int ln, int sz);
 char * command_line(char *cmd, size_t sz, size_t sza);
 
-char * read_pref_char(char *file, char *key, int n);
-int read_pref_int(char *file, char *key);
-void exec_pref_cmd(char *file, int n);
+char * read_config_char(char *file, char *key, int n);
+int read_config_int(char *file, char *key);
+void exec_config_cmd(char *file, int n);
 
-void set_pref_pos(char *file, struct glmpos *pos);
-void set_pref_txt(char *file, struct glmtxt *txt);
-void set_pref_decor(char *file, struct glmdecor *decor);
+void set_config_pos(char *file, struct glmpos *pos);
+void set_config_txt(char *file, struct glmtxt *txt);
+void set_config_decor(char *file, struct glmdecor *decor);
 
 void set_widget_pos(struct glmapp *app);
 void set_widget_color(struct glmapp *app);

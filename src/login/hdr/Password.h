@@ -12,7 +12,7 @@
 #include <gtk/gtk.h>
 
 // Defines
-#define PASS_PREF    "/etc/X11/glm/src/login/pref/Password.pref"
+#define PASS_CONFIG    "/etc/X11/glm/src/login/config/Password.config"
 
 // Public functions
 void display_password_entry();

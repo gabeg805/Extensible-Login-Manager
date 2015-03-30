@@ -13,7 +13,7 @@
 #include <unistd.h>
 
 // Defines
-#define X_PREF    "/etc/X11/glm/src/login/pref/Xsetup.pref"
+#define X_CONFIG    "/etc/X11/glm/src/login/config/Xsetup.config"
 
 #define DATE           "/usr/bin/date"
 #define TAIL           "/usr/bin/tail"

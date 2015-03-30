@@ -12,8 +12,8 @@
 #include <gtk/gtk.h>
 
 // Defines
-#define CLOCK_DATE_PREF    "/etc/X11/glm/src/login/pref/Clock-Date.pref"
-#define CLOCK_TIME_PREF    "/etc/X11/glm/src/login/pref/Clock-Time.pref"
+#define CLOCK_DATE_CONFIG    "/etc/X11/glm/src/login/config/Clock-Date.config"
+#define CLOCK_TIME_CONFIG    "/etc/X11/glm/src/login/config/Clock-Time.config"
 
 #define UPDATE_SEC   30
 

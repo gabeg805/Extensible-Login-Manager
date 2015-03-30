@@ -86,7 +86,7 @@
 //                          a method to have the application write verbosely to the  
 //                          log, in the event that a problem arises.
 // 
-//     gabeg Mar 25 2015 <> Utilized the execute-preference-command function.
+//     gabeg Mar 25 2015 <> Utilized the execute-config-command function.
 // 
 // **********************************************************************************
 
@@ -357,11 +357,11 @@ void xsetup() {
     start_compman();
     
     // Set background 
-    exec_pref_cmd(X_PREF, 1);
+    exec_config_cmd(X_CONFIG, 1);
     
     
     // Cursor and background attributes
-    exec_pref_cmd(X_PREF, 2);
+    exec_config_cmd(X_CONFIG, 2);
     
     // Log that interface is allowed start
     INTERFACE = true;

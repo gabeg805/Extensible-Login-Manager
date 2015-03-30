@@ -82,8 +82,8 @@
 // 
 //     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
 //                          header file. Included the new functions that read in from
-//                          the preferences file, "set_pref_pos" and 
-//                          "set_pref_decor".
+//                          the config file, "set_config_pos" and 
+//                          "set_config_decor".
 // 
 //     gabeg Mar 19 2015 <> Utilized the universal setup function and also enabled 
 //                          a method to have the application write verbosely to the  
@@ -251,7 +251,7 @@ void display_window_manager() {
     app.widg = gtk_menu_button_new();
     
     // Create the window manager menu button
-    setup_widget(WM_PREF, &app, NULL, NULL);
+    setup_widget(WM_CONFIG, &app, NULL, NULL);
     setup_menu(app);
     
     // Log function completion

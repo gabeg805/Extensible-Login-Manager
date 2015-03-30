@@ -218,6 +218,4 @@ Here's a list of things I want to implement, but haven't had the time to do so y
     
     - Focus password entry 
     
-    - use fprintf to stderr and __func__ because log messages are good to have!!
-        
     - find a better way to get open tty ports and all user accounts on comp

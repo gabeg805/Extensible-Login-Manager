@@ -46,12 +46,12 @@
 // 
 //     command_line        - Return output of a Linux command.
 // 
-//     read_pref_char      - Read the preference file and output a string.
-//     read_pref_int       - Read the preference file and output an int.
+//     read_config_char    - Read the config file and output a string.
+//     read_config_int     - Read the config file and output an int.
 // 
-//     set_pref_pos        - Set position values defined in the preference file.
-//     set_pref_txt        - Set text values defined in the preference file.
-//     set_pref_decor      - Set decoration values defined in the preference file.
+//     set_config_pos      - Set position values defined in the config file.
+//     set_config_txt      - Set text values defined in the config file.
+//     set_config_decor    - Set decoration values defined in the config file.
 // 
 //     set_widget_pos      - Set the size and position of the widget.
 //     set_widget_color    - Set the color and opacity of the widget.
@@ -106,7 +106,7 @@
 // 
 //     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
 //                          header file. Also added new funtions that read in key 
-//                          value pairs from a preferences file. In doing so I remove
+//                          value pairs from a config file. In doing so I remove
 //                          all the preprocessor define statements and just put all 
 //                          the variables I need into glm structures. This hopefully 
 //                          makes the code look cleaner.
@@ -116,16 +116,16 @@
 //                          incorporating a struct 'glmapp' that holds everything an
 //                          app will need.
 // 
-//     gabeg Mar 25 2015 <> Modified the "read_pref_char" function so that it 
+//     gabeg Mar 25 2015 <> Modified the "read_config_char" function so that it 
 //                          allocates memory if it finds a match, that way the user 
 //                          doesn't have to manually malloc. Also, the function takes
 //                          in less arguments than before. Modified the 
-//                          "read_pref_int" function so that it utilizes the 
-//                          "read_pref_char" function, that way I don't repeat 
+//                          "read_config_int" function so that it utilizes the 
+//                          "read_config_char" function, that way I don't repeat 
 //                          essentially the same code, then I just convert the string
 //                          it finds to an int. Added a function that reads and 
-//                          executes commands from the preference file, called 
-//                          "exec_pref_cmd". 
+//                          executes commands from the config file, called 
+//                          "exec_config_cmd". 
 // 
 // **********************************************************************************
 
@@ -311,12 +311,12 @@ char * command_line(char *cmd, size_t sz, size_t sza) {
 
 
 
-// ////////////////////////////////
-// ///// READ PREFERENCE FILE /////
-// ////////////////////////////////
+// ////////////////////////////
+// ///// READ CONFIG FILE /////
+// ////////////////////////////
 
-// Read the preference file and output a string
-char * read_pref_char(char *file, char *key, int n) {
+// Read the config file and output a string
+char * read_config_char(char *file, char *key, int n) {
     
     // File variables
     FILE *handle = fopen(file, "r");
@@ -332,7 +332,7 @@ char * read_pref_char(char *file, char *key, int n) {
     int i = 0,
         j = 0;
     
-    // Loop through line by line the contents of the preference file
+    // Loop through line by line the contents of the config file
     while ( fgets(line, sizeof(line), handle) != NULL ) {
         
         // Reset to 0
@@ -399,9 +399,9 @@ char * read_pref_char(char *file, char *key, int n) {
 
 
 
-// Read preference file and output an int
-int read_pref_int(char *file, char *key) {
-    char *val = read_pref_char(file, key, READ_INT_LEN);
+// Read config file and output an int
+int read_config_int(char *file, char *key) {
+    char *val = read_config_char(file, key, READ_INT_LEN);
     
     if ( val == NULL )
         return 0;
@@ -411,13 +411,13 @@ int read_pref_int(char *file, char *key) {
 
 
 
-// Execute a command found in the preferences file
-void exec_pref_cmd(char *file, int n) {
+// Execute a command found in the config file
+void exec_config_cmd(char *file, int n) {
     
-    // Get the command string from the preferences file
+    // Get the command string from the config file
     char key[6];
     snprintf(key, sizeof(key), "cmd%d", n);
-    char *cmd = read_pref_char(file, key, READ_PATH_LEN);
+    char *cmd = read_config_char(file, key, READ_PATH_LEN);
     
     // Clean up zombie processes
     signal(SIGCHLD, cleanup_child);
@@ -435,52 +435,52 @@ void exec_pref_cmd(char *file, int n) {
 
 
 
-// /////////////////////////////////
-// ///// SET PREFERENCE VALUES /////
-// /////////////////////////////////
+// /////////////////////////////
+// ///// SET CONFIG VALUES /////
+// /////////////////////////////
 
-// Set preference position values
-void set_pref_pos(char *file, struct glmpos *pos) {
-    pos->x      = read_pref_int(file, "xpos");
-    pos->y      = read_pref_int(file, "ypos");
-    pos->width  = read_pref_int(file, "width");
-    pos->height = read_pref_int(file, "height");
+// Set config position values
+void set_config_pos(char *file, struct glmpos *pos) {
+    pos->x      = read_config_int(file, "xpos");
+    pos->y      = read_config_int(file, "ypos");
+    pos->width  = read_config_int(file, "width");
+    pos->height = read_config_int(file, "height");
 }
 
 
 
-// Set preference text values
-void set_pref_txt(char *file, struct glmtxt *txt) {
-    txt->size     = read_pref_int(file, "size");
-    txt->maxchars = read_pref_int(file, "maxchars");
+// Set config text values
+void set_config_txt(char *file, struct glmtxt *txt) {
+    txt->size     = read_config_int(file, "size");
+    txt->maxchars = read_config_int(file, "maxchars");
     
-    txt->text  = read_pref_char(file, "text",  READ_CHAR_LEN);
-    txt->font  = read_pref_char(file, "font",  READ_CHAR_LEN);
-    txt->fmt   = read_pref_char(file, "fmt",   READ_CHAR_LEN);
-    txt->invis = read_pref_char(file, "invis", READ_CHAR_LEN);
+    txt->text  = read_config_char(file, "text",  READ_CHAR_LEN);
+    txt->font  = read_config_char(file, "font",  READ_CHAR_LEN);
+    txt->fmt   = read_config_char(file, "fmt",   READ_CHAR_LEN);
+    txt->invis = read_config_char(file, "invis", READ_CHAR_LEN);
     
-    txt->red   = read_pref_int(file, "txt-red");
-    txt->green = read_pref_int(file, "txt-green");
-    txt->blue  = read_pref_int(file, "txt-blue");
+    txt->red   = read_config_int(file, "txt-red");
+    txt->green = read_config_int(file, "txt-green");
+    txt->blue  = read_config_int(file, "txt-blue");
 }
 
 
 
-// Set preference decoration values
-void set_pref_decor(char *file, struct glmdecor *decor) {
-    decor->img_file = read_pref_char(file, "img-file", READ_PATH_LEN);
+// Set config decoration values
+void set_config_decor(char *file, struct glmdecor *decor) {
+    decor->img_file = read_config_char(file, "img-file", READ_PATH_LEN);
     
-    decor->bg_red   = read_pref_int(file, "bg-red");
-    decor->bg_green = read_pref_int(file, "bg-green");
-    decor->bg_blue  = read_pref_int(file, "bg-blue");
-    decor->bg_alpha = read_pref_int(file, "bg-alpha");
+    decor->bg_red   = read_config_int(file, "bg-red");
+    decor->bg_green = read_config_int(file, "bg-green");
+    decor->bg_blue  = read_config_int(file, "bg-blue");
+    decor->bg_alpha = read_config_int(file, "bg-alpha");
     
-    decor->fg_red   = read_pref_int(file, "fg-red");
-    decor->fg_green = read_pref_int(file, "fg-green");
-    decor->fg_blue  = read_pref_int(file, "fg-blue");
-    decor->fg_alpha = read_pref_int(file, "fg-alpha");
+    decor->fg_red   = read_config_int(file, "fg-red");
+    decor->fg_green = read_config_int(file, "fg-green");
+    decor->fg_blue  = read_config_int(file, "fg-blue");
+    decor->fg_alpha = read_config_int(file, "fg-alpha");
     
-    decor->div = read_pref_int(file, "div");
+    decor->div = read_config_int(file, "div");
     
     // Set default value to 1
     if ( decor->div == 0 )
@@ -554,10 +554,10 @@ void setup_widget(char *file, struct glmapp *app, char *event, void (*func)(GtkW
     
     double bmtime = benchmark_runtime(0);
     
-    // Define variables in preferences file
-    set_pref_pos(file,   &app->pos);
-    set_pref_txt(file,   &app->txt);
-    set_pref_decor(file, &app->decor);
+    // Define variables in config file
+    set_config_pos(file,   &app->pos);
+    set_config_txt(file,   &app->txt);
+    set_config_decor(file, &app->decor);
     
     // Setup the widget
     set_widget_pos(app);

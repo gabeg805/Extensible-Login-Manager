@@ -76,8 +76,8 @@
 // 
 //     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
 //                          header file. Included the new functions that read in from
-//                          the preferences file, "set_pref_pos" and 
-//                          "set_pref_decor".
+//                          the config file, "set_config_pos" and 
+//                          "set_config_decor".
 // 
 //     gabeg Mar 19 2015 <> Utilized the universal setup function and also enabled 
 //                          a method to have the application write verbosely to the  
@@ -183,8 +183,8 @@ static void display_dialog() {
     // Declare the widget position, text, and decoration structs
     struct glmpos pos;
     
-    // Define variables in preferences file
-    set_pref_pos(PANEL_DIA_PREF,  &pos);
+    // Define variables in config file
+    set_config_pos(PANEL_DIA_CONFIG,  &pos);
     
     // Initialize widgets
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -273,7 +273,7 @@ static void display_item(char *file, void (*func)() ) {
 
 // Display the button panel 
 void display_panel() {
-    display_item(PANEL_SHUT_PREF, system_shutdown);
-    display_item(PANEL_REB_PREF, system_reboot);
-    display_item(PANEL_REF_PREF, display_dialog);
+    display_item(PANEL_SHUT_CONFIG, system_shutdown);
+    display_item(PANEL_REB_CONFIG, system_reboot);
+    display_item(PANEL_REF_CONFIG, display_dialog);
 }

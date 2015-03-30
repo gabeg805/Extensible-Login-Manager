@@ -67,7 +67,7 @@
 // 
 //     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
 //                          header file. Included the new functions that read in from
-//                          the preferences file, "set_pref_pos".
+//                          the config file, "set_config_pos".
 // 
 //     gabeg Mar 19 2015 <> Utilized the universal setup function and also enabled 
 //                          a method to have the application write verbosely to the  
@@ -177,7 +177,7 @@ void display_frame() {
     APP.widg = gtk_drawing_area_new(); 
     
     // Create the login frame
-    setup_widget(FRAME_PREF, &APP, "draw", (void *)draw_window);
+    setup_widget(FRAME_CONFIG, &APP, "draw", (void *)draw_window);
     
     // Log function completion
     if ( VERBOSE )

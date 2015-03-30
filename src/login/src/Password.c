@@ -64,8 +64,8 @@
 // 
 //     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
 //                          header file. Included the new functions that read in from
-//                          the preferences file, "set_pref_pos", "set_pref_txt", and
-//                          "set_pref_decor".
+//                          the config file, "set_config_pos", "set_config_txt", and
+//                          "set_config_decor".
 // 
 //     gabeg Mar 19 2015 <> Utilized the universal setup function and also enabled 
 //                          a method to have the application write verbosely to the  
@@ -195,7 +195,7 @@ void display_password_entry() {
     APP.widg = gtk_entry_new();
     
     // Create the password entry box
-    setup_widget(PASS_PREF, &APP, "activate", get_entry_text);
+    setup_widget(PASS_CONFIG, &APP, "activate", get_entry_text);
     setup_entry();
     
     // Log function completion

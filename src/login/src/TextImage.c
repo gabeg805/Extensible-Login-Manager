@@ -54,7 +54,7 @@
 // 
 //     gabeg Sep 16 2014 <> Removed unneeded libraries.
 // 
-//     gabeg Oct 23 2014 <> Moved over #define statements from "Config.c" to here. 
+//     gabeg Oct 23 2014 <> Moved over #define statements from "Utility.c" to here. 
 //                          Made "draw_..." functions static and changed the 
 //                          textimage setup function for the main universal setup 
 //                          funtion.
@@ -65,7 +65,7 @@
 // 
 //     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
 //                          header file. Included the new functions that read in from
-//                          the preferences file, "set_pref_pos" and "set_pref_txt".
+//                          the config file, "set_config_pos" and "set_config_txt".
 // 
 //     gabeg Mar 19 2015 <> Utilized the universal setup function and also enabled 
 //                          a method to have the application write verbosely to the  
@@ -160,7 +160,7 @@ void display_text_image() {
     APP.widg = gtk_drawing_area_new(); 
     
     // Create the text image
-    setup_widget(TEXT_PREF, &APP, "draw", (void *)draw_window);
+    setup_widget(TEXT_CONFIG, &APP, "draw", (void *)draw_window);
     
     // Log function completion
     if ( VERBOSE )

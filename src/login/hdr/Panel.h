@@ -9,10 +9,10 @@
 #include <stdlib.h>
 
 // Defines
-#define PANEL_SHUT_PREF    "/etc/X11/glm/src/login/pref/Panel-Shutdown.pref"
-#define PANEL_REF_PREF     "/etc/X11/glm/src/login/pref/Panel-Refresh.pref"
-#define PANEL_REB_PREF     "/etc/X11/glm/src/login/pref/Panel-Reboot.pref"
-#define PANEL_DIA_PREF     "/etc/X11/glm/src/login/pref/Panel-Dialog.pref"
+#define PANEL_SHUT_CONFIG    "/etc/X11/glm/src/login/config/Panel-Shutdown.config"
+#define PANEL_REF_CONFIG     "/etc/X11/glm/src/login/config/Panel-Refresh.config"
+#define PANEL_REB_CONFIG     "/etc/X11/glm/src/login/config/Panel-Reboot.config"
+#define PANEL_DIA_CONFIG     "/etc/X11/glm/src/login/config/Panel-Dialog.config"
 
 #define POWEROFF          "/usr/bin/poweroff"
 #define REBOOT            "/usr/bin/reboot"

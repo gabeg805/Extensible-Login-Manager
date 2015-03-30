@@ -86,8 +86,8 @@
 // 
 //     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
 //                          header file. Included the new functions that read in from
-//                          the preferences file, "set_pref_pos", "set_pref_txt", and
-//                          "set_pref_decor".
+//                          the config file, "set_config_pos", "set_config_txt", and
+//                          "set_config_decor".
 // 
 //     gabeg Mar 19 2015 <> Utilized the universal setup function and also enabled 
 //                          a method to have the application write verbosely to the  
@@ -391,7 +391,7 @@ static void display_icon() {
     app.widg = gtk_image_new();
     
     // Create the username icon
-    setup_widget(USER_IMG_PREF, &app, NULL, NULL);
+    setup_widget(USER_IMG_CONFIG, &app, NULL, NULL);
     gtk_image_set_from_file(GTK_IMAGE(app.widg), app.decor.img_file);
     
     // Log function completion
@@ -426,7 +426,7 @@ static void display_usr_menu() {
     app.widg = gtk_menu_button_new();
     
     // Create the login frame
-    setup_widget(USER_PREF, &app, NULL, NULL);
+    setup_widget(USER_CONFIG, &app, NULL, NULL);
     setup_menu(app);
     
     // Log function completion

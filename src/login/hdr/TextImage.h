@@ -11,7 +11,7 @@
 #include <cairo.h>
 
 // Defines
-#define TEXT_PREF    "/etc/X11/glm/src/login/pref/TextImage.pref"
+#define TEXT_CONFIG    "/etc/X11/glm/src/login/config/TextImage.config"
 
 // Public functions
 void display_text_image();
