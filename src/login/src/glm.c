@@ -68,6 +68,9 @@
 //                          know it's a type definition, but it makes the code look
 //                          a little cleaner.
 // 
+//     gabeg Apr 04 2015 <> Not sure if I should initialize globals in a function
+//                          or not. I'll keep it just in case.
+// 
 // **********************************************************************************
 
 
@@ -78,6 +81,17 @@
 
 // Includes
 #include "../hdr/glm.h"
+
+/* char *SERVICE; */
+/* char *USERNAME; */
+/* char *PASSWORD; */
+/* char *SESSION; */
+/* char *GLM_LOG; */
+/* int  TTYN; */
+/* bool INTERFACE; */
+/* bool PREVIEW; */
+/* bool VERBOSE; */
+/* bool BENCHTIME; */
 
 char *SERVICE  = "glm";
 char *USERNAME = "User";
@@ -102,6 +116,9 @@ int main(int argc, char *argv[]) {
     // Read input cli arguments
     cli_parse(argc, argv);
     
+    // Initialize global variables
+    /* init_globals(); */
+    
     // Log program start
     if ( VERBOSE || BENCHTIME ) {
         time_t t;
@@ -121,9 +138,6 @@ int main(int argc, char *argv[]) {
         if ( login(USERNAME, PASSWORD) )
             break;
     }
-    
-    // Free memory
-    free(USERNAME);
     
     return 0;
 }

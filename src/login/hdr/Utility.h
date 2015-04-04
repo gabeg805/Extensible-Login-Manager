@@ -18,9 +18,10 @@
 #include <gtk/gtk.h>
 
 // Defines
-#define READ_INT_LEN     20
-#define READ_CHAR_LEN    50
-#define READ_PATH_LEN    100
+#define MAX_CMD_LEN    128
+#define MAX_LOC_LEN    64
+#define MAX_STR_LEN    32
+#define MAX_NUM_LEN    16
 
 // Global variables
 extern char *SERVICE;
@@ -45,6 +46,7 @@ struct glmpos { // Widget position and size
 struct glmtxt { // Text attributes
     int size;
     int maxchars;
+    int refresh;
     
     char *text;
     char *font;
@@ -83,15 +85,19 @@ struct glmapp { // Widget application
 
 // Public functions 
 void cli_parse(int argc, char **argv);
+/* void init_globals(); */
 void cleanup_child(int signal);
-int count_char(char *str, char val);
+
+void get_substring(char *copy, char *str, char sep, int num);
 void file_log(const char *fmt, ...);
-void file_write(char *file, char *opt, const char *fmt, ...);
-char * file_read(char *file, int ln, int sz);
-char * command_line(char *cmd, size_t sz, size_t sza);
+void file_line_overwrite(char *file, char *key, char *val);
+
+bool is_running(char *prog);
+void get_cmd_output(char *arr, int size, char *cmd);
 
 char * read_config_char(char *file, char *key, int n);
 int read_config_int(char *file, char *key);
+void read_config_cmd_rep(char *arr, char *file, char *rep1, char *rep2, char *rep3);
 void exec_config_cmd(char *file, int n);
 
 void set_config_pos(char *file, struct glmpos *pos);
@@ -101,6 +107,9 @@ void set_config_decor(char *file, struct glmdecor *decor);
 void set_widget_pos(struct glmapp *app);
 void set_widget_color(struct glmapp *app);
 void enable_transparency(GtkWidget *widget);
-void setup_widget(char *file, struct glmapp *app, char *event, void (*func)(GtkWidget *widg));
+void setup_app(char *file, 
+               struct glmapp *app, 
+               char *event, 
+               void (*func)(GtkWidget *widg));
 
 #endif

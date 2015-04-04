@@ -7,6 +7,7 @@
 #include "../hdr/Utility.h"
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 #include <signal.h>
 #include <unistd.h>
@@ -18,9 +19,8 @@
 #include <security/pam_misc.h>
 
 // Defines
-#define AWK        "/usr/bin/awk"
-#define GREP       "/usr/bin/grep"
-#define LOGINCTL   "/usr/bin/loginctl"
+#define AUTH_CONFIG    "/etc/X11/glm/src/login/config/Authenticate.config"
+
 #define SESSREG    "/usr/bin/sessreg"
 #define UTMP_ADD   "/run/utmp"
 #define UTMP_DEL   "/var/run/utmp"

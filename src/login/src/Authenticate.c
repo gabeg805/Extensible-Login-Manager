@@ -80,6 +80,16 @@
 //     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
 //                          header file.
 // 
+//     gabeg Apr 04 2015 <> Removed excess of defined commands in the header file 
+//                          ("loginctl", "grep", "awk") and put the whole command in
+//                          the config file.
+//                          
+//                          Removed the "command_line" function when initializing
+//                          environment variables and used the "get_cmd_output",
+//                          which does not need a call to "malloc".
+// 
+//                          Changed "is_pam_success" to bool type.
+// 
 // **********************************************************************************
 
 
@@ -94,7 +104,7 @@
 // Private functions
 static void init_env(pam_handle_t *pam_handle, struct passwd *pw);
 static void manage_login_records(const char *username, char *opt);
-static int is_pam_success(int result, pam_handle_t *pamh);
+static bool is_pam_success(int result, pam_handle_t *pamh);
 static int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr);
 
 char TTY[6];
@@ -108,27 +118,28 @@ char TTY[6];
 // Set environment variables for USER 
 static void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
     
-    // Define loginctl commands
-    char cmd_start[100];
-    char seat_cmd[100];
-    char session_id_cmd[100];
-    
-    snprintf(cmd_start, sizeof(cmd_start), "%s | %s %s | %s", LOGINCTL, GREP, pw->pw_name, AWK);
-    snprintf(seat_cmd, sizeof(seat_cmd), "%s %s", cmd_start, "'{ print $4 }'");
-    snprintf(session_id_cmd, sizeof(session_id_cmd), "%s %s", cmd_start, "'{ print $1 }'");
-    
+    // Loginctl XDG commands from the config file
+    char seat_cmd[MAX_CMD_LEN];
+    char session_id_cmd[MAX_CMD_LEN];
+    read_config_cmd_rep(seat_cmd,       AUTH_CONFIG, pw->pw_name, "$1", NULL);
+    read_config_cmd_rep(session_id_cmd, AUTH_CONFIG, pw->pw_name, "$4", NULL);
     
     // Define environment variables
-    char *seat       = command_line(seat_cmd,       10, 10);
-    char *session_id = command_line(session_id_cmd, 10, 10);
+    char seat[MAX_STR_LEN];
+    char session_id[MAX_STR_LEN];
+    char vtnr[MAX_NUM_LEN];
+    char runtime_dir[MAX_LOC_LEN];
+    char xauthority[MAX_LOC_LEN];
     
-    char vtnr[3];
-    char runtime_dir[100];
-    char xauthority[100];
-    
+    get_cmd_output(seat, sizeof(seat), seat_cmd);
+    get_cmd_output(session_id, sizeof(session_id), session_id_cmd);
     snprintf(vtnr, sizeof(vtnr), "%d", TTYN);
     snprintf(runtime_dir, sizeof(runtime_dir), "%s/%d", "/run/user", pw->pw_uid);
     snprintf(xauthority, sizeof(xauthority), "%s/%s", pw->pw_dir, ".Xauthority");
+    
+    // Null terminate environment variables 
+    seat[strlen(seat)-1] = '\0';
+    session_id[strlen(session_id)-1] = '\0';
     
     // Set environment variables
     setenv("USER", pw->pw_name, 1);
@@ -138,10 +149,6 @@ static void init_env(pam_handle_t *pam_handle, struct passwd *pw) {
     setenv("XDG_SESSION_ID", session_id, 1);
     setenv("XDG_RUNTIME_DIR", runtime_dir, 1);
     setenv("XAUTHORITY", xauthority, 1);
-    
-    // Free memory
-    free(seat);
-    free(session_id);
 }
 
 
@@ -182,13 +189,14 @@ static void manage_login_records(const char *username, char *opt) {
 // ///////////////////////////////////////////
 
 // Check if previous PAM command resulted in Success 
-int is_pam_success(int result, pam_handle_t *pamh) {
+bool is_pam_success(int result, pam_handle_t *pamh) {
     if ( result != PAM_SUCCESS ) {
-        file_write(GLM_LOG, "a+", "%s\n", pam_strerror(pamh, result));
-        return 0;
+        file_log("%s: (%s:%d) %s\n", 
+                 __FILE__, __FUNCTION__, __LINE__, pam_strerror(pamh, result));
+        return false;
     } 
     
-    return 1;
+    return true;
 }
 
 
@@ -207,8 +215,10 @@ static int conv(int num_msg, const struct pam_message **msg, struct pam_response
     }
     
     int result = PAM_SUCCESS;
+    
     for (i = 0; i < num_msg; i++) {
         char *username, *password;
+        
         switch (msg[i]->msg_style) {
         case PAM_PROMPT_ECHO_ON:
             username = ((char **) appdata_ptr)[0];
@@ -255,31 +265,31 @@ int login(const char *username, const char *password) {
     
     // Start PAM
     int result = pam_start(SERVICE, NULL, &pam_conv, &pam_handle);
-    if (!is_pam_success(result, pam_handle)) return 0;
+    if ( !is_pam_success(result, pam_handle) ) return 0;
     
     // Set PAM items
     snprintf(TTY, sizeof(TTY), "%s%d", "tty", TTYN);
     
     result = pam_set_item(pam_handle, PAM_USER, username);
-    if (!is_pam_success(result, pam_handle)) return 0;
+    if ( !is_pam_success(result, pam_handle) ) return 0;
     result = pam_set_item(pam_handle, PAM_TTY, TTY);
-    if (!is_pam_success(result, pam_handle)) return 0;
+    if ( !is_pam_success(result, pam_handle) ) return 0;
     
     // Authenticate PAM user
     result = pam_authenticate(pam_handle, 0);
-    if (!is_pam_success(result, pam_handle)) return 0;
+    if ( !is_pam_success(result, pam_handle) ) return 0;
     
     // Check if user account is valid
     result = pam_acct_mgmt(pam_handle, 0);
-    if (!is_pam_success(result, pam_handle)) return 0;
+    if ( !is_pam_success(result, pam_handle) ) return 0;
     
     // Establish credentials
     result = pam_setcred(pam_handle, PAM_ESTABLISH_CRED);
-    if (!is_pam_success(result, pam_handle)) return 0;
+    if ( !is_pam_success(result, pam_handle) ) return 0;
     
     // Open PAM session
     result = pam_open_session(pam_handle, 0);
-    if (!is_pam_success(result, pam_handle)) {
+    if ( !is_pam_success(result, pam_handle) ) {
         pam_setcred(pam_handle, PAM_DELETE_CRED);
         return 0;
     }
@@ -298,13 +308,17 @@ int login(const char *username, const char *password) {
     if ( child_pid == 0 ) {
         
         // Check if GLM is in preview mode
-        if (PREVIEW) 
+        if (PREVIEW) {
+            init_env(pam_handle, pw);
             return 1;
-        else {
+        } else {
             
             // Log system login start
-            file_write(GLM_LOG, "a+", "%s\n", "Setting up user session...");
+            double bmtime = benchmark_runtime(0);
             
+            if ( VERBOSE )
+                file_log("%s (%s:%d) Setting up user session...\n", 
+                         __FILE__, __FUNCTION__, __LINE__);
             
             // Kill windows
             system("xwininfo -root -children | grep '  0x' | cut -d' ' -f6 | xargs -n1 xkill -id");
@@ -332,10 +346,14 @@ int login(const char *username, const char *password) {
             
             
             // Log system login start
-            file_write(GLM_LOG, "a+", "%s '%s' %s\n%s '%s'.\n\n", 
-                       "User session", SESSION, "is active.", 
-                       "Successfully logged in as", username);
+            if ( VERBOSE )
+                file_log("%s (%s:%d) Successfully logged in as '%s' (Session '%s').\n\n", 
+                         __FILE__, __FUNCTION__, __LINE__,
+                         username, SESSION);
             
+            if ( BENCHTIME )
+                file_log("%s: (%s: Runtime): %lf\n", 
+                         __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
             
             // Start user X session with xinitrc
             execl(pw->pw_shell, pw->pw_shell, "-c", cmd, NULL);
@@ -351,14 +369,14 @@ int login(const char *username, const char *password) {
     
     // Close PAM session
     result = pam_close_session(pam_handle, 0);
-    if (!is_pam_success(result, pam_handle)) {
+    if ( !is_pam_success(result, pam_handle) ) {
         pam_setcred(pam_handle, PAM_DELETE_CRED);
         return 0;
     }
     
     // Remove credentials
     result = pam_setcred(pam_handle, PAM_DELETE_CRED);
-    if (!is_pam_success(result, pam_handle)) return 0;
+    if ( !is_pam_success(result, pam_handle) ) return 0;
     
     // End PAM session
     result = pam_end(pam_handle, result);

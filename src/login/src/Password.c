@@ -166,7 +166,7 @@ static void get_entry_text(GtkWidget *widg) {
         gtk_widget_destroy(APP.widg);
         gtk_main_quit();
         
-        PASSWORD = (char*)text;
+        PASSWORD = (char*) text;
     }
     
     if ( BENCHTIME )
@@ -195,7 +195,7 @@ void display_password_entry() {
     APP.widg = gtk_entry_new();
     
     // Create the password entry box
-    setup_widget(PASS_CONFIG, &APP, "activate", get_entry_text);
+    setup_app(PASS_CONFIG, &APP, "activate", get_entry_text);
     setup_entry();
     
     // Log function completion

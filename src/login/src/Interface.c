@@ -96,11 +96,11 @@ void login_interface(int argc, char *argv[]) {
                      __FILE__, __FUNCTION__, __LINE__);
         
         // Display interface items
-        display_clock();
         display_frame();
         display_text_image();
-        display_window_manager();
         display_username();
+        display_window_manager();
+        display_clock();
         display_panel();
         
         // Denote that interface has already begun

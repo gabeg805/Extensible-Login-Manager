@@ -3,12 +3,8 @@
 #define PASSWORD_H
 
 // Includes
-#include "../hdr/glm.h"
 #include "../hdr/Utility.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <gtk/gtk.h>
 
 // Defines

@@ -38,7 +38,7 @@
 // 
 //     usermenu_write_to_file - Write username to file.
 // 
-//     get_username           - Get username/uid combination from the specified file.
+//     get_usernames          - Get username/uid combination from the specified file.
 // 
 //     set_username_entries   - Set entries in the user menu.
 // 
@@ -51,7 +51,7 @@
 //     * Includes and Declares
 //     * Setup Username Menu
 //     * Write User Menu Item to File
-//     * Get Username-UID Combination
+//     * Get All Users On System
 //     * Add Username Entries to the Menu
 //     * Display Username 
 // 
@@ -99,6 +99,14 @@
 // 
 //     gabeg Mar 25 2015 <> No longer have to malloc for the application txt struct.
 // 
+//     gabeg Apr 04 2015 <> Now save current user in config file instead of a file 
+//                          specific to the username. This means I can use the
+//                          "read_config_char" function to get the username.
+//                          
+//                          Moved the system username sorter into the function that
+//                          returns all the usernames on the system. Now a simple 
+//                          loop is all it takes to add the user radio buttons.
+// 
 // **********************************************************************************
 
 
@@ -114,7 +122,7 @@
 static void setup_menu(struct glmapp app);
 static void setup_label(GtkWidget *label, struct glmtxt txt);
 static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label);
-static char ** get_username(char *file, int size);
+static char ** get_usernames(char *file);
 static void set_username_entries(GtkWidget *menu, GtkWidget *label);
 static void display_icon();
 static void display_usr_menu();
@@ -193,10 +201,8 @@ static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
     
     double bmtime = benchmark_runtime(0);
     
-    const gchar *user = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    
-    snprintf(USERNAME, strlen(user)+1, "%s", (char*)user);
-    file_write(USERNAME_LOG, "w", "%s\n", USERNAME);
+    USERNAME = (char*) gtk_menu_item_get_label( GTK_MENU_ITEM(item) );
+    file_line_overwrite(USER_CONFIG, "user", USERNAME);
     
     gtk_label_set_text(GTK_LABEL(label), USERNAME);
     
@@ -207,86 +213,96 @@ static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
 
 
 
-// ////////////////////////////////////////
-// ///// GET USERNAME-UID COMBINATION /////
-// ////////////////////////////////////////
+// ///////////////////////////////////
+// ///// GET ALL USERS ON SYSTEM /////
+// ///////////////////////////////////
 
 // Get username/uid combination from the specified file
-static char ** get_username(char *file, int size) {
+static char ** get_usernames(char *file) {
     
     double bmtime = benchmark_runtime(0);
     
-    // Initialize username array
-    char **array = malloc(sizeof(char*)*size);
-    assert(array);
-    array[0] = "0";
-    
     // Open file for reading
     FILE *handle = fopen(file, "r");
-    char line[150];
+    char line[MAX_CMD_LEN];
+    
+    // Available system users that can be signed into
+    char container[MAX_NUM_LEN][MAX_STR_LEN];
+    char sep = ':';
+    int count = 0;
     
     // Loop through file lines
-    int i = 1;
     while ( fgets(line, sizeof(line), handle) != NULL ) {
         
-        // Information on file lines
-        int uid;
-        char *user = NULL;
-        char *sep;
-        char *buffer, *orig;
-        buffer = orig = strdup(line);
+        // System user UID
+        char uid_str[MAX_NUM_LEN];
+        get_substring(uid_str, line, sep, 3);
+        int uid = atoi(uid_str);
         
-        
-        // Loop through words (delimited by ':') on line
-        int count = 0;
-        while ( (count < 3) && (sep = strsep(&buffer, ":")) ) {
-            if ( count == 0 ) 
-                user = sep;
-            else if ( count == 1 ) 
-                ;
-            else if ( count == 2 ) {
-                uid = atoi(sep);
-                
-                if ( (strcmp(user, "root") == 0) && (uid != 0) )
-                    return array;
-                
-                if ( (uid == 0) || ((uid >= 1000) && (uid <= 9999)) ) {
-                    size_t sz = strlen(user);
-                    char *output = malloc(sz+1);
-                    assert(output);
-                    snprintf(output, sz+1, user);
-                    
-                    array[i] = output;
-                    ++i;
-                }
-            }
+        // When valid UID value, add user to available user list
+        if ( (uid == 0) || ((uid >= 1000) && (uid <= 9999)) ) {
+            char user[MAX_STR_LEN];
+            get_substring(user, line, sep, 1);
+            snprintf(container[count], strlen(user)+1, "%s", user);
             
-            count++;
+            ++count;
+        }
+    }
+    
+    // No users found in file
+    if ( count == 0 )
+        return NULL;
+    
+    // Allocate necessary space to hold all users
+    char **ret = malloc( sizeof(*ret) * count);
+    int i  = 0,
+        loc    = 0;
+    bool add   = false;
+    
+    // Add users to return array (from previous available user list)
+    while (1) {
+        
+        // Compare label with the focus label
+        add = true;
+        
+        if ( (strcmp(USERNAME, "User") == 0) 
+             || (strcmp(container[loc], USERNAME) == 0) ) 
+            ;
+        else if ( (i != 0) 
+                  && (container[loc][0] != '\0') ) 
+            ;
+        else
+            add = false;
+        
+        // Setup the menu items
+        if ( add == true ) {
+            ret[i] = malloc(MAX_STR_LEN);
+            snprintf(ret[i], strlen(container[loc])+1, "%s", container[loc]);
+            container[loc][0] = '\0';
+            
+            // Increment and check array index values
+            ++i;
+            if ( i == count )
+                break;
         }
         
-        free(orig);
-        orig = NULL;
+        // Increment and check username add counter
+        ++loc;
+        if ( loc >= count )
+            loc = 0;
     }
+    
+    // Null terminate the last element
+    ret[i] = NULL;
     
     // Close file
     fclose(handle);
-    
-    // Put number of array elements into first index
-    char val[5];
-    snprintf(val, sizeof(val), "%d", (i-1));
-    
-    size_t sz = strlen(val);
-    char *copy = malloc(sz+1);
-    assert(copy);
-    snprintf(copy, sz+1, val);
-    
-    array[0] = copy;
     
     if ( BENCHTIME )
         file_log("%s: (%s: Runtime): %lf\n", 
                  __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
     
-    return array;
+    return ret;
 }
 
 
@@ -305,60 +321,42 @@ static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
     GSList *group = NULL;
     
     // Search for login users in passwd files
-    int size = 20;
-    char *files[] = {"/etc/shadow", "/etc/passwd", NULL};
+    char *files[] = {"/etc/passwd", "/etc/shadow", NULL};
     
     // Set usernames from file
-    int num;
-    char **allusers;
-    allusers = get_username(files[0], size);
-    num = atoi(allusers[0]);
+    char **allusers = get_usernames(files[0]);
     
     // Wrong file was used above, use the other file
-    if ( num == 0 ) {
-        allusers = get_username(files[1], size);
-        num = atoi(allusers[0]);
-    }
+    if ( allusers == NULL )
+        allusers = get_usernames(files[1]);
     
     // Define menu item counters
-    int i = 1, q = 0, p = 0;
-    while (1) {
+    int i = 0;
+    
+    while ( allusers[i] != NULL ) {
         
-        // Compare label with the focus label
-        p = 1; 
-        if ( strcmp(allusers[i], USERNAME) == 0 ) {
+        // Create the radio button menu label
+        if ( i == 0 )
             user = gtk_radio_menu_item_new_with_label(NULL, allusers[i]);
-            group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(user));
-        } else if ( (q != 0) && (allusers[i] != NULL) )
+        else
             user = gtk_radio_menu_item_new_with_label(group, allusers[i]);
-        else 
-            p = 0;
         
-        // Setup the menu items
-        if ( p == 1 ) {
-            free(allusers[i]);
-            allusers[i] = NULL;
-            
-            // Attach window manager entries to the menu
-            gtk_menu_attach(GTK_MENU(menu), user, 0, 1, q, q+1);
-            gtk_widget_show(user);
-            
-            // Add menu entry signal
-            g_signal_connect(G_OBJECT(user), "activate", G_CALLBACK(usermenu_write_to_file), label);
-            
-            if ( (++q) == num ) 
-                break;
-        }
+        // Create the menu radio button group
+        group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(user));
         
-        // Increment counter
-        if ( (++i) > num )
-            i = 1;
+        // Attach window manager entries to the menu
+        gtk_menu_attach(GTK_MENU(menu), user, 0, 1, i, i+1);
+        gtk_widget_show(user);
+        g_signal_connect(G_OBJECT(user), "activate", G_CALLBACK(usermenu_write_to_file), label);
+        
+        // Free up used memory
+        free(allusers[i]);
+        allusers[i] = NULL;
+        
+        ++i;
     }
     
     // Free the memory
-    free(allusers[0]);
-    allusers[0] = NULL;
-    
     free(allusers);
     allusers = NULL;
     
@@ -391,7 +389,7 @@ static void display_icon() {
     app.widg = gtk_image_new();
     
     // Create the username icon
-    setup_widget(USER_IMG_CONFIG, &app, NULL, NULL);
+    setup_app(USER_IMG_CONFIG, &app, NULL, NULL);
     gtk_image_set_from_file(GTK_IMAGE(app.widg), app.decor.img_file);
     
     // Log function completion
@@ -415,8 +413,11 @@ static void display_usr_menu() {
         file_log("%s: (%s:%d): Displaying Username menu button...", 
                  __FILE__, __FUNCTION__, __LINE__);
     
-    // Define username
-    USERNAME = file_read(USERNAME_LOG, 1, 20);
+    // Define default username
+    USERNAME = read_config_char(USER_CONFIG, "user", MAX_STR_LEN);
+    
+    if ( USERNAME == NULL ) 
+        USERNAME = "User";
     
     // Allocate space for the application 
     struct glmapp app;
@@ -425,8 +426,8 @@ static void display_usr_menu() {
     app.win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     app.widg = gtk_menu_button_new();
     
-    // Create the login frame
-    setup_widget(USER_CONFIG, &app, NULL, NULL);
+    // Setup the widget
+    setup_app(USER_CONFIG, &app, NULL, NULL);
     setup_menu(app);
     
     // Log function completion

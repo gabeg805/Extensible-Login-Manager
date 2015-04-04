@@ -37,17 +37,23 @@
 // 
 //     cleanup_child       - Remove zombie processes.
 // 
-//     count_char          - Count number of times a character occurs in a string.
+//     get_substring       - Return the substring in between the specified delimeter.
 // 
 //     file_log            - Write to the GLM log file.
-//     file_write          - Write to a file.
+//     file_line_overwrite - Overwrite the specified line (given by the key) in the 
+//                           configuration file.
 // 
-//     file_read           - Read a file's contents.
+//     is_running          - Check if program is running.
 // 
-//     command_line        - Return output of a Linux command.
+//     get_cmd_output      - Get output from the specified linux command.
 // 
 //     read_config_char    - Read the config file and output a string.
 //     read_config_int     - Read the config file and output an int.
+//     read_config_cmd_rep - Read the config file and output a command that has 
+//                           replacement chars ('@'), and replace those chars with
+//                           the specified replacements.
+//     exec_config_cmd     - Execute the command in the config file.
+// 
 // 
 //     set_config_pos      - Set position values defined in the config file.
 //     set_config_txt      - Set text values defined in the config file.
@@ -56,20 +62,20 @@
 //     set_widget_pos      - Set the size and position of the widget.
 //     set_widget_color    - Set the color and opacity of the widget.
 //     enable_transparency - Enable widget transparency.
-//     setup_app           - Setup the application.
+//     setup_app           - Setup the widget application.
 // 
 // 
 // FILE STRUCTURE:
 // 
-//     * Parse Input Options
 //     * Includes and Declares
+//     * Parse Input Options
 //     * Remove Zombie Processes
-//     * Character Count In String
+//     * Get Subtring Within Delimeter
 //     * Write to File
-//     * Read File
+//     * Check If Program Is Running
 //     * Get Linux Command Output
-//     * Read Preference File
-//     * Set Preference Values
+//     * Read Config File
+//     * Set Config Values
 //     * Application Setup 
 // 
 // 
@@ -127,6 +133,29 @@
 //                          executes commands from the config file, called 
 //                          "exec_config_cmd". 
 // 
+//     gabeg Apr 04 2015 <> Added a function "file_line_overwrite" to overwrite the
+//                          line that matches the given key, in the given file. This
+//                          will make "file_read" obselete as I put the items I was
+//                          reading into config files and then use the "read_config" 
+//                          functions to find the items I was looking for. 
+//                          
+//                          Modified the "MAX_LEN" variables to include one for 
+//                          commands, and used the "MAX_CMD_LEN" in the 
+//                          "exec_config_cmd" function.
+//                          
+//                          Removed the "file_read" function, it's now obsolete.
+// 
+//                          Removed the "file_write" function, it's now obsolete.
+// 
+//                          Added the "get_cmd_output" function to replace 
+//                          "command_line".
+// 
+//                          Removed the "command_line" function, it's now obsolete.
+// 
+//                          Added the "read_config_cmd_rep" function which reads a  
+//                          command from the config file and replaces instances of
+//                          '@' (up to 3), with whatever the user specifies.
+// 
 // **********************************************************************************
 
 
@@ -165,6 +194,26 @@ void cli_parse(int argc, char **argv) {
 
 
 
+// ///////////////////////////////////////
+// ///// INITIALIZE GLOBAL VARIABLES /////
+// /////////////////////...../////////////
+
+// Initialize global variables
+/* void init_globals() { */
+/*     SERVICE  = "glm"; */
+/*     USERNAME = "User"; */
+/*     PASSWORD = "Password"; */
+/*     SESSION  = "xterm"; */
+/*     GLM_LOG  = "/etc/X11/glm/log/glm.log"; */
+/*     TTYN      = 1; */
+/*     INTERFACE = false; */
+/*     PREVIEW   = false; */
+/*     VERBOSE   = false; */
+/*     BENCHTIME = false; */
+/* } */
+
+
+
 // ///////////////////////////////////
 // ///// REMOVE ZOMBIE PROCESSES /////
 // ///////////////////////////////////
@@ -176,23 +225,39 @@ void cleanup_child(int signal) {
 
 
 
-// /////////////////////////////////////
-// ///// CHARACTER COUNT IN STRING /////
-// /////////////////////////////////////
+// /////////////////////////////////////////
+// ///// GET SUBTRING WITHIN DELIMETER /////
+// /////////////////////////////////////////
 
-// Count number of times a character occurs in a string
-int count_char(char *str, char val) {
-    int i = 0;
-    int count = 0;
-    int len = strlen(str);
+// Return the substring between the given separator
+void get_substring(char *copy, char *str, char sep, int num) {
     
-    while ( i < len ) {
-        if ( str[i] == val )
+    // Loop variables
+    int i     = 0,
+        j     = 0,
+        count = 1;
+    
+    // Loop through each variable in array
+    while ( str[i] != '\0' ) {
+        
+        // Increae separator count
+        if ( str[i] == sep )
             ++count;
+        else if ( count == num ) {
+            // Copy current char 
+            copy[j] = str[i];
+            ++j;
+        }
+        
+        // Done checking for separator
+        if ( count > num ) 
+            break;
+        
         ++i;
     }
     
-    return count;
+    // Add null terminator
+    copy[j] = '\0';
 }
 
 
@@ -221,56 +286,143 @@ void file_log(const char *fmt, ...) {
 
 
 
-// Write to a file
-void file_write(char *file, char *opt, const char *fmt, ...) {
-    FILE *handle = fopen(file, opt);
-    va_list args;
+// Overwrite configuration file line that matches the given key
+void file_line_overwrite(char *file, char *key, char *val) {
     
-    va_start(args, fmt);
-    vfprintf(handle, fmt, args);
-    va_end(args);
+    // File attributes    
+    FILE *handle = fopen(file, "r+");
+    char line[MAX_STR_LEN];
+    char copy[MAX_STR_LEN];
+    bool write = false;
     
+    // New file attributes
+    char *ext = ".bak";
+    int n = strlen(file) + strlen(ext) + 1;
+    char newfile[n];
+    snprintf(newfile, n, "%s%s", file, ext);
+    
+    FILE *new_handle = fopen(newfile, "w");
+    
+    // Create the new line
+    int len_key = strlen(key),
+        len_val = strlen(val),
+        len     = len_key + len_val + 3;
+    char newline[len];
+    snprintf(newline, len, "%s: %s", key, val);
+    
+    // Edit the line matching the key, in the file
+    while ( fgets(line, sizeof(line), handle) != NULL ) {
+        
+        // Find the key
+        get_substring(copy, line, ':', 1);
+        
+        // Rewrite a new file with same contents but the line is changed
+        if ( (strcmp(key, copy) == 0) ) {
+            fprintf(new_handle, "%s\n", newline);
+            write = true;
+        } else 
+            fprintf(new_handle, "%s", line);
+    }
+    
+    // Write in default entry if key was not found
+    if ( !write )
+        fprintf(handle, "%s: Not Found\n", key);
+    
+    // Close the files
     fclose(handle);
+    fclose(new_handle);
+    
+    // Remove old file and rename the new file 
+    remove(file);
+    rename(newfile, file);
 }
 
 
 
-// /////////////////////
-// ///// READ FILE /////
-// /////////////////////
+// ///////////////////////////////////////
+// ///// CHECK IF PROGRAM IS RUNNING /////
+// ///////////////////////////////////////
 
-// Read a file's contents
-char * file_read(char *file, int ln, int sz) {
+// Check if the specified program is running
+bool is_running(char *prog) {
     
-    // Store file contents in variable
-    FILE *handle = fopen(file, "r");
-    char temp[sz];
+    // File and directory reading variables
+    DIR  *dir_handle = opendir("/proc");
+    FILE *file_handle;
+    struct dirent *dir_entry;
+    char *endptr;
+    char buf[512];
     
-    // Loop through file
-    int i = 0;
-    while (fgets(temp, sz, handle) != NULL ) {
+    // Loop through each file name in the directory
+    while ( (dir_entry=readdir(dir_handle)) != NULL ) {
         
-        // Remove trailing newline characters
-        char *pos;
-        if ((pos=strchr(temp, '\n')) != NULL)
-            *pos = '\0';
+        // Convert filename to pid value
+        long pid = strtol(dir_entry->d_name, &endptr, 10);
         
-        // Break out of loop
-        ++i;
-        if ( i == ln )
-            break;
+        if ( *endptr != '\0' ) 
+            continue;
+        
+        // Open up the cmdline file
+        snprintf(buf, sizeof(buf), "/proc/%ld/cmdline", pid);
+        file_handle = fopen(buf, "r");
+        
+        // Read the cmdline file
+        if ( fgets(buf, sizeof(buf), file_handle) != NULL ) {
+            int i   = 0, 
+                j   = 0,
+                sz  = strlen(buf),
+                len = strlen(prog);
+            char copy[sz+1];
+            bool match = false,
+                clear  = false;
+            
+            // Loop through each char of the line in the file
+            while ( buf[i] != '\0' ) {
+                
+                // Stop searching if too late to match
+                if ( (j+(sz-i)) < len )
+                    break;
+                
+                // Matched char found (keeps adding to match until space char found)
+                if ( (buf[i] != ' ') && ((buf[i] == prog[j]) || match) ) {
+                    
+                    // Clear memory
+                    if ( !clear && (j == 0) ) {
+                        memset(copy, 0, sz+1);
+                        clear = true;
+                    }
+                    
+                    // Continue matching chars (if possible)
+                    if ( j == (len-1) )
+                        match = true;
+                    
+                    copy[j] = buf[i];
+                    ++j;
+                } else {
+                    // Match not found, reset everything
+                    if ( j >= len )
+                        break;
+                    if ( j != 0 )
+                        memset(copy, 0, j);
+                    
+                    j = 0;
+                }
+                ++i;
+            }
+            
+            // Check for match
+            if ( strcmp(prog, copy) == 0 ) 
+                return true;
+        }
+        
+        // Close the file
+        fclose(file_handle);
     }
     
-    // Close file
-    fclose(handle);
-    
-    // Copy the line int to the return variable
-    size_t len = strlen(temp) + 1;
-    char *copy = malloc(len);
-    assert(copy);
-    snprintf(copy, len, "%s", temp);
-    
-    return copy;
+    // Close the directory
+    closedir(dir_handle);
+        
+    return false;
 }
 
 
@@ -279,35 +431,38 @@ char * file_read(char *file, int ln, int sz) {
 // ///// GET LINUX COMMAND OUTPUT ///// 
 // ////////////////////////////////////
 
+
 // Store command output as a string inside variable
-char * command_line(char *cmd, size_t sz, size_t sza) { 
+void get_cmd_output(char *arr, int size, char *cmd) { 
     
-    // Output arrays
+    // Process attributes
     FILE *handle  = popen(cmd, "r");
-    char temp[sz];
-    char contents[sza];
-    strcpy(contents, "");
+    char line[MAX_STR_LEN];
+    memset(arr, 0, size);
     
-    // Add file contents to contents variable
-    while (fgets(temp, sz, handle) != NULL ) {
-        int lc = strlen(contents);
-        int lt = strlen(temp);
-        if ( sza >  (lc+lt) )
-            strcat(contents, temp);
+    // Initialize string lengths
+    int i = 0,
+        len = 0,
+        loc = 0;
+    
+    // Add process output to array
+    while (fgets(line, MAX_STR_LEN, handle) != NULL ) {
+        len = strlen(arr) + strlen(line);
+        
+        if ( size > len ) {
+            i = 0;
+            
+            while ( line[i] != '\0' ) {
+                arr[loc] = line[i];
+                ++i;
+                ++loc;
+            }
+        }
     }
     
     // Close process
     pclose(handle);
-    
-    // Copy file contents to the return variable
-    size_t len = strlen(contents) + 1;
-    char *copy = malloc(len);
-    assert(copy);
-    snprintf(copy, len, "%s", contents);
-    
-    return copy;
 }
-
 
 
 
@@ -320,13 +475,14 @@ char * read_config_char(char *file, char *key, int n) {
     
     // File variables
     FILE *handle = fopen(file, "r");
-    char line[n];
     char *ret = NULL;
+    char line[n];
     
-    // Length of various strings
+    // Substring variables
+    char sep = ':';
     int count    = 0,
-        len_key  = strlen(key),
-        len_line = 0;
+        len_line = 0,
+        num      = 1;
     
     // Array indicies
     int i = 0,
@@ -336,41 +492,38 @@ char * read_config_char(char *file, char *key, int n) {
     while ( fgets(line, sizeof(line), handle) != NULL ) {
         
         // Reset to 0
+        i     = 0;
+        j     = 0;
         count = 0;
-        i = 0; 
-        j = 0;
         
-        bool sep  = false,
-            found = false;
+        // Find the key substring in the file line
+        char sub[n];
+        get_substring(sub, line, sep, num);
         
-        // Loop through each char of the line
+        if ( strcmp(key, sub) != 0 )
+            continue;
+        
+        // Loop through each char of the line if key was found
         while ( line[i] != 0 ) {
             
             // Compare attribute name to given key
-            if ( !sep || !found ) {
-                
-                if ( line[i] == ':' )
-                    sep = true;
-                
-                if ( !found && (i < len_key) && (line[i] == key[i]) )
+            if ( count < num ) {
+                if ( line[i] == sep )
                     ++count;
-                
-                if ( count == len_key )
-                    found = true;
-                
             } else {
                 
                 // Attribute found, ignore leading space and trailing newline
-                if ( 
-                     ( (j == 0) && ((line[i] == ' ') || (line[i] == '\t') || (line[i] == '\n')) ) 
-                     || 
-                     ( (i == len_line-2) && (line[i] == '\n') )
-                   )
+                bool is_start  = (j == 0),
+                    is_space   = ((line[i] == ' ') || (line[i] == '\t') || (line[i] == '\n')),
+                    is_newline = (line[i] == '\n'),
+                    is_end     = (i == len_line-2);
+                
+                if ( ( is_start && is_space ) || ( is_end && is_newline ) )
                     ;
                 else {
                     
                     // Allocate and clear memory for return variable
-                    if ( j == 0 ) {
+                    if ( is_start ) {
                         // Create your own strlen to ignore leading spaces
                         len_line = strlen(line) + 1; 
                         ret = malloc(len_line);
@@ -387,8 +540,7 @@ char * read_config_char(char *file, char *key, int n) {
         }
         
         // Attribute was found so return the value
-        if ( found )
-            break;
+        break;
     }
     
     // Close the file
@@ -401,12 +553,67 @@ char * read_config_char(char *file, char *key, int n) {
 
 // Read config file and output an int
 int read_config_int(char *file, char *key) {
-    char *val = read_config_char(file, key, READ_INT_LEN);
+    char *val = read_config_char(file, key, MAX_NUM_LEN);
     
     if ( val == NULL )
-        return 0;
+        return -1;
     
     return atoi(val);
+}
+
+
+
+// Read a command from the config file and replace the '@' instances with the 
+//   specified replacements
+void read_config_cmd_rep(char *arr, char *file, char *rep1, char *rep2, char *rep3) {
+    
+    // Clear memory of holder array and define command string 
+    memset(arr, 0, MAX_CMD_LEN);
+    char *cmd = read_config_char(file, "cmd", MAX_CMD_LEN);
+    
+    // Counters for arrays
+    int i     = 0,
+        j     = 0,
+        count = 1;
+    
+    // Copy command string and replace instances of '@' with the given parameters
+    while ( cmd[i] != '\0' ) {
+        
+        // Copy over command char by char
+        if ( cmd[i] != '@' ) {
+            arr[j] = cmd[i];
+            ++j;
+        } else {
+            
+            // Replacement char found, copy over replacement strings
+            switch ( count ) {
+            case 1:
+                if ( rep1 == NULL ) break;
+                
+                strcat(arr, rep1);
+                j = j + strlen(rep1);
+                break;
+            case 2:
+                if ( rep2 == NULL ) break;
+                
+                strcat(arr, rep2);
+                j = j + strlen(rep2);
+                break;
+            case 3:
+                if ( rep3 == NULL ) break;
+                
+                strcat(arr, rep3);
+                j = j + strlen(rep3);
+                break;
+            default:
+                break;
+            }
+            
+            ++count;
+        }
+        
+        ++i;
+    }
 }
 
 
@@ -417,7 +624,7 @@ void exec_config_cmd(char *file, int n) {
     // Get the command string from the config file
     char key[6];
     snprintf(key, sizeof(key), "cmd%d", n);
-    char *cmd = read_config_char(file, key, READ_PATH_LEN);
+    char *cmd = read_config_char(file, key, MAX_CMD_LEN);
     
     // Clean up zombie processes
     signal(SIGCHLD, cleanup_child);
@@ -445,6 +652,12 @@ void set_config_pos(char *file, struct glmpos *pos) {
     pos->y      = read_config_int(file, "ypos");
     pos->width  = read_config_int(file, "width");
     pos->height = read_config_int(file, "height");
+    
+    // Set default values
+    if ( pos->x < 0 )      pos->x = 0;
+    if ( pos->y < 0 )      pos->y = 0;
+    if ( pos->width < 0 )  pos->width = 0;
+    if ( pos->height < 0 ) pos->height = 0;
 }
 
 
@@ -453,22 +666,27 @@ void set_config_pos(char *file, struct glmpos *pos) {
 void set_config_txt(char *file, struct glmtxt *txt) {
     txt->size     = read_config_int(file, "size");
     txt->maxchars = read_config_int(file, "maxchars");
+    txt->refresh  = read_config_int(file, "refresh-sec");
     
-    txt->text  = read_config_char(file, "text",  READ_CHAR_LEN);
-    txt->font  = read_config_char(file, "font",  READ_CHAR_LEN);
-    txt->fmt   = read_config_char(file, "fmt",   READ_CHAR_LEN);
-    txt->invis = read_config_char(file, "invis", READ_CHAR_LEN);
+    txt->text  = read_config_char(file, "text",  MAX_STR_LEN);
+    txt->font  = read_config_char(file, "font",  MAX_STR_LEN);
+    txt->fmt   = read_config_char(file, "fmt",   MAX_STR_LEN);
+    txt->invis = read_config_char(file, "invis", MAX_STR_LEN);
     
     txt->red   = read_config_int(file, "txt-red");
     txt->green = read_config_int(file, "txt-green");
     txt->blue  = read_config_int(file, "txt-blue");
+    
+    // Set default values
+    if ( txt->invis == NULL )
+        txt->invis = " ";
 }
 
 
 
 // Set config decoration values
 void set_config_decor(char *file, struct glmdecor *decor) {
-    decor->img_file = read_config_char(file, "img-file", READ_PATH_LEN);
+    decor->img_file = read_config_char(file, "img-file", MAX_LOC_LEN);
     
     decor->bg_red   = read_config_int(file, "bg-red");
     decor->bg_green = read_config_int(file, "bg-green");
@@ -481,10 +699,6 @@ void set_config_decor(char *file, struct glmdecor *decor) {
     decor->fg_alpha = read_config_int(file, "fg-alpha");
     
     decor->div = read_config_int(file, "div");
-    
-    // Set default value to 1
-    if ( decor->div == 0 )
-        decor->div = 1;
 }
 
 
@@ -504,8 +718,9 @@ void set_widget_pos(struct glmapp *app) {
 // Set the color of a widget 
 void set_widget_color(struct glmapp *app) {
     
-    /* if ( decor == NULL ) */
-    /*     return; */
+    // No decoration defined
+    if ( app->decor.div < 0 )
+        return;
     
     // Define background and foreground window color
     const GdkRGBA bg_win = {0, 0, 0, 0};
@@ -550,7 +765,10 @@ void enable_transparency(GtkWidget *widg) {
 
 
 // Setup the widget
-void setup_widget(char *file, struct glmapp *app, char *event, void (*func)(GtkWidget *widg)) {
+void setup_app(char *file, 
+               struct glmapp *app, 
+               char *event, 
+               void (*func)(GtkWidget *widg)) {
     
     double bmtime = benchmark_runtime(0);
     

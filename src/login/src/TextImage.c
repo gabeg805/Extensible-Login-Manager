@@ -160,7 +160,7 @@ void display_text_image() {
     APP.widg = gtk_drawing_area_new(); 
     
     // Create the text image
-    setup_widget(TEXT_CONFIG, &APP, "draw", (void *)draw_window);
+    setup_app(TEXT_CONFIG, &APP, "draw", (void *)draw_window);
     
     // Log function completion
     if ( VERBOSE )

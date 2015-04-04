@@ -75,7 +75,7 @@
 //                          a method to have the application write verbosely to the  
 //                          log, in the event that a problem arises.
 // 
-//     gabeg Mar 25 2015 <> No longer have to malloc for the application txt struct.
+//     gabeg Mar 30 2015 <> No longer have to malloc for the application txt struct.
 // 
 // **********************************************************************************
 
@@ -91,7 +91,7 @@
 // Private functions
 static void set_label(struct glmapp *app);
 static gboolean update(gpointer data);
-static void display_item(char *file);
+static void display_item(char *file, struct glmapp *app);
 
 
 
@@ -152,7 +152,7 @@ static gboolean update(gpointer data) {
 // /////////////////////////
 
 // Display a piece of the time
-static void display_item(char *file) {
+static void display_item(char *file, struct glmapp *app) {
     
     double bmtime = benchmark_runtime(0);
     
@@ -161,17 +161,14 @@ static void display_item(char *file) {
         file_log("%s: (%s:%d): Displaying clock item...", 
                  __FILE__, __FUNCTION__, __LINE__);
     
-    // Allocate space for the application 
-    struct glmapp *app = malloc( sizeof(struct glmapp) );
-    
     // Define the application widget
     app->win  = gtk_window_new(GTK_WINDOW_POPUP);
     app->widg = gtk_label_new("");
     
     // Create the clock
-    setup_widget(file, app, NULL, NULL);
+    setup_app(file, app, NULL, NULL);
     set_label(app);
-    g_timeout_add_seconds(UPDATE_SEC, update, app);
+    g_timeout_add_seconds(app->txt.refresh, update, app);
     
     // Log function end
     if ( VERBOSE )
@@ -186,6 +183,8 @@ static void display_item(char *file) {
 
 // Display the date and time clock
 void display_clock() {
-    display_item(CLOCK_DATE_CONFIG);
-    display_item(CLOCK_TIME_CONFIG);
+    static struct glmapp date_app, time_app;
+    
+    display_item(CLOCK_DATE_CONFIG, &date_app);
+    display_item(CLOCK_TIME_CONFIG, &time_app);
 }

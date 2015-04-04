@@ -88,6 +88,11 @@
 // 
 //     gabeg Mar 25 2015 <> Utilized the execute-config-command function.
 // 
+//     gabeg Apr 03 2015 <> Modified the method to check if X server is up. Now use
+//                          XOpenDisplay command to check. Moved this check to 
+//                          "start_xserver" function. Also added a timeout for the 
+//                          X server startup.
+// 
 // **********************************************************************************
 
 
@@ -125,20 +130,16 @@ static void set_open_display() {
                  __FILE__, __FUNCTION__, __LINE__);
     
     // Used display file name
-    char *xtmp = "/tmp/.X";
-    char *xlock = "-lock";
     char file[15];
+    bool open = false;
+    int d;
     
     // Loop through possible open displays
-    int d;
-    bool open = false;
-    
     for ( d=0; d < 10; d++ ) {
         
-        // Piece together the file name
-        snprintf(file, sizeof(file), "%s%d%s", xtmp, d, xlock);
-        
         // Check if the file exists (display in use, if exists)
+        snprintf(file, sizeof(file), "/tmp/.X%d-lock", d);
+        
         if ( access(file, F_OK) ) {
             open = true;
             break;
@@ -232,6 +233,29 @@ static void start_xserver() {
               XSERVER_AUTH, VT, NULL);
     }
     
+    // Timer variables for X startup
+    struct timespec t_start, t_end;
+    double start, end;
+    int timeout;
+    
+    clock_gettime(CLOCK_MONOTONIC, &t_start);
+    start   = (double)(t_start.tv_sec + (t_start.tv_nsec / 1e9));
+    timeout = read_config_int(X_CONFIG, "timeout");
+    
+    // Wait until X server is up
+    while ( XOpenDisplay(NULL) == NULL ) {
+        
+        clock_gettime(CLOCK_MONOTONIC, &t_end);        // X server startup timeout
+        end = (double)(t_end.tv_sec + (t_end.tv_nsec / 1e9));
+        
+        if ( (end-start) >= timeout ) {
+            file_log("%s: (%s:%d): Timeout reached: %s (%d sec). GLM exited.",
+                     __FILE__, __FUNCTION__, __LINE__, 
+                     "X server timed out", timeout);
+            exit(1);
+        }
+    }
+    
     // Log function completion
     if ( VERBOSE )
         file_log("%s: (%s:%d): X server is active.\n", 
@@ -259,79 +283,21 @@ static void start_compman() {
                  __FILE__, __FUNCTION__, __LINE__);
 
     
-    // Check if composite manager is already running
-    size_t runsz = 5;
-    char *compcmd = "pgrep -c xcompmgr";
-    char *val = command_line(compcmd, runsz, runsz);
-    
-    if ( atoi(val) != 0 ) {
-        
-        // Log status of composite manager
+    // Check if composite manager is already running (not yet done)
+    if ( is_running(XCOMPMGR) ) {
         if ( VERBOSE )
             file_log("Already running.\n");
-        
-        free(val);
         return;
     }
     
-    // Initialize monotonic clock
-    double diff = 0,
-        ds = 0,
-        dn = 0;
-    struct timespec start, end; 
-    clock_gettime(CLOCK_MONOTONIC, &start);
-    
-    // Time the logging to X server log file
-    int count = 0;
-    char *last = NULL;
-    
-    while (1) {
-        
-        // Calculate time between loops
-        clock_gettime(CLOCK_MONOTONIC, &end); 
-        ds   = (double)(end.tv_sec - start.tv_sec);
-        dn   = (double)(end.tv_nsec - start.tv_nsec) / 1e9;
-        diff = ds + dn; 
-        
-        // Check if server file exists
-        if ( access(XSERVER_LOG, F_OK) != 0 )
-            continue;
-        
-        // Get the last line of X server log file
-        size_t linesz = 100;
-        char cmd[linesz]; 
-        snprintf(cmd, sizeof(cmd), "%s %s %s", TAIL, "-1", XSERVER_LOG);
-        char *xcheck = command_line(cmd, linesz, linesz);
-        
-        // Make sure file is not empty
-        if ( strlen(xcheck) != 0 ) {
-            
-            // Increment count and free last
-            if ( last != NULL ) {
-                if ( strcmp(last, xcheck) == 0 ) 
-                    ++count;
-                free(last);
-            }
-            
-            // Define last
-            last = xcheck;
-        }
-        
-        // Once a safe amount of time has elapsed, execute the compositing manager
-        if ( PREVIEW || (count == 200) || (diff >= 5) ) {
-            pid_t new_pid = fork();
-            if ( new_pid == 0 )
-                execl(XCOMPMGR, XCOMPMGR, NULL);
-            break;
-        }
-    }
+    // Start compositing manager
+    pid_t pid = fork();
+    if ( pid == 0 ) 
+        execl(XCOMPMGR, XCOMPMGR, NULL);
     
     // Log function completion
     if ( VERBOSE )
         file_log("Done.\n");
-    
-    // Free memory
-    free(val);
     
     if ( BENCHTIME ) 
         file_log("%s: (%s: Runtime): %lf\n", 
@@ -358,7 +324,6 @@ void xsetup() {
     
     // Set background 
     exec_config_cmd(X_CONFIG, 1);
-    
     
     // Cursor and background attributes
     exec_config_cmd(X_CONFIG, 2);

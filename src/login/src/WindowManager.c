@@ -34,15 +34,15 @@
 // 
 // FUNCTIONS:
 // 
-//     setup_menu             - Setup window manager dropdown menu.
+//     setup_menu                 - Setup window manager dropdown menu.
 // 
-//     wm_write_to_file       - Write to a file, which window manager to use for the 
-//                              session.
+//     wm_write_to_file           - Write to a file, which window manager to use for the 
+//                                  session.
 // 
-//     set_wm_entries         - Determine which window manager(s) the system has and add 
-//                              them as entries to the menu.
+//     get_window_managers        - Return the window managers that are on the system.
+//     set_window_manager_entries - Add the window managers onto the WM menu.
 // 
-//     display_window_manager - Display the window manager button.
+//     display_window_manager     - Display the window manager button.
 // 
 // 
 // FILE STRUCTURE:
@@ -89,6 +89,18 @@
 //                          a method to have the application write verbosely to the  
 //                          log, in the event that a problem arises.
 // 
+//     gabeg Apr 04 2015 <> Now save current window manager in config file instead of 
+//                           a file specific to the window manager. This means I can
+//                           use the "read_config_char" function to get the window
+//                           manager.
+//                           
+//                           Removed the #define command in the header file. Moved it
+//                           to the config file for easier access to the user. 
+//                           
+//                           Added a function to return all window managers on the 
+//                           system. It sorts them, and then setting the window
+//                           manager radio buttons is a simple loop.
+// 
 // **********************************************************************************
 
 
@@ -103,7 +115,8 @@
 // Declares
 static void setup_menu(struct glmapp app);
 static void wm_write_to_file(GtkMenu *item);
-static void set_wm_entries(GtkWidget *menu);
+static char ** get_window_managers();
+static void set_window_manager_entries(GtkWidget *menu);
 
 
 
@@ -118,7 +131,7 @@ static void setup_menu(struct glmapp app) {
     
     // Set entries in window manager dropdown menu
     GtkWidget *menu = gtk_menu_new();
-    set_wm_entries(menu);
+    set_window_manager_entries(menu);
     
     // Modify button style
     GtkWidget *icon = gtk_image_new_from_file(app.decor.img_file);
@@ -144,9 +157,8 @@ static void wm_write_to_file(GtkMenu *item) {
     
     double bmtime = benchmark_runtime(0);
     
-    const gchar *sess = gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    snprintf(SESSION, strlen(sess)+1, "%s", (char*)sess);
-    file_write(SESSION_LOG, "w", "%s\n", SESSION);
+    SESSION = (char *) gtk_menu_item_get_label( GTK_MENU_ITEM(item) );
+    file_line_overwrite(WM_CONFIG, "wm", SESSION);
     
     if ( BENCHTIME )
         file_log("%s: (%s: Runtime): %lf\n", 
@@ -159,8 +171,110 @@ static void wm_write_to_file(GtkMenu *item) {
 // ///// ADD WM ENTRIES TO THE MENU /////
 // //////////////////////////////////////
 
+// Return all the window managers on the system
+static char ** get_window_managers() {
+    
+    double bmtime = benchmark_runtime(0);
+    
+    // Execute command to get system window managers
+    char *cmd = read_config_char(WM_CONFIG, "cmd", MAX_CMD_LEN);
+    char arr[MAX_CMD_LEN];
+    get_cmd_output(arr, sizeof(arr), cmd);
+    
+    // Initialize array indicies
+    int i   = 0,
+        j   = 0,
+        loc = 0;
+    
+    // Count number of window managers
+    char sep  = '\n';
+    int count = 0;
+    
+    while ( arr[i] != '\0' ) {
+        if ( arr[i] == sep )
+            ++count;
+        ++i;
+    }
+    
+    // No window managers found
+    if ( count == 0 )
+        return NULL;
+    
+    // Initialize array containing all window managers
+    char container[count+1][MAX_STR_LEN];
+    memset(container[0], 0, MAX_STR_LEN);
+    
+    // Package window managers into one array
+    i   = 0;
+    j   = 0;
+    loc = 0;
+    
+    while ( arr[i] != '\0' ) {
+        if ( arr[i] != '\n' ) {
+            container[loc][j] = arr[i];
+            ++j;
+        } else {
+            j = 0;
+            ++loc;
+            memset(container[loc], 0, MAX_STR_LEN);
+        }
+        
+        ++i;
+    }
+    
+    // Allocate necessary space to hold all users
+    char **ret = malloc( sizeof(*ret) * count);
+    bool add   = false;
+    i   = 0;
+    loc = 0;
+    
+    // Add users to return array (from previous available user list)
+    while (1) {
+        
+        // Compare label with the focus label
+        add = true;
+        
+        if ( (strcmp(SESSION, "xterm") == 0) 
+             || (strcmp(container[loc], SESSION) == 0) ) 
+            ;
+        else if ( (i != 0) 
+                  && (container[loc][0] != '\0') ) 
+            ;
+        else
+            add = false;
+        
+        // Setup the menu items
+        if ( add == true ) {
+            ret[i] = malloc(MAX_STR_LEN);
+            snprintf(ret[i], strlen(container[loc])+1, "%s", container[loc]);
+            container[loc][0] = '\0';
+            
+            // Increment and check array index values
+            ++i;
+            if ( i == count )
+                break;
+        }
+        
+        // Increment and check username add counter
+        ++loc;
+        if ( loc >= count )
+            loc = 0;
+    }
+    
+    // Null terminate the last element
+    ret[i] = NULL;
+    
+    if ( BENCHTIME )
+        file_log("%s: (%s: Runtime): %lf\n", 
+                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    
+    return ret;
+}
+
+
+
 // Determine which window manager(s) the system has and add them as entries to the menu
-static void set_wm_entries(GtkWidget *menu) {
+static void set_window_manager_entries(GtkWidget *menu) {
     
     double bmtime = benchmark_runtime(0);
     
@@ -169,55 +283,37 @@ static void set_wm_entries(GtkWidget *menu) {
     GSList *group = NULL;
     
     // Get all window managers in one string 
-    char *wmstr = command_line(WM_SES_CMD, 20, 100);
-    
-    // Break up window manager string into array of strings (based on newline char)
-    int k = 0;
-    int count = count_char(wmstr, '\n') + 1;
-    char *allwm[count];
-    char *sep;
-    char *wm = strdup(wmstr);
-    
-    while ( (sep=strsep(&wm, "\n")) != NULL ) {
-        allwm[k] = sep;
-        ++k;
-    }
+    char **allwm = get_window_managers();
     
     // Create menu labels based on the window managers that were found
-    int i = 0, q = 0, p = 0;
-    while (1) {
+    int i = 0;
+    
+    while ( allwm[i] != NULL ) {
         
-        // Compare label with the focus label
-        p = 1;
-        if ( strcmp(allwm[i], SESSION) == 0 ) {
+        // Create the radio buttons for the window managers
+        if ( i == 0 )
             sesh = gtk_radio_menu_item_new_with_label(NULL, allwm[i]);
-            group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(sesh));
-        } else if ( (q != 0) && (allwm[i] != NULL) ) {
-            if ( strcmp(allwm[i], "") != 0 )
-                sesh = gtk_radio_menu_item_new_with_label(group, allwm[i]);
-        } else
-            p = 0;
+        else
+            sesh = gtk_radio_menu_item_new_with_label(group, allwm[i]);
         
-        // Setup the menu items
-        if ( p == 1 ) {
-            allwm[i] = NULL;
-            
-            gtk_menu_attach(GTK_MENU(menu), sesh, 0, 1, q, q+1);
-            gtk_widget_show(sesh);
-            g_signal_connect(G_OBJECT(sesh), "activate", G_CALLBACK(wm_write_to_file), NULL);
-                    
-            if ( (++q) == count )
-                break;
-        }
+        // Create the group for the radio buttons
+        group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(sesh));
         
-        // Increment counter
-        if ( (++i) >= count )
-            i = 0;
+        // Attach radio buttons to the menu
+        gtk_menu_attach(GTK_MENU(menu), sesh, 0, 1, i, i+1);
+        gtk_widget_show(sesh);
+        g_signal_connect(G_OBJECT(sesh), "activate", G_CALLBACK(wm_write_to_file), NULL);
+        
+        // Free up used memory
+        free(allwm[i]);
+        allwm[i] = NULL;
+        
+        ++i;
     }
     
-    // Free used memory
-    free(wm);
-    free(wmstr);
+    // Free final piece of memory
+    free(allwm);
+    allwm = NULL;
     
     if ( BENCHTIME )
         file_log("%s: (%s: Runtime): %lf\n", 
@@ -241,7 +337,10 @@ void display_window_manager() {
                  __FILE__, __FUNCTION__, __LINE__);
     
     // Define session
-    SESSION = file_read(SESSION_LOG, 1, 20);
+    SESSION = read_config_char(WM_CONFIG, "wm", MAX_STR_LEN);
+    
+    if ( SESSION == NULL )
+        SESSION = "xterm";
     
     // Allocate space for application 
     static struct glmapp app;
@@ -251,7 +350,7 @@ void display_window_manager() {
     app.widg = gtk_menu_button_new();
     
     // Create the window manager menu button
-    setup_widget(WM_CONFIG, &app, NULL, NULL);
+    setup_app(WM_CONFIG, &app, NULL, NULL);
     setup_menu(app);
     
     // Log function completion

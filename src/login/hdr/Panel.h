@@ -3,10 +3,10 @@
 #define PANEL_H
 
 // Includes
-#include "../hdr/glm.h"
 #include "../hdr/Utility.h"
+
+#include <unistd.h>
 #include <gtk/gtk.h>
-#include <stdlib.h>
 
 // Defines
 #define PANEL_SHUT_CONFIG    "/etc/X11/glm/src/login/config/Panel-Shutdown.config"

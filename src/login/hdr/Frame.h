@@ -3,7 +3,6 @@
 #define FRAME_H
 
 // Includes
-#include "../hdr/glm.h"
 #include "../hdr/Utility.h"
 
 #include <gtk/gtk.h>

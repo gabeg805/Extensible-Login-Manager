@@ -1,352 +1,352 @@
-[    21.148] 
+[    26.493] 
 X.Org X Server 1.17.1
 Release Date: 2015-02-10
-[    21.148] X Protocol Version 11, Revision 0
-[    21.148] Build Operating System: Linux 3.18.6-1-ARCH x86_64 
-[    21.148] Current Operating System: Linux archy 3.18.6-1-ARCH #1 SMP PREEMPT Sat Feb 7 08:44:05 CET 2015 x86_64
-[    21.148] Kernel command line: BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=74426f6c-67d5-4bad-8b57-8d908dd34e29 rw pcie_aspm=force resume=/dev/sda6 resume_offset=479232 quiet rw init=/usr/lib/systemd/systemd
-[    21.148] Build Date: 22 February 2015  12:50:32PM
-[    21.148]  
-[    21.148] Current version of pixman: 0.32.6
-[    21.148] 	Before reporting problems, check http://wiki.x.org
+[    26.493] X Protocol Version 11, Revision 0
+[    26.493] Build Operating System: Linux 3.18.6-1-ARCH x86_64 
+[    26.493] Current Operating System: Linux archy 3.19.2-1-ARCH #1 SMP PREEMPT Wed Mar 18 16:21:02 CET 2015 x86_64
+[    26.493] Kernel command line: BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=74426f6c-67d5-4bad-8b57-8d908dd34e29 rw pcie_aspm=force resume=/dev/sda6 resume_offset=479232 quiet rw init=/usr/lib/systemd/systemd
+[    26.493] Build Date: 14 March 2015  06:45:50PM
+[    26.493]  
+[    26.493] Current version of pixman: 0.32.6
+[    26.493] 	Before reporting problems, check http://wiki.x.org
 	to make sure that you have the latest version.
-[    21.148] Markers: (--) probed, (**) from config file, (==) default setting,
+[    26.493] Markers: (--) probed, (**) from config file, (==) default setting,
 	(++) from command line, (!!) notice, (II) informational,
 	(WW) warning, (EE) error, (NI) not implemented, (??) unknown.
-[    21.148] (++) Log file: "/etc/X11/glm/log/xserver.log", Time: Sun Mar 29 10:24:19 2015
-[    21.228] (==) Using config directory: "/etc/X11/xorg.conf.d"
-[    21.229] (==) Using system config directory "/usr/share/X11/xorg.conf.d"
-[    21.260] (==) No Layout section.  Using the first Screen section.
-[    21.260] (==) No screen section available. Using defaults.
-[    21.260] (**) |-->Screen "Default Screen Section" (0)
-[    21.260] (**) |   |-->Monitor "<default monitor>"
-[    21.271] (==) No monitor specified for screen "Default Screen Section".
+[    26.494] (++) Log file: "/etc/X11/glm/log/xserver.log", Time: Sat Apr  4 19:49:38 2015
+[    26.735] (==) Using config directory: "/etc/X11/xorg.conf.d"
+[    26.735] (==) Using system config directory "/usr/share/X11/xorg.conf.d"
+[    26.810] (==) No Layout section.  Using the first Screen section.
+[    26.810] (==) No screen section available. Using defaults.
+[    26.810] (**) |-->Screen "Default Screen Section" (0)
+[    26.811] (**) |   |-->Monitor "<default monitor>"
+[    26.822] (==) No monitor specified for screen "Default Screen Section".
 	Using a default monitor configuration.
-[    21.271] (==) Automatically adding devices
-[    21.271] (==) Automatically enabling devices
-[    21.271] (==) Automatically adding GPU devices
-[    21.636] (WW) `fonts.dir' not found (or not valid) in "/usr/share/fonts/100dpi/".
-[    21.636] 	Entry deleted from font path.
-[    21.636] 	(Run 'mkfontdir' on "/usr/share/fonts/100dpi/").
-[    21.637] (WW) `fonts.dir' not found (or not valid) in "/usr/share/fonts/75dpi/".
-[    21.637] 	Entry deleted from font path.
-[    21.637] 	(Run 'mkfontdir' on "/usr/share/fonts/75dpi/").
-[    21.637] (==) FontPath set to:
+[    26.822] (==) Automatically adding devices
+[    26.822] (==) Automatically enabling devices
+[    26.822] (==) Automatically adding GPU devices
+[    26.977] (WW) `fonts.dir' not found (or not valid) in "/usr/share/fonts/100dpi/".
+[    26.977] 	Entry deleted from font path.
+[    26.977] 	(Run 'mkfontdir' on "/usr/share/fonts/100dpi/").
+[    26.977] (WW) `fonts.dir' not found (or not valid) in "/usr/share/fonts/75dpi/".
+[    26.977] 	Entry deleted from font path.
+[    26.977] 	(Run 'mkfontdir' on "/usr/share/fonts/75dpi/").
+[    26.977] (==) FontPath set to:
 	/usr/share/fonts/misc/,
 	/usr/share/fonts/TTF/,
 	/usr/share/fonts/OTF/,
 	/usr/share/fonts/Type1/
-[    21.637] (==) ModulePath set to "/usr/lib/xorg/modules"
-[    21.637] (II) The server relies on udev to provide the list of input devices.
+[    26.977] (==) ModulePath set to "/usr/lib/xorg/modules"
+[    26.977] (II) The server relies on udev to provide the list of input devices.
 	If no devices become available, reconfigure udev or disable AutoAddDevices.
-[    21.645] (II) Loader magic: 0x815d80
-[    21.645] (II) Module ABI versions:
-[    21.645] 	X.Org ANSI C Emulation: 0.4
-[    21.645] 	X.Org Video Driver: 19.0
-[    21.645] 	X.Org XInput driver : 21.0
-[    21.645] 	X.Org Server Extension : 9.0
-[    21.646] (EE) systemd-logind: failed to get session: PID 490 does not belong to any known session
-[    21.647] (II) xfree86: Adding drm device (/dev/dri/card0)
-[    21.648] (--) PCI:*(0:0:2:0) 8086:0116:1028:04d7 rev 9, Mem @ 0xd0000000/4194304, 0xc0000000/268435456, I/O @ 0x00004000/64
-[    21.648] (WW) Open ACPI failed (/var/run/acpid.socket) (No such file or directory)
-[    21.669] (II) LoadModule: "glx"
-[    21.688] (II) Loading /usr/lib/xorg/modules/extensions/libglx.so
-[    21.701] (II) Module glx: vendor="X.Org Foundation"
-[    21.701] 	compiled for 1.17.1, module version = 1.0.0
-[    21.701] 	ABI class: X.Org Server Extension, version 9.0
-[    21.701] (==) AIGLX enabled
-[    21.701] (==) Matched intel as autoconfigured driver 0
-[    21.701] (==) Matched intel as autoconfigured driver 1
-[    21.701] (==) Matched modesetting as autoconfigured driver 2
-[    21.701] (==) Matched fbdev as autoconfigured driver 3
-[    21.701] (==) Matched vesa as autoconfigured driver 4
-[    21.701] (==) Assigned the driver to the xf86ConfigLayout
-[    21.701] (II) LoadModule: "intel"
-[    21.701] (WW) Warning, couldn't open module intel
-[    21.701] (II) UnloadModule: "intel"
-[    21.701] (II) Unloading intel
-[    21.701] (EE) Failed to load module "intel" (module does not exist, 0)
-[    21.701] (II) LoadModule: "modesetting"
-[    21.701] (II) Loading /usr/lib/xorg/modules/drivers/modesetting_drv.so
-[    21.717] (II) Module modesetting: vendor="X.Org Foundation"
-[    21.717] 	compiled for 1.17.1, module version = 1.17.1
-[    21.717] 	Module class: X.Org Video Driver
-[    21.717] 	ABI class: X.Org Video Driver, version 19.0
-[    21.717] (II) LoadModule: "fbdev"
-[    21.717] (WW) Warning, couldn't open module fbdev
-[    21.717] (II) UnloadModule: "fbdev"
-[    21.717] (II) Unloading fbdev
-[    21.717] (EE) Failed to load module "fbdev" (module does not exist, 0)
-[    21.717] (II) LoadModule: "vesa"
-[    21.718] (WW) Warning, couldn't open module vesa
-[    21.718] (II) UnloadModule: "vesa"
-[    21.718] (II) Unloading vesa
-[    21.718] (EE) Failed to load module "vesa" (module does not exist, 0)
-[    21.718] (II) modesetting: Driver for Modesetting Kernel Drivers: kms
-[    21.718] (++) using VT number 7
+[    26.985] (II) Loader magic: 0x815d80
+[    26.985] (II) Module ABI versions:
+[    26.985] 	X.Org ANSI C Emulation: 0.4
+[    26.985] 	X.Org Video Driver: 19.0
+[    26.985] 	X.Org XInput driver : 21.0
+[    26.985] 	X.Org Server Extension : 9.0
+[    26.987] (EE) systemd-logind: failed to get session: PID 436 does not belong to any known session
+[    26.987] (II) xfree86: Adding drm device (/dev/dri/card0)
+[    26.989] (--) PCI:*(0:0:2:0) 8086:0116:1028:04d7 rev 9, Mem @ 0xd0000000/4194304, 0xc0000000/268435456, I/O @ 0x00004000/64
+[    26.990] (WW) Open ACPI failed (/var/run/acpid.socket) (No such file or directory)
+[    26.997] (II) LoadModule: "glx"
+[    27.028] (II) Loading /usr/lib/xorg/modules/extensions/libglx.so
+[    27.082] (II) Module glx: vendor="X.Org Foundation"
+[    27.082] 	compiled for 1.17.1, module version = 1.0.0
+[    27.082] 	ABI class: X.Org Server Extension, version 9.0
+[    27.082] (==) AIGLX enabled
+[    27.082] (==) Matched intel as autoconfigured driver 0
+[    27.082] (==) Matched intel as autoconfigured driver 1
+[    27.082] (==) Matched modesetting as autoconfigured driver 2
+[    27.082] (==) Matched fbdev as autoconfigured driver 3
+[    27.082] (==) Matched vesa as autoconfigured driver 4
+[    27.082] (==) Assigned the driver to the xf86ConfigLayout
+[    27.082] (II) LoadModule: "intel"
+[    27.083] (WW) Warning, couldn't open module intel
+[    27.083] (II) UnloadModule: "intel"
+[    27.083] (II) Unloading intel
+[    27.083] (EE) Failed to load module "intel" (module does not exist, 0)
+[    27.083] (II) LoadModule: "modesetting"
+[    27.083] (II) Loading /usr/lib/xorg/modules/drivers/modesetting_drv.so
+[    27.137] (II) Module modesetting: vendor="X.Org Foundation"
+[    27.137] 	compiled for 1.17.1, module version = 1.17.1
+[    27.137] 	Module class: X.Org Video Driver
+[    27.137] 	ABI class: X.Org Video Driver, version 19.0
+[    27.137] (II) LoadModule: "fbdev"
+[    27.137] (WW) Warning, couldn't open module fbdev
+[    27.137] (II) UnloadModule: "fbdev"
+[    27.137] (II) Unloading fbdev
+[    27.137] (EE) Failed to load module "fbdev" (module does not exist, 0)
+[    27.137] (II) LoadModule: "vesa"
+[    27.138] (WW) Warning, couldn't open module vesa
+[    27.138] (II) UnloadModule: "vesa"
+[    27.138] (II) Unloading vesa
+[    27.138] (EE) Failed to load module "vesa" (module does not exist, 0)
+[    27.138] (II) modesetting: Driver for Modesetting Kernel Drivers: kms
+[    27.138] (++) using VT number 7
 
-[    21.722] (II) modeset(0): using drv /dev/dri/card0
-[    21.722] (II) modeset(0): Creating default Display subsection in Screen section
+[    27.144] (II) modeset(0): using drv /dev/dri/card0
+[    27.145] (II) modeset(0): Creating default Display subsection in Screen section
 	"Default Screen Section" for depth/fbbpp 24/32
-[    21.722] (==) modeset(0): Depth 24, (==) framebuffer bpp 32
-[    21.722] (==) modeset(0): RGB weight 888
-[    21.722] (==) modeset(0): Default visual is TrueColor
-[    21.722] (II) Loading sub module "glamoregl"
-[    21.722] (II) LoadModule: "glamoregl"
-[    21.722] (II) Loading /usr/lib/xorg/modules/libglamoregl.so
-[    21.752] (II) Module glamoregl: vendor="X.Org Foundation"
-[    21.752] 	compiled for 1.17.1, module version = 1.0.0
-[    21.752] 	ABI class: X.Org ANSI C Emulation, version 0.4
-[    21.752] (II) glamor: OpenGL accelerated X.org driver based.
-[    21.990] (II) glamor: EGL version 1.4 (DRI2):
-[    22.291] (II) modeset(0): glamor initialized
-[    22.291] (II) Loading sub module "dri2"
-[    22.291] (II) LoadModule: "dri2"
-[    22.291] (II) Module "dri2" already built-in
-[    22.291] (II) modeset(0): Output LVDS-0 has no monitor section
-[    22.293] (II) modeset(0): Output VGA-0 has no monitor section
-[    22.294] (II) modeset(0): Output HDMI-0 has no monitor section
-[    22.294] (II) modeset(0): Output DisplayPort-0 has no monitor section
-[    22.294] (II) modeset(0): EDID for output LVDS-0
-[    22.294] (II) modeset(0): Manufacturer: LGD  Model: 2e9  Serial#: 0
-[    22.294] (II) modeset(0): Year: 2010  Week: 0
-[    22.294] (II) modeset(0): EDID Version: 1.4
-[    22.294] (II) modeset(0): Digital Display Input
-[    22.294] (II) modeset(0): 6 bits per channel
-[    22.294] (II) modeset(0): Digital interface is undefined
-[    22.294] (II) modeset(0): Max Image Size [cm]: horiz.: 31  vert.: 17
-[    22.294] (II) modeset(0): Gamma: 2.20
-[    22.294] (II) modeset(0): No DPMS capabilities specified
-[    22.294] (II) modeset(0): Supported color encodings: RGB 4:4:4 YCrCb 4:4:4 
-[    22.294] (II) modeset(0): First detailed timing is preferred mode
-[    22.294] (II) modeset(0): Preferred mode is native pixel format and refresh rate
-[    22.294] (II) modeset(0): redX: 0.592 redY: 0.347   greenX: 0.337 greenY: 0.562
-[    22.294] (II) modeset(0): blueX: 0.154 blueY: 0.123   whiteX: 0.313 whiteY: 0.329
-[    22.294] (II) modeset(0): Manufacturer's mask: 0
-[    22.294] (II) modeset(0): Supported detailed timing:
-[    22.294] (II) modeset(0): clock: 70.0 MHz   Image Size:  309 x 174 mm
-[    22.294] (II) modeset(0): h_active: 1366  h_sync: 1402  h_sync_end 1450 h_blank_end 1492 h_border: 0
-[    22.294] (II) modeset(0): v_active: 768  v_sync: 771  v_sync_end 776 v_blanking: 782 v_border: 0
-[    22.294] (II) modeset(0): Supported detailed timing:
-[    22.294] (II) modeset(0): clock: 48.3 MHz   Image Size:  309 x 174 mm
-[    22.294] (II) modeset(0): h_active: 1366  h_sync: 1402  h_sync_end 1450 h_blank_end 1520 h_border: 0
-[    22.294] (II) modeset(0): v_active: 768  v_sync: 771  v_sync_end 776 v_blanking: 794 v_border: 0
-[    22.294] (II) modeset(0):  9DMK2€140WH4
-[    22.294] (II) modeset(0): Unknown vendor-specific block 0
-[    22.294] (II) modeset(0): EDID (in hex):
-[    22.294] (II) modeset(0): 	00ffffffffffff0030e4e90200000000
-[    22.294] (II) modeset(0): 	00140104901f11780ab7a59758568f27
-[    22.294] (II) modeset(0): 	1f505400000001010101010101010101
-[    22.294] (II) modeset(0): 	010101010101581b567e50000e302430
-[    22.294] (II) modeset(0): 	350035ae10000019de12569a50001a30
-[    22.295] (II) modeset(0): 	2430350035ae10000019000000fe0039
-[    22.295] (II) modeset(0): 	444d4b32803134305748340a00000000
-[    22.295] (II) modeset(0): 	00004131940100000001010a2020007f
-[    22.295] (II) modeset(0): Printing probed modes for output LVDS-0
-[    22.295] (II) modeset(0): Modeline "1366x768"x60.0   70.00  1366 1402 1450 1492  768 771 776 782 -hsync -vsync (46.9 kHz eP)
-[    22.295] (II) modeset(0): Modeline "1366x768"x40.0   48.30  1366 1402 1450 1520  768 771 776 794 -hsync -vsync (31.8 kHz e)
-[    22.295] (II) modeset(0): Modeline "1024x768"x120.1  133.47  1024 1100 1212 1400  768 768 770 794 doublescan -hsync +vsync (95.3 kHz d)
-[    22.295] (II) modeset(0): Modeline "1024x768"x60.0   65.00  1024 1048 1184 1344  768 771 777 806 -hsync -vsync (48.4 kHz d)
-[    22.295] (II) modeset(0): Modeline "960x720"x120.0  117.00  960 1024 1128 1300  720 720 722 750 doublescan -hsync +vsync (90.0 kHz d)
-[    22.295] (II) modeset(0): Modeline "928x696"x120.1  109.15  928 976 1088 1264  696 696 698 719 doublescan -hsync +vsync (86.4 kHz d)
-[    22.295] (II) modeset(0): Modeline "896x672"x120.0  102.40  896 960 1060 1224  672 672 674 697 doublescan -hsync +vsync (83.7 kHz d)
-[    22.295] (II) modeset(0): Modeline "800x600"x120.0   81.00  800 832 928 1080  600 600 602 625 doublescan +hsync +vsync (75.0 kHz d)
-[    22.295] (II) modeset(0): Modeline "800x600"x60.3   40.00  800 840 968 1056  600 601 605 628 +hsync +vsync (37.9 kHz d)
-[    22.295] (II) modeset(0): Modeline "800x600"x56.2   36.00  800 824 896 1024  600 601 603 625 +hsync +vsync (35.2 kHz d)
-[    22.295] (II) modeset(0): Modeline "700x525"x120.0   61.00  700 744 820 940  525 526 532 541 doublescan +hsync +vsync (64.9 kHz d)
-[    22.295] (II) modeset(0): Modeline "640x512"x120.0   54.00  640 664 720 844  512 512 514 533 doublescan +hsync +vsync (64.0 kHz d)
-[    22.295] (II) modeset(0): Modeline "640x480"x120.0   54.00  640 688 744 900  480 480 482 500 doublescan +hsync +vsync (60.0 kHz d)
-[    22.295] (II) modeset(0): Modeline "640x480"x59.9   25.18  640 656 752 800  480 490 492 525 -hsync -vsync (31.5 kHz d)
-[    22.295] (II) modeset(0): Modeline "512x384"x120.0   32.50  512 524 592 672  384 385 388 403 doublescan -hsync -vsync (48.4 kHz d)
-[    22.295] (II) modeset(0): Modeline "400x300"x120.6   20.00  400 420 484 528  300 300 302 314 doublescan +hsync +vsync (37.9 kHz d)
-[    22.295] (II) modeset(0): Modeline "400x300"x112.7   18.00  400 412 448 512  300 300 301 312 doublescan +hsync +vsync (35.2 kHz d)
-[    22.295] (II) modeset(0): Modeline "320x240"x120.1   12.59  320 328 376 400  240 245 246 262 doublescan -hsync -vsync (31.5 kHz d)
-[    22.297] (II) modeset(0): EDID for output VGA-0
-[    22.297] (II) modeset(0): EDID for output HDMI-0
-[    22.297] (II) modeset(0): EDID for output DisplayPort-0
-[    22.297] (II) modeset(0): Output LVDS-0 connected
-[    22.297] (II) modeset(0): Output VGA-0 disconnected
-[    22.297] (II) modeset(0): Output HDMI-0 disconnected
-[    22.297] (II) modeset(0): Output DisplayPort-0 disconnected
-[    22.297] (II) modeset(0): Using exact sizes for initial modes
-[    22.297] (II) modeset(0): Output LVDS-0 using initial mode 1366x768
-[    22.297] (II) modeset(0): Using default gamma of (1.0, 1.0, 1.0) unless otherwise stated.
-[    22.297] (==) modeset(0): DPI set to (96, 96)
-[    22.297] (II) Loading sub module "fb"
-[    22.297] (II) LoadModule: "fb"
-[    22.298] (II) Loading /usr/lib/xorg/modules/libfb.so
-[    22.324] (II) Module fb: vendor="X.Org Foundation"
-[    22.324] 	compiled for 1.17.1, module version = 1.0.0
-[    22.324] 	ABI class: X.Org ANSI C Emulation, version 0.4
-[    22.324] (==) Depth 24 pixmap format is 32 bpp
-[    22.492] (==) modeset(0): Backing store enabled
-[    22.492] (==) modeset(0): Silken mouse enabled
-[    22.499] (II) modeset(0): RandR 1.2 enabled, ignore the following RandR disabled message.
-[    22.509] (==) modeset(0): DPMS enabled
-[    22.509] (II) modeset(0): [DRI2] Setup complete
-[    22.509] (II) modeset(0): [DRI2]   DRI driver: i965
-[    22.509] (II) modeset(0): [DRI2]   VDPAU driver: i965
-[    22.516] (--) RandR disabled
-[    22.524] (II) AIGLX: enabled GLX_MESA_copy_sub_buffer
-[    22.524] (II) AIGLX: enabled GLX_ARB_create_context
-[    22.524] (II) AIGLX: enabled GLX_ARB_create_context_profile
-[    22.524] (II) AIGLX: enabled GLX_EXT_create_context_es2_profile
-[    22.524] (II) AIGLX: enabled GLX_INTEL_swap_event
-[    22.524] (II) AIGLX: enabled GLX_SGI_swap_control and GLX_MESA_swap_control
-[    22.524] (II) AIGLX: enabled GLX_EXT_framebuffer_sRGB
-[    22.524] (II) AIGLX: enabled GLX_ARB_fbconfig_float
-[    22.524] (II) AIGLX: GLX_EXT_texture_from_pixmap backed by buffer objects
-[    22.524] (II) AIGLX: enabled GLX_ARB_create_context_robustness
-[    22.524] (II) AIGLX: Loaded and initialized i965
-[    22.524] (II) GLX: Initialized DRI2 GL provider for screen 0
-[    22.541] (II) modeset(0): Setting screen physical size to 361 x 203
-[    23.004] (II) XKB: Reusing cached keymap
-[    23.007] (II) config/udev: Adding input device Power Button (/dev/input/event3)
-[    23.007] (**) Power Button: Applying InputClass "evdev keyboard catchall"
-[    23.007] (II) LoadModule: "evdev"
-[    23.007] (II) Loading /usr/lib/xorg/modules/input/evdev_drv.so
-[    23.060] (II) Module evdev: vendor="X.Org Foundation"
-[    23.060] 	compiled for 1.16.2, module version = 2.9.1
-[    23.060] 	Module class: X.Org XInput Driver
-[    23.060] 	ABI class: X.Org XInput driver, version 21.0
-[    23.060] (II) Using input driver 'evdev' for 'Power Button'
-[    23.060] (**) Power Button: always reports core events
-[    23.060] (**) evdev: Power Button: Device: "/dev/input/event3"
-[    23.060] (--) evdev: Power Button: Vendor 0 Product 0x1
-[    23.060] (--) evdev: Power Button: Found keys
-[    23.060] (II) evdev: Power Button: Configuring as keyboard
-[    23.060] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXPWRBN:00/input/input3/event3"
-[    23.060] (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD, id 6)
-[    23.060] (**) Option "xkb_rules" "evdev"
-[    23.060] (**) Option "xkb_model" "pc104"
-[    23.060] (**) Option "xkb_layout" "us"
-[    23.112] (II) config/udev: Adding input device Video Bus (/dev/input/event4)
-[    23.112] (**) Video Bus: Applying InputClass "evdev keyboard catchall"
-[    23.112] (II) Using input driver 'evdev' for 'Video Bus'
-[    23.112] (**) Video Bus: always reports core events
-[    23.112] (**) evdev: Video Bus: Device: "/dev/input/event4"
-[    23.112] (--) evdev: Video Bus: Vendor 0 Product 0x6
-[    23.112] (--) evdev: Video Bus: Found keys
-[    23.112] (II) evdev: Video Bus: Configuring as keyboard
-[    23.112] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/LNXVIDEO:00/input/input4/event4"
-[    23.112] (II) XINPUT: Adding extended input device "Video Bus" (type: KEYBOARD, id 7)
-[    23.112] (**) Option "xkb_rules" "evdev"
-[    23.112] (**) Option "xkb_model" "pc104"
-[    23.112] (**) Option "xkb_layout" "us"
-[    23.112] (II) XKB: Reusing cached keymap
-[    23.113] (II) config/udev: Adding input device Power Button (/dev/input/event0)
-[    23.113] (**) Power Button: Applying InputClass "evdev keyboard catchall"
-[    23.113] (II) Using input driver 'evdev' for 'Power Button'
-[    23.113] (**) Power Button: always reports core events
-[    23.113] (**) evdev: Power Button: Device: "/dev/input/event0"
-[    23.113] (--) evdev: Power Button: Vendor 0 Product 0x1
-[    23.113] (--) evdev: Power Button: Found keys
-[    23.113] (II) evdev: Power Button: Configuring as keyboard
-[    23.113] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00/input/input0/event0"
-[    23.114] (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD, id 8)
-[    23.114] (**) Option "xkb_rules" "evdev"
-[    23.114] (**) Option "xkb_model" "pc104"
-[    23.114] (**) Option "xkb_layout" "us"
-[    23.114] (II) XKB: Reusing cached keymap
-[    23.115] (II) config/udev: Adding input device Lid Switch (/dev/input/event2)
-[    23.115] (II) No input driver specified, ignoring this device.
-[    23.115] (II) This device may have been added with another device file.
-[    23.115] (II) config/udev: Adding input device Sleep Button (/dev/input/event1)
-[    23.115] (**) Sleep Button: Applying InputClass "evdev keyboard catchall"
-[    23.115] (II) Using input driver 'evdev' for 'Sleep Button'
-[    23.115] (**) Sleep Button: always reports core events
-[    23.115] (**) evdev: Sleep Button: Device: "/dev/input/event1"
-[    23.115] (--) evdev: Sleep Button: Vendor 0 Product 0x3
-[    23.115] (--) evdev: Sleep Button: Found keys
-[    23.115] (II) evdev: Sleep Button: Configuring as keyboard
-[    23.115] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0E:00/input/input1/event1"
-[    23.116] (II) XINPUT: Adding extended input device "Sleep Button" (type: KEYBOARD, id 9)
-[    23.116] (**) Option "xkb_rules" "evdev"
-[    23.116] (**) Option "xkb_model" "pc104"
-[    23.116] (**) Option "xkb_layout" "us"
-[    23.116] (II) XKB: Reusing cached keymap
-[    23.117] (II) config/udev: Adding input device HDA Digital PCBeep (/dev/input/event7)
-[    23.117] (II) No input driver specified, ignoring this device.
-[    23.117] (II) This device may have been added with another device file.
-[    23.118] (II) config/udev: Adding input device HDA Intel PCH Mic (/dev/input/event8)
-[    23.118] (II) No input driver specified, ignoring this device.
-[    23.118] (II) This device may have been added with another device file.
-[    23.118] (II) config/udev: Adding input device HDA Intel PCH Headphone (/dev/input/event9)
-[    23.118] (II) No input driver specified, ignoring this device.
-[    23.118] (II) This device may have been added with another device file.
-[    23.119] (II) config/udev: Adding input device HDA Intel PCH HDMI/DP,pcm=3 (/dev/input/event10)
-[    23.119] (II) No input driver specified, ignoring this device.
-[    23.119] (II) This device may have been added with another device file.
-[    23.119] (II) config/udev: Adding input device AT Translated Set 2 keyboard (/dev/input/event5)
-[    23.119] (**) AT Translated Set 2 keyboard: Applying InputClass "evdev keyboard catchall"
-[    23.119] (II) Using input driver 'evdev' for 'AT Translated Set 2 keyboard'
-[    23.120] (**) AT Translated Set 2 keyboard: always reports core events
-[    23.120] (**) evdev: AT Translated Set 2 keyboard: Device: "/dev/input/event5"
-[    23.120] (--) evdev: AT Translated Set 2 keyboard: Vendor 0x1 Product 0x1
-[    23.120] (--) evdev: AT Translated Set 2 keyboard: Found keys
-[    23.120] (II) evdev: AT Translated Set 2 keyboard: Configuring as keyboard
-[    23.120] (**) Option "config_info" "udev:/sys/devices/platform/i8042/serio0/input/input5/event5"
-[    23.120] (II) XINPUT: Adding extended input device "AT Translated Set 2 keyboard" (type: KEYBOARD, id 10)
-[    23.120] (**) Option "xkb_rules" "evdev"
-[    23.120] (**) Option "xkb_model" "pc104"
-[    23.120] (**) Option "xkb_layout" "us"
-[    23.120] (II) XKB: Reusing cached keymap
-[    23.121] (II) config/udev: Adding input device SynPS/2 Synaptics TouchPad (/dev/input/event12)
-[    23.121] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "evdev touchpad catchall"
-[    23.121] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "touchpad catchall"
-[    23.121] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "Default clickpad buttons"
-[    23.121] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "touchpad catchall"
-[    23.121] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "Default clickpad buttons"
-[    23.121] (II) LoadModule: "synaptics"
-[    23.121] (II) Loading /usr/lib/xorg/modules/input/synaptics_drv.so
-[    23.126] (II) Module synaptics: vendor="X.Org Foundation"
-[    23.126] 	compiled for 1.16.0, module version = 1.8.1
-[    23.126] 	Module class: X.Org XInput Driver
-[    23.126] 	ABI class: X.Org XInput driver, version 21.0
-[    23.126] (II) Using input driver 'synaptics' for 'SynPS/2 Synaptics TouchPad'
-[    23.126] (**) SynPS/2 Synaptics TouchPad: always reports core events
-[    23.126] (**) Option "Device" "/dev/input/event12"
-[    23.226] (**) Option "Device" "/dev/input/event12"
-[    23.227] (II) synaptics: SynPS/2 Synaptics TouchPad: ignoring touch events for semi-multitouch device
-[    23.227] (--) synaptics: SynPS/2 Synaptics TouchPad: x-axis range 1472 - 5798 (res 59)
-[    23.227] (--) synaptics: SynPS/2 Synaptics TouchPad: y-axis range 1408 - 4992 (res 99)
-[    23.227] (--) synaptics: SynPS/2 Synaptics TouchPad: pressure range 0 - 255
-[    23.227] (--) synaptics: SynPS/2 Synaptics TouchPad: finger width range 0 - 15
-[    23.227] (--) synaptics: SynPS/2 Synaptics TouchPad: buttons: left right double triple
-[    23.227] (--) synaptics: SynPS/2 Synaptics TouchPad: Vendor 0x2 Product 0x7
-[    23.227] (**) Option "HorizTwoFingerScroll" "on"
-[    23.227] (**) Option "TapButton1" "1"
-[    23.227] (**) Option "TapButton2" "2"
-[    23.227] (**) Option "TapButton3" "3"
-[    23.227] (--) synaptics: SynPS/2 Synaptics TouchPad: touchpad found
-[    23.227] (**) SynPS/2 Synaptics TouchPad: always reports core events
-[    23.280] (**) Option "config_info" "udev:/sys/devices/platform/i8042/serio1/input/input9/event12"
-[    23.280] (II) XINPUT: Adding extended input device "SynPS/2 Synaptics TouchPad" (type: TOUCHPAD, id 11)
-[    23.280] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) MinSpeed is now constant deceleration 2.5
-[    23.280] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) MaxSpeed is now 1.75
-[    23.280] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) AccelFactor is now 0.036
-[    23.280] (**) SynPS/2 Synaptics TouchPad: (accel) keeping acceleration scheme 1
-[    23.280] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration profile 1
-[    23.280] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration factor: 2.000
-[    23.281] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration threshold: 4
-[    23.281] (**) Option "Device" "/dev/input/event12"
-[    23.281] (--) synaptics: SynPS/2 Synaptics TouchPad: touchpad found
-[    23.281] (II) config/udev: Adding input device SynPS/2 Synaptics TouchPad (/dev/input/mouse0)
-[    23.281] (**) SynPS/2 Synaptics TouchPad: Ignoring device from InputClass "touchpad ignore duplicates"
-[    23.282] (II) config/udev: Adding input device PC Speaker (/dev/input/event6)
-[    23.282] (II) No input driver specified, ignoring this device.
-[    23.282] (II) This device may have been added with another device file.
-[    23.283] (II) config/udev: Adding input device Dell WMI hotkeys (/dev/input/event11)
-[    23.283] (**) Dell WMI hotkeys: Applying InputClass "evdev keyboard catchall"
-[    23.283] (II) Using input driver 'evdev' for 'Dell WMI hotkeys'
-[    23.283] (**) Dell WMI hotkeys: always reports core events
-[    23.283] (**) evdev: Dell WMI hotkeys: Device: "/dev/input/event11"
-[    23.283] (--) evdev: Dell WMI hotkeys: Vendor 0 Product 0
-[    23.283] (--) evdev: Dell WMI hotkeys: Found keys
-[    23.283] (II) evdev: Dell WMI hotkeys: Configuring as keyboard
-[    23.283] (**) Option "config_info" "udev:/sys/devices/virtual/input/input13/event11"
-[    23.283] (II) XINPUT: Adding extended input device "Dell WMI hotkeys" (type: KEYBOARD, id 12)
-[    23.283] (**) Option "xkb_rules" "evdev"
-[    23.283] (**) Option "xkb_model" "pc104"
-[    23.283] (**) Option "xkb_layout" "us"
-[    23.283] (II) XKB: Reusing cached keymap
+[    27.145] (==) modeset(0): Depth 24, (==) framebuffer bpp 32
+[    27.145] (==) modeset(0): RGB weight 888
+[    27.145] (==) modeset(0): Default visual is TrueColor
+[    27.145] (II) Loading sub module "glamoregl"
+[    27.145] (II) LoadModule: "glamoregl"
+[    27.145] (II) Loading /usr/lib/xorg/modules/libglamoregl.so
+[    27.323] (II) Module glamoregl: vendor="X.Org Foundation"
+[    27.323] 	compiled for 1.17.1, module version = 1.0.0
+[    27.323] 	ABI class: X.Org ANSI C Emulation, version 0.4
+[    27.323] (II) glamor: OpenGL accelerated X.org driver based.
+[    27.640] (II) glamor: EGL version 1.4 (DRI2):
+[    27.759] (II) modeset(0): glamor initialized
+[    27.759] (II) Loading sub module "dri2"
+[    27.759] (II) LoadModule: "dri2"
+[    27.759] (II) Module "dri2" already built-in
+[    27.760] (II) modeset(0): Output LVDS-0 has no monitor section
+[    27.761] (II) modeset(0): Output VGA-0 has no monitor section
+[    27.762] (II) modeset(0): Output HDMI-0 has no monitor section
+[    27.762] (II) modeset(0): Output DisplayPort-0 has no monitor section
+[    27.762] (II) modeset(0): EDID for output LVDS-0
+[    27.762] (II) modeset(0): Manufacturer: LGD  Model: 2e9  Serial#: 0
+[    27.762] (II) modeset(0): Year: 2010  Week: 0
+[    27.762] (II) modeset(0): EDID Version: 1.4
+[    27.762] (II) modeset(0): Digital Display Input
+[    27.762] (II) modeset(0): 6 bits per channel
+[    27.762] (II) modeset(0): Digital interface is undefined
+[    27.762] (II) modeset(0): Max Image Size [cm]: horiz.: 31  vert.: 17
+[    27.762] (II) modeset(0): Gamma: 2.20
+[    27.762] (II) modeset(0): No DPMS capabilities specified
+[    27.762] (II) modeset(0): Supported color encodings: RGB 4:4:4 YCrCb 4:4:4 
+[    27.762] (II) modeset(0): First detailed timing is preferred mode
+[    27.762] (II) modeset(0): Preferred mode is native pixel format and refresh rate
+[    27.762] (II) modeset(0): redX: 0.592 redY: 0.347   greenX: 0.337 greenY: 0.562
+[    27.762] (II) modeset(0): blueX: 0.154 blueY: 0.123   whiteX: 0.313 whiteY: 0.329
+[    27.762] (II) modeset(0): Manufacturer's mask: 0
+[    27.762] (II) modeset(0): Supported detailed timing:
+[    27.762] (II) modeset(0): clock: 70.0 MHz   Image Size:  309 x 174 mm
+[    27.762] (II) modeset(0): h_active: 1366  h_sync: 1402  h_sync_end 1450 h_blank_end 1492 h_border: 0
+[    27.762] (II) modeset(0): v_active: 768  v_sync: 771  v_sync_end 776 v_blanking: 782 v_border: 0
+[    27.762] (II) modeset(0): Supported detailed timing:
+[    27.762] (II) modeset(0): clock: 48.3 MHz   Image Size:  309 x 174 mm
+[    27.762] (II) modeset(0): h_active: 1366  h_sync: 1402  h_sync_end 1450 h_blank_end 1520 h_border: 0
+[    27.762] (II) modeset(0): v_active: 768  v_sync: 771  v_sync_end 776 v_blanking: 794 v_border: 0
+[    27.762] (II) modeset(0):  9DMK2€140WH4
+[    27.762] (II) modeset(0): Unknown vendor-specific block 0
+[    27.763] (II) modeset(0): EDID (in hex):
+[    27.763] (II) modeset(0): 	00ffffffffffff0030e4e90200000000
+[    27.763] (II) modeset(0): 	00140104901f11780ab7a59758568f27
+[    27.763] (II) modeset(0): 	1f505400000001010101010101010101
+[    27.763] (II) modeset(0): 	010101010101581b567e50000e302430
+[    27.763] (II) modeset(0): 	350035ae10000019de12569a50001a30
+[    27.763] (II) modeset(0): 	2430350035ae10000019000000fe0039
+[    27.763] (II) modeset(0): 	444d4b32803134305748340a00000000
+[    27.763] (II) modeset(0): 	00004131940100000001010a2020007f
+[    27.763] (II) modeset(0): Printing probed modes for output LVDS-0
+[    27.763] (II) modeset(0): Modeline "1366x768"x60.0   70.00  1366 1402 1450 1492  768 771 776 782 -hsync -vsync (46.9 kHz eP)
+[    27.763] (II) modeset(0): Modeline "1366x768"x40.0   48.30  1366 1402 1450 1520  768 771 776 794 -hsync -vsync (31.8 kHz e)
+[    27.763] (II) modeset(0): Modeline "1024x768"x120.1  133.47  1024 1100 1212 1400  768 768 770 794 doublescan -hsync +vsync (95.3 kHz d)
+[    27.763] (II) modeset(0): Modeline "1024x768"x60.0   65.00  1024 1048 1184 1344  768 771 777 806 -hsync -vsync (48.4 kHz d)
+[    27.763] (II) modeset(0): Modeline "960x720"x120.0  117.00  960 1024 1128 1300  720 720 722 750 doublescan -hsync +vsync (90.0 kHz d)
+[    27.763] (II) modeset(0): Modeline "928x696"x120.1  109.15  928 976 1088 1264  696 696 698 719 doublescan -hsync +vsync (86.4 kHz d)
+[    27.763] (II) modeset(0): Modeline "896x672"x120.0  102.40  896 960 1060 1224  672 672 674 697 doublescan -hsync +vsync (83.7 kHz d)
+[    27.763] (II) modeset(0): Modeline "800x600"x120.0   81.00  800 832 928 1080  600 600 602 625 doublescan +hsync +vsync (75.0 kHz d)
+[    27.763] (II) modeset(0): Modeline "800x600"x60.3   40.00  800 840 968 1056  600 601 605 628 +hsync +vsync (37.9 kHz d)
+[    27.763] (II) modeset(0): Modeline "800x600"x56.2   36.00  800 824 896 1024  600 601 603 625 +hsync +vsync (35.2 kHz d)
+[    27.763] (II) modeset(0): Modeline "700x525"x120.0   61.00  700 744 820 940  525 526 532 541 doublescan +hsync +vsync (64.9 kHz d)
+[    27.763] (II) modeset(0): Modeline "640x512"x120.0   54.00  640 664 720 844  512 512 514 533 doublescan +hsync +vsync (64.0 kHz d)
+[    27.763] (II) modeset(0): Modeline "640x480"x120.0   54.00  640 688 744 900  480 480 482 500 doublescan +hsync +vsync (60.0 kHz d)
+[    27.763] (II) modeset(0): Modeline "640x480"x59.9   25.18  640 656 752 800  480 490 492 525 -hsync -vsync (31.5 kHz d)
+[    27.763] (II) modeset(0): Modeline "512x384"x120.0   32.50  512 524 592 672  384 385 388 403 doublescan -hsync -vsync (48.4 kHz d)
+[    27.763] (II) modeset(0): Modeline "400x300"x120.6   20.00  400 420 484 528  300 300 302 314 doublescan +hsync +vsync (37.9 kHz d)
+[    27.763] (II) modeset(0): Modeline "400x300"x112.7   18.00  400 412 448 512  300 300 301 312 doublescan +hsync +vsync (35.2 kHz d)
+[    27.763] (II) modeset(0): Modeline "320x240"x120.1   12.59  320 328 376 400  240 245 246 262 doublescan -hsync -vsync (31.5 kHz d)
+[    27.765] (II) modeset(0): EDID for output VGA-0
+[    27.765] (II) modeset(0): EDID for output HDMI-0
+[    27.765] (II) modeset(0): EDID for output DisplayPort-0
+[    27.765] (II) modeset(0): Output LVDS-0 connected
+[    27.766] (II) modeset(0): Output VGA-0 disconnected
+[    27.766] (II) modeset(0): Output HDMI-0 disconnected
+[    27.766] (II) modeset(0): Output DisplayPort-0 disconnected
+[    27.766] (II) modeset(0): Using exact sizes for initial modes
+[    27.766] (II) modeset(0): Output LVDS-0 using initial mode 1366x768
+[    27.766] (II) modeset(0): Using default gamma of (1.0, 1.0, 1.0) unless otherwise stated.
+[    27.766] (==) modeset(0): DPI set to (96, 96)
+[    27.766] (II) Loading sub module "fb"
+[    27.766] (II) LoadModule: "fb"
+[    27.766] (II) Loading /usr/lib/xorg/modules/libfb.so
+[    27.785] (II) Module fb: vendor="X.Org Foundation"
+[    27.785] 	compiled for 1.17.1, module version = 1.0.0
+[    27.785] 	ABI class: X.Org ANSI C Emulation, version 0.4
+[    27.785] (==) Depth 24 pixmap format is 32 bpp
+[    27.967] (==) modeset(0): Backing store enabled
+[    27.968] (==) modeset(0): Silken mouse enabled
+[    27.981] (II) modeset(0): RandR 1.2 enabled, ignore the following RandR disabled message.
+[    27.991] (==) modeset(0): DPMS enabled
+[    27.991] (II) modeset(0): [DRI2] Setup complete
+[    27.991] (II) modeset(0): [DRI2]   DRI driver: i965
+[    27.991] (II) modeset(0): [DRI2]   VDPAU driver: i965
+[    28.012] (--) RandR disabled
+[    28.029] (II) AIGLX: enabled GLX_MESA_copy_sub_buffer
+[    28.029] (II) AIGLX: enabled GLX_ARB_create_context
+[    28.030] (II) AIGLX: enabled GLX_ARB_create_context_profile
+[    28.030] (II) AIGLX: enabled GLX_EXT_create_context_es2_profile
+[    28.030] (II) AIGLX: enabled GLX_INTEL_swap_event
+[    28.030] (II) AIGLX: enabled GLX_SGI_swap_control and GLX_MESA_swap_control
+[    28.030] (II) AIGLX: enabled GLX_EXT_framebuffer_sRGB
+[    28.030] (II) AIGLX: enabled GLX_ARB_fbconfig_float
+[    28.030] (II) AIGLX: GLX_EXT_texture_from_pixmap backed by buffer objects
+[    28.030] (II) AIGLX: enabled GLX_ARB_create_context_robustness
+[    28.030] (II) AIGLX: Loaded and initialized i965
+[    28.030] (II) GLX: Initialized DRI2 GL provider for screen 0
+[    28.054] (II) modeset(0): Setting screen physical size to 361 x 203
+[    28.465] (II) XKB: Reusing cached keymap
+[    28.470] (II) config/udev: Adding input device Power Button (/dev/input/event3)
+[    28.470] (**) Power Button: Applying InputClass "evdev keyboard catchall"
+[    28.470] (II) LoadModule: "evdev"
+[    28.470] (II) Loading /usr/lib/xorg/modules/input/evdev_drv.so
+[    28.511] (II) Module evdev: vendor="X.Org Foundation"
+[    28.511] 	compiled for 1.17.1, module version = 2.9.2
+[    28.511] 	Module class: X.Org XInput Driver
+[    28.511] 	ABI class: X.Org XInput driver, version 21.0
+[    28.511] (II) Using input driver 'evdev' for 'Power Button'
+[    28.511] (**) Power Button: always reports core events
+[    28.512] (**) evdev: Power Button: Device: "/dev/input/event3"
+[    28.512] (--) evdev: Power Button: Vendor 0 Product 0x1
+[    28.512] (--) evdev: Power Button: Found keys
+[    28.512] (II) evdev: Power Button: Configuring as keyboard
+[    28.512] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXPWRBN:00/input/input3/event3"
+[    28.512] (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD, id 6)
+[    28.512] (**) Option "xkb_rules" "evdev"
+[    28.512] (**) Option "xkb_model" "pc104"
+[    28.512] (**) Option "xkb_layout" "us"
+[    28.565] (II) config/udev: Adding input device Video Bus (/dev/input/event4)
+[    28.565] (**) Video Bus: Applying InputClass "evdev keyboard catchall"
+[    28.565] (II) Using input driver 'evdev' for 'Video Bus'
+[    28.565] (**) Video Bus: always reports core events
+[    28.565] (**) evdev: Video Bus: Device: "/dev/input/event4"
+[    28.565] (--) evdev: Video Bus: Vendor 0 Product 0x6
+[    28.565] (--) evdev: Video Bus: Found keys
+[    28.565] (II) evdev: Video Bus: Configuring as keyboard
+[    28.565] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/LNXVIDEO:00/input/input4/event4"
+[    28.565] (II) XINPUT: Adding extended input device "Video Bus" (type: KEYBOARD, id 7)
+[    28.565] (**) Option "xkb_rules" "evdev"
+[    28.565] (**) Option "xkb_model" "pc104"
+[    28.565] (**) Option "xkb_layout" "us"
+[    28.565] (II) XKB: Reusing cached keymap
+[    28.566] (II) config/udev: Adding input device Power Button (/dev/input/event0)
+[    28.566] (**) Power Button: Applying InputClass "evdev keyboard catchall"
+[    28.566] (II) Using input driver 'evdev' for 'Power Button'
+[    28.566] (**) Power Button: always reports core events
+[    28.566] (**) evdev: Power Button: Device: "/dev/input/event0"
+[    28.566] (--) evdev: Power Button: Vendor 0 Product 0x1
+[    28.566] (--) evdev: Power Button: Found keys
+[    28.566] (II) evdev: Power Button: Configuring as keyboard
+[    28.566] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00/input/input0/event0"
+[    28.566] (II) XINPUT: Adding extended input device "Power Button" (type: KEYBOARD, id 8)
+[    28.566] (**) Option "xkb_rules" "evdev"
+[    28.566] (**) Option "xkb_model" "pc104"
+[    28.566] (**) Option "xkb_layout" "us"
+[    28.566] (II) XKB: Reusing cached keymap
+[    28.567] (II) config/udev: Adding input device Lid Switch (/dev/input/event2)
+[    28.567] (II) No input driver specified, ignoring this device.
+[    28.567] (II) This device may have been added with another device file.
+[    28.568] (II) config/udev: Adding input device Sleep Button (/dev/input/event1)
+[    28.568] (**) Sleep Button: Applying InputClass "evdev keyboard catchall"
+[    28.568] (II) Using input driver 'evdev' for 'Sleep Button'
+[    28.568] (**) Sleep Button: always reports core events
+[    28.568] (**) evdev: Sleep Button: Device: "/dev/input/event1"
+[    28.568] (--) evdev: Sleep Button: Vendor 0 Product 0x3
+[    28.568] (--) evdev: Sleep Button: Found keys
+[    28.568] (II) evdev: Sleep Button: Configuring as keyboard
+[    28.568] (**) Option "config_info" "udev:/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0E:00/input/input1/event1"
+[    28.568] (II) XINPUT: Adding extended input device "Sleep Button" (type: KEYBOARD, id 9)
+[    28.568] (**) Option "xkb_rules" "evdev"
+[    28.568] (**) Option "xkb_model" "pc104"
+[    28.568] (**) Option "xkb_layout" "us"
+[    28.568] (II) XKB: Reusing cached keymap
+[    28.569] (II) config/udev: Adding input device HDA Digital PCBeep (/dev/input/event8)
+[    28.569] (II) No input driver specified, ignoring this device.
+[    28.569] (II) This device may have been added with another device file.
+[    28.569] (II) config/udev: Adding input device HDA Intel PCH Mic (/dev/input/event9)
+[    28.569] (II) No input driver specified, ignoring this device.
+[    28.569] (II) This device may have been added with another device file.
+[    28.570] (II) config/udev: Adding input device HDA Intel PCH Headphone (/dev/input/event10)
+[    28.570] (II) No input driver specified, ignoring this device.
+[    28.570] (II) This device may have been added with another device file.
+[    28.570] (II) config/udev: Adding input device HDA Intel PCH HDMI/DP,pcm=3 (/dev/input/event11)
+[    28.570] (II) No input driver specified, ignoring this device.
+[    28.570] (II) This device may have been added with another device file.
+[    28.571] (II) config/udev: Adding input device AT Translated Set 2 keyboard (/dev/input/event5)
+[    28.571] (**) AT Translated Set 2 keyboard: Applying InputClass "evdev keyboard catchall"
+[    28.571] (II) Using input driver 'evdev' for 'AT Translated Set 2 keyboard'
+[    28.571] (**) AT Translated Set 2 keyboard: always reports core events
+[    28.571] (**) evdev: AT Translated Set 2 keyboard: Device: "/dev/input/event5"
+[    28.571] (--) evdev: AT Translated Set 2 keyboard: Vendor 0x1 Product 0x1
+[    28.571] (--) evdev: AT Translated Set 2 keyboard: Found keys
+[    28.571] (II) evdev: AT Translated Set 2 keyboard: Configuring as keyboard
+[    28.571] (**) Option "config_info" "udev:/sys/devices/platform/i8042/serio0/input/input5/event5"
+[    28.571] (II) XINPUT: Adding extended input device "AT Translated Set 2 keyboard" (type: KEYBOARD, id 10)
+[    28.571] (**) Option "xkb_rules" "evdev"
+[    28.571] (**) Option "xkb_model" "pc104"
+[    28.571] (**) Option "xkb_layout" "us"
+[    28.571] (II) XKB: Reusing cached keymap
+[    28.572] (II) config/udev: Adding input device SynPS/2 Synaptics TouchPad (/dev/input/event12)
+[    28.572] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "evdev touchpad catchall"
+[    28.572] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "touchpad catchall"
+[    28.572] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "Default clickpad buttons"
+[    28.572] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "touchpad catchall"
+[    28.572] (**) SynPS/2 Synaptics TouchPad: Applying InputClass "Default clickpad buttons"
+[    28.572] (II) LoadModule: "synaptics"
+[    28.572] (II) Loading /usr/lib/xorg/modules/input/synaptics_drv.so
+[    28.573] (II) Module synaptics: vendor="X.Org Foundation"
+[    28.573] 	compiled for 1.17.1, module version = 1.8.2
+[    28.573] 	Module class: X.Org XInput Driver
+[    28.573] 	ABI class: X.Org XInput driver, version 21.0
+[    28.573] (II) Using input driver 'synaptics' for 'SynPS/2 Synaptics TouchPad'
+[    28.573] (**) SynPS/2 Synaptics TouchPad: always reports core events
+[    28.573] (**) Option "Device" "/dev/input/event12"
+[    28.680] (**) Option "Device" "/dev/input/event12"
+[    28.680] (II) synaptics: SynPS/2 Synaptics TouchPad: ignoring touch events for semi-multitouch device
+[    28.680] (--) synaptics: SynPS/2 Synaptics TouchPad: x-axis range 1472 - 5798 (res 59)
+[    28.680] (--) synaptics: SynPS/2 Synaptics TouchPad: y-axis range 1408 - 4992 (res 99)
+[    28.680] (--) synaptics: SynPS/2 Synaptics TouchPad: pressure range 0 - 255
+[    28.680] (--) synaptics: SynPS/2 Synaptics TouchPad: finger width range 0 - 15
+[    28.680] (--) synaptics: SynPS/2 Synaptics TouchPad: buttons: left right double triple
+[    28.680] (--) synaptics: SynPS/2 Synaptics TouchPad: Vendor 0x2 Product 0x7
+[    28.680] (**) Option "HorizTwoFingerScroll" "on"
+[    28.680] (**) Option "TapButton1" "1"
+[    28.680] (**) Option "TapButton2" "2"
+[    28.680] (**) Option "TapButton3" "3"
+[    28.680] (--) synaptics: SynPS/2 Synaptics TouchPad: touchpad found
+[    28.680] (**) SynPS/2 Synaptics TouchPad: always reports core events
+[    28.733] (**) Option "config_info" "udev:/sys/devices/platform/i8042/serio1/input/input8/event12"
+[    28.733] (II) XINPUT: Adding extended input device "SynPS/2 Synaptics TouchPad" (type: TOUCHPAD, id 11)
+[    28.733] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) MinSpeed is now constant deceleration 2.5
+[    28.733] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) MaxSpeed is now 1.75
+[    28.733] (**) synaptics: SynPS/2 Synaptics TouchPad: (accel) AccelFactor is now 0.036
+[    28.734] (**) SynPS/2 Synaptics TouchPad: (accel) keeping acceleration scheme 1
+[    28.734] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration profile 1
+[    28.734] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration factor: 2.000
+[    28.734] (**) SynPS/2 Synaptics TouchPad: (accel) acceleration threshold: 4
+[    28.734] (**) Option "Device" "/dev/input/event12"
+[    28.734] (--) synaptics: SynPS/2 Synaptics TouchPad: touchpad found
+[    28.734] (II) config/udev: Adding input device SynPS/2 Synaptics TouchPad (/dev/input/mouse0)
+[    28.735] (**) SynPS/2 Synaptics TouchPad: Ignoring device from InputClass "touchpad ignore duplicates"
+[    28.735] (II) config/udev: Adding input device PC Speaker (/dev/input/event6)
+[    28.735] (II) No input driver specified, ignoring this device.
+[    28.735] (II) This device may have been added with another device file.
+[    28.736] (II) config/udev: Adding input device Dell WMI hotkeys (/dev/input/event7)
+[    28.736] (**) Dell WMI hotkeys: Applying InputClass "evdev keyboard catchall"
+[    28.736] (II) Using input driver 'evdev' for 'Dell WMI hotkeys'
+[    28.736] (**) Dell WMI hotkeys: always reports core events
+[    28.736] (**) evdev: Dell WMI hotkeys: Device: "/dev/input/event7"
+[    28.736] (--) evdev: Dell WMI hotkeys: Vendor 0 Product 0
+[    28.736] (--) evdev: Dell WMI hotkeys: Found keys
+[    28.736] (II) evdev: Dell WMI hotkeys: Configuring as keyboard
+[    28.736] (**) Option "config_info" "udev:/sys/devices/virtual/input/input9/event7"
+[    28.736] (II) XINPUT: Adding extended input device "Dell WMI hotkeys" (type: KEYBOARD, id 12)
+[    28.736] (**) Option "xkb_rules" "evdev"
+[    28.736] (**) Option "xkb_model" "pc104"
+[    28.736] (**) Option "xkb_layout" "us"
+[    28.736] (II) XKB: Reusing cached keymap

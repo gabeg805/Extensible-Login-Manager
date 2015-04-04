@@ -177,7 +177,7 @@ void display_frame() {
     APP.widg = gtk_drawing_area_new(); 
     
     // Create the login frame
-    setup_widget(FRAME_CONFIG, &APP, "draw", (void *)draw_window);
+    setup_app(FRAME_CONFIG, &APP, "draw", (void *)draw_window);
     
     // Log function completion
     if ( VERBOSE )

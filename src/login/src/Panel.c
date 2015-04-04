@@ -258,7 +258,7 @@ static void display_item(char *file, void (*func)() ) {
     app.widg = gtk_button_new();
     
     // Create the panel
-    setup_widget(file, &app, "clicked", func);
+    setup_app(file, &app, "clicked", func);
     setup_button(app.widg, app.decor.img_file);
     
     // Log function completion

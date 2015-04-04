@@ -1,6 +1,6 @@
 CC      = gcc
 LIBS    = gtk+-3.0 cairo
-CFLAGS  = -g -Wall -lpam
+CFLAGS  = -g -Wall -lpam -lX11
 CFLAGS += `pkg-config $(LIBS) --cflags --libs`
 
 PROGRAM = glm
@@ -13,8 +13,8 @@ all: $(PROGRAM)
 
 ./src/login/obj/%.o: ./src/login/src/%.c 
 	$(CC) $(CFLAGS) \
-		-o $@ \
-		-c $<
+		-c $< \
+		-o $@ 
 
 $(PROGRAM): $(OBJECTS)
 	$(CC) $(CFLAGS) \
