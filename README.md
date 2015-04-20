@@ -2,16 +2,16 @@
 What is it?
 ===========
 
-This is a login manager I created for my Arch Linux system. I made it because I  
-thought it'd be a fun project to do and indeed it was super fun! Along the way though
-it became clear to me that there was a serious lack of information out there for 
-creating a login manager. The real hard part, and consequently the content of the 
-missing information, was in authenticating the user session. A lot of the stuff I 
-found was nearly ten years old; suffice it to say that it took some doing to figure 
-out how things worked. From what I gather Linux systems stand for, to me this lack of
-information was a serious dissapointment. After I made this discovery, my new goal 
-with this project was to help someone out that was trying to do something similar. 
-I hope this project reaches that person and helps them out!
+The Atlas login manager is a highly configurable login manager I created for my Arch
+Linux system. I made it because I thought it'd be a fun project to do and indeed it
+was super fun! Along the way though it became clear to me that there was a serious
+lack of information out there for creating a login manager. The real hard part, and
+consequently the content of the missing information, was in authenticating the user
+session. A lot of the stuff I found was nearly ten years old; suffice it to say that
+it took some doing to figure out how things worked. From what I gather Linux systems
+stand for, to me this lack of information was a serious dissapointment. After I made
+this discovery, my new goal with this project was to help someone out that was trying
+to do something similar.  I hope this project reaches that person and helps them out!
 
 
 
