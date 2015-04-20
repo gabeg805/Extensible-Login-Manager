@@ -2,7 +2,7 @@
 What is it?
 ===========
 
-The Atlas login manager is a highly configurable login manager I created for my Arch
+The Elysia login manager is a highly configurable login manager I created for my Arch
 Linux system. I made it because I thought it'd be a fun project to do and indeed it
 was super fun! Along the way though it became clear to me that there was a serious
 lack of information out there for creating a login manager. The real hard part, and
