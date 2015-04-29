@@ -119,8 +119,8 @@
 #include "../hdr/Username.h"
 
 // Declares
-static void setup_menu(struct glmapp app);
-static void setup_label(GtkWidget *label, struct glmtxt txt);
+static void setup_menu(struct elyapp app);
+static void setup_label(GtkWidget *label, struct elytxt txt);
 static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label);
 static char ** get_usernames(char *file);
 static void set_username_entries(GtkWidget *menu, GtkWidget *label);
@@ -134,7 +134,7 @@ static void display_usr_menu();
 // ///////////////////////////////
 
 // Setup dropdown menu that displays users
-static void setup_menu(struct glmapp app) {
+static void setup_menu(struct elyapp app) {
     
     double bmtime = benchmark_runtime(0);
     
@@ -162,7 +162,7 @@ static void setup_menu(struct glmapp app) {
 
 
 // Setup the label for the dropdown menu
-static void setup_label(GtkWidget *label, struct glmtxt txt) {
+static void setup_label(GtkWidget *label, struct elytxt txt) {
     
     double bmtime = benchmark_runtime(0);
     
@@ -382,7 +382,7 @@ static void display_icon() {
                  __FILE__, __FUNCTION__, __LINE__);
     
     // Allocate space for the application 
-    struct glmapp app;
+    struct elyapp app;
     
     // Define the application widget
     app.win  = gtk_window_new(GTK_WINDOW_POPUP);
@@ -420,7 +420,7 @@ static void display_usr_menu() {
         USERNAME = "User";
     
     // Allocate space for the application 
-    struct glmapp app;
+    struct elyapp app;
     
     // Define the application widget
     app.win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);

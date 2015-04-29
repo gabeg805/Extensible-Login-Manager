@@ -29,10 +29,10 @@ as follows:
     SYSTEM
     ------
         - Boot up, all required processes are started
-        - GLM is started after Getty
+        - Elysia is started after Getty
     
-    GLM
-    ---
+    ELYSIA
+    ------
         - An open display is found, display environment variable is set 
         - X server is initialized with on the display with tty7
         - Compositing manager is started (for transparency)
@@ -57,7 +57,7 @@ as follows:
                 * Set up a user session for the authenticated user
                 * Set the PAM environment variables
                 * Destroy all the windows that were displayed for logging in
-                * Execute the GLM provided xinitrc file
+                * Execute the login manager provided xinitrc file
                 * PAM waits in the background until login...
                 * Closes the user session that was opened
                 * Deletes the user credentials that were set
@@ -88,17 +88,20 @@ Also, you'll need to download "pqiv-git" from the AUR!
 To install the login manager you want to do the following:
     
     # unzip Gabes-Login-Manager-master.zip
-    # mv Gabes-Login-Manager-master /etc/X11/glm
-    # cp /etc/X11/glm/src/pam/glm /etc/pam.d/
-    # cp /etc/X11/glm/src/systemd/glm.service /usr/lib/systemd/system/
-    # systemctl enable glm.service
-    # cd /etc/X11/glm/src/login/
+    # mv Gabes-Login-Manager-master /etc/X11/elysia
+    # cp /etc/X11/elysia/src/pam/elysia /etc/pam.d/
+    # cp /etc/X11/elysia/src/systemd/elysia.service /usr/lib/systemd/system/
+    # systemctl enable elysia.service
+    # cd /etc/X11/elysia/src/login/
     # make
 
 With the last command, the binary generated is the one needed in order to execute the
 login manager on startup. 
 
-In case you want to MAKE CHANGES TO SOURCE CODE, to:
+In case you want to make changes to source code. To:
+    
+    - Modify the PAM module, the Elysia PAM module is located at /etc/pam.d/elysia
+      but only do this if you know what you're doing.
     
     - Change variable values inside the '.pref' files or the '.h' header files
             * I would suggest to only alter the values of the "#define" statements,
@@ -155,7 +158,7 @@ Executing this program on startup can have some pretty adverse effects, but fear
             * When this happens, it means that the compositing manager is starting 
               up either too early or too late. To fix this, hit the leaf icon in the
               bottom right of the screen, and hit restart. This will restart the 
-              GLM service.
+              Elysia service.
     
     - I enter my password correctly, but it registers as an incorrect login.
             * When this happens it usually means that the USERNAME global variable
@@ -192,11 +195,11 @@ Executing this program on startup can have some pretty adverse effects, but fear
 
               Now you're in your system, execute:
 
-                    # systemctl disable glm.service
+                    # systemctl disable elysia.service
                     # exit
                     # reboot
             
-            * When you reboot, GLM should no longer start up and you should be able 
+            * When you reboot, Elysia should no longer start up and you should be able 
               to login to your system using Getty. At this point though, the problem 
               for why the screen was black could be anything so you'll have to do 
               some debugging. When the screen turns black though, it'd be good to 
@@ -212,7 +215,7 @@ To-Do
 
 Here's a list of things I want to implement, but haven't had the time to do so yet:
     
-    - Start GLM over getty
+    - Start Elysia over getty
     
     - Change focus policy
     

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 IFS=$'\n'
-LOG_FILE="/etc/X11/glm/log/glm.log"
+LOG_FILE="/etc/X11/elysia/log/elysia.log"
 RUNTIME=()
 
 function get_entry_len {

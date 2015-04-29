@@ -11,14 +11,14 @@
 // 
 // NAME:
 // 
-//     glm.c
+//     elysia.c
 // 
 // 
 // SYNTAX: 
 // 
 //     Execute the command:
 //         
-//         # ./glm
+//         # ./elysia
 // 
 // 
 // PURPOSE:
@@ -80,24 +80,24 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/glm.h"
+#include "../hdr/elysia.h"
 
 /* char *SERVICE; */
 /* char *USERNAME; */
 /* char *PASSWORD; */
 /* char *SESSION; */
-/* char *GLM_LOG; */
+/* char *ELYSIA_LOG; */
 /* int  TTYN; */
 /* bool INTERFACE; */
 /* bool PREVIEW; */
 /* bool VERBOSE; */
 /* bool BENCHTIME; */
 
-char *SERVICE  = "glm";
+char *SERVICE  = "elysia";
 char *USERNAME = "User";
 char *PASSWORD = "Password";
 char *SESSION  = "xterm";
-char *GLM_LOG  = "/etc/X11/glm/log/glm.log";
+char *ELYSIA_LOG  = "/etc/X11/elysia/log/elysia.log";
 int  TTYN      = 1;
 bool INTERFACE = false;
 bool PREVIEW   = false;

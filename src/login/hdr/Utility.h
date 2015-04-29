@@ -28,7 +28,7 @@ extern char *SERVICE;
 extern char *USERNAME;
 extern char *PASSWORD;
 extern char *SESSION;
-extern char *GLM_LOG;
+extern char *ELYSIA_LOG;
 extern int  TTYN;
 extern bool INTERFACE;
 extern bool PREVIEW;
@@ -36,14 +36,14 @@ extern bool VERBOSE;
 extern bool BENCHTIME;
 
 // Definitions
-struct glmpos { // Widget position and size
+struct elypos { // Widget position and size
     int x;
     int y;
     int width;
     int height;
 };
 
-struct glmtxt { // Text attributes
+struct elytxt { // Text attributes
     int size;
     int maxchars;
     int refresh;
@@ -58,7 +58,7 @@ struct glmtxt { // Text attributes
     int blue;
 };
 
-struct glmdecor { // Widget decoration
+struct elydecor { // Widget decoration
     char *img_file;
     
     int bg_red;
@@ -74,12 +74,12 @@ struct glmdecor { // Widget decoration
     int div;
 };
 
-struct glmapp { // Widget application
+struct elyapp { // Widget application
     GtkWidget *win;
     GtkWidget *widg;
-    struct glmpos pos;
-    struct glmtxt txt;
-    struct glmdecor decor;
+    struct elypos pos;
+    struct elytxt txt;
+    struct elydecor decor;
 };
 
 
@@ -100,15 +100,15 @@ int read_config_int(char *file, char *key);
 void read_config_cmd_rep(char *arr, char *file, char *rep1, char *rep2, char *rep3);
 void exec_config_cmd(char *file, int n);
 
-void set_config_pos(char *file, struct glmpos *pos);
-void set_config_txt(char *file, struct glmtxt *txt);
-void set_config_decor(char *file, struct glmdecor *decor);
+void set_config_pos(char *file, struct elypos *pos);
+void set_config_txt(char *file, struct elytxt *txt);
+void set_config_decor(char *file, struct elydecor *decor);
 
-void set_widget_pos(struct glmapp *app);
-void set_widget_color(struct glmapp *app);
+void set_widget_pos(struct elyapp *app);
+void set_widget_color(struct elyapp *app);
 void enable_transparency(GtkWidget *widget);
 void setup_app(char *file, 
-               struct glmapp *app, 
+               struct elyapp *app, 
                char *event, 
                void (*func)(GtkWidget *widg));
 

@@ -10,8 +10,8 @@
 #include <gtk/gtk.h>
 
 // Defines
-#define CLOCK_DATE_CONFIG    "/etc/X11/glm/src/login/config/Clock-Date.config"
-#define CLOCK_TIME_CONFIG    "/etc/X11/glm/src/login/config/Clock-Time.config"
+#define CLOCK_DATE_CONFIG    "/etc/X11/elysia/src/login/config/Clock-Date.config"
+#define CLOCK_TIME_CONFIG    "/etc/X11/elysia/src/login/config/Clock-Time.config"
 
 // Public functions
 void display_clock();

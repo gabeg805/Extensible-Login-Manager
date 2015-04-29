@@ -3,7 +3,7 @@ LIBS    = gtk+-3.0 cairo
 CFLAGS  = -g -Wall -lpam -lX11
 CFLAGS += `pkg-config $(LIBS) --cflags --libs`
 
-PROGRAM = glm
+PROGRAM = elysia
 NAMES   = $(PROGRAM) Username Password Clock Frame TextImage WindowManager Panel Authenticate Interface Xsetup Utility Benchmark
 SOURCES = $(addprefix ./src/login/src/, $(addsuffix .c, $(NAMES)))
 HEADERS = $(addprefix ./src/login/hdr/, $(addsuffix .h, $(NAMES)))

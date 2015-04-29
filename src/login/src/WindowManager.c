@@ -113,7 +113,7 @@
 #include "../hdr/WindowManager.h"
 
 // Declares
-static void setup_menu(struct glmapp app);
+static void setup_menu(struct elyapp app);
 static void wm_write_to_file(GtkMenu *item);
 static char ** get_window_managers();
 static void set_window_manager_entries(GtkWidget *menu);
@@ -125,7 +125,7 @@ static void set_window_manager_entries(GtkWidget *menu);
 // /////////////////////////////////////
 
 // Setup window manager dropdown menu button
-static void setup_menu(struct glmapp app) {
+static void setup_menu(struct elyapp app) {
     
     double bmtime = benchmark_runtime(0);
     
@@ -343,7 +343,7 @@ void display_window_manager() {
         SESSION = "xterm";
     
     // Allocate space for application 
-    static struct glmapp app;
+    static struct elyapp app;
     
     // Define the application widget
     app.win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);

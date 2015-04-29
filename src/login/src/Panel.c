@@ -37,9 +37,9 @@
 // 
 //     system_shutdown - Command to shutdown computer.
 //     system_reboot   - Command to reboot computer.
-//     cancel_glm      - Command to close the refresh login popup.
-//     refresh_glm     - Command to refresh the login manager.
-//     quit_glm        - Command to quit the login manager.
+//     cancel_ely      - Command to close the refresh login popup.
+//     refresh_ely     - Command to refresh the login manager.
+//     quit_ely        - Command to quit the login manager.
 // 
 //     display_dialog  - Initialize refresh login button.
 // 
@@ -98,9 +98,9 @@
 static void setup_button(GtkWidget *widg, char *img);
 static void system_shutdown();
 static void system_reboot();
-static void cancel_glm();
-static void refresh_glm();
-static void quit_glm();
+static void cancel_ely();
+static void refresh_ely();
+static void quit_ely();
 static void display_dialog();
 static void display_item();
 
@@ -145,22 +145,22 @@ static void system_reboot() {
 
 
 // Quit the prompt
-static void cancel_glm(GtkWidget *button, GtkWidget *window) {
+static void cancel_ely(GtkWidget *button, GtkWidget *window) {
     gtk_widget_hide(window);
 }
 
 
 
 // Refresh the login screen
-static void refresh_glm() {
+static void refresh_ely() {
     execl(SYSTEMCTL, SYSTEMCTL, "restart", SERVICE, NULL);
 }
 
 
 
 // Quit the login screen
-static void quit_glm() {
-    char *cmd = "/usr/bin/chvt 2; /usr/bin/systemctl stop glm";
+static void quit_ely() {
+    char *cmd = "/usr/bin/chvt 2; /usr/bin/systemctl stop elysia";
     execl("/bin/bash", "/bin/bash", "-c", cmd, NULL);
 }
 
@@ -170,18 +170,18 @@ static void quit_glm() {
 // ///// DISPLAY DIALOG /////
 // //////////////////////////
 
-// Display the GLM dialog
+// Display the Elysia dialog
 static void display_dialog() {
     
     double bmtime = benchmark_runtime(0);
     
     // Log function start
     if ( VERBOSE )
-        file_log("%s: (%s:%d): Displaying GLM dialog...", 
+        file_log("%s: (%s:%d): Displaying Elysia dialog...", 
                  __FILE__, __FUNCTION__, __LINE__);
     
     // Declare the widget position, text, and decoration structs
-    struct glmpos pos;
+    struct elypos pos;
     
     // Define variables in config file
     set_config_pos(PANEL_DIA_CONFIG,  &pos);
@@ -220,9 +220,9 @@ static void display_dialog() {
     gtk_widget_show(window);
     
     // GTK signals
-    g_signal_connect(G_OBJECT(refresh_button), "clicked", G_CALLBACK(refresh_glm),   NULL);
-    g_signal_connect(G_OBJECT(quit_button),    "clicked", G_CALLBACK(quit_glm),      NULL);
-    g_signal_connect(G_OBJECT(cancel_button),  "clicked", G_CALLBACK(cancel_glm),    window);
+    g_signal_connect(G_OBJECT(refresh_button), "clicked", G_CALLBACK(refresh_ely),   NULL);
+    g_signal_connect(G_OBJECT(quit_button),    "clicked", G_CALLBACK(quit_ely),      NULL);
+    g_signal_connect(G_OBJECT(cancel_button),  "clicked", G_CALLBACK(cancel_ely),    window);
     g_signal_connect(window,                   "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
     // Log function completion
@@ -251,7 +251,7 @@ static void display_item(char *file, void (*func)() ) {
                  __FILE__, __FUNCTION__, __LINE__);
     
     // Allocate space for the application 
-    struct glmapp app; 
+    struct elyapp app; 
     
     // Define the application widget
     app.win = gtk_window_new(GTK_WINDOW_TOPLEVEL);

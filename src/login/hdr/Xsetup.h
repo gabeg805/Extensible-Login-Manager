@@ -16,12 +16,12 @@
 #include <dirent.h>
 
 // Defines
-#define X_CONFIG    "/etc/X11/glm/src/login/config/Xsetup.config"
+#define X_CONFIG    "/etc/X11/elysia/src/login/config/Xsetup.config"
 
 #define XCOMPMGR       "/usr/bin/xcompmgr"
 #define XORG           "/usr/bin/Xorg"
-#define XSERVER_AUTH   "/etc/X11/glm/log/glm.auth"
-#define XSERVER_LOG    "/etc/X11/glm/log/xserver.log"
+#define XSERVER_AUTH   "/etc/X11/elysia/log/elysia.auth"
+#define XSERVER_LOG    "/etc/X11/elysia/log/xserver.log"
 
 // Public functions
 void xsetup();

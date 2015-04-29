@@ -10,7 +10,7 @@
 #include <math.h>
 
 // Defines
-#define FRAME_CONFIG    "/etc/X11/glm/src/login/config/Frame.config"
+#define FRAME_CONFIG    "/etc/X11/elysia/src/login/config/Frame.config"
 
 // Public functions
 void display_frame();

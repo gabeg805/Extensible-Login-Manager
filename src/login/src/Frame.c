@@ -89,7 +89,7 @@ static void draw_frame(cairo_t *cr);
 static gboolean draw_window(GtkWidget *widget);
 
 // Declares
-static struct glmapp APP;
+static struct elyapp APP;
 
 
 

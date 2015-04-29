@@ -39,7 +39,7 @@
 // 
 //     get_substring       - Return the substring in between the specified delimeter.
 // 
-//     file_log            - Write to the GLM log file.
+//     file_log            - Write to the Elysia log file.
 //     file_line_overwrite - Overwrite the specified line (given by the key) in the 
 //                           configuration file.
 // 
@@ -114,12 +114,12 @@
 //                          header file. Also added new funtions that read in key 
 //                          value pairs from a config file. In doing so I remove
 //                          all the preprocessor define statements and just put all 
-//                          the variables I need into glm structures. This hopefully 
+//                          the variables I need into elysia structures. This hopefully 
 //                          makes the code look cleaner.
 // 
 //     gabeg Mar 19 2015 <> Attempted to make code look cleaner by creating a 
 //                          universal setup function for each application by 
-//                          incorporating a struct 'glmapp' that holds everything an
+//                          incorporating a struct 'elyapp' that holds everything an
 //                          app will need.
 // 
 //     gabeg Mar 25 2015 <> Modified the "read_config_char" function so that it 
@@ -200,11 +200,11 @@ void cli_parse(int argc, char **argv) {
 
 // Initialize global variables
 /* void init_globals() { */
-/*     SERVICE  = "glm"; */
+/*     SERVICE  = "elysia"; */
 /*     USERNAME = "User"; */
 /*     PASSWORD = "Password"; */
 /*     SESSION  = "xterm"; */
-/*     GLM_LOG  = "/etc/X11/glm/log/glm.log"; */
+/*     ELYSIA_LOG  = "/etc/X11/elysia/log/elysia.log"; */
 /*     TTYN      = 1; */
 /*     INTERFACE = false; */
 /*     PREVIEW   = false; */
@@ -266,11 +266,11 @@ void get_substring(char *copy, char *str, char sep, int num) {
 // ///// WRITE TO FILE /////
 // /////////////////////////
 
-// Log to the GLM log file
+// Log to the Elysia log file
 void file_log(const char *fmt, ...) {
     
     // Default values for logging
-    char *file = GLM_LOG;
+    char *file = ELYSIA_LOG;
     char *opt = "a+";
     
     // Write to file
@@ -647,7 +647,7 @@ void exec_config_cmd(char *file, int n) {
 // /////////////////////////////
 
 // Set config position values
-void set_config_pos(char *file, struct glmpos *pos) {
+void set_config_pos(char *file, struct elypos *pos) {
     pos->x      = read_config_int(file, "xpos");
     pos->y      = read_config_int(file, "ypos");
     pos->width  = read_config_int(file, "width");
@@ -663,7 +663,7 @@ void set_config_pos(char *file, struct glmpos *pos) {
 
 
 // Set config text values
-void set_config_txt(char *file, struct glmtxt *txt) {
+void set_config_txt(char *file, struct elytxt *txt) {
     txt->size     = read_config_int(file, "size");
     txt->maxchars = read_config_int(file, "maxchars");
     txt->refresh  = read_config_int(file, "refresh-sec");
@@ -685,7 +685,7 @@ void set_config_txt(char *file, struct glmtxt *txt) {
 
 
 // Set config decoration values
-void set_config_decor(char *file, struct glmdecor *decor) {
+void set_config_decor(char *file, struct elydecor *decor) {
     decor->img_file = read_config_char(file, "img-file", MAX_LOC_LEN);
     
     decor->bg_red   = read_config_int(file, "bg-red");
@@ -708,7 +708,7 @@ void set_config_decor(char *file, struct glmdecor *decor) {
 // /////////////////////////////
 
 // Set widget position and size
-void set_widget_pos(struct glmapp *app) {
+void set_widget_pos(struct elyapp *app) {
     gtk_window_move(GTK_WINDOW(app->win), app->pos.x, app->pos.y);
     gtk_window_set_default_size(GTK_WINDOW(app->win), app->pos.width, app->pos.height);
 }
@@ -716,7 +716,7 @@ void set_widget_pos(struct glmapp *app) {
 
 
 // Set the color of a widget 
-void set_widget_color(struct glmapp *app) {
+void set_widget_color(struct elyapp *app) {
     
     // No decoration defined
     if ( app->decor.div < 0 )
@@ -766,7 +766,7 @@ void enable_transparency(GtkWidget *widg) {
 
 // Setup the widget
 void setup_app(char *file, 
-               struct glmapp *app, 
+               struct elyapp *app, 
                char *event, 
                void (*func)(GtkWidget *widg)) {
     

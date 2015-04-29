@@ -89,9 +89,9 @@
 #include "../hdr/Clock.h"
 
 // Private functions
-static void set_label(struct glmapp *app);
+static void set_label(struct elyapp *app);
 static gboolean update(gpointer data);
-static void display_item(char *file, struct glmapp *app);
+static void display_item(char *file, struct elyapp *app);
 
 
 
@@ -100,7 +100,7 @@ static void display_item(char *file, struct glmapp *app);
 // //////////////////////////
 
 // Set the clock label font and text size
-static void set_label(struct glmapp *app) {
+static void set_label(struct elyapp *app) {
     
     double bmtime = benchmark_runtime(0);
     
@@ -139,7 +139,7 @@ static void set_label(struct glmapp *app) {
 
 // Refresh the current clock label
 static gboolean update(gpointer data) {
-    struct glmapp *app = (struct glmapp *) data;
+    struct elyapp *app = (struct elyapp *) data;
     set_label(app);
     
     return TRUE;
@@ -152,7 +152,7 @@ static gboolean update(gpointer data) {
 // /////////////////////////
 
 // Display a piece of the time
-static void display_item(char *file, struct glmapp *app) {
+static void display_item(char *file, struct elyapp *app) {
     
     double bmtime = benchmark_runtime(0);
     
@@ -183,7 +183,7 @@ static void display_item(char *file, struct glmapp *app) {
 
 // Display the date and time clock
 void display_clock() {
-    static struct glmapp date_app, time_app;
+    static struct elyapp date_app, time_app;
     
     display_item(CLOCK_DATE_CONFIG, &date_app);
     display_item(CLOCK_TIME_CONFIG, &time_app);

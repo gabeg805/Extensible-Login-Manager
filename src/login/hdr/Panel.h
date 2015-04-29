@@ -9,10 +9,10 @@
 #include <gtk/gtk.h>
 
 // Defines
-#define PANEL_SHUT_CONFIG    "/etc/X11/glm/src/login/config/Panel-Shutdown.config"
-#define PANEL_REF_CONFIG     "/etc/X11/glm/src/login/config/Panel-Refresh.config"
-#define PANEL_REB_CONFIG     "/etc/X11/glm/src/login/config/Panel-Reboot.config"
-#define PANEL_DIA_CONFIG     "/etc/X11/glm/src/login/config/Panel-Dialog.config"
+#define PANEL_SHUT_CONFIG    "/etc/X11/elysia/src/login/config/Panel-Shutdown.config"
+#define PANEL_REF_CONFIG     "/etc/X11/elysia/src/login/config/Panel-Refresh.config"
+#define PANEL_REB_CONFIG     "/etc/X11/elysia/src/login/config/Panel-Reboot.config"
+#define PANEL_DIA_CONFIG     "/etc/X11/elysia/src/login/config/Panel-Dialog.config"
 
 #define POWEROFF          "/usr/bin/poweroff"
 #define REBOOT            "/usr/bin/reboot"

@@ -9,7 +9,7 @@
 #include <cairo.h>
 
 // Defines
-#define TEXT_CONFIG    "/etc/X11/glm/src/login/config/TextImage.config"
+#define TEXT_CONFIG    "/etc/X11/elysia/src/login/config/TextImage.config"
 
 // Public functions
 void display_text_image();

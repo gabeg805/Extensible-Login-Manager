@@ -1,6 +1,6 @@
 // Header guard
-#ifndef GLM_H
-#define GLM_H
+#ifndef ELYSIA_H
+#define ELYSIA_H
 
 // Includes
 #include "../hdr/Xsetup.h"

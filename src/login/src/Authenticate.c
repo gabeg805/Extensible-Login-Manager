@@ -307,7 +307,7 @@ int login(const char *username, const char *password) {
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
         
-        // Check if GLM is in preview mode
+        // Check if Elysia is in preview mode
         if (PREVIEW) {
             init_env(pam_handle, pw);
             return 1;
@@ -326,11 +326,11 @@ int login(const char *username, const char *password) {
             // Add session to utmp/wtmp
             manage_login_records(username, "-a");
                         
-            // Change directory and ownership of GLM xinitrc file
+            // Change directory and ownership of Elysia xinitrc file
             chdir(pw->pw_dir);
             chown(XINITRC, pw->pw_uid, pw->pw_gid);
-            chown(GLM_LOG, pw->pw_uid, pw->pw_gid);
-                        
+            chown(ELYSIA_LOG, pw->pw_uid, pw->pw_gid);
+            
             // Set uid and groups for USER
             if (initgroups(pw->pw_name, pw->pw_gid) == -1) return 0;
             if (setgid(pw->pw_gid) == -1)                  return 0;

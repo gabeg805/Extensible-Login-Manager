@@ -8,7 +8,7 @@
 #include <gtk/gtk.h>
 
 // Defines
-#define PASS_CONFIG    "/etc/X11/glm/src/login/config/Password.config"
+#define PASS_CONFIG    "/etc/X11/elysia/src/login/config/Password.config"
 
 // Public functions
 void display_password_entry();

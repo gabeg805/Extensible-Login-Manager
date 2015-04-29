@@ -93,7 +93,7 @@ static void setup_entry();
 static void get_entry_text(GtkWidget *widg);
 
 // Application (if error, could be cuz of static)
-static struct glmapp APP;
+static struct elyapp APP;
 
 
 

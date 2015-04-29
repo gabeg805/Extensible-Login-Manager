@@ -249,7 +249,7 @@ static void start_xserver() {
         end = (double)(t_end.tv_sec + (t_end.tv_nsec / 1e9));
         
         if ( (end-start) >= timeout ) {
-            file_log("%s: (%s:%d): Timeout reached: %s (%d sec). GLM exited.",
+            file_log("%s: (%s:%d): Timeout reached: %s (%d sec). Elysia exited.",
                      __FILE__, __FUNCTION__, __LINE__, 
                      "X server timed out", timeout);
             exit(1);

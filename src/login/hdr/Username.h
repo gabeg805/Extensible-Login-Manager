@@ -13,8 +13,8 @@
 #include <gtk/gtk.h>
 
 // Defines
-#define USER_CONFIG        "/etc/X11/glm/src/login/config/Username.config"
-#define USER_IMG_CONFIG    "/etc/X11/glm/src/login/config/Username-Image.config"
+#define USER_CONFIG        "/etc/X11/elysia/src/login/config/Username.config"
+#define USER_IMG_CONFIG    "/etc/X11/elysia/src/login/config/Username-Image.config"
 
 // Public functions
 void display_username();
