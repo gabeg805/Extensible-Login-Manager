@@ -18,7 +18,7 @@
 // 
 //     Include the header file:
 // 
-//         #include "../hdr/Authenticate.h"
+//         #include "Authenticate.h"
 // 
 // 
 // PURPOSE:
@@ -99,7 +99,7 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/Authenticate.h"
+#include "Authenticate.h"
 
 // Private functions
 static void init_env(pam_handle_t *pam_handle, struct passwd *pw);

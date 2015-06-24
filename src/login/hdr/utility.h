@@ -1,20 +1,29 @@
+// *****************************************************************************
+// 
+// Name:    utility.h
+// Author:  Gabriel Gonzalez
+// Email:   gabeg@bu.edu
+// License: The MIT License (MIT)
+// 
+// Syntax: #include "utility.h"
+// 
+// Description: Contains the variables and types used by all Elysia source 
+//              files.
+//              
+// Notes: None.
+// 
+// *****************************************************************************
+
+
+
 // Header guard
 #ifndef UTILITY_H
 #define UTILITY_H
 
 // Includes
-#include "../hdr/Benchmark.h"
+#include "elytypes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
 #include <stdbool.h>
-#include <assert.h>
-#include <string.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
 #include <gtk/gtk.h>
 
 // Defines
@@ -23,68 +32,9 @@
 #define MAX_STR_LEN    32
 #define MAX_NUM_LEN    16
 
-// Global variables
-extern char *SERVICE;
-extern char *USERNAME;
-extern char *PASSWORD;
-extern char *SESSION;
-extern char *ELYSIA_LOG;
-extern int  TTYN;
-extern bool INTERFACE;
-extern bool PREVIEW;
-extern bool VERBOSE;
-extern bool BENCHTIME;
-
-// Definitions
-struct elypos { // Widget position and size
-    int x;
-    int y;
-    int width;
-    int height;
-};
-
-struct elytxt { // Text attributes
-    int size;
-    int maxchars;
-    int refresh;
-    
-    char *text;
-    char *font;
-    char *fmt;
-    char *invis;
-    
-    int red;
-    int green;
-    int blue;
-};
-
-struct elydecor { // Widget decoration
-    char *img_file;
-    
-    int bg_red;
-    int bg_green;
-    int bg_blue;
-    int bg_alpha;
-    
-    int fg_red;
-    int fg_green;
-    int fg_blue;
-    int fg_alpha;
-    
-    int div;
-};
-
-struct elyapp { // Widget application
-    GtkWidget *win;
-    GtkWidget *widg;
-    struct elypos pos;
-    struct elytxt txt;
-    struct elydecor decor;
-};
-
-
 // Public functions 
-void cli_parse(int argc, char **argv);
+void usage(char *prog);
+void parse_argv(int argc, char **argv);
 /* void init_globals(); */
 void cleanup_child(int signal);
 

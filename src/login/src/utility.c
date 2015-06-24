@@ -1,171 +1,55 @@
-// 
-// CONTRIBUTORS: 
-// 
-//     * Gabriel Gonzalez (gabeg@bu.edu) 
-// 
-// 
-// LICENSE: 
-// 
-//     The MIT License (MIT)
-// 
-// 
-// NAME:
-// 
-//     Utility.c
-// 
-// 
-// SYNTAX: 
-// 
-//     Without a 'main' function, include the following header:
-// 
-//         #include "Utility.h"
-// 
-// 
-// PURPOSE:
-// 
-//     Contains various functions that are used frequently.
-// 
-// 
-// OPTIONS:
-// 
-//     N/A
-// 
-// 
-// FUNCTIONS:
-// 
-//     cli_parse           - Parse the command line arguments.
-// 
-//     cleanup_child       - Remove zombie processes.
-// 
-//     get_substring       - Return the substring in between the specified delimeter.
-// 
-//     file_log            - Write to the Elysia log file.
-//     file_line_overwrite - Overwrite the specified line (given by the key) in the 
-//                           configuration file.
-// 
-//     is_running          - Check if program is running.
-// 
-//     get_cmd_output      - Get output from the specified linux command.
-// 
-//     read_config_char    - Read the config file and output a string.
-//     read_config_int     - Read the config file and output an int.
-//     read_config_cmd_rep - Read the config file and output a command that has 
-//                           replacement chars ('@'), and replace those chars with
-//                           the specified replacements.
-//     exec_config_cmd     - Execute the command in the config file.
-// 
-// 
-//     set_config_pos      - Set position values defined in the config file.
-//     set_config_txt      - Set text values defined in the config file.
-//     set_config_decor    - Set decoration values defined in the config file.
-// 
-//     set_widget_pos      - Set the size and position of the widget.
-//     set_widget_color    - Set the color and opacity of the widget.
-//     enable_transparency - Enable widget transparency.
-//     setup_app           - Setup the widget application.
-// 
-// 
-// FILE STRUCTURE:
-// 
-//     * Includes and Declares
-//     * Parse Input Options
-//     * Remove Zombie Processes
-//     * Get Subtring Within Delimeter
-//     * Write to File
-//     * Check If Program Is Running
-//     * Get Linux Command Output
-//     * Read Config File
-//     * Set Config Values
-//     * Application Setup 
-// 
-// 
-// MODIFICATION HISTORY:
-// 	
-//     gabeg Aug 12 2014 <> created
-// 
-//     gabeg Aug 14 2014 <> Modified command_line function to return an array of 
-//                          strings instead of just one long string
-// 
-//     gabeg Sep 16 2014 <> Removed unneeded libraries, and added "cleanup_child"
-// 
-//     gabeg Oct 25 2014 <> Moved "Transparency" source file functions here and 
-//                          removed the "Transparency" source file. Added the 
-//                          universal widget setup function.
-// 
-//     gabeg Oct 31 2014 <> Modified "get_open_display", "file_read", and 
-//                          "command_line".  In "get_open_display", instead of
-//                          returning a (char *), I return the int value of the
-//                          display. In "file_read" I made it so that you can specify
-//                          a file line to return.  In "command_line", I removed all
-//                          the calls to malloc and just made it return all the
-//                          output as one string. In both modified functions, instead
-//                          of returning a (char *), I return void and have the user
-//                          input a (char *) to be modified. That way malloc does not
-//                          have to be called. I also added a function "count_char"
-//                          which counts the number of times a character occurs in a
-//                          string.
-// 
-//     gabeg Nov 01 2014 <> Testing to see if calls to malloc are expensive by
-//                          changing "file_read" and "command_line" to return 
-//                          (char *). It seems they're not that expensive so I'm
-//                          keeping them as returning as returning (char *).
-// 
-//     gabeg Mar 17 2015 <> Moved excess preprocessor calls and declarations into the
-//                          header file. Also added new funtions that read in key 
-//                          value pairs from a config file. In doing so I remove
-//                          all the preprocessor define statements and just put all 
-//                          the variables I need into elysia structures. This hopefully 
-//                          makes the code look cleaner.
-// 
-//     gabeg Mar 19 2015 <> Attempted to make code look cleaner by creating a 
-//                          universal setup function for each application by 
-//                          incorporating a struct 'elyapp' that holds everything an
-//                          app will need.
-// 
-//     gabeg Mar 25 2015 <> Modified the "read_config_char" function so that it 
-//                          allocates memory if it finds a match, that way the user 
-//                          doesn't have to manually malloc. Also, the function takes
-//                          in less arguments than before. Modified the 
-//                          "read_config_int" function so that it utilizes the 
-//                          "read_config_char" function, that way I don't repeat 
-//                          essentially the same code, then I just convert the string
-//                          it finds to an int. Added a function that reads and 
-//                          executes commands from the config file, called 
-//                          "exec_config_cmd". 
-// 
-//     gabeg Apr 04 2015 <> Added a function "file_line_overwrite" to overwrite the
-//                          line that matches the given key, in the given file. This
-//                          will make "file_read" obselete as I put the items I was
-//                          reading into config files and then use the "read_config" 
-//                          functions to find the items I was looking for. 
-//                          
-//                          Modified the "MAX_LEN" variables to include one for 
-//                          commands, and used the "MAX_CMD_LEN" in the 
-//                          "exec_config_cmd" function.
-//                          
-//                          Removed the "file_read" function, it's now obsolete.
-// 
-//                          Removed the "file_write" function, it's now obsolete.
-// 
-//                          Added the "get_cmd_output" function to replace 
-//                          "command_line".
-// 
-//                          Removed the "command_line" function, it's now obsolete.
-// 
-//                          Added the "read_config_cmd_rep" function which reads a  
-//                          command from the config file and replaces instances of
-//                          '@' (up to 3), with whatever the user specifies.
-// 
-// **********************************************************************************
+/* *****************************************************************************
+ * 
+ * Name:    utility.c
+ * Author:  Gabriel Gonzalez
+ * Email:   gabeg@bu.edu
+ * License: The MIT License (MIT)
+ * 
+ * Syntax: None.
+ * 
+ * Description: Commonly used functions.
+ *              
+ * Notes: None.
+ * 
+ * *****************************************************************************
+ */
+
+/* Includes */
+#include "utility.h"
+#include "elytypes.h"
+#include "elysia.h"
+#include "benchmark.h"
+#include <assert.h>
+#include <getopt.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <string.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <gtk/gtk.h>
+/* #include <sys/wait.h> */
+/* #include <unistd.h> */
 
 
 
-// /////////////////////////////////
-// ///// INCLUDES AND DECLARES /////
-// /////////////////////////////////
+/* *************************
+ * ***** PROGRAM USAGE *****
+ * *************************
+ */
 
-// Includes
-#include "../hdr/Utility.h"
+void usage(char *prog)
+{
+    printf("Usage: %s [option]\n", prog);
+    printf("\n");
+    printf("Options:\n");
+    printf("\t-h, --help       Print program usage.\n");
+    printf("\t-v, --verbose    Print program information verbosely.\n");
+    printf("\t-p, --preview    Run the login manager in Preview Mode, does not paint a new X window.\n");
+    printf("\t-t, --time       Run benchmark time tests.\n");
+}
 
 
 
@@ -174,165 +58,141 @@
 // ///////////////////////////////
 
 // Parse the command line arguments
-void cli_parse(int argc, char **argv) {
-    
-    int i = 0;
-    
-    while ( i < argc ) {
-        if ( (strcmp(argv[i], "-p") == 0) || (strcmp(argv[i], "--preview") == 0) )
-            PREVIEW = true;
-        
-        if ( (strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "--verbose") == 0) )
+void parse_argv(int argc, char **argv)
+{
+    const struct option long_options[] = {
+        {"help",    optional_argument, 0, 'h'},
+        {"verbose", optional_argument, 0, 'v'},
+        {"preview", optional_argument, 0, 'p'},
+        {"time",    optional_argument, 0, 't'},
+        {0, 0, 0, 0}
+    };
+
+    int opt;
+    while ( (opt=getopt_long(argc, argv, "hvpt", long_options, 0)) != -1 ) {
+        switch (opt) {
+        case 'h':
+            usage(argv[0]);
+            exit(0);
+            break;
+        case 'v':
             VERBOSE = true;
-        
-        if ( (strcmp(argv[i], "-t") == 0) || (strcmp(argv[i], "--time") == 0) )
+            break;
+        case 'p':
+            PREVIEW = true;
+            break;
+        case 't':
             BENCHTIME = true;
-        
-        ++i;
+            break;
+        default:
+            break;
+        }
     }
 }
 
 
 
-// ///////////////////////////////////////
-// ///// INITIALIZE GLOBAL VARIABLES /////
-// /////////////////////...../////////////
+/* ************************************
+ * ***** CLEANUP ZOMBIE PROCESSES *****
+ * ************************************
+ */
 
-// Initialize global variables
-/* void init_globals() { */
-/*     SERVICE  = "elysia"; */
-/*     USERNAME = "User"; */
-/*     PASSWORD = "Password"; */
-/*     SESSION  = "xterm"; */
-/*     ELYSIA_LOG  = "/etc/X11/elysia/log/elysia.log"; */
-/*     TTYN      = 1; */
-/*     INTERFACE = false; */
-/*     PREVIEW   = false; */
-/*     VERBOSE   = false; */
-/*     BENCHTIME = false; */
-/* } */
-
-
-
-// ///////////////////////////////////
-// ///// REMOVE ZOMBIE PROCESSES /////
-// ///////////////////////////////////
-
-// Clean up child zombie process
-void cleanup_child(int signal) {
+void cleanup_child(int signal)
+{
     wait(NULL);
 }
 
 
 
-// /////////////////////////////////////////
-// ///// GET SUBTRING WITHIN DELIMETER /////
-// /////////////////////////////////////////
+/* *****************************************
+ * ***** GET SUBTRING WITHIN DELIMETER *****
+ * *****************************************
+ */
 
 // Return the substring between the given separator
-void get_substring(char *copy, char *str, char sep, int num) {
-    
-    // Loop variables
-    int i     = 0,
-        j     = 0,
-        count = 1;
-    
-    // Loop through each variable in array
+void get_substring(char *copy, char *str, char sep, int num)
+{
+    size_t i     = 0;
+    size_t j     = 0;
+    size_t count = 1;
+
     while ( str[i] != '\0' ) {
-        
-        // Increae separator count
         if ( str[i] == sep )
             ++count;
         else if ( count == num ) {
-            // Copy current char 
             copy[j] = str[i];
             ++j;
         }
-        
-        // Done checking for separator
+
         if ( count > num ) 
             break;
-        
+
         ++i;
     }
-    
-    // Add null terminator
-    copy[j] = '\0';
+    copy[j] = 0;
 }
 
 
 
-// /////////////////////////
-// ///// WRITE TO FILE /////
-// /////////////////////////
+/* *************************
+ * ***** WRITE TO FILE *****
+ * *************************
+ */
 
-// Log to the Elysia log file
-void file_log(const char *fmt, ...) {
-    
-    // Default values for logging
+/* Write to the Elysia log file */
+void file_log(const char *fmt, ...)
+{
     char *file = ELYSIA_LOG;
     char *opt = "a+";
-    
-    // Write to file
+
     FILE *handle = fopen(file, opt);
     va_list args;
-    
+
     va_start(args, fmt);
     vfprintf(handle, fmt, args);
     va_end(args);
-    
+
     fclose(handle);
 }
 
 
 
-// Overwrite configuration file line that matches the given key
-void file_line_overwrite(char *file, char *key, char *val) {
-    
-    // File attributes    
-    FILE *handle = fopen(file, "r+");
+/* Overwrite configuration file line that matches the given key */
+void file_line_overwrite(char *file, char *key, char *val)
+{
+    /* Prepare new strings for the file overwrite procedure */
+    char *ext  = ".bak";
+    size_t n   = strlen(file) + strlen(ext) + 1;
+    size_t len = strlen(key)  + strlen(val) + 3;
+    char newfile[n];
+    char replacement[len];
+    snprintf(newfile,     n,   "%s%s",   file, ext);
+    snprintf(replacement, len, "%s: %s", key,  val);
+
+    /* Edit the line matching the key */
+    FILE *handle    = fopen(file, "r+");
+    FILE *newhandle = fopen(newfile, "w");
+    bool write      = false;
     char line[MAX_STR_LEN];
     char copy[MAX_STR_LEN];
-    bool write = false;
-    
-    // New file attributes
-    char *ext = ".bak";
-    int n = strlen(file) + strlen(ext) + 1;
-    char newfile[n];
-    snprintf(newfile, n, "%s%s", file, ext);
-    
-    FILE *new_handle = fopen(newfile, "w");
-    
-    // Create the new line
-    int len_key = strlen(key),
-        len_val = strlen(val),
-        len     = len_key + len_val + 3;
-    char newline[len];
-    snprintf(newline, len, "%s: %s", key, val);
-    
-    // Edit the line matching the key, in the file
-    while ( fgets(line, sizeof(line), handle) != NULL ) {
-        
-        // Find the key
+    while ( fgets(line, sizeof(line), handle) != 0 ) {
         get_substring(copy, line, ':', 1);
-        
-        // Rewrite a new file with same contents but the line is changed
+
         if ( (strcmp(key, copy) == 0) ) {
-            fprintf(new_handle, "%s\n", newline);
+            fprintf(newhandle, "%s\n", replacement);
             write = true;
-        } else 
-            fprintf(new_handle, "%s", line);
+        } 
+        else 
+            fprintf(newhandle, "%s", line);
     }
     
-    // Write in default entry if key was not found
+    /* Write in default entry if key was not found */
     if ( !write )
         fprintf(handle, "%s: Not Found\n", key);
     
-    // Close the files
+
     fclose(handle);
-    fclose(new_handle);
-    
-    // Remove old file and rename the new file 
+    fclose(newhandle);
     remove(file);
     rename(newfile, file);
 }
@@ -344,7 +204,8 @@ void file_line_overwrite(char *file, char *key, char *val) {
 // ///////////////////////////////////////
 
 // Check if the specified program is running
-bool is_running(char *prog) {
+bool is_running(char *prog)
+{
     
     // File and directory reading variables
     DIR  *dir_handle = opendir("/proc");
@@ -433,7 +294,8 @@ bool is_running(char *prog) {
 
 
 // Store command output as a string inside variable
-void get_cmd_output(char *arr, int size, char *cmd) { 
+void get_cmd_output(char *arr, int size, char *cmd)
+{
     
     // Process attributes
     FILE *handle  = popen(cmd, "r");
@@ -446,7 +308,7 @@ void get_cmd_output(char *arr, int size, char *cmd) {
         loc = 0;
     
     // Add process output to array
-    while (fgets(line, MAX_STR_LEN, handle) != NULL ) {
+    while ( fgets(line, MAX_STR_LEN, handle) != 0 ) {
         len = strlen(arr) + strlen(line);
         
         if ( size > len ) {
@@ -471,7 +333,8 @@ void get_cmd_output(char *arr, int size, char *cmd) {
 // ////////////////////////////
 
 // Read the config file and output a string
-char * read_config_char(char *file, char *key, int n) {
+char * read_config_char(char *file, char *key, int n)
+{
     
     // File variables
     FILE *handle = fopen(file, "r");
@@ -527,6 +390,7 @@ char * read_config_char(char *file, char *key, int n) {
                         // Create your own strlen to ignore leading spaces
                         len_line = strlen(line) + 1; 
                         ret = malloc(len_line);
+                        assert(ret);
                         memset(ret, 0, len_line);
                     }
                     
@@ -552,7 +416,8 @@ char * read_config_char(char *file, char *key, int n) {
 
 
 // Read config file and output an int
-int read_config_int(char *file, char *key) {
+int read_config_int(char *file, char *key)
+{
     char *val = read_config_char(file, key, MAX_NUM_LEN);
     
     if ( val == NULL )
@@ -565,7 +430,8 @@ int read_config_int(char *file, char *key) {
 
 // Read a command from the config file and replace the '@' instances with the 
 //   specified replacements
-void read_config_cmd_rep(char *arr, char *file, char *rep1, char *rep2, char *rep3) {
+void read_config_cmd_rep(char *arr, char *file, char *rep1, char *rep2, char *rep3)
+{
     
     // Clear memory of holder array and define command string 
     memset(arr, 0, MAX_CMD_LEN);
@@ -619,7 +485,8 @@ void read_config_cmd_rep(char *arr, char *file, char *rep1, char *rep2, char *re
 
 
 // Execute a command found in the config file
-void exec_config_cmd(char *file, int n) {
+void exec_config_cmd(char *file, int n)
+{
     
     // Get the command string from the config file
     char key[6];
@@ -647,7 +514,8 @@ void exec_config_cmd(char *file, int n) {
 // /////////////////////////////
 
 // Set config position values
-void set_config_pos(char *file, struct elypos *pos) {
+void set_config_pos(char *file, struct elypos *pos)
+{
     pos->x      = read_config_int(file, "xpos");
     pos->y      = read_config_int(file, "ypos");
     pos->width  = read_config_int(file, "width");
@@ -663,7 +531,8 @@ void set_config_pos(char *file, struct elypos *pos) {
 
 
 // Set config text values
-void set_config_txt(char *file, struct elytxt *txt) {
+void set_config_txt(char *file, struct elytxt *txt)
+{
     txt->size     = read_config_int(file, "size");
     txt->maxchars = read_config_int(file, "maxchars");
     txt->refresh  = read_config_int(file, "refresh-sec");
@@ -685,7 +554,8 @@ void set_config_txt(char *file, struct elytxt *txt) {
 
 
 // Set config decoration values
-void set_config_decor(char *file, struct elydecor *decor) {
+void set_config_decor(char *file, struct elydecor *decor)
+{
     decor->img_file = read_config_char(file, "img-file", MAX_LOC_LEN);
     
     decor->bg_red   = read_config_int(file, "bg-red");
@@ -708,7 +578,8 @@ void set_config_decor(char *file, struct elydecor *decor) {
 // /////////////////////////////
 
 // Set widget position and size
-void set_widget_pos(struct elyapp *app) {
+void set_widget_pos(struct elyapp *app)
+{
     gtk_window_move(GTK_WINDOW(app->win), app->pos.x, app->pos.y);
     gtk_window_set_default_size(GTK_WINDOW(app->win), app->pos.width, app->pos.height);
 }
@@ -716,8 +587,8 @@ void set_widget_pos(struct elyapp *app) {
 
 
 // Set the color of a widget 
-void set_widget_color(struct elyapp *app) {
-    
+void set_widget_color(struct elyapp *app)
+{
     // No decoration defined
     if ( app->decor.div < 0 )
         return;
@@ -752,8 +623,8 @@ void set_widget_color(struct elyapp *app) {
 
 
 // Enable widget transparency
-void enable_transparency(GtkWidget *widg) {
-    
+void enable_transparency(GtkWidget *widg)
+{
     // To check if the display supports alpha channels, get the visual 
     GdkScreen *screen = gtk_widget_get_screen(widg);
     GdkVisual *visual = gdk_screen_get_rgba_visual(screen);
@@ -768,7 +639,8 @@ void enable_transparency(GtkWidget *widg) {
 void setup_app(char *file, 
                struct elyapp *app, 
                char *event, 
-               void (*func)(GtkWidget *widg)) {
+               void (*func)(GtkWidget *widg))
+{
     
     double bmtime = benchmark_runtime(0);
     

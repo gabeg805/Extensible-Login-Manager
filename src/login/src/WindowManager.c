@@ -18,7 +18,7 @@
 // 
 //     Include the header file:
 // 
-//         #include "../hdr/WindowManager.h"
+//         #include "WindowManager.h"
 // 
 // 
 // PURPOSE:
@@ -110,7 +110,8 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/WindowManager.h"
+#include "WindowManager.h"
+#include "elysia.h"
 
 // Declares
 static void setup_menu(struct elyapp app);

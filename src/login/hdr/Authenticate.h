@@ -3,8 +3,8 @@
 #define AUTHENTICATE_H
 
 // Includes
-#include "../hdr/elysia.h"
-#include "../hdr/Utility.h"
+#include "elysia.h"
+#include "utility.h"
 
 #include <stdio.h>
 #include <stdbool.h>

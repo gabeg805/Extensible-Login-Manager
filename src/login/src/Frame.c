@@ -18,7 +18,7 @@
 // 
 //     Include the header file:
 // 
-//         #include "../hdr/Frame.h"
+//         #include "Frame.h"
 // 
 // 
 // PURPOSE:
@@ -82,7 +82,8 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/Frame.h"
+#include "Frame.h"
+#include "elysia.h"
 
 // Private functions
 static void draw_frame(cairo_t *cr);

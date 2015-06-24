@@ -18,7 +18,7 @@
 // 
 //     Include the header file:
 // 
-//         #include "../hdr/Password.h"
+//         #include "Password.h"
 // 
 // 
 // PURPOSE:
@@ -86,7 +86,8 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/Password.h"
+#include "Password.h"
+#include "elysia.h"
 
 // Private functions
 static void setup_entry();

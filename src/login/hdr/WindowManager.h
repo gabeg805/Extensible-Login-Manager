@@ -3,7 +3,7 @@
 #define WINDOWMANAGER_H
 
 // Includes
-#include "../hdr/Utility.h"
+#include "utility.h"
 
 #include <string.h>
 #include <gtk/gtk.h>

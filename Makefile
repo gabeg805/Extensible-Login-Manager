@@ -1,26 +1,32 @@
 CC      = gcc
 LIBS    = gtk+-3.0 cairo
-CFLAGS  = -g -Wall -lpam -lX11
-CFLAGS += `pkg-config $(LIBS) --cflags --libs`
+CFLAGS  = -w -lpam -lX11 `pkg-config $(LIBS) --cflags --libs`
+# CFLAGS  = -g -Wall -lpam -lX11 `pkg-config $(LIBS) --cflags --libs`
 
-PROGRAM = elysia
-NAMES   = $(PROGRAM) Username Password Clock Frame TextImage WindowManager Panel Authenticate Interface Xsetup Utility Benchmark
-SOURCES = $(addprefix ./src/login/src/, $(addsuffix .c, $(NAMES)))
-HEADERS = $(addprefix ./src/login/hdr/, $(addsuffix .h, $(NAMES)))
-OBJECTS = $(addprefix ./src/login/obj/, $(addsuffix .o, $(NAMES)))
+HDR_DIR = ./src/login/hdr
+OBJ_DIR = ./src/login/obj
+SRC_DIR = ./src/login/src
 
-all: $(PROGRAM)
+PROG = elysia
+NAMES   = $(PROG) Username Password Clock Frame TextImage WindowManager Panel Authenticate Interface Xsetup utility benchmark
+HDR = $(addprefix ${HDR_DIR}/, $(addsuffix .h, ${NAMES}))
+OBJ = $(addprefix ${OBJ_DIR}/, $(addsuffix .o, ${NAMES}))
+SRC = $(addprefix ${SRC_DIR}/, $(addsuffix .c, ${NAMES}))
 
-./src/login/obj/%.o: ./src/login/src/%.c 
-	$(CC) $(CFLAGS) \
+CFLAGS += -I ${HDR_DIR}
+
+all: ${PROG}
+
+${OBJ_DIR}/%.o: ${SRC_DIR}/%.c 
+	${CC} ${CFLAGS} \
 		-c $< \
 		-o $@ 
 
-$(PROGRAM): $(OBJECTS)
-	$(CC) $(CFLAGS) \
-		-o $(PROGRAM) $(OBJECTS) 
+${PROG}: ${OBJ}
+	${CC} ${CFLAGS} \
+		-o ${PROG} ${OBJ} 
 
 .PHONY: clean
 clean : 
-	@rm -v -f $(OBJECTS)
-	@rm -v -f $(PROGRAM)
+	@rm -v -f ${OBJ}
+	@rm -v -f ${PROG}

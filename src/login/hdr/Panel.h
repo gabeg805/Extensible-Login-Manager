@@ -3,7 +3,7 @@
 #define PANEL_H
 
 // Includes
-#include "../hdr/Utility.h"
+#include "utility.h"
 
 #include <unistd.h>
 #include <gtk/gtk.h>

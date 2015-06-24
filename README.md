@@ -222,3 +222,5 @@ Here's a list of things I want to implement, but haven't had the time to do so y
     - Focus password entry 
     
     - find a better way to get open tty ports and all user accounts on comp
+
+    - Print to stdout/stderr by default, and log to a file on request

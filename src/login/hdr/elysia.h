@@ -1,18 +1,36 @@
-// Header guard
+/* *****************************************************************************
+ * 
+ * Name:    elysia.h
+ * Author:  Gabriel Gonzalez
+ * Email:   gabeg@bu.edu
+ * License: The MIT License (MIT)
+ * 
+ * Syntax: #include "elysia.h"
+ * 
+ * Description: Global variables used throughout the the Elysia source files.
+ *              
+ * Notes: None.
+ * 
+ * *****************************************************************************
+ */
+
+/* Header guard */
 #ifndef ELYSIA_H
 #define ELYSIA_H
 
-// Includes
-#include "../hdr/Xsetup.h"
-#include "../hdr/Username.h"
-#include "../hdr/Password.h"
-#include "../hdr/Interface.h"
-#include "../hdr/Authenticate.h"
-#include "../hdr/Utility.h"
-#include "../hdr/Benchmark.h"
-
-#include <stdlib.h>
+/* Includes */
 #include <stdbool.h>
-#include <string.h>
 
-#endif
+/* Global variables */
+extern char *SERVICE;
+extern char *USERNAME;
+extern char *PASSWORD;
+extern char *SESSION;
+extern char *ELYSIA_LOG;
+extern int  TTYN;
+extern bool INTERFACE;
+extern bool PREVIEW;
+extern bool VERBOSE;
+extern bool BENCHTIME;
+
+#endif /* ELYSIA_H */

@@ -18,7 +18,7 @@
 // 
 //     Include the header file:
 // 
-//         #include "../hdr/Username.h"
+//         #include "Username.h"
 // 
 // 
 // PURPOSE:
@@ -116,7 +116,8 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/Username.h"
+#include "Username.h"
+#include "elysia.h"
 
 // Declares
 static void setup_menu(struct elyapp app);

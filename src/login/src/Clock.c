@@ -18,7 +18,7 @@
 // 
 //     Include the header file:
 // 
-//         #include "../hdr/Clock.h"
+//         #include "Clock.h"
 // 
 // 
 // PURPOSE:
@@ -86,7 +86,8 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/Clock.h"
+#include "Clock.h"
+#include "elysia.h"
 
 // Private functions
 static void set_label(struct elyapp *app);

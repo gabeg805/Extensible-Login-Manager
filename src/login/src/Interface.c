@@ -18,7 +18,7 @@
 // 
 //     Include the header file:
 // 
-//         #include "../hdr/Interface.h"
+//         #include "Interface.h"
 // 
 // 
 // PURPOSE:
@@ -71,7 +71,7 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/Interface.h"
+#include "Interface.h"
 
 
 

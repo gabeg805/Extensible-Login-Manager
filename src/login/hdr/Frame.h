@@ -3,7 +3,7 @@
 #define FRAME_H
 
 // Includes
-#include "../hdr/Utility.h"
+#include "utility.h"
 
 #include <gtk/gtk.h>
 #include <cairo.h>

@@ -18,7 +18,7 @@
 // 
 //     Include the header file:
 // 
-//         #include "../hdr/TextImage.h"
+//         #include "TextImage.h"
 // 
 // 
 // PURPOSE:
@@ -82,7 +82,8 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/TextImage.h"
+#include "TextImage.h"
+#include "elysia.h"
 
 // Private functions
 static void draw_text(cairo_t *cr);

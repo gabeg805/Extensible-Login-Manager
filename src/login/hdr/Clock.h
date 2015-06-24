@@ -3,7 +3,7 @@
 #define CLOCK_H
 
 // Includes
-#include "../hdr/Utility.h"
+#include "utility.h"
 
 #include <assert.h>
 #include <time.h>

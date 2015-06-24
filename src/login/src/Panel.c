@@ -18,7 +18,7 @@
 // 
 //     Include the following:
 // 
-//         #include "../hdr/Panel.h"
+//         #include "Panel.h"
 // 
 // 
 // PURPOSE:
@@ -92,7 +92,8 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/Panel.h"
+#include "Panel.h"
+#include "elysia.h"
 
 // Declares
 static void setup_button(GtkWidget *widg, char *img);

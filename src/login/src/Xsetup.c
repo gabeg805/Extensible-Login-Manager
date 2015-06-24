@@ -18,7 +18,7 @@
 // 
 //     Include the header file:
 // 
-//         #include "../hdr/Xsetup.h"
+//         #include "Xsetup.h"
 // 
 // 
 // PURPOSE:
@@ -102,7 +102,8 @@
 // /////////////////////////////////
 
 // Includes
-#include "../hdr/Xsetup.h"
+#include "Xsetup.h"
+#include "elysia.h"
 
 // Private functions
 static void set_open_display();
