@@ -292,28 +292,21 @@ bool is_running(char *prog)
 // ///// GET LINUX COMMAND OUTPUT ///// 
 // ////////////////////////////////////
 
-
-// Store command output as a string inside variable
+/* Store command output as a string inside variable */
 void get_cmd_output(char *arr, int size, char *cmd)
 {
-    
-    // Process attributes
-    FILE *handle  = popen(cmd, "r");
+    FILE *handle = popen(cmd, "r");
+    int i        = 0;
+    int len      = 0;
+    int loc      = 0;
     char line[MAX_STR_LEN];
     memset(arr, 0, size);
-    
-    // Initialize string lengths
-    int i = 0,
-        len = 0,
-        loc = 0;
-    
-    // Add process output to array
-    while ( fgets(line, MAX_STR_LEN, handle) != 0 ) {
+
+    /* Add process output to array */
+    while ( fgets(line, sizeof(line), handle) != 0 ) {
         len = strlen(arr) + strlen(line);
-        
-        if ( size > len ) {
+        if ( len < size ) {
             i = 0;
-            
             while ( line[i] != '\0' ) {
                 arr[loc] = line[i];
                 ++i;
@@ -321,9 +314,8 @@ void get_cmd_output(char *arr, int size, char *cmd)
             }
         }
     }
-    
-    // Close process
     pclose(handle);
+    arr[size-1] = 0;
 }
 
 

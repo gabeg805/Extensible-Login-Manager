@@ -8,7 +8,7 @@ OBJ_DIR = ./src/login/obj
 SRC_DIR = ./src/login/src
 
 PROG = elysia
-NAMES   = $(PROG) Username Password Clock Frame TextImage WindowManager Panel Authenticate Interface Xsetup utility benchmark
+NAMES   = $(PROG) Username Password Clock Frame TextImage WindowManager Panel authenticate Interface Xsetup utility benchmark
 HDR = $(addprefix ${HDR_DIR}/, $(addsuffix .h, ${NAMES}))
 OBJ = $(addprefix ${OBJ_DIR}/, $(addsuffix .o, ${NAMES}))
 SRC = $(addprefix ${SRC_DIR}/, $(addsuffix .c, ${NAMES}))

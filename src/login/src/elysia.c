@@ -19,7 +19,7 @@
 #include "Username.h"
 #include "Password.h"
 #include "Interface.h"
-#include "Authenticate.h"
+#include "authenticate.h"
 #include "utility.h"
 #include "benchmark.h"
 #include <stdlib.h>
