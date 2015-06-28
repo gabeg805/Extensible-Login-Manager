@@ -1,0 +1,95 @@
+#!/bin/bash
+#
+# ~/.xinitrc
+#
+# Executed by startx (run your window manager here)
+
+## #################################################
+## ##### DETERMINE VALID WINDOW MANAGER TO USE ##### 
+## #################################################
+
+## Get valid  window manager execution command
+function getWM {
+    
+    ## Default window manager
+    local default_wm=awesome
+    
+    ## Location containing valid WM sessions
+    local wmdir='/usr/share/xsessions'
+    
+    ## Check for correct WM in /usr/share/xsessions/
+    local flag=false
+    for i in `ls -1 "$wmdir"`; do
+        local session=`echo $i | sed 's/.desktop//'`
+        [[ "$1" == "$session" ]] && flag=true
+    done
+    
+    
+    ## Check input for valid window manager
+    if $flag; then
+        local window_manager="$1"
+    else
+        local window_manager="$default_wm"
+    fi
+    
+    
+    ## Determine execution command
+    if [[ "$window_manager" != "$default_wm" ]]; then
+        local sess_desktop="$wmdir/$window_manager.desktop"
+        local command=`grep -E '^Exec=' "$sess_desktop" | sed 's/Exec=//'`
+    else
+        local command=`which "$window_manager"`
+    fi
+    
+    
+    ## Log and return WM execution command
+    echo "$command"
+}
+
+
+
+## ###########################
+## ##### LOAD X SETTINGS ##### 
+## ###########################
+
+## Load X settings
+function loadXSettings {
+
+    if [ -d /etc/X11/xinit/xinitrc.d ]; then
+	    for f in /etc/X11/xinit/xinitrc.d/*; do
+		    [ -x "$f" ] && . "$f"
+	    done
+	    unset f
+    fi
+    
+    [ -f "$HOME/.Xresources" ] && xrdb -merge "$HOME/.Xresources"
+    [ -f "$HOME/.Xmodmap" ] && xmodmap "$HOME/.Xmodmap"
+}
+
+
+
+## ###########################
+## ##### START X SESSION ##### 
+## ###########################
+
+## Start an X session with a window manager
+function main {
+    local window_manager=`getWM "$1"`
+    local startdwm="$HOME/.config/dwm/startdwm"
+    loadXSettings 
+    
+    
+    if [ -f "$startdwm" ] && [[ "$window_manager" == 'dwm' ]]; then
+        exec "$startdwm"
+    else
+        exec dbus-launch --exit-with-session "$window_manager"
+    fi
+}
+
+
+
+## ------------------------------------------
+## Execute the command to start the X session
+## ------------------------------------------
+
+main "$@"
