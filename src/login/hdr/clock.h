@@ -1,13 +1,13 @@
 /* *****************************************************************************
  * 
- * Name:    benchmark.h
+ * Name:    clock.h
  * Author:  Gabriel Gonzalez
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Syntax: #include "benchmark.h"
+ * Syntax: #include "clock.h"
  * 
- * Description: Time the progress of program execution.
+ * Description: Display the clock application.
  *              
  * Notes: None.
  * 
@@ -15,16 +15,14 @@
  */
 
 /* Header guard */
-#ifndef ELYSIA_BENCHMARK_H
-#define ELYSIA_BENCHMARK_H
-
-/* Includes */
-#include <stdbool.h>
+#ifndef ELYSIA_CLOCK_H
+#define ELYSIA_CLOCK_H
 
 /* Defines */
-extern bool BENCHTIME;
+#define CLOCK_DATE_CONFIG    "/etc/X11/elysia/src/login/config/Clock-Date.config"
+#define CLOCK_TIME_CONFIG    "/etc/X11/elysia/src/login/config/Clock-Time.config"
 
 /* Public functions */
-double benchmark_runtime(double start);
+void display_clock();
 
-#endif /* ELYSIA_BENCHMARK_H */
+#endif /* ELYSIA_CLOCK_H */

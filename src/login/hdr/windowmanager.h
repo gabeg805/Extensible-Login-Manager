@@ -1,13 +1,13 @@
 /* *****************************************************************************
  * 
- * Name:    benchmark.h
+ * Name:    windowmanager.h
  * Author:  Gabriel Gonzalez
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Syntax: #include "benchmark.h"
+ * Syntax: #include "windowmanager.h"
  * 
- * Description: Time the progress of program execution.
+ * Description: Display the window manager button application.
  *              
  * Notes: None.
  * 
@@ -15,16 +15,13 @@
  */
 
 /* Header guard */
-#ifndef ELYSIA_BENCHMARK_H
-#define ELYSIA_BENCHMARK_H
-
-/* Includes */
-#include <stdbool.h>
+#ifndef ELYSIA_WINDOWMANAGER_H
+#define ELYSIA_WINDOWMANAGER_H
 
 /* Defines */
-extern bool BENCHTIME;
+#define WM_CONFIG    "/etc/X11/elysia/src/login/config/WindowManager.config"
 
 /* Public functions */
-double benchmark_runtime(double start);
+void display_window_manager();
 
-#endif /* ELYSIA_BENCHMARK_H */
+#endif /* ELYSIA_WINDOWMANAGER_H */

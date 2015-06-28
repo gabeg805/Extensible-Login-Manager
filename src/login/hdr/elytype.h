@@ -1,11 +1,11 @@
 /* *****************************************************************************
  * 
- * Name:    elytypes.h
+ * Name:    elytype.h
  * Author:  Gabriel Gonzalez
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Syntax: #include "elytypes.h"
+ * Syntax: #include "elytype.h"
  * 
  * Description: Struct definitions used by all Elysia source files.
  *              
@@ -15,8 +15,8 @@
  */
 
 /* Header guard */
-#ifndef ELYSIA_ELYTYPES_H
-#define ELYSIA_ELYTYPES_H
+#ifndef ELYSIA_ELYTYPE_H
+#define ELYSIA_ELYTYPE_H
 
 /* Includes */
 #include <gtk/gtk.h>
@@ -72,4 +72,4 @@ struct elyapp {
     struct elydecor decor;
 };
 
-#endif /* ELYSIA_ELYTYPES_H */
+#endif /* ELYSIA_ELYTYPE_H */

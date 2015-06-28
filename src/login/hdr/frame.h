@@ -1,13 +1,13 @@
 /* *****************************************************************************
  * 
- * Name:    benchmark.h
+ * Name:    frame.h
  * Author:  Gabriel Gonzalez
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Syntax: #include "benchmark.h"
+ * Syntax: #include "frame.h"
  * 
- * Description: Time the progress of program execution.
+ * Description: Display login frame application.
  *              
  * Notes: None.
  * 
@@ -15,16 +15,13 @@
  */
 
 /* Header guard */
-#ifndef ELYSIA_BENCHMARK_H
-#define ELYSIA_BENCHMARK_H
-
-/* Includes */
-#include <stdbool.h>
+#ifndef ELYSIA_FRAME_H
+#define ELYSIA_FRAME_H
 
 /* Defines */
-extern bool BENCHTIME;
+#define FRAME_CONFIG    "/etc/X11/elysia/src/login/config/Frame.config"
 
 /* Public functions */
-double benchmark_runtime(double start);
+void display_frame();
 
-#endif /* ELYSIA_BENCHMARK_H */
+#endif /* ELYSIA_FRAME_H */

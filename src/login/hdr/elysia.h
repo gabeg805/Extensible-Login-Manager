@@ -20,8 +20,10 @@
 
 /* Includes */
 #include <stdbool.h>
+#include "elyapp.h"
 
 /* Global variables */
+extern const char *PROG;
 extern char *SERVICE;
 extern char *USERNAME;
 extern char *PASSWORD;
@@ -31,6 +33,5 @@ extern int  TTYN;
 extern bool INTERFACE;
 extern bool PREVIEW;
 extern bool VERBOSE;
-extern bool BENCHTIME;
 
 #endif /* ELYSIA_H */

@@ -15,18 +15,16 @@
  */
 
 /* Includes */
-#include "Xsetup.h"
-#include "Username.h"
-#include "Password.h"
-#include "Interface.h"
+#include "elyx.h"
+#include "interface.h"
 #include "authenticate.h"
 #include "utility.h"
 #include "benchmark.h"
-#include <stdlib.h>
 #include <stdbool.h>
-#include <string.h>
+#include <time.h>
 
 /* Globals */
+const char *PROG;
 char *SERVICE  = "elysia";
 char *USERNAME = "User";
 char *PASSWORD = "Password";
@@ -47,9 +45,10 @@ bool BENCHTIME = false;
 // Display the Elysia Login Manager 
 int main(int argc, char **argv)
 {
+    PROG = argv[0];
     parse_argv(argc, argv);
 
-    // Log program start
+    /* Log program start */
     if ( VERBOSE || BENCHTIME ) {
         time_t t;
         time(&t);
@@ -59,7 +58,7 @@ int main(int argc, char **argv)
     xsetup();
 
     while (true) {
-        login_interface(argc, argv);
+        login_interface();
         if ( login(USERNAME, PASSWORD) )
             break;
     }

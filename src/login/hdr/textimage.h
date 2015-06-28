@@ -1,13 +1,13 @@
 /* *****************************************************************************
  * 
- * Name:    benchmark.h
+ * Name:    textimage.h
  * Author:  Gabriel Gonzalez
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Syntax: #include "benchmark.h"
+ * Syntax: #include "textimage.h"
  * 
- * Description: Time the progress of program execution.
+ * Description: Display the text image application.
  *              
  * Notes: None.
  * 
@@ -15,16 +15,13 @@
  */
 
 /* Header guard */
-#ifndef ELYSIA_BENCHMARK_H
-#define ELYSIA_BENCHMARK_H
-
-/* Includes */
-#include <stdbool.h>
+#ifndef ELYSIA_TEXTIMAGE_H
+#define ELYSIA_TEXTIMAGE_H
 
 /* Defines */
-extern bool BENCHTIME;
+#define TEXT_CONFIG    "/etc/X11/elysia/src/login/config/TextImage.config"
 
 /* Public functions */
-double benchmark_runtime(double start);
+void display_text_image();
 
-#endif /* ELYSIA_BENCHMARK_H */
+#endif /* ELYSIA_TEXTIMAGE_H */

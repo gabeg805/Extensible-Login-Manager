@@ -18,6 +18,7 @@
 #include "authenticate.h"
 #include "elysia.h"
 #include "utility.h"
+#include "benchmark.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -30,13 +31,14 @@
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
 
-// Private functions
+/* Private functions */
 static void init_env(pam_handle_t *pam_handle, struct passwd *pw);
-static void manage_login_records(const char *username, char *opt);
+static void manage_login_records(const char *username, char *opt, char *tty);
 static bool is_pam_success(int result, pam_handle_t *pamh);
-static int conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr);
-
-char TTY[6];
+static int conv(int num_msg, 
+                const struct pam_message **msg, 
+                struct pam_response **resp, 
+                void *appdata_ptr);
 
 
 
@@ -82,19 +84,23 @@ static void init_env(pam_handle_t *pam_handle, struct passwd *pw)
 /* ******************************** */
 
 /* Manager utmp/wtmp login records */
-static void manage_login_records(const char *username, char *opt)
+static void manage_login_records(const char *username, char *opt, char *tty)
 {
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
-        char *UTMP;
+        char *sessreg  = "/usr/bin/sessreg";
+        char *wtmp     = "/var/log/wtmp";
+        char *utmp_add = "/run/utmp";
+        char *utmp_del = "/var/run/utmp";
+        char *utmp;
         if ( strcmp(opt, "-a") == 0 )
-            UTMP = UTMP_ADD;
+            utmp = utmp_add;
         else
-            UTMP = UTMP_DEL;
+            utmp = utmp_del;
 
-        execl(SESSREG, SESSREG, opt,
-              "-w", WTMP, "-u", UTMP,
-              "-l", TTY, "-h", "", username, NULL);
+        execl(sessreg, sessreg, opt,
+              "-w", wtmp, "-u", utmp,
+              "-l", tty, "-h", "", username, NULL);
     } 
     int status;
     waitpid(child_pid, &status, 0);
@@ -107,7 +113,8 @@ static void manage_login_records(const char *username, char *opt)
 /* ******************************************* */
 
 /* Check if previous PAM command resulted in Success  */
-bool is_pam_success(int result, pam_handle_t *pamh) {
+bool is_pam_success(int result, pam_handle_t *pamh)
+{
     if ( result != PAM_SUCCESS ) {
         file_log("%s: (%s:%d) %s\n", 
                  __FILE__, __FUNCTION__, __LINE__, pam_strerror(pamh, result));
@@ -122,6 +129,7 @@ bool is_pam_success(int result, pam_handle_t *pamh) {
 /* ***** PAM CONVERSATION ***** */
 /* **************************** */
 
+/* Convert login information (username/password) to PAM application data (?) */
 static int conv(int num_msg, 
                 const struct pam_message **msg,
                 struct pam_response **resp,
@@ -171,20 +179,32 @@ static int conv(int num_msg,
 /* ***** PAM LOGIN AUTHENTICATION ***** */
 /* ************************************ */
 
-int login(const char *username, const char *password) {
+/* Cleanup zombie processes */
+void cleanup_child(int signal)
+{
+    wait(NULL);
+}
+
+
+
+/* Read man page of PAM functions for better info, and for initgroups */
+int login(const char *username, const char *password)
+{
     const char *data[2]      = {username, password};
     struct pam_conv pam_conv = {conv, data};
     pam_handle_t *pam_handle;
+    int result;
 
     /* Start PAM */
-    int result = pam_start(SERVICE, NULL, &pam_conv, &pam_handle);
+    result = pam_start(SERVICE, NULL, &pam_conv, &pam_handle);
     if ( !is_pam_success(result, pam_handle) ) { return 0; }
 
     /* Set PAM items */
-    snprintf(TTY, sizeof(TTY), "%s%d", "tty", TTYN);
+    char tty[6];
+    snprintf(tty, sizeof(tty), "%s%d", "tty", TTYN);
     result = pam_set_item(pam_handle, PAM_USER, username);
     if ( !is_pam_success(result, pam_handle) ) { return 0; }
-    result = pam_set_item(pam_handle, PAM_TTY, TTY);
+    result = pam_set_item(pam_handle, PAM_TTY, tty);
     if ( !is_pam_success(result, pam_handle) ) { return 0; }
 
     /* Authenticate PAM user */
@@ -198,6 +218,8 @@ int login(const char *username, const char *password) {
     /* Establish credentials */
     result = pam_setcred(pam_handle, PAM_ESTABLISH_CRED);
     if ( !is_pam_success(result, pam_handle) ) { return 0; }
+    if ( PREVIEW )
+        return 1;
 
     /* Open PAM session */
     result = pam_open_session(pam_handle, 0);
@@ -205,98 +227,68 @@ int login(const char *username, const char *password) {
         pam_setcred(pam_handle, PAM_DELETE_CRED);
         return 0;
     }
-    
-    
-    // Get mapped user name, PAM may have changed it
+
+    /* Get mapped user name, PAM may have changed it */
     struct passwd *pw = getpwnam(username);
-    result = pam_get_item(pam_handle, PAM_USER, (const void **)&username);
-    if (result != PAM_SUCCESS || pw == NULL) { return 0; }
-    
-    // Clean up zombie processes
-    signal(SIGCHLD, cleanup_child);
+    result            = pam_get_item(pam_handle, PAM_USER, (const void**)&username);
+    if (result != PAM_SUCCESS || pw == 0) { return 0; }
     
     // Setup and execute user session
+    signal(SIGCHLD, cleanup_child);
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
-        
-        // Check if Elysia is in preview mode
-        if (PREVIEW) {
-            init_env(pam_handle, pw);
-            return 1;
-        } else {
-            
-            // Log system login start
-            double bmtime = benchmark_runtime(0);
-            
-            if ( VERBOSE )
-                file_log("%s (%s:%d) Setting up user session...\n", 
-                         __FILE__, __FUNCTION__, __LINE__);
-            
-            // Kill windows
-            system("xwininfo -root -children | grep '  0x' | cut -d' ' -f6 | xargs -n1 xkill -id");
-            
-            // Add session to utmp/wtmp
-            manage_login_records(username, "-a");
-                        
-            // Change directory and ownership of Elysia xinitrc file
-            chdir(pw->pw_dir);
-            chown(XINITRC, pw->pw_uid, pw->pw_gid);
-            chown(ELYSIA_LOG, pw->pw_uid, pw->pw_gid);
-            
-            // Set uid and groups for USER
-            if (initgroups(pw->pw_name, pw->pw_gid) == -1) { return 0; }
-            if (setgid(pw->pw_gid) == -1)                  { return 0; }
-            if (setuid(pw->pw_uid) == -1)                  { return 0; }
-            
-            // Initialize environment variables
-            init_env(pam_handle, pw);
-            
-            // Piece together X session cmd
-            size_t sz = strlen(XINITRC) + strlen(SESSION) + 2;
-            char cmd[sz];
-            snprintf(cmd, sz, "%s %s", XINITRC, SESSION);
-            
-            
-            // Log system login start
-            if ( VERBOSE )
-                file_log("%s (%s:%d) Successfully logged in as '%s' (Session '%s').\n\n", 
-                         __FILE__, __FUNCTION__, __LINE__,
-                         username, SESSION);
-            
-            if ( BENCHTIME )
-                file_log("%s: (%s: Runtime): %lf\n", 
-                         __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
-            
-            // Start user X session with xinitrc
-            execl(pw->pw_shell, pw->pw_shell, "-c", cmd, NULL);
-        }
+        double bmtime = benchmark_runtime(0);
+        if ( VERBOSE )
+            file_log("%s (%s:%d) Setting up user session...\n", 
+                     __FILE__, __FUNCTION__, __LINE__);
+
+        // Begin setup of user session
+        system("xwininfo -root -children | grep '  0x' | cut -d' ' -f6 | xargs -n1 xkill -id");
+        manage_login_records(username, "-a", tty);
+        chdir(pw->pw_dir);
+        chown(XINITRC, pw->pw_uid, pw->pw_gid);
+        chown(ELYSIA_LOG, pw->pw_uid, pw->pw_gid);
+        if ( initgroups(pw->pw_name, pw->pw_gid) == -1 ) { return 0; }
+        if ( setgid(pw->pw_gid) == -1 )                  { return 0; }
+        if ( setuid(pw->pw_uid) == -1 )                  { return 0; }
+        init_env(pam_handle, pw);
+
+        if ( VERBOSE )
+            file_log("%s (%s:%d) Successfully logged in as '%s' (Session '%s').\n\n", 
+                     __FILE__, __FUNCTION__, __LINE__,
+                     username, SESSION);
+        if ( BENCHTIME )
+            file_log("%s: (%s: Runtime): %lf\n", 
+                     __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+
+        // Start user X session with xinitrc
+        size_t size = strlen(XINITRC) + strlen(SESSION) + 2;
+        char cmd[size];
+        snprintf(cmd, sizeof(cmd), "%s %s", XINITRC, SESSION);
+        execl(pw->pw_shell, pw->pw_shell, "-c", cmd, 0);
     }
-    
-    
-    // Wait for child process to finish (wait for logout)
-    if (!PREVIEW) {
-        int status;
-        waitpid(child_pid, &status, 0); 
-    }
-    
-    // Close PAM session
+
+    int status;
+    waitpid(child_pid, &status, 0);
+    /* Print status info here */
+
+    /* Close PAM session */
     result = pam_close_session(pam_handle, 0);
     if ( !is_pam_success(result, pam_handle) ) {
         pam_setcred(pam_handle, PAM_DELETE_CRED);
         return 0;
     }
-    
-    // Remove credentials
+
+    /* Remove credentials */
     result = pam_setcred(pam_handle, PAM_DELETE_CRED);
     if ( !is_pam_success(result, pam_handle) ) return 0;
-    
-    // End PAM session
+
+    /* End PAM session */
     result = pam_end(pam_handle, result);
     pam_handle = 0;
-    
-    // Delete session from utmp/wtmp
-    if (!PREVIEW)
-        manage_login_records(username, "-d");    
-    
+
+    /* Delete session from utmp/wtmp */
+    manage_login_records(username, "-d", tty);
+
     return 1;
 }

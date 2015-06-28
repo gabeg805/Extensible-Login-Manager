@@ -1,30 +1,50 @@
+# =================
+# Compiler settings
+# =================
 CC      = gcc
-LIBS    = gtk+-3.0 cairo
-CFLAGS  = -w -lpam -lX11 `pkg-config $(LIBS) --cflags --libs`
-# CFLAGS  = -g -Wall -lpam -lX11 `pkg-config $(LIBS) --cflags --libs`
+PKGS    = gtk+-3.0 cairo
+CFLAGS  = -w # -g -Wall
+CLIBS   = -lpam -lX11 `pkg-config ${PKGS} --cflags --libs`
 
+
+# ===============
+# Directory paths
+# ===============
 HDR_DIR = ./src/login/hdr
 OBJ_DIR = ./src/login/obj
 SRC_DIR = ./src/login/src
 
-PROG = elysia
-NAMES   = $(PROG) Username Password Clock Frame TextImage WindowManager Panel authenticate Interface Xsetup utility benchmark
-HDR = $(addprefix ${HDR_DIR}/, $(addsuffix .h, ${NAMES}))
-OBJ = $(addprefix ${OBJ_DIR}/, $(addsuffix .o, ${NAMES}))
-SRC = $(addprefix ${SRC_DIR}/, $(addsuffix .c, ${NAMES}))
-
 CFLAGS += -I ${HDR_DIR}
 
+
+# ================
+# Program settings
+# ================
+PROG  = elysia
+AUTH  = authenticate
+GUI   = interface
+APPS  = clock frame panel password textimage username windowmanager 
+UTIL  = benchmark elyapp elyconfig elyx utility 
+FILES = ${PROG} ${AUTH} ${GUI} ${APPS} ${UTIL}
+OBJ   = $(addprefix ${OBJ_DIR}/, $(addsuffix .o, ${FILES}))
+
+
+
+# ==========
+# Make Rules
+# ==========
 all: ${PROG}
 
 ${OBJ_DIR}/%.o: ${SRC_DIR}/%.c 
 	${CC} ${CFLAGS} \
 		-c $< \
-		-o $@ 
+		-o $@ \
+		${CLIBS}
 
 ${PROG}: ${OBJ}
 	${CC} ${CFLAGS} \
-		-o ${PROG} ${OBJ} 
+		-o ${PROG} ${OBJ} \
+		${CLIBS}
 
 .PHONY: clean
 clean : 

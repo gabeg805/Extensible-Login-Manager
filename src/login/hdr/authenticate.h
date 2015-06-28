@@ -7,7 +7,7 @@
  * 
  * Syntax: #include "authenticate.h"
  * 
- * Description: Login to the system.
+ * Description: Elysia Login Manager login authentication.
  *              
  * Notes: None.
  * 
@@ -20,10 +20,6 @@
 
 /* Defines */
 #define AUTH_CONFIG    "/etc/X11/elysia/src/login/config/Authenticate.config"
-#define SESSREG        "/usr/bin/sessreg"
-#define UTMP_ADD       "/run/utmp"
-#define UTMP_DEL       "/var/run/utmp"
-#define WTMP           "/var/log/wtmp"
 #define XINITRC        "/etc/X11/elysia/src/x/xinitrc"
 
 /* Public functions */
