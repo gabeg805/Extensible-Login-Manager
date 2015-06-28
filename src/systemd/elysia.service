@@ -1,9 +1,0 @@
-[Unit]
-Description=Elysia Login Manager
-After=systemd-user-sessions.service 
-
-[Service]
-ExecStart=/etc/X11/elysia/elysia -t
-
-[Install]
-Alias=display-manager.service
