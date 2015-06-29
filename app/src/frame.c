@@ -16,7 +16,7 @@
 
 /* Includes */
 #include "frame.h"
-#include "elysia.h"
+#include "elyglobal.h"
 #include "elyapp.h"
 #include "elytype.h"
 #include "utility.h"

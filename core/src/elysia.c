@@ -15,45 +15,44 @@
  */
 
 /* Includes */
+#include "elyglobal.h"
 #include "xserver.h"
 #include "interface.h"
 #include "authenticate.h"
 #include "utility.h"
-#include "benchmark.h"
+#include <stdio.h>
 #include <stdbool.h>
 #include <time.h>
 
 /* Globals */
 const char *PROG;
-char *SERVICE  = "elysia";
-char *USERNAME = "User";
-char *PASSWORD = "Password";
-char *SESSION  = "xterm";
+char *SERVICE     = "elysia";
+char *USERNAME    = "User";
+char *PASSWORD    = "Password";
+char *SESSION     = "xterm";
 char *ELYSIA_LOG  = "/etc/X11/elysia/elysia.log";
-int  TTYN      = 1;
-bool INTERFACE = false;
-bool PREVIEW   = false;
-bool VERBOSE   = false;
-bool BENCHTIME = false;
+int  TTYN         = 1;
+bool PREVIEW      = false;
+bool VERBOSE      = false;
+bool BENCHTIME    = false;
 
 
 
-// ////////////////////////////////
-// ///// GABE'S LOGIN MANAGER /////
-// ////////////////////////////////
+/* ******************************** */
+/* ***** ELYSIA LOGIN MANAGER ***** */
+/* ******************************** */
 
-// Display the Elysia Login Manager 
+/* Display the Elysia Login Manager  */
 int main(int argc, char **argv)
 {
     PROG = argv[0];
     parse_argv(argc, argv);
 
     /* Log program start */
-    if ( VERBOSE || BENCHTIME ) {
-        time_t t;
-        time(&t);
-        file_log("\nDate: %s", ctime(&t));
-    }
+    time_t t;
+    time(&t);
+    TRACE(stdout, "**************************************************", "");
+    TRACE(stdout, "Date: %s", ctime(&t));
 
     xsetup();
 

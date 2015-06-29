@@ -16,9 +16,8 @@
 
 /* Includes */
 #include "authenticate.h"
-#include "elysia.h"
+#include "elyglobal.h"
 #include "utility.h"
-#include "benchmark.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -116,8 +115,7 @@ static void manage_login_records(const char *username, char *opt, char *tty)
 bool is_pam_success(int result, pam_handle_t *pamh)
 {
     if ( result != PAM_SUCCESS ) {
-        file_log("%s: (%s:%d) %s\n", 
-                 __FILE__, __FUNCTION__, __LINE__, pam_strerror(pamh, result));
+        TRACE(stdout, "%s", pam_strerror(pamh, result));
         return false;
     }
     return true;
@@ -190,6 +188,7 @@ void cleanup_child(int signal)
 /* Read man page of PAM functions for better info, and for initgroups */
 int login(const char *username, const char *password)
 {
+    TRACE(stdout, "%s", "Authenticating username/password combo...");
     const char *data[2]      = {username, password};
     struct pam_conv pam_conv = {conv, data};
     pam_handle_t *pam_handle;
@@ -218,8 +217,10 @@ int login(const char *username, const char *password)
     /* Establish credentials */
     result = pam_setcred(pam_handle, PAM_ESTABLISH_CRED);
     if ( !is_pam_success(result, pam_handle) ) { return 0; }
-    if ( PREVIEW )
+    if ( PREVIEW ) {
+        TRACE(stdout, "Successful authentication (Preview Mode).", "");
         return 1;
+    }
 
     /* Open PAM session */
     result = pam_open_session(pam_handle, 0);
@@ -233,16 +234,13 @@ int login(const char *username, const char *password)
     result            = pam_get_item(pam_handle, PAM_USER, (const void**)&username);
     if (result != PAM_SUCCESS || pw == 0) { return 0; }
     
-    // Setup and execute user session
+    /* Setup and execute user session */
     signal(SIGCHLD, cleanup_child);
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
-        double bmtime = benchmark_runtime(0);
-        if ( VERBOSE )
-            file_log("%s (%s:%d) Setting up user session...\n", 
-                     __FILE__, __FUNCTION__, __LINE__);
+        TRACE(stdout, "%s", "Setting up user session...");
 
-        // Begin setup of user session
+        /* Begin setup of user session */
         system("xwininfo -root -children | grep '  0x' | cut -d' ' -f6 | xargs -n1 xkill -id");
         manage_login_records(username, "-a", tty);
         chdir(pw->pw_dir);
@@ -253,15 +251,11 @@ int login(const char *username, const char *password)
         if ( setuid(pw->pw_uid) == -1 )                  { return 0; }
         init_env(pam_handle, pw);
 
-        if ( VERBOSE )
-            file_log("%s (%s:%d) Successfully logged in as '%s' (Session '%s').\n\n", 
-                     __FILE__, __FUNCTION__, __LINE__,
-                     username, SESSION);
-        if ( BENCHTIME )
-            file_log("%s: (%s: Runtime): %lf\n", 
-                     __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+        TRACE(stdout, "%s", "Authentication successful.");
+        TRACE(stdout, "User = %s", username);
+        TRACE(stdout, "Session = %s", SESSION);
 
-        // Start user X session with xinitrc
+        /* Start user X session with xinitrc */
         size_t size = strlen(XINITRC) + strlen(SESSION) + 2;
         char cmd[size];
         snprintf(cmd, sizeof(cmd), "%s %s", XINITRC, SESSION);

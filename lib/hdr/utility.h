@@ -19,14 +19,22 @@
 #define ELYSIA_UTILITY_H
 
 /* Includes */
+#include "benchmark.h"
 #include <stdio.h>
 #include <stdbool.h>
 
 /* Defines */
-#define TRACE_LOC(stream) \
-    fprintf(stream, "%s:%s:%d", __FILE__, __FUNCTION__, __LINE__)
-#define TRACE_PRINT(stream, fmt, str) \
-    fprintf(stream, fmt, str)
+#ifdef BENCHERIES
+# define TRACE(stream, fmt, str) \
+    fprintf(stream, "%s: %s:%d: " fmt " (%f)\n", \
+            __FILE__, __FUNCTION__, __LINE__,   \
+            str, benchmark_runtime())
+#else
+# define TRACE(stream, fmt, str)                 \
+    fprintf(stream, "%s: %s:%d: " fmt "\n",  \
+            __FILE__, __FUNCTION__, __LINE__,    \
+            str)
+#endif
 
 #define MAX_CMD_LEN    128
 #define MAX_LOC_LEN    64

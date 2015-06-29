@@ -16,7 +16,7 @@
 
 /* Includes */
 #include "textimage.h"
-#include "elysia.h"
+#include "elyglobal.h"
 #include "elyapp.h"
 #include "elytype.h"
 #include "utility.h"

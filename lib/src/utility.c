@@ -17,7 +17,7 @@
 /* Includes */
 #include "utility.h"
 #include "elytype.h"
-#include "elysia.h"
+#include "elyglobal.h"
 #include "benchmark.h"
 #include <assert.h>
 #include <getopt.h>

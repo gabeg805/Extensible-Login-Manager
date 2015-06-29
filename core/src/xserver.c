@@ -17,9 +17,8 @@
 
 /* Includes */
 #include "xserver.h"
-#include "elysia.h"
+#include "elyglobal.h"
 #include "utility.h"
-#include "benchmark.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -38,16 +37,104 @@ char VT[6];
 
 
 
+/* ******************* */
+/* ***** SETUP X ***** */
+/* ******************* */
+
+/* Setup X for login manager */
+void xsetup() {
+    TRACE(stdout, "%s", "Setting up X environment...");
+
+    if ( !PREVIEW )
+        start_xserver();
+    start_compman();
+    exec_config_cmd(X_CONFIG, 1);
+    exec_config_cmd(X_CONFIG, 2);
+
+    TRACE(stdout, "%s", "Done with X setup.");
+}
+
+
+
+/* ************************** */
+/* ***** START X SERVER ***** */
+/* ************************** */
+
+/* Start the X server */
+/* Note: I added a check if Xorg is already running, but if multiple instances 
+ * can be run, it needs to be removed 
+ */
+static void start_xserver() {
+    TRACE(stdout, "%s", "Starting X server...");
+
+    /* Check if X server is already running */
+    if ( is_running(basename(XORG)) ) {
+        TRACE(stdout, "%s already running.", XORG);
+        return;
+    }
+
+    /* Start X server */
+    set_open_display();
+    set_open_tty();
+    pid_t child_pid = fork();
+    if ( child_pid == 0 ) {
+        TRACE(stdout, "Executing %s command...", XORG);
+        execl(XORG, XORG, "-logverbose", "-logfile", XSERVER_LOG, 
+              "-nolisten", "tcp", DISPLAY, "-auth",
+              XSERVER_AUTH, VT, 0);
+    }
+
+    struct timespec t_start, t_end;
+    double start, end;
+    int timeout;
+    clock_gettime(CLOCK_MONOTONIC, &t_start);
+    start   = (double)(t_start.tv_sec + (t_start.tv_nsec / 1e9));
+    timeout = read_config_int(X_CONFIG, "timeout");
+
+    /* Wait until X server is up */
+    while ( XOpenDisplay(0) == 0 ) {
+        clock_gettime(CLOCK_MONOTONIC, &t_end);
+        end = (double)(t_end.tv_sec + (t_end.tv_nsec / 1e9));
+        if ( (end-start) >= timeout ) {
+            TRACE(stdout, "X server timed out (%d sec). Exiting.", timeout);
+            exit(1);
+        }
+    }
+
+    TRACE(stdout, "%s", "X server now active.");
+}
+
+/* ************************************* */
+/* ***** START COMPOSITING MANAGER ***** */
+/* ************************************* */
+
+/* Start compositing manager (for transparency) */
+static void start_compman() {
+    TRACE(stdout, "%s", "Starting compositing manager...");
+    
+    /* Check if composite manager is already running */
+    if ( is_running(basename(XCOMPMGR)) ) {
+        TRACE(stdout, "%s already running.", XCOMPMGR);
+        return;
+    }
+
+    /* Start compositing manager */
+    pid_t pid = fork();
+    if ( pid == 0 ) 
+        execl(XCOMPMGR, XCOMPMGR, NULL);
+
+    TRACE(stdout, "%s", "Done with composite manager startup.");
+}
+
+
+
 /* ****************************** */
 /* ***** SET OPEN X DISPLAY *****  */
 /* ****************************** */
 
 /* Return an open display (i.e. ':0') */
 static void set_open_display() {
-    double bmtime = benchmark_runtime(0);
-    if ( VERBOSE )
-        file_log("%s: (%s:%d): Searching for an open display...", 
-                 __FILE__, __FUNCTION__, __LINE__);
+    TRACE(stdout, "%s", "Searching for an open display...");
 
     bool open = false;
     char file[15];
@@ -66,22 +153,13 @@ static void set_open_display() {
     if ( open ) {
         snprintf(DISPLAY, sizeof(DISPLAY), ":%d", d);
         setenv("DISPLAY", DISPLAY, 1);
-
-        if ( VERBOSE )
-            file_log("Done.\n%s: (%s:%d): Display '%s' is open.\n", 
-                     __FILE__, __FUNCTION__, __LINE__, DISPLAY);
+        TRACE(stdout, "Display '%s' is now open.", DISPLAY);
     }
     /* Couldn't find an open display */
     else {
-        if ( VERBOSE )
-            file_log("Error.\n%s (%s:%d): An open display could not be found. Exiting...\n", 
-                     __FILE__, __FUNCTION__, __LINE__);
+        TRACE(stdout, "An open display could not be found. Exiting.", "");
         exit(1);
     }
-
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
 }
 
 
@@ -93,123 +171,10 @@ static void set_open_display() {
 /* Return an open TTY port */
 /* * Find a better way to do this */
 static void set_open_tty() {
-    double bmtime = benchmark_runtime(0);
-    if ( VERBOSE )
-        file_log("%s: (%s:%d): Determining TTY...", 
-                 __FILE__, __FUNCTION__, __LINE__);
+    TRACE(stdout, "%s", "Searching for an open tty...");
 
     TTYN = 7;
     snprintf(VT, sizeof(VT), "%s%d", "vt", TTYN);
 
-    if ( VERBOSE )
-        file_log("Done.\n%s: (%s:%d): TTY number is '%d'.\n", 
-                 __FILE__, __FUNCTION__, __LINE__, TTYN);
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
-
-}
-
-
-
-/* ************************** */
-/* ***** START X SERVER ***** */
-/* ************************** */
-
-/* Start the X server */
-static void start_xserver() {
-    double bmtime = benchmark_runtime(0);
-    if ( VERBOSE )
-        file_log("%s: (%s:%d): Starting X server...\n", 
-                 __FILE__, __FUNCTION__, __LINE__);
-
-    /* Start X server */
-    set_open_display();
-    set_open_tty();
-    pid_t child_pid = fork();
-    if ( child_pid == 0 ) {
-        execl(XORG, XORG, "-logverbose", "-logfile", XSERVER_LOG, 
-              "-nolisten", "tcp", DISPLAY, "-auth",
-              XSERVER_AUTH, VT, 0);
-    }
-
-    struct timespec t_start, t_end;
-    double start, end;
-    int timeout;
-    clock_gettime(CLOCK_MONOTONIC, &t_start);
-    start   = (double)(t_start.tv_sec + (t_start.tv_nsec / 1e9));
-    timeout = read_config_int(X_CONFIG, "timeout");
-
-    /* Wait until X server is up */
-    while ( XOpenDisplay(0) == 0 ) {
-        clock_gettime(CLOCK_MONOTONIC, &t_end);
-        end = (double)(t_end.tv_sec + (t_end.tv_nsec / 1e9));
-        if ( (end-start) >= timeout ) {
-            file_log("%s: (%s:%d): Timeout reached: %s (%d sec). Elysia exited.",
-                     __FILE__, __FUNCTION__, __LINE__, 
-                     "X server timed out", timeout);
-            exit(1);
-        }
-    }
-
-    if ( VERBOSE )
-        file_log("%s: (%s:%d): X server is active.\n", 
-                 __FILE__, __FUNCTION__, __LINE__);
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
-}
-
-
-
-/* ************************************* */
-/* ***** START COMPOSITING MANAGER ***** */
-/* ************************************* */
-
-/* Start compositing manager (for transparency) */
-static void start_compman() {
-    double bmtime = benchmark_runtime(0);
-    if ( VERBOSE )
-        file_log("%s: (%s:%d): Starting compositing manager...", 
-                 __FILE__, __FUNCTION__, __LINE__);
-    
-    /* Check if composite manager is already running */
-    if ( is_running(basename(XCOMPMGR)) ) {
-        if ( VERBOSE )
-            file_log("Already running.\n");
-        return;
-    }
-
-    /* Start compositing manager */
-    pid_t pid = fork();
-    if ( pid == 0 ) 
-        execl(XCOMPMGR, XCOMPMGR, NULL);
-
-    if ( VERBOSE )
-        file_log("Done.\n");
-    if ( BENCHTIME ) 
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
-}
-
-
-
-/* ******************* */
-/* ***** SETUP X ***** */
-/* ******************* */
-
-/* Setup X for login manager */
-void xsetup() {
-    double bmtime = benchmark_runtime(0);
-
-    if ( !PREVIEW ) 
-        start_xserver();
-    start_compman();
-    exec_config_cmd(X_CONFIG, 1);
-    exec_config_cmd(X_CONFIG, 2);
-    INTERFACE = true;
-
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "TTY number is '%d'.", TTYN);
 }

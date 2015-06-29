@@ -17,7 +17,7 @@
 
 /* Includes */
 #include "username.h"
-#include "elysia.h"
+#include "elyglobal.h"
 #include "elyapp.h"
 #include "elytype.h"
 #include "elyconfig.h"

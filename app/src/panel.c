@@ -3,7 +3,7 @@
 
 /* Includes */
 #include "panel.h"
-#include "elysia.h"
+#include "elyglobal.h"
 #include "benchmark.h"
 #include <unistd.h>
 #include <gtk/gtk.h>

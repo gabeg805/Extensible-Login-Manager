@@ -16,16 +16,14 @@
 
 /* Includes */
 #include "interface.h"
-#include "elysia.h"
-#include "username.h"
-#include "password.h"
 #include "clock.h"
 #include "frame.h"
-#include "textimage.h"
-#include "windowmanager.h"
 #include "panel.h"
+#include "password.h"
+#include "textimage.h"
+#include "username.h"
 #include "utility.h"
-#include "benchmark.h"
+#include "windowmanager.h"
 #include <stdbool.h>
 #include <gtk/gtk.h>
 
@@ -37,33 +35,24 @@
 
 /* Display the login interface */
 void login_interface(void) {
-    double bmtime = benchmark_runtime(0);
-
+    static bool interface = true;
     gtk_init(0, 0);
 
-    if ( INTERFACE ) {
-        if ( VERBOSE )
-            file_log("%s: (%s:%d): Displaying login interface...\n", 
-                     __FILE__, __FUNCTION__, __LINE__);
-
-        /* Display interface items */
+    if ( interface ) {
+        TRACE(stdout, "%s", "Starting login interface...");
         display_frame();
         display_text_image();
         display_username();
         display_window_manager();
         display_clock();
         display_panel();
-
-        INTERFACE = false;
     }
     display_password_entry();
 
-    if ( VERBOSE )
-        file_log("%s: (%s:%d): Done displaying login interface.\n",
-                 __FILE__, __FUNCTION__, __LINE__);
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    if ( interface ) {
+        TRACE(stdout, "%s", "Done displaying login interface.");
+        interface = false;
+    }
 
     gtk_main();
 }
