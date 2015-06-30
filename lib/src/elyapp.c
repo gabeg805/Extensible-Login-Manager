@@ -19,7 +19,6 @@
 #include "elytype.h"
 #include "elyconfig.h"
 #include "utility.h"
-#include "benchmark.h"
 #include <gtk/gtk.h>
 
 
@@ -34,7 +33,7 @@ void setup_app(char *file,
                char *event, 
                void (*func)(GtkWidget *widg))
 {
-    double bmtime = benchmark_runtime(0);
+    TRACE(stdout, "%s", "Setting up application...");
 
     /* Define widget settings from the config file */
     set_config_pos(file,   &app->pos);
@@ -54,9 +53,7 @@ void setup_app(char *file,
     gtk_widget_show(app->widg);
     gtk_widget_show(app->win);
 
-    /* if ( BENCHTIME ) */
-    /*     file_log("%s: (%s: Runtime): %lf\n",  */
-    /*              __FILE__, __FUNCTION__, benchmark_runtime(bmtime)); */
+    TRACE(stdout, "%s", "Done setting up application");
 }
 
 
@@ -64,12 +61,16 @@ void setup_app(char *file,
 /* Set widget position and size */
 void set_widget_pos(struct elyapp *app)
 {
+    TRACE(stdout, "%s", "Setting application position and size...");
+
     gtk_window_move(GTK_WINDOW(app->win),
                     app->pos.x,
                     app->pos.y);
     gtk_window_set_default_size(GTK_WINDOW(app->win),
                                 app->pos.width,
                                 app->pos.height);
+
+    TRACE(stdout, "%s", "Done setting position and size.");
 }
 
 
@@ -77,6 +78,8 @@ void set_widget_pos(struct elyapp *app)
 /* Set the color of a widget  */
 void set_widget_color(struct elyapp *app)
 {
+    TRACE(stdout, "%s", "Setting application color...");
+
     /* No decoration defined */
     if ( app->decor.div < 0 )
         return;
@@ -100,6 +103,8 @@ void set_widget_color(struct elyapp *app)
     gtk_widget_override_background_color(app->widg, GTK_STATE_FLAG_NORMAL, &bg_widg);
     gtk_widget_override_color(app->win, GTK_STATE_FLAG_NORMAL, &fg_win);
     gtk_widget_override_color(app->widg, GTK_STATE_FLAG_NORMAL, &fg_widg);
+
+    TRACE(stdout, "%s", "Done setting color.");
 }
 
 
@@ -107,9 +112,13 @@ void set_widget_color(struct elyapp *app)
 /* Enable widget transparency */
 void enable_transparency(GtkWidget *widg)
 {
+    TRACE(stdout, "%s", "Setting application transparency...");
+
     GdkScreen *screen = gtk_widget_get_screen(widg);
     GdkVisual *visual = gdk_screen_get_rgba_visual(screen);
     gtk_widget_set_visual(widg, visual);
+
+    TRACE(stdout, "%s", "Done setting transparency.");
 }
 
 
@@ -121,6 +130,8 @@ void enable_transparency(GtkWidget *widg)
 /* Set position values from config file */
 void set_config_pos(char *file, struct elypos *pos)
 {
+    TRACE(stdout, "%s", "Reading application position from config file...");
+
     pos->x      = read_config_int(file, "xpos");
     pos->y      = read_config_int(file, "ypos");
     pos->width  = read_config_int(file, "width");
@@ -131,6 +142,8 @@ void set_config_pos(char *file, struct elypos *pos)
     if ( pos->y < 0 )      { pos->y = 0; }
     if ( pos->width < 0 )  { pos->width = 0; }
     if ( pos->height < 0 ) { pos->height = 0; }
+
+    TRACE(stdout, "%s", "Done reading position from config file.");
 }
 
 
@@ -138,6 +151,8 @@ void set_config_pos(char *file, struct elypos *pos)
 /* Set text values from config file */
 void set_config_txt(char *file, struct elytxt *txt)
 {
+    TRACE(stdout, "%s", "Reading application text settings from config file...");
+
     txt->size     = read_config_int(file,  "size");
     txt->maxchars = read_config_int(file,  "maxchars");
     txt->refresh  = read_config_int(file,  "refresh-sec");
@@ -152,6 +167,8 @@ void set_config_txt(char *file, struct elytxt *txt)
     /* Set default values when no value in config file is set */
     if ( txt->invis == 0 )
         txt->invis = " ";
+
+    TRACE(stdout, "%s", "Done reading text settings from config file.");
 }
 
 
@@ -159,6 +176,8 @@ void set_config_txt(char *file, struct elytxt *txt)
 /* Set decoration values from config file */
 void set_config_decor(char *file, struct elydecor *decor)
 {
+    TRACE(stdout, "%s", "Reading application color from config file...");
+
     decor->img_file = read_config_char(file, "img-file", MAX_LOC_LEN);
     decor->bg_red   = read_config_int(file, "bg-red");
     decor->bg_green = read_config_int(file, "bg-green");
@@ -169,4 +188,6 @@ void set_config_decor(char *file, struct elydecor *decor)
     decor->fg_blue  = read_config_int(file, "fg-blue");
     decor->fg_alpha = read_config_int(file, "fg-alpha");
     decor->div      = read_config_int(file, "div");
+
+    TRACE(stdout, "%s", "Done reading color from config file.");
 }

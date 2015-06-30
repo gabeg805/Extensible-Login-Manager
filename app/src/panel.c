@@ -4,7 +4,7 @@
 /* Includes */
 #include "panel.h"
 #include "elyglobal.h"
-#include "benchmark.h"
+#include "utility.h"
 #include <unistd.h>
 #include <gtk/gtk.h>
 
@@ -26,15 +26,13 @@ static void display_item();
 
 /* Setup panel buttons and style */
 static void setup_button(GtkWidget *widg, char *img) {
-    double bmtime = benchmark_runtime(0);
+    TRACE(stdout, "%s", "Setting up panel button...");
 
     GtkWidget *icon = gtk_image_new_from_file(img);
     gtk_button_set_image(GTK_BUTTON(widg), icon);
     gtk_button_set_relief(GTK_BUTTON(widg), GTK_RELIEF_NONE);
 
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done setting up panel button.");
 }
 
 
@@ -45,6 +43,7 @@ static void setup_button(GtkWidget *widg, char *img) {
 
 /* Shutdown the system */
 static void system_shutdown() {
+    TRACE(stdout, "%s", "Shutting down...");
     execl(POWEROFF, POWEROFF, NULL);
 }
 
@@ -52,6 +51,7 @@ static void system_shutdown() {
 
 /* Shutdown the system */
 static void system_reboot() {
+    TRACE(stdout, "%s", "Rebooting...");
     execl(REBOOT, REBOOT, NULL);
 }
 
@@ -59,6 +59,7 @@ static void system_reboot() {
 
 /* Quit the prompt */
 static void cancel_ely(GtkWidget *button, GtkWidget *window) {
+    TRACE(stdout, "%s", "Hiding panel dialog...");
     gtk_widget_hide(window);
 }
 
@@ -66,6 +67,7 @@ static void cancel_ely(GtkWidget *button, GtkWidget *window) {
 
 /* Refresh the login screen */
 static void refresh_ely() {
+    TRACE(stdout, "%s", "Refreshing the login manager...");
     execl(SYSTEMCTL, SYSTEMCTL, "restart", SERVICE, NULL);
 }
 
@@ -73,6 +75,7 @@ static void refresh_ely() {
 
 /* Quit the login screen */
 static void quit_ely() {
+    TRACE(stdout, "%s", "Quitting the login manager...");
     char *cmd = "/usr/bin/chvt 2; /usr/bin/systemctl stop elysia";
     execl("/bin/bash", "/bin/bash", "-c", cmd, NULL);
 }
@@ -85,10 +88,7 @@ static void quit_ely() {
 
 /* Display the Elysia dialog */
 static void display_dialog() {
-    double bmtime = benchmark_runtime(0);
-    if ( VERBOSE )
-        file_log("%s: (%s:%d): Displaying Elysia dialog...", 
-                 __FILE__, __FUNCTION__, __LINE__);
+    TRACE(stdout, "%s", "Displaying button panel...");
 
     GtkWidget *window         = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *grid           = gtk_grid_new();
@@ -119,11 +119,7 @@ static void display_dialog() {
     g_signal_connect(G_OBJECT(cancel_button),  "clicked", G_CALLBACK(cancel_ely),    window);
     g_signal_connect(window,                   "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-    if ( VERBOSE )
-        file_log("Done\n");
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done displaying button panel.");
 }
 
 
@@ -134,11 +130,8 @@ static void display_dialog() {
 
 /* Display items in the button panel */
 static void display_item(char *file, void (*func)() ) {
-    double bmtime = benchmark_runtime(0);
-    if ( VERBOSE )
-        file_log("%s: (%s:%d): Displaying panel item...", 
-                 __FILE__, __FUNCTION__, __LINE__);
-    
+    TRACE(stdout, "%s", "Displaying panel item...");
+
     /* Create the panel button items */
     struct elyapp app; 
     app.win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -146,11 +139,7 @@ static void display_item(char *file, void (*func)() ) {
     setup_app(file, &app, "clicked", func);
     setup_button(app.widg, app.decor.img_file);
 
-    if ( VERBOSE )
-        file_log("Done\n");
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done displaying panel item.");
 }
 
 

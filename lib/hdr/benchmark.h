@@ -21,10 +21,7 @@
 /* Includes */
 #include <stdbool.h>
 
-/* Global variables */
-extern bool BENCHTIME;
-
 /* Public functions */
-double benchmark_runtime();
+double benchmark();
 
 #endif /* ELYSIA_BENCHMARK_H */

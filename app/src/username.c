@@ -22,7 +22,6 @@
 #include "elytype.h"
 #include "elyconfig.h"
 #include "utility.h"
-#include "benchmark.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -46,7 +45,8 @@ static void display_usr_menu();
 
 /* Setup dropdown menu that displays users */
 static void setup_menu(struct elyapp app) {
-    double bmtime    = benchmark_runtime(0);
+    TRACE(stdout, "%s", "Setting up username menu...");
+
     GtkWidget *label = gtk_label_new("");
     GtkWidget *menu  = gtk_menu_new();
 
@@ -57,21 +57,20 @@ static void setup_menu(struct elyapp app) {
     gtk_button_set_relief(GTK_BUTTON(app.widg), GTK_RELIEF_NORMAL);
     gtk_widget_show(label);
 
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done setting up menu.");
 }
 
 
 
 /* Setup the label for the dropdown menu */
 static void setup_label(GtkWidget *label, struct elytxt txt) {
-    double bmtime             = benchmark_runtime(0);
+    TRACE(stdout, "%s", "Setting up username menu labels...");
+
     PangoAttrList *attrList   = pango_attr_list_new();
     PangoAttribute *attrFont  = pango_attr_family_new(txt.font);
-    PangoAttribute *attrSize  = pango_attr_size_new((long)1024 * txt.size );
-    PangoAttribute *attrColor = pango_attr_foreground_new((long)256 * txt.red, 
-                                                          (long)256 * txt.green, 
+    PangoAttribute *attrSize  = pango_attr_size_new((long)1024 * txt.size);
+    PangoAttribute *attrColor = pango_attr_foreground_new((long)256 * txt.red,
+                                                          (long)256 * txt.green,
                                                           (long)256 * txt.blue);
 
     attrList = pango_attr_list_ref(attrList);
@@ -82,9 +81,7 @@ static void setup_label(GtkWidget *label, struct elytxt txt) {
     gtk_label_set_text(GTK_LABEL(label), USERNAME);
     gtk_label_set_attributes(GTK_LABEL(label), attrList);
 
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done setting up labels.");
 }
 
 
@@ -95,14 +92,13 @@ static void setup_label(GtkWidget *label, struct elytxt txt) {
 
 /* Write to a file, which user to login as */
 static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
-    double bmtime = benchmark_runtime(0);
-    USERNAME      = (char*) gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    file_line_overwrite(USER_CONFIG, "user", USERNAME);
+    TRACE(stdout, "%s", "Setting username...");
+
+    USERNAME = (char*) gtk_menu_item_get_label(GTK_MENU_ITEM(item));
+    overwrite_config_line(USER_CONFIG, "user", USERNAME);
     gtk_label_set_text(GTK_LABEL(label), USERNAME);
 
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done setting username.");
 }
 
 
@@ -113,7 +109,8 @@ static void usermenu_write_to_file(GtkMenu *item, GtkWidget *label) {
 
 /* Get username*uid combination from the specified file */
 static char ** get_usernames(char *file) {
-    double bmtime = benchmark_runtime(0);
+    TRACE(stdout, "%s", "Getting list of users on system...");
+
     FILE *handle  = fopen(file, "r");
     size_t count  = 0;
     char sep      = ':';
@@ -146,8 +143,8 @@ static char ** get_usernames(char *file) {
     /* Add users to return array from available user list */
     while (1) {
         add = true;
-        if ( (strcmp(USERNAME, "User") == 0) 
-             || (strcmp(container[loc], USERNAME) == 0) ) 
+        if ( (strcmp(USERNAME, "User") == 0) ||
+             (strcmp(container[loc], USERNAME) == 0) ) 
             ;
         else if ( (i != 0) && (container[loc][0] != 0) ) 
             ;
@@ -171,9 +168,7 @@ static char ** get_usernames(char *file) {
     ret[i] = 0;
     fclose(handle);
 
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done getting list of system users.");
 
     return ret;
 }
@@ -186,7 +181,8 @@ static char ** get_usernames(char *file) {
 
 /* Set user name entries */
 static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
-    double bmtime   = benchmark_runtime(0);
+    TRACE(stdout, "%s", "Creating username menu entries...");
+
     GSList *group   = 0;
     char *files[]   = {"/etc/passwd", "/etc/shadow", 0};
     char **allusers = get_usernames(files[0]);
@@ -215,9 +211,7 @@ static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
     free(allusers);
     allusers = 0;
 
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done creating username entries.");
 }
 
 
@@ -228,11 +222,8 @@ static void set_username_entries(GtkWidget *menu, GtkWidget *label) {
 
 /* Display username icon */
 static void display_icon() {
-    double bmtime = benchmark_runtime(0);
-    if ( VERBOSE )
-        file_log("%s: (%s:%d): Displaying Username icon...", 
-                 __FILE__, __FUNCTION__, __LINE__);
-    
+    TRACE(stdout, "%s", "Displaying username icon...");
+
     /* Create the icon widget  */
     struct elyapp app;
     app.win  = gtk_window_new(GTK_WINDOW_POPUP);
@@ -240,21 +231,14 @@ static void display_icon() {
     setup_app(USER_IMG_CONFIG, &app, 0, 0);
     gtk_image_set_from_file(GTK_IMAGE(app.widg), app.decor.img_file);
 
-    if ( VERBOSE )
-        file_log("Done\n");
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done displaying username icon.");
 }
 
 
 
 /* Display the username menu */
 static void display_usr_menu() {
-    double bmtime = benchmark_runtime(0);
-    if ( VERBOSE )
-        file_log("%s: (%s:%d): Displaying Username menu button...", 
-                 __FILE__, __FUNCTION__, __LINE__);
+    TRACE(stdout, "%s", "Displaying username menu application...");
     
     /* Define default username */
     USERNAME = read_config_char(USER_CONFIG, "user", MAX_STR_LEN);
@@ -268,11 +252,7 @@ static void display_usr_menu() {
     setup_app(USER_CONFIG, &app, NULL, NULL);
     setup_menu(app);
 
-    if ( VERBOSE )
-        file_log("Done\n");
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done displaying username menu application.");
 }
 
 

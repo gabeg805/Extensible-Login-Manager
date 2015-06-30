@@ -26,9 +26,63 @@
 
 
 
-/* **************************** */
-/* ***** READ CONFIG FILE ***** */
-/* **************************** */
+/* ************************ */
+/* ***** CONFIG EDITS ***** */
+/* ************************ */
+
+/* Overwrite configuration file line that matches the given key */
+void overwrite_config_line(char *file, char *key, char *val)
+{
+    /* Prepare new strings for the file overwrite procedure */
+    char *ext  = ".bak";
+    size_t n   = strlen(file) + strlen(ext) + 1;
+    size_t len = strlen(key)  + strlen(val) + 3;
+    char newfile[n];
+    char replacement[len];
+    snprintf(newfile,     n,   "%s%s",   file, ext);
+    snprintf(replacement, len, "%s: %s", key,  val);
+
+    /* Edit the line matching the key */
+    FILE *stream    = fopen(file, "r+");
+    FILE *newstream = fopen(newfile, "w");
+    bool write      = false;
+    char line[MAX_STR_LEN];
+    char copy[MAX_STR_LEN];
+    while ( fgets(line, sizeof(line), stream) != NULL ) {
+        get_substring(copy, line, ':', 1);
+
+        if ( (strcmp(key, copy) == 0) ) {
+            fprintf(newstream, "%s\n", replacement);
+            write = true;
+        } 
+        else 
+            fprintf(newstream, "%s", line);
+    }
+    
+    /* Write in default entry if key was not found */
+    if ( !write )
+        fprintf(stream, "%s: Not Found\n", key);
+
+    fclose(stream);
+    fclose(newstream);
+    remove(file);
+    rename(newfile, file);
+}
+
+
+
+/* Execute a command found in the config file */
+void exec_config_cmd(char *file, int n)
+{
+    char key[6];
+    snprintf(key, sizeof(key), "cmd%d", n);
+    char *cmd = read_config_char(file, key, MAX_CMD_LEN);
+    pid_t pid = fork();
+    if ( pid == 0 )
+        exit(system(cmd));
+}
+
+
 
 /* Strip a line in a configuration file of the key, separator, and leading 
  * empty space, as well as the trailing newline
@@ -69,6 +123,10 @@ char * strip_config_line(char *line, char sep)
 
 
 
+/* **************************** */
+/* ***** READ CONFIG FILE ***** */
+/* **************************** */
+
 /* Read the config file and output a string */
 char * read_config_char(char *file, char *key, int n)
 {
@@ -80,7 +138,7 @@ char * read_config_char(char *file, char *key, int n)
     char substr[n];
 
     /* Loop through line by line the contents of the config file */
-    while ( fgets(line, sizeof(line), stream) != 0 ) {
+    while ( fgets(line, sizeof(line), stream) != NULL ) {
         /* Strip config line's leading components */
         get_substring(substr, line, sep, num);
         if ( strcmp(substr, key) != 0 )
@@ -90,7 +148,6 @@ char * read_config_char(char *file, char *key, int n)
         /* Copy data from stripped string to return variable */
         size_t len  = strlen(stripped);
         size_t size = len + 1;
-        size_t i;
         ret = malloc(size);
         assert(ret);
         strcpy(ret, stripped);
@@ -107,7 +164,7 @@ char * read_config_char(char *file, char *key, int n)
 int read_config_int(char *file, char *key)
 {
     char *val = read_config_char(file, key, MAX_NUM_LEN);
-    if ( val == 0 )
+    if ( val == NULL )
         return -1;
     else
         return atoi(val);
@@ -137,17 +194,17 @@ void read_config_cmd_rep(char *arr, char *file, char *rep1, char *rep2, char *re
         else {
             switch ( num ) {
             case 0:
-                if ( rep1 == 0 ) { break; }
+                if ( rep1 == NULL ) { break; }
                 strcat(arr, rep1);
                 j += strlen(rep1);
                 break;
             case 1:
-                if ( rep2 == 0 ) { break; }
+                if ( rep2 == NULL ) { break; }
                 strcat(arr, rep2);
                 j += strlen(rep2);
                 break;
             case 2:
-                if ( rep3 == 0 ) { break; }
+                if ( rep3 == NULL ) { break; }
                 strcat(arr, rep3);
                 j += strlen(rep3);
                 break;
@@ -159,17 +216,4 @@ void read_config_cmd_rep(char *arr, char *file, char *rep1, char *rep2, char *re
         }
         ++i;
     }
-}
-
-
-
-/* Execute a command found in the config file */
-void exec_config_cmd(char *file, int n)
-{
-    char key[6];
-    snprintf(key, sizeof(key), "cmd%d", n);
-    char *cmd = read_config_char(file, key, MAX_CMD_LEN);
-    pid_t pid = fork();
-    if ( pid == 0 )
-        exit(system(cmd));
 }

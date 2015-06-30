@@ -20,7 +20,6 @@
 #include "elyapp.h"
 #include "elytype.h"
 #include "utility.h"
-#include "benchmark.h"
 #include <time.h>
 #include <gtk/gtk.h>
 
@@ -37,7 +36,8 @@ static void display_item(char *file, struct elyapp *app);
 
 /* Set the clock label font and text size */
 static void set_label(struct elyapp *app) {
-    double bmtime  = benchmark_runtime(0);
+    TRACE(stdout, "%s", "Setting clock label...");
+
     time_t current = time(0);
     struct tm *t   = localtime(&current);
     char time[50];
@@ -52,9 +52,7 @@ static void set_label(struct elyapp *app) {
     gtk_label_set_attributes(GTK_LABEL(app->widg), attrList);
     gtk_label_set_text(GTK_LABEL(app->widg), time);
 
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done setting clock label.");
 }
 
 
@@ -65,8 +63,12 @@ static void set_label(struct elyapp *app) {
 
 /* Refresh the current clock label */
 static gboolean update(gpointer data) {
+    TRACE(stdout, "%s", "Updating clock...");
+
     struct elyapp *app = (struct elyapp *) data;
     set_label(app);
+
+    TRACE(stdout, "%s", "Done updating clock.");
 
     return TRUE;
 }
@@ -79,11 +81,8 @@ static gboolean update(gpointer data) {
 
 /* Display a piece of the time */
 static void display_item(char *file, struct elyapp *app) {
-    double bmtime = benchmark_runtime(0);
-    if ( VERBOSE )
-        file_log("%s: (%s:%d): Displaying clock item...", 
-                 __FILE__, __FUNCTION__, __LINE__);
-    
+    TRACE(stdout, "%s", "Displaying clock item...");
+
     /* Create the clock application */
     app->win  = gtk_window_new(GTK_WINDOW_POPUP);
     app->widg = gtk_label_new("");
@@ -91,18 +90,15 @@ static void display_item(char *file, struct elyapp *app) {
     set_label(app);
     g_timeout_add_seconds(app->txt.refresh, update, app);
 
-    if ( VERBOSE )
-        file_log("Done.\n");
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done displaying clock item.");
 }
 
 
 
 /* Display the date and time clock */
 void display_clock() {
-    static struct elyapp date_app, time_app;
+    static struct elyapp date_app;
+    static struct elyapp time_app;
     display_item(CLOCK_DATE_CONFIG, &date_app);
     display_item(CLOCK_TIME_CONFIG, &time_app);
 }

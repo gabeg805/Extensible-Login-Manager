@@ -17,9 +17,11 @@
 /* Includes */
 #include "authenticate.h"
 #include "elyglobal.h"
+#include "elyconfig.h"
 #include "utility.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include <errno.h>
 #include <string.h>
 #include <signal.h>
 #include <unistd.h>
@@ -48,6 +50,8 @@ static int conv(int num_msg,
 /* Set environment variables for USER */
 static void init_env(pam_handle_t *pam_handle, struct passwd *pw)
 {
+    TRACE(stdout, "%s", "Initializing environment variables...");
+
     /* Loginctl XDG commands from the config file */
     char seat_cmd[MAX_CMD_LEN];
     char session_id_cmd[MAX_CMD_LEN];
@@ -67,13 +71,22 @@ static void init_env(pam_handle_t *pam_handle, struct passwd *pw)
     snprintf(xauthority,  sizeof(xauthority),  "%s/%s", pw->pw_dir,  ".Xauthority");
 
     /* Set environment variables */
-    setenv("USER",            pw->pw_name,  1);
-    setenv("SHELL",           pw->pw_shell, 1);
-    setenv("XDG_VTNR",        vtnr,         1);
-    setenv("XDG_SEAT",        seat,         1);
-    setenv("XDG_SESSION_ID",  session_id,   1);
-    setenv("XDG_RUNTIME_DIR", runtime_dir,  1);
-    setenv("XAUTHORITY",      xauthority,   1);
+    if ( setenv("USER", pw->pw_name, 1) == -1 )
+        TRACE(stderr, "Error setting environment variable: %s", strerror(errno));
+    if ( setenv("SHELL", pw->pw_shell, 1) == -1 )
+        TRACE(stderr, "Error setting environment variable: %s", strerror(errno));
+    if ( setenv("XDG_VTNR", vtnr, 1) == -1 )
+        TRACE(stderr, "Error setting environment variable: %s", strerror(errno));
+    if ( setenv("XDG_SEAT", seat, 1) == -1 )
+        TRACE(stderr, "Error setting environment variable: %s", strerror(errno));
+    if ( setenv("XDG_SESSION_ID", session_id, 1) == -1 )
+        TRACE(stderr, "Error setting environment variable: %s", strerror(errno));
+    if ( setenv("XDG_RUNTIME_DIR", runtime_dir, 1) == -1 )
+        TRACE(stderr, "Error setting environment variable: %s", strerror(errno));
+    if ( setenv("XAUTHORITY", xauthority, 1) == -1 )
+        TRACE(stderr, "Error setting environment variable: %s", strerror(errno));
+
+    TRACE(stdout, "%s", "Done initializing environment variables.");
 }
 
 
@@ -85,6 +98,8 @@ static void init_env(pam_handle_t *pam_handle, struct passwd *pw)
 /* Manager utmp/wtmp login records */
 static void manage_login_records(const char *username, char *opt, char *tty)
 {
+    TRACE(stdout, "Managing login records for '%s'...", opt);
+
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
         char *sessreg  = "/usr/bin/sessreg";
@@ -97,12 +112,16 @@ static void manage_login_records(const char *username, char *opt, char *tty)
         else
             utmp = utmp_del;
 
+        TRACE(stdout, "Executing '%s'...", utmp);
+
         execl(sessreg, sessreg, opt,
               "-w", wtmp, "-u", utmp,
               "-l", tty, "-h", "", username, NULL);
     } 
     int status;
     waitpid(child_pid, &status, 0);
+
+    TRACE(stdout, "Done managing login records for '%s'", opt);
 }
 
 
@@ -115,7 +134,7 @@ static void manage_login_records(const char *username, char *opt, char *tty)
 bool is_pam_success(int result, pam_handle_t *pamh)
 {
     if ( result != PAM_SUCCESS ) {
-        TRACE(stdout, "%s", pam_strerror(pamh, result));
+        TRACE(stdout, "PAM error: %s", pam_strerror(pamh, result));
         return false;
     }
     return true;
@@ -133,6 +152,8 @@ static int conv(int num_msg,
                 struct pam_response **resp,
                 void *appdata_ptr)
 {
+    TRACE(stdout, "%s", "Converting PAM login information...");
+
     *resp = calloc(num_msg, sizeof(struct pam_response));
     if ( *resp == NULL )
         return PAM_BUF_ERR;
@@ -168,6 +189,8 @@ static int conv(int num_msg,
         *resp = 0;
     }
 
+    TRACE(stdout, "%s", "Done converting PAM information.");
+
     return result;
 }
 
@@ -188,7 +211,8 @@ void cleanup_child(int signal)
 /* Read man page of PAM functions for better info, and for initgroups */
 int login(const char *username, const char *password)
 {
-    TRACE(stdout, "%s", "Authenticating username/password combo...");
+    TRACE(stdout, "%s", "Authenticating username and password...");
+
     const char *data[2]      = {username, password};
     struct pam_conv pam_conv = {conv, data};
     pam_handle_t *pam_handle;
@@ -218,7 +242,7 @@ int login(const char *username, const char *password)
     result = pam_setcred(pam_handle, PAM_ESTABLISH_CRED);
     if ( !is_pam_success(result, pam_handle) ) { return 0; }
     if ( PREVIEW ) {
-        TRACE(stdout, "Successful authentication (Preview Mode).", "");
+        TRACE(stdout, "%s", "Successful authentication (Preview Mode).");
         return 1;
     }
 
@@ -232,7 +256,7 @@ int login(const char *username, const char *password)
     /* Get mapped user name, PAM may have changed it */
     struct passwd *pw = getpwnam(username);
     result            = pam_get_item(pam_handle, PAM_USER, (const void**)&username);
-    if (result != PAM_SUCCESS || pw == 0) { return 0; }
+    if (result != PAM_SUCCESS || pw == NULL) { return 0; }
     
     /* Setup and execute user session */
     signal(SIGCHLD, cleanup_child);
@@ -255,11 +279,14 @@ int login(const char *username, const char *password)
         TRACE(stdout, "User = %s", username);
         TRACE(stdout, "Session = %s", SESSION);
 
-        /* Start user X session with xinitrc */
         size_t size = strlen(XINITRC) + strlen(SESSION) + 2;
         char cmd[size];
         snprintf(cmd, sizeof(cmd), "%s %s", XINITRC, SESSION);
-        execl(pw->pw_shell, pw->pw_shell, "-c", cmd, 0);
+
+        TRACE(stdout, "%s", "Starting user session...");
+
+        /* Start user X session with xinitrc */
+        execl(pw->pw_shell, pw->pw_shell, "-c", cmd, NULL);
     }
 
     int status;
@@ -275,7 +302,7 @@ int login(const char *username, const char *password)
 
     /* Remove credentials */
     result = pam_setcred(pam_handle, PAM_DELETE_CRED);
-    if ( !is_pam_success(result, pam_handle) ) return 0;
+    if ( !is_pam_success(result, pam_handle) ) { return 0; }
 
     /* End PAM session */
     result = pam_end(pam_handle, result);
@@ -283,6 +310,8 @@ int login(const char *username, const char *password)
 
     /* Delete session from utmp/wtmp */
     manage_login_records(username, "-d", tty);
+
+    TRACE(stdout, "%s", "Done authenticating username and password.");
 
     return 1;
 }

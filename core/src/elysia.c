@@ -34,7 +34,6 @@ char *ELYSIA_LOG  = "/etc/X11/elysia/elysia.log";
 int  TTYN         = 1;
 bool PREVIEW      = false;
 bool VERBOSE      = false;
-bool BENCHTIME    = false;
 
 
 
@@ -51,7 +50,7 @@ int main(int argc, char **argv)
     /* Log program start */
     time_t t;
     time(&t);
-    TRACE(stdout, "**************************************************", "");
+    TRACE(stdout, "%s", "**************************************************");
     TRACE(stdout, "Date: %s", ctime(&t));
 
     xsetup();

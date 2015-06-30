@@ -18,7 +18,6 @@
 #include "utility.h"
 #include "elytype.h"
 #include "elyglobal.h"
-#include "benchmark.h"
 #include <assert.h>
 #include <getopt.h>
 #include <stdio.h>
@@ -46,7 +45,6 @@ void usage()
     printf("\t-h, --help       Print program usage.\n");
     printf("\t-v, --verbose    Print program information verbosely.\n");
     printf("\t-p, --preview    Run the login manager in Preview Mode, does not paint a new X window.\n");
-    printf("\t-t, --time       Run benchmark time tests.\n");
 }
 
 
@@ -62,12 +60,11 @@ void parse_argv(int argc, char **argv)
         {"help",    optional_argument, 0, 'h'},
         {"verbose", optional_argument, 0, 'v'},
         {"preview", optional_argument, 0, 'p'},
-        {"time",    optional_argument, 0, 't'},
         {0, 0, 0, 0}
     };
 
     int opt;
-    while ( (opt=getopt_long(argc, argv, "hvpt", long_options, 0)) != -1 ) {
+    while ( (opt=getopt_long(argc, argv, "hvp", long_options, 0)) != -1 ) {
         switch (opt) {
         case 'h':
             usage(argv[0]);
@@ -78,9 +75,6 @@ void parse_argv(int argc, char **argv)
             break;
         case 'p':
             PREVIEW = true;
-            break;
-        case 't':
-            BENCHTIME = true;
             break;
         default:
             break;
@@ -132,70 +126,6 @@ void get_substring(char *copy, char *str, char sep, int num)
         ++i;
     }
     copy[j] = 0;
-}
-
-
-
-/* *************************
- * ***** WRITE TO FILE *****
- * *************************
- */
-
-/* Write to the Elysia log file */
-void file_log(const char *fmt, ...)
-{
-    char *file = ELYSIA_LOG;
-    char *opt = "a+";
-
-    FILE *stream = fopen(file, opt);
-    va_list args;
-
-    va_start(args, fmt);
-    vfprintf(stream, fmt, args);
-    va_end(args);
-
-    fclose(stream);
-}
-
-
-
-/* Overwrite configuration file line that matches the given key */
-void file_line_overwrite(char *file, char *key, char *val)
-{
-    /* Prepare new strings for the file overwrite procedure */
-    char *ext  = ".bak";
-    size_t n   = strlen(file) + strlen(ext) + 1;
-    size_t len = strlen(key)  + strlen(val) + 3;
-    char newfile[n];
-    char replacement[len];
-    snprintf(newfile,     n,   "%s%s",   file, ext);
-    snprintf(replacement, len, "%s: %s", key,  val);
-
-    /* Edit the line matching the key */
-    FILE *stream    = fopen(file, "r+");
-    FILE *newstream = fopen(newfile, "w");
-    bool write      = false;
-    char line[MAX_STR_LEN];
-    char copy[MAX_STR_LEN];
-    while ( fgets(line, sizeof(line), stream) != 0 ) {
-        get_substring(copy, line, ':', 1);
-
-        if ( (strcmp(key, copy) == 0) ) {
-            fprintf(newstream, "%s\n", replacement);
-            write = true;
-        } 
-        else 
-            fprintf(newstream, "%s", line);
-    }
-    
-    /* Write in default entry if key was not found */
-    if ( !write )
-        fprintf(stream, "%s: Not Found\n", key);
-
-    fclose(stream);
-    fclose(newstream);
-    remove(file);
-    rename(newfile, file);
 }
 
 

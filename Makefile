@@ -4,8 +4,17 @@
 
 CC      = gcc
 PKGS    = gtk+-3.0 cairo
-CFLAGS  = -w # -g -Wall
+CFLAGS  = -g -Wall
 CLIBS   = -lpam -lX11 `pkg-config ${PKGS} --cflags --libs`
+CMACROS = 
+
+# Macros
+# BENCHMARK = 
+BENCHMARK = -D BENCHMARK
+DEBUG     = 
+# DEBUG     = -D DEBUG
+
+CMACROS += ${BENCHMARK} ${DEBUG}
 
 
 
@@ -51,24 +60,24 @@ OBJ   = $(addprefix ${OBJ_DIR}/, $(addsuffix .o, ${FILES}))
 all: ${PROG}
 
 ${PROG}: ${OBJ}
-	${CC} ${CFLAGS} \
+	${CC} ${CFLAGS} ${CMACROS} \
 		-o ${PROG} ${OBJ} \
 		${CLIBS}
 
 ${OBJ_DIR}/%.o: ${APP_SRC_DIR}/%.c 
-	${CC} ${CFLAGS} \
+	${CC} ${CFLAGS} ${CMACROS} \
 		-c $< \
 		-o $@ \
 		${CLIBS}
 
 ${OBJ_DIR}/%.o: ${CORE_SRC_DIR}/%.c 
-	${CC} ${CFLAGS} \
+	${CC} ${CFLAGS} ${CMACROS} \
 		-c $< \
 		-o $@ \
 		${CLIBS}
 
 ${OBJ_DIR}/%.o: ${LIB_SRC_DIR}/%.c 
-	${CC} ${CFLAGS} \
+	${CC} ${CFLAGS} ${CMACROS} \
 		-c $< \
 		-o $@ \
 		${CLIBS}

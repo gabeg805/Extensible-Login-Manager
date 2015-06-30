@@ -8,7 +8,7 @@
  * Syntax: None.
  * 
  * Description: Setup the X server and all its components (composite manager, 
- *              background, etc.) for the Elysia Login Manager.
+ *              background, etc.).
  *              
  * Notes: None.
  * 
@@ -18,10 +18,14 @@
 /* Includes */
 #include "xserver.h"
 #include "elyglobal.h"
+#include "elyconfig.h"
 #include "utility.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include <assert.h>
+#include <errno.h>
 #include <time.h>
 #include <unistd.h>
 #include <X11/Xlib.h>
@@ -32,7 +36,6 @@ static void set_open_tty();
 static void start_xserver();
 static void start_compman();
 
-char DISPLAY[4];
 char VT[6];
 
 
@@ -79,9 +82,11 @@ static void start_xserver() {
     pid_t child_pid = fork();
     if ( child_pid == 0 ) {
         TRACE(stdout, "Executing %s command...", XORG);
+        char *display = getenv("DISPLAY");
+        assert(display);
         execl(XORG, XORG, "-logverbose", "-logfile", XSERVER_LOG, 
-              "-nolisten", "tcp", DISPLAY, "-auth",
-              XSERVER_AUTH, VT, 0);
+              "-nolisten", "tcp", display, "-auth",
+              XSERVER_AUTH, VT, NULL);
     }
 
     struct timespec t_start, t_end;
@@ -92,7 +97,7 @@ static void start_xserver() {
     timeout = read_config_int(X_CONFIG, "timeout");
 
     /* Wait until X server is up */
-    while ( XOpenDisplay(0) == 0 ) {
+    while ( XOpenDisplay(NULL) == NULL ) {
         clock_gettime(CLOCK_MONOTONIC, &t_end);
         end = (double)(t_end.tv_sec + (t_end.tv_nsec / 1e9));
         if ( (end-start) >= timeout ) {
@@ -103,6 +108,8 @@ static void start_xserver() {
 
     TRACE(stdout, "%s", "X server now active.");
 }
+
+
 
 /* ************************************* */
 /* ***** START COMPOSITING MANAGER ***** */
@@ -140,8 +147,8 @@ static void set_open_display() {
     char file[15];
     int d;
 
-    /* Determine an open display */
-    for ( d=0; d < 10; d++ ) {
+    /* Find an open display */
+    for ( d = 0; d < 10; d++ ) {
         snprintf(file, sizeof(file), "/tmp/.X%d-lock", d);
         if ( access(file, F_OK) ) {
             open = true;
@@ -151,13 +158,19 @@ static void set_open_display() {
 
     /* Open display found */
     if ( open ) {
-        snprintf(DISPLAY, sizeof(DISPLAY), ":%d", d);
-        setenv("DISPLAY", DISPLAY, 1);
-        TRACE(stdout, "Display '%s' is now open.", DISPLAY);
+        char display[5];
+        snprintf(display, sizeof(display), ":%d", d);
+        int status = setenv("DISPLAY", display, 1);
+        if ( status == -1 ) {
+            TRACE(stderr, "Error setting environment variable: %s", 
+                  strerror(errno));
+            exit(1);
+        }
+        TRACE(stdout, "Display '%s' is now open.", display);
     }
     /* Couldn't find an open display */
     else {
-        TRACE(stdout, "An open display could not be found. Exiting.", "");
+        TRACE(stdout, "%s", "An open display could not be found. Exiting.");
         exit(1);
     }
 }

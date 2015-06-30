@@ -24,11 +24,11 @@
 #include <stdbool.h>
 
 /* Defines */
-#ifdef BENCHERIES
+#ifdef BENCHMARK
 # define TRACE(stream, fmt, str) \
-    fprintf(stream, "%s: %s:%d: " fmt " (%f)\n", \
+    fprintf(stream, "%s: %s:%d: " fmt " (%.8f)\n", \
             __FILE__, __FUNCTION__, __LINE__,   \
-            str, benchmark_runtime())
+            str, benchmark())
 #else
 # define TRACE(stream, fmt, str)                 \
     fprintf(stream, "%s: %s:%d: " fmt "\n",  \
@@ -48,10 +48,6 @@ void parse_argv(int argc, char **argv);
 
 char * basename(char *str);
 void get_substring(char *substr, char *str, char sep, int num);
-
-void trace(FILE *handle);
-void file_log(const char *fmt, ...);
-void file_line_overwrite(char *file, char *key, char *val);
 
 bool is_running(char *prog);
 void get_cmd_output(char *arr, int size, char *cmd);

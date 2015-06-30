@@ -21,7 +21,7 @@
 #include "elytype.h"
 #include "elyconfig.h"
 #include "utility.h"
-#include "benchmark.h"
+#include <stdlib.h>
 #include <string.h>
 #include <gtk/gtk.h>
 
@@ -39,7 +39,7 @@ static void set_window_manager_entries(GtkWidget *menu);
 
 /* Setup window manager dropdown menu button */
 static void setup_menu(struct elyapp app) {
-    double bmtime = benchmark_runtime(0);
+    TRACE(stdout, "%s", "Setting up window manager menu...");
 
     GtkWidget *menu = gtk_menu_new();
     set_window_manager_entries(menu);
@@ -48,9 +48,7 @@ static void setup_menu(struct elyapp app) {
     gtk_button_set_relief(GTK_BUTTON(app.widg), GTK_RELIEF_NONE);
     gtk_menu_button_set_popup(GTK_MENU_BUTTON(app.widg), menu);
 
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done setting up window manager menu.");
 }
 
 
@@ -61,14 +59,12 @@ static void setup_menu(struct elyapp app) {
 
 /* Write to a file, which window manager to use for the session */
 static void wm_write_to_file(GtkMenu *item) {
-    double bmtime = benchmark_runtime(0);
+    TRACE(stdout, "%s", "Setting window manager session...");
 
     SESSION = (char *) gtk_menu_item_get_label(GTK_MENU_ITEM(item));
-    file_line_overwrite(WM_CONFIG, "wm", SESSION);
+    overwrite_config_line(WM_CONFIG, "wm", SESSION);
 
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done setting window manager session.");
 }
 
 
@@ -79,7 +75,7 @@ static void wm_write_to_file(GtkMenu *item) {
 
 /* Return all the window managers on the system */
 static char ** get_window_managers() {
-    double bmtime = benchmark_runtime(0);
+    TRACE(stdout, "%s", "Getting list of system window managers...");
 
     char *cmd    = read_config_char(WM_CONFIG, "cmd", MAX_CMD_LEN);
     char sep     = '\n';
@@ -126,8 +122,8 @@ static char ** get_window_managers() {
     /* Add users to return array from available window manager list */
     while (1) {
         add = true;
-        if ( (strcmp(SESSION, "xterm") == 0) 
-             || (strcmp(container[loc], SESSION) == 0) ) 
+        if ( (strcmp(SESSION, "xterm") == 0) ||
+             (strcmp(container[loc], SESSION) == 0) ) 
             ;
         else if ( (i != 0) && (container[loc][0] != 0) ) 
             ;
@@ -149,9 +145,7 @@ static char ** get_window_managers() {
     }
     ret[i] = 0;
 
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done getting list of system window managers.");
 
     return ret;
 }
@@ -160,15 +154,15 @@ static char ** get_window_managers() {
 
 /* Determine which window manager(s) the system has and add them as entries to the menu */
 static void set_window_manager_entries(GtkWidget *menu) {
-    double bmtime = benchmark_runtime(0);
+    TRACE(stdout, "%s", "Creating window manager menu entries...");
 
     char **allwm  = get_window_managers();
-    GSList *group = 0;
+    GSList *group = NULL;
     size_t i      = 0;
     GtkWidget *sesh;
 
     /* Create the radio buttons for the window managers */
-    while ( allwm[i] != 0 ) {
+    while ( allwm[i] != NULL ) {
         if ( i == 0 )
             sesh = gtk_radio_menu_item_new_with_label(0, allwm[i]);
         else
@@ -179,15 +173,13 @@ static void set_window_manager_entries(GtkWidget *menu) {
         g_signal_connect(G_OBJECT(sesh), "activate", G_CALLBACK(wm_write_to_file), NULL);
 
         free(allwm[i]);
-        allwm[i] = 0;
+        allwm[i] = NULL;
         ++i;
     }
     free(allwm);
-    allwm = 0;
+    allwm = NULL;
 
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done creating window manager entries.");
 }
 
 
@@ -198,26 +190,19 @@ static void set_window_manager_entries(GtkWidget *menu) {
 
 /* Display the window manager button */
 void display_window_manager() {
-    double bmtime = benchmark_runtime(0);
-    if ( VERBOSE )
-        file_log("%s: (%s:%d): Displaying window manager menu button...", 
-                 __FILE__, __FUNCTION__, __LINE__);
-    
+    TRACE(stdout, "%s", "Displaying window manager menu...");
+
     /* Define default window manager session */
     SESSION = read_config_char(WM_CONFIG, "wm", MAX_STR_LEN);
-    if ( SESSION == 0 )
+    if ( SESSION == NULL )
         SESSION = "xterm";
 
     /* Create the window manager menu application */
     static struct elyapp app;
     app.win  = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     app.widg = gtk_menu_button_new();
-    setup_app(WM_CONFIG, &app, 0, 0);
+    setup_app(WM_CONFIG, &app, NULL, NULL);
     setup_menu(app);
 
-    if ( VERBOSE )
-        file_log("Done\n");
-    if ( BENCHTIME )
-        file_log("%s: (%s: Runtime): %lf\n", 
-                 __FILE__, __FUNCTION__, benchmark_runtime(bmtime));
+    TRACE(stdout, "%s", "Done displaying window manager menu.");
 }
