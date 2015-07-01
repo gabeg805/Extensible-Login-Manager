@@ -11,8 +11,8 @@ CMACROS =
 # Macros
 # BENCHMARK = 
 BENCHMARK = -D BENCHMARK
-DEBUG     = 
-# DEBUG     = -D DEBUG
+# DEBUG     = 
+DEBUG     = -D DEBUG
 
 CMACROS += ${BENCHMARK} ${DEBUG}
 

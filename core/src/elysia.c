@@ -31,6 +31,7 @@ char *USERNAME    = "User";
 char *PASSWORD    = "Password";
 char *SESSION     = "xterm";
 char *ELYSIA_LOG  = "/etc/X11/elysia/elysia.log";
+FILE *FP;
 int  TTYN         = 1;
 bool PREVIEW      = false;
 bool VERBOSE      = false;
@@ -45,6 +46,7 @@ bool VERBOSE      = false;
 int main(int argc, char **argv)
 {
     PROG = argv[0];
+    FP   = fopen(ELYSIA_LOG, "a+");
     parse_argv(argc, argv);
 
     /* Log program start */
@@ -60,6 +62,8 @@ int main(int argc, char **argv)
         if ( login(USERNAME, PASSWORD) )
             break;
     }
+
+    fclose(FP);
 
     return 0;
 }

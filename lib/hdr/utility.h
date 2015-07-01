@@ -19,23 +19,49 @@
 #define ELYSIA_UTILITY_H
 
 /* Includes */
+#include "elyglobal.h"
 #include "benchmark.h"
 #include <stdio.h>
 #include <stdbool.h>
 
 /* Defines */
-#ifdef BENCHMARK
-# define TRACE(stream, fmt, str) \
-    fprintf(stream, "%s: %s:%d: " fmt " (%.8f)\n", \
-            __FILE__, __FUNCTION__, __LINE__,   \
-            str, benchmark())
+/* Print to file pointer and stream */
+#define FPRINTF(stream, fmt, str) \
+    do { \
+        fprintf(FP, fmt, str);     \
+        fprintf(stream, fmt, str); \
+    } while (0)
+
+/* Enable debugging */
+#ifdef DEBUG
+#define TRACE_DEBUG(stream) \
+    do { \
+        FPRINTF(stream, "%s: ", __FILE__);    \
+        FPRINTF(stream, "%s:", __FUNCTION__); \
+        FPRINTF(stream, "%d: ", __LINE__);    \
+    } while (0)
 #else
-# define TRACE(stream, fmt, str)                 \
-    fprintf(stream, "%s: %s:%d: " fmt "\n",  \
-            __FILE__, __FUNCTION__, __LINE__,    \
-            str)
+#define TRACE_DEBUG(stream)
 #endif
 
+/* Enable benchmark testing */
+#ifdef BENCHMARK
+#define TRACE_BENCH(stream) \
+    FPRINTF(stream, " (%.8f)", benchmark())
+#else
+#define TRACE_BENCH(stream)
+#endif
+
+/* Status print statement */
+#define TRACE(stream, fmt, str) \
+    do { \
+        TRACE_DEBUG(stream);         \
+        FPRINTF(stream, fmt, str);   \
+        TRACE_BENCH(stream);         \
+        FPRINTF(stream, "%s", "\n"); \
+    } while (0)
+
+/* Maximum lengths for different strings */
 #define MAX_CMD_LEN    128
 #define MAX_LOC_LEN    64
 #define MAX_STR_LEN    32
@@ -43,7 +69,6 @@
 
 /* Public functions  */
 void usage();
-
 void parse_argv(int argc, char **argv);
 
 char * basename(char *str);

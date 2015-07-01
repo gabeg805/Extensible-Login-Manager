@@ -49,10 +49,6 @@ void usage()
 
 
 
-/* ******************************* */
-/* ***** PARSE INPUT OPTIONS ***** */
-/* ******************************* */
-
 /* Parse the command line arguments */
 void parse_argv(int argc, char **argv)
 {

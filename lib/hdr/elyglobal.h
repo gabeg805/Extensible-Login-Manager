@@ -29,6 +29,7 @@ extern char *USERNAME;
 extern char *PASSWORD;
 extern char *SESSION;
 extern char *ELYSIA_LOG;
+extern FILE *FP;
 extern int  TTYN;
 extern bool PREVIEW;
 extern bool VERBOSE;
