@@ -20,6 +20,7 @@
 
 /* Defines */
 #define WM_CONFIG    "/etc/X11/elysia/app/config/windowmanager.cfg"
+#define WM_STYLE     "/etc/X11/elysia/app/style/windowmanager.css"
 
 /* Public functions */
 void display_window_manager();

@@ -22,54 +22,48 @@
 #include <gtk/gtk.h>
 
 /* Definitions */
-/* Widget position and size */
+/* Settings file paths */
+struct elysettings {
+    char *config;
+    char *style;
+    char *class;
+};
+
+/* Application position */
 struct elypos {
     int x;
     int y;
+};
+
+/* Application shape attributes */
+struct elyshape {
     int width;
     int height;
+    int curve;
+    char *img;
 };
 
 /* Text attributes */
-struct elytxt {
-    int size;
-    int maxchars;
-    int refresh;
-    
-    char *text;
-    char *font;
+struct elytext {
     char *fmt;
     char *invis;
-    
-    int red;
-    int green;
-    int blue;
+    int maxchars;
 };
 
-/* Widget decoration */
-struct elydecor {
-    char *img_file;
-    
-    int bg_red;
-    int bg_green;
-    int bg_blue;
-    int bg_alpha;
-    
-    int fg_red;
-    int fg_green;
-    int fg_blue;
-    int fg_alpha;
-    
-    int div;
-};
-
-/* Widget application */
-struct elyapp {
+/* GUI attributes */
+struct elygui {
     GtkWidget *win;
     GtkWidget *widg;
+};
+
+/* Application */
+struct elyapp {
+    struct elygui gui;
     struct elypos pos;
-    struct elytxt txt;
-    struct elydecor decor;
+    struct elyshape shape;
+    struct elytext text;
+    struct elysettings settings;
+    int refresh;
 };
 
 #endif /* ELYSIA_ELYTYPE_H */

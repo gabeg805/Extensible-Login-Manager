@@ -65,7 +65,7 @@
 #define MAX_CMD_LEN    128
 #define MAX_LOC_LEN    64
 #define MAX_STR_LEN    32
-#define MAX_NUM_LEN    16
+#define MAX_NUM_LEN    32
 
 /* Public functions  */
 void usage();

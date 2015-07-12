@@ -19,8 +19,10 @@
 #define ELYSIA_CLOCK_H
 
 /* Defines */
-#define CLOCK_DATE_CONFIG    "/etc/X11/elysia/app/config/clock-date.cfg"
-#define CLOCK_TIME_CONFIG    "/etc/X11/elysia/app/config/clock-time.cfg"
+#define DATE_CONFIG    "/etc/X11/elysia/app/config/date.cfg"
+#define TIME_CONFIG    "/etc/X11/elysia/app/config/time.cfg"
+#define DATE_STYLE     "/etc/X11/elysia/app/style/date.css"
+#define TIME_STYLE     "/etc/X11/elysia/app/style/time.css"
 
 /* Public functions */
 void display_clock();

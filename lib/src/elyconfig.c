@@ -16,6 +16,7 @@
 
 /* Includes */
 #include "elyconfig.h"
+#include "elytype.h"
 #include "utility.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -216,4 +217,58 @@ void read_config_cmd_rep(char *arr, char *file, char *rep1, char *rep2, char *re
         }
         ++i;
     }
+}
+
+
+
+/* *********************************** */
+/* ***** SETUP APP CONFIG VALUES ***** */
+/* *********************************** */
+
+/* Set position values from config file */
+void setup_config_pos(struct elyapp *app)
+{
+    TRACE(stdout, "%s", "Reading application position from config file...");
+
+    int x = read_config_int(app->settings.config, "xpos");
+    int y = read_config_int(app->settings.config, "ypos");
+    if ( x < 0 ) { x = 0; }
+    if ( y < 0 ) { y = 0; }
+    setup_app_pos(app, x, y);
+
+    TRACE(stdout, "%s", "Done reading position from config file.");
+}
+
+
+
+/* Set position values from config file */
+void setup_config_shape(struct elyapp *app)
+{
+    TRACE(stdout, "%s", "Reading application shape from config file...");
+
+    int width  = read_config_int(app->settings.config,  "width");
+    int height = read_config_int(app->settings.config,  "height");
+    int curve  = read_config_int(app->settings.config,  "curve");
+    char *img  = read_config_char(app->settings.config, "img-file", MAX_LOC_LEN);
+    if ( width  < 0 ) { width = 0; }
+    if ( height < 0 ) { height = 0; }
+    if ( curve  < 0 ) { curve = 0; }
+    setup_app_shape(app, width, height, curve, img);
+
+    TRACE(stdout, "%s", "Done reading shape from config file.");
+}
+
+
+
+/* Set text values from config file */
+void setup_config_text(struct elyapp *app)
+{
+    TRACE(stdout, "%s", "Reading application text settings from config file...");
+
+    char *fmt    = read_config_char(app->settings.config, "fmt",   MAX_STR_LEN);
+    char *invis  = read_config_char(app->settings.config, "invis", MAX_STR_LEN);
+    int maxchars = read_config_int(app->settings.config,  "maxchars");
+    setup_app_text(app, fmt, invis, maxchars);
+
+    TRACE(stdout, "%s", "Done reading text settings from config file.");
 }

@@ -19,9 +19,7 @@
 #include "clock.h"
 #include "frame.h"
 #include "panel.h"
-#include "password.h"
-#include "textimage.h"
-#include "username.h"
+#include "login.h"
 #include "utility.h"
 #include "windowmanager.h"
 #include <stdbool.h>
@@ -41,13 +39,11 @@ void login_interface(void) {
     if ( interface ) {
         TRACE(stdout, "%s", "Starting login interface...");
         display_frame();
-        display_text_image();
-        display_username();
         display_window_manager();
         display_clock();
         display_panel();
     }
-    display_password_entry();
+    display_login();
 
     if ( interface ) {
         TRACE(stdout, "%s", "Done displaying login interface.");

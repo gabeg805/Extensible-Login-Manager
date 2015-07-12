@@ -19,175 +19,163 @@
 #include "elytype.h"
 #include "elyconfig.h"
 #include "utility.h"
+#include <string.h>
+#include <unistd.h>
 #include <gtk/gtk.h>
 
 
 
-/* ***************************** */
-/* ***** APPLICATION SETUP ***** */
-/* ***************************** */
+/* **************************************
+ * ***** SET APPLICATION ATTRIBUTES *****
+ * **************************************
+ */
 
-/* Setup the widget */
-void setup_app(char *file, 
-               struct elyapp *app, 
-               char *event, 
-               void (*func)(GtkWidget *widg))
+/* Setup the application */
+void set_app(struct elyapp *app)
 {
     TRACE(stdout, "%s", "Setting up application...");
 
     /* Define widget settings from the config file */
-    set_config_pos(file,   &app->pos);
-    set_config_txt(file,   &app->txt);
-    set_config_decor(file, &app->decor);
-    set_widget_pos(app);
-    set_widget_color(app);
-
-    /* Set widget settings */
-    enable_transparency(app->win);
-    gtk_container_add(GTK_CONTAINER(app->win), app->widg);
-    g_signal_connect(app->win, "destroy", G_CALLBACK(gtk_main_quit), 0);
-    if ( event != 0 )
-        g_signal_connect(G_OBJECT(app->widg), event, G_CALLBACK(func), 0);
+    setup_config_pos(app);
+    setup_config_shape(app);
+    setup_config_text(app);
+    set_app_pos(app);
+    set_app_shape(app);
 
     /* Display the login frame */
-    gtk_widget_show(app->widg);
-    gtk_widget_show(app->win);
+    enable_transparency(app->gui.win);
+    g_signal_connect(app->gui.win, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    gtk_container_add(GTK_CONTAINER(app->gui.win), app->gui.widg);
+    gtk_widget_show(app->gui.widg);
+    gtk_widget_show(app->gui.win);
 
     TRACE(stdout, "%s", "Done setting up application");
 }
 
-
-
 /* Set widget position and size */
-void set_widget_pos(struct elyapp *app)
+void set_app_pos(struct elyapp *app)
 {
     TRACE(stdout, "%s", "Setting application position and size...");
 
-    gtk_window_move(GTK_WINDOW(app->win),
+    gtk_window_move(GTK_WINDOW(app->gui.win),
                     app->pos.x,
                     app->pos.y);
-    gtk_window_set_default_size(GTK_WINDOW(app->win),
-                                app->pos.width,
-                                app->pos.height);
 
     TRACE(stdout, "%s", "Done setting position and size.");
 }
 
+/* Set widget position and size */
+void set_app_shape(struct elyapp *app)
+{
+    TRACE(stdout, "%s", "Setting application position and size...");
 
+    gtk_window_set_default_size(GTK_WINDOW(app->gui.win),
+                                app->shape.width,
+                                app->shape.height);
+
+    TRACE(stdout, "%s", "Done setting position and size.");
+}
 
 /* Set the color of a widget  */
-void set_widget_color(struct elyapp *app)
+void set_app_style(struct elyapp *app, GtkWidget *widg)
 {
-    TRACE(stdout, "%s", "Setting application color...");
+    TRACE(stdout, "%s", "Setting application style...");
 
-    /* No decoration defined */
-    if ( app->decor.div < 0 )
+    /* No style defined */
+    if ( access(app->settings.style, F_OK) == -1 )
         return;
 
-    /* Define widget/window dackground and foreground colors */
-    double bg_red         = (double) app->decor.bg_red   / app->decor.div;
-    double bg_green       = (double) app->decor.bg_green / app->decor.div;
-    double bg_blue        = (double) app->decor.bg_blue  / app->decor.div;
-    double bg_alpha       = (double) app->decor.bg_alpha / app->decor.div;
-    double fg_red         = (double) app->decor.fg_red   / app->decor.div;
-    double fg_green       = (double) app->decor.fg_green / app->decor.div;
-    double fg_blue        = (double) app->decor.fg_blue  / app->decor.div;
-    double fg_alpha       = (double) app->decor.fg_alpha / app->decor.div;
-    const GdkRGBA bg_win  = {0, 0, 0, 0};
-    const GdkRGBA fg_win  = {0, 0, 0, 0};
-    const GdkRGBA bg_widg = {bg_red, bg_green, bg_blue, bg_alpha};
-    const GdkRGBA fg_widg = {fg_red, fg_green, fg_blue, fg_alpha};
-
-    /* Set widget/window colors */
-    gtk_widget_override_background_color(app->win, GTK_STATE_FLAG_NORMAL, &bg_win);
-    gtk_widget_override_background_color(app->widg, GTK_STATE_FLAG_NORMAL, &bg_widg);
-    gtk_widget_override_color(app->win, GTK_STATE_FLAG_NORMAL, &fg_win);
-    gtk_widget_override_color(app->widg, GTK_STATE_FLAG_NORMAL, &fg_widg);
+    GtkStyleContext *context = gtk_widget_get_style_context(widg);
+    GtkCssProvider *css      = gtk_css_provider_new();
+    GFile *gfile             = g_file_new_for_path(app->settings.style);
+    gtk_css_provider_load_from_file(css, gfile, NULL);
+    gtk_style_context_add_class(context, app->settings.class);
+    gtk_style_context_add_provider(context, 
+                                   GTK_STYLE_PROVIDER(css), 
+                                   GTK_STYLE_PROVIDER_PRIORITY_USER);
 
     TRACE(stdout, "%s", "Done setting color.");
 }
 
 
 
+/* ****************************
+ * ***** SETUP APP FIELDS *****
+ * ****************************
+ */
+
+/* Set application */
+void setup_app(struct elyapp *app,
+               struct elypos *pos,
+               struct elyshape *shape,
+               struct elytext *text,
+               struct elysettings *settings)
+{
+    setup_app_pos(app, pos->x, pos->y);
+    setup_app_shape(app, shape->width, shape->height, shape->curve, shape->img);
+    setup_app_text(app, text->fmt, text->invis, text->maxchars);
+    setup_app_settings(app, settings->config, settings->style, settings->class);
+}
+
+/* Set application settings files */
+void setup_app_settings(struct elyapp *app,
+                        char *config, char *style, char *class)
+{
+    app->settings.config = config;
+    app->settings.style  = style;
+    app->settings.class  = class;
+}
+
+/* Set application GTK GUI objects */
+void setup_app_gui(struct elyapp *app,
+                   GtkWidget *win, GtkWidget *widg)
+{
+    app->gui.win  = win;
+    app->gui.widg = widg;
+}
+
+/* Set application position */
+void setup_app_pos(struct elyapp *app,
+                   int x, int y)
+{
+    app->pos.x = x;
+    app->pos.y = y;
+}
+
+/* Set application shape dimensions */
+void setup_app_shape(struct elyapp *app,
+                     int width, int height, int curve, char *img)
+{
+    app->shape.width  = width;
+    app->shape.height = height;
+    app->shape.curve  = curve;
+    app->shape.img    = img;
+}
+
+/* Set application textual attributes */
+void setup_app_text(struct elyapp *app,
+                    char *fmt, char *invis, int maxchars)
+{
+    app->text.fmt      = fmt;
+    app->text.invis    = invis;
+    app->text.maxchars = maxchars;
+}
+
+
+
+/* ****************************
+ * ***** APP TRANSPARENCY *****
+ * ****************************
+ */
+
 /* Enable widget transparency */
-void enable_transparency(GtkWidget *widg)
+void enable_transparency(GtkWidget *win)
 {
     TRACE(stdout, "%s", "Setting application transparency...");
 
-    GdkScreen *screen = gtk_widget_get_screen(widg);
+    GdkScreen *screen = gtk_widget_get_screen(win);
     GdkVisual *visual = gdk_screen_get_rgba_visual(screen);
-    gtk_widget_set_visual(widg, visual);
+    gtk_widget_set_visual(win, visual);
 
     TRACE(stdout, "%s", "Done setting transparency.");
-}
-
-
-
-/* ***************************** */
-/* ***** SET CONFIG VALUES ***** */
-/* ***************************** */
-
-/* Set position values from config file */
-void set_config_pos(char *file, struct elypos *pos)
-{
-    TRACE(stdout, "%s", "Reading application position from config file...");
-
-    pos->x      = read_config_int(file, "xpos");
-    pos->y      = read_config_int(file, "ypos");
-    pos->width  = read_config_int(file, "width");
-    pos->height = read_config_int(file, "height");
-
-    /* Set default values when no values in config file are set */
-    if ( pos->x < 0 )      { pos->x = 0; }
-    if ( pos->y < 0 )      { pos->y = 0; }
-    if ( pos->width < 0 )  { pos->width = 0; }
-    if ( pos->height < 0 ) { pos->height = 0; }
-
-    TRACE(stdout, "%s", "Done reading position from config file.");
-}
-
-
-
-/* Set text values from config file */
-void set_config_txt(char *file, struct elytxt *txt)
-{
-    TRACE(stdout, "%s", "Reading application text settings from config file...");
-
-    txt->size     = read_config_int(file,  "size");
-    txt->maxchars = read_config_int(file,  "maxchars");
-    txt->refresh  = read_config_int(file,  "refresh-sec");
-    txt->text     = read_config_char(file, "text",  MAX_STR_LEN);
-    txt->font     = read_config_char(file, "font",  MAX_STR_LEN);
-    txt->fmt      = read_config_char(file, "fmt",   MAX_STR_LEN);
-    txt->invis    = read_config_char(file, "invis", MAX_STR_LEN);
-    txt->red      = read_config_int(file,  "txt-red");
-    txt->green    = read_config_int(file,  "txt-green");
-    txt->blue     = read_config_int(file,  "txt-blue");
-
-    /* Set default values when no value in config file is set */
-    if ( txt->invis == 0 )
-        txt->invis = " ";
-
-    TRACE(stdout, "%s", "Done reading text settings from config file.");
-}
-
-
-
-/* Set decoration values from config file */
-void set_config_decor(char *file, struct elydecor *decor)
-{
-    TRACE(stdout, "%s", "Reading application color from config file...");
-
-    decor->img_file = read_config_char(file, "img-file", MAX_LOC_LEN);
-    decor->bg_red   = read_config_int(file, "bg-red");
-    decor->bg_green = read_config_int(file, "bg-green");
-    decor->bg_blue  = read_config_int(file, "bg-blue");
-    decor->bg_alpha = read_config_int(file, "bg-alpha");
-    decor->fg_red   = read_config_int(file, "fg-red");
-    decor->fg_green = read_config_int(file, "fg-green");
-    decor->fg_blue  = read_config_int(file, "fg-blue");
-    decor->fg_alpha = read_config_int(file, "fg-alpha");
-    decor->div      = read_config_int(file, "div");
-
-    TRACE(stdout, "%s", "Done reading color from config file.");
 }

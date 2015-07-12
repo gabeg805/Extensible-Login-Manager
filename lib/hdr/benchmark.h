@@ -18,9 +18,6 @@
 #ifndef ELYSIA_BENCHMARK_H
 #define ELYSIA_BENCHMARK_H
 
-/* Includes */
-#include <stdbool.h>
-
 /* Public functions */
 double benchmark();
 

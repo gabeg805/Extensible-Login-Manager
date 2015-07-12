@@ -1,0 +1,13 @@
+.WindowManager {
+    background-image:none;
+    background-color:#e5e5e5;
+    border-color:transparent;
+    border-radius:10px;
+    border-width:0;
+}
+
+.WindowManager:hover {
+    background-image: -gtk-gradient (linear,
+                                     0 0, 0 1,
+                                     from(#ffffff), to(#e5e5e5));
+}

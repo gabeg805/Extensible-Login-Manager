@@ -23,16 +23,27 @@
 #include <gtk/gtk.h>
 
 /* Public functions */
-void setup_app(char *file, 
-               struct elyapp *app, 
-               char *event, 
-               void (*func)(GtkWidget *widg));
-void set_widget_pos(struct elyapp *app);
-void set_widget_color(struct elyapp *app);
-void enable_transparency(GtkWidget *widget);
+void set_app(struct elyapp *app);
+void set_app_pos(struct elyapp *app);
+void set_app_shape(struct elyapp *app);
+void set_app_style(struct elyapp *app, GtkWidget *widg);
 
-void set_config_pos(char *file, struct elypos *pos);
-void set_config_txt(char *file, struct elytxt *txt);
-void set_config_decor(char *file, struct elydecor *decor);
+void setup_app(struct elyapp *app,
+               struct elypos *pos,
+               struct elyshape *shape,
+               struct elytext *text,
+               struct elysettings *settings);
+void setup_app_settings(struct elyapp *app,
+                        char *config, char *style, char *class);
+void setup_app_gui(struct elyapp *app,
+                   GtkWidget *win, GtkWidget *widg);
+void setup_app_pos(struct elyapp *app,
+                   int x, int y);
+void setup_app_shape(struct elyapp *app,
+                     int width, int height, int curve, char *img);
+void setup_app_text(struct elyapp *app,
+                    char *fmt, char *invis, int maxchars);
+
+void enable_transparency(GtkWidget *win);
 
 #endif /* ELYSIA_ELYAPP_H */

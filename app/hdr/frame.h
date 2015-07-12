@@ -20,6 +20,7 @@
 
 /* Defines */
 #define FRAME_CONFIG    "/etc/X11/elysia/app/config/frame.cfg"
+#define FRAME_STYLE     "/etc/X11/elysia/app/style/frame.cfg"
 
 /* Public functions */
 void display_frame();
