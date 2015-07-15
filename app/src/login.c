@@ -20,8 +20,10 @@
 #include "elytype.h"
 #include "utility.h"
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 
 /* Private functions */
+static gboolean set_login_focus(GtkWidget *widg, GdkEvent *event, gpointer data);
 static void setup_entry(struct elyapp *app, char *tag);
 static void get_entry_text(struct elyapp *app, char **str);
 static void get_username(void);
@@ -57,6 +59,10 @@ void display_login()
     g_signal_connect(user.gui.widg,   "activate", G_CALLBACK(get_login), NULL);
     g_signal_connect(pass.gui.widg,   "activate", G_CALLBACK(get_login), NULL);
     g_signal_connect(signin.gui.widg, "clicked",  G_CALLBACK(get_login), NULL);
+    g_signal_connect(user.gui.widg, "key-press-event", 
+                     G_CALLBACK(set_login_focus), pass.gui.widg);
+    g_signal_connect(pass.gui.widg, "key-press-event", 
+                     G_CALLBACK(set_login_focus), signin.gui.widg);
 
     setup_entry(&user, user.settings.class);
     setup_entry(&pass, pass.settings.class);
@@ -70,9 +76,23 @@ void display_login()
     TRACE(stdout, "%s", "Done displaying password entry box.");
 }
 
-/* ************************
- * ***** SETUP ENTRY BOX **
- * ************************
+/* ***************************
+ * ***** SET LOGIN FOCUS *****
+ * ***************************
+ */
+static gboolean set_login_focus(GtkWidget *widg, GdkEvent *event, gpointer data)
+{
+    GdkEventKey *key = (GdkEventKey*)event;
+
+    if ( key->keyval == GDK_KEY_Tab )
+        gtk_widget_grab_focus((GtkWidget*)data);
+
+    return FALSE;
+}
+
+/* ***************************
+ * ***** SETUP ENTRY BOX *****
+ * ***************************
  */
 static void setup_entry(struct elyapp *app, char *tag)
 {

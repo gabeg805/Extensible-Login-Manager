@@ -1,6 +1,6 @@
 .Shutdown {
     background-image:none;
-    background-color:#cccccc;
+    background-color:#ff0000;
     border-color:transparent;
     border-radius:10px;
     border-width:0;
@@ -9,5 +9,5 @@
 .Shutdown:hover {
     background-image: -gtk-gradient (linear,
                                      0 0, 0 1,
-                                     from(#ffffff), to(#cccccc));
+                                     from(#ff4c4c), to(#ff0000));
 }

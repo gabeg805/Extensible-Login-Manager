@@ -16,6 +16,7 @@
 
 /* Includes */
 #include "interface.h"
+#include "banner.h"
 #include "clock.h"
 #include "frame.h"
 #include "panel.h"
@@ -42,6 +43,7 @@ void login_interface(void) {
         display_window_manager();
         display_clock();
         display_panel();
+        display_banner();
     }
     display_login();
 
