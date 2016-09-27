@@ -1,10 +1,12 @@
+* Readme is slightly outdated, but generally holds correct information *
+
 ===========
 What is it?
 ===========
 
-The Elysia login manager is a highly configurable login manager I created for my
-Arch Linux system. I made it because I thought it'd be a fun project to do and
-it really was super fun!
+The Extensible Login Manager (ELM) is a highly configurable login manager I
+created for my Arch Linux system. I made it because I thought it'd be a fun
+project to do and it really was super fun!
 
 Along the way though it became clear to me that there was a serious lack of
 information out there for creating a login manager. The real hard part, and
@@ -29,26 +31,26 @@ file.
 
 A quick program setup is first required which accomplishes the following:
 
-    - Enables the systemd service file (elysia.service)
-    - Enables the Linux-PAM module (elysia)
+    - Enables the systemd service file (elm.service)
+    - Enables the Linux-PAM module (elm)
 
 The program itself works as follows (starting at system bootup):
 
     - System boots up and all required processes are started
-    - Elysia service is started (since it was enabled with "make install") after
+    - Elm service is started (since it was enabled with "make install") after
       the Getty service
-    - Elysia service starts the Elysia Login Manager
-    - Elysia Login Manager starts an X server (everything following needs a
+    - Elm service starts the login manager
+    - ELM starts an X server (everything following needs a
       running X server)
     - Compositing manager is started
     - Background is displayed
-    - Elysia applications are displayed
+    - Elm applications are displayed
     - The user is prompted to enter the password
     - Username/password combination is sent to the "authenticate" function
     - Inside the "authenticate" function, initiate the PAM module conversation
       ("conv" function) between the username and password combination and the
-      Elysia PAM module
-    - Start the designated PAM module ("elysia")
+      Elm PAM module
+    - Start the designated PAM module ("elm")
     - Set the PAM user
     - Set the PAM tty
     - Authenticate the username/password combination
@@ -89,7 +91,7 @@ manager works, here's how to get them:
 To install the login manager you want to do the following:
 
     # unzip Gabes-Login-Manager-master.zip
-    # mv Gabes-Login-Manager-master /etc/X11/elysia
+    # mv Gabes-Login-Manager-master /etc/X11/elm
     # make install
     # make
 
@@ -116,7 +118,7 @@ Executing this program on startup can have some pretty adverse effects, but fear
             * When this happens, it means that the compositing manager is starting 
               up either too early or too late. To fix this, hit the leaf icon in the
               bottom right of the screen, and hit restart. This will restart the 
-              Elysia service.
+              Elm service.
 
     - Screen remains black and nothing shows up.
             * This one requires a more manual approach. Switch to a tty with:
@@ -136,7 +138,7 @@ To-Do
 
 Here's a list of things I want to implement, but haven't had the time to do so yet:
     
-    - Start Elysia over getty reliably
+    - Start Elm over getty reliably
     
     - Change focus policy
     

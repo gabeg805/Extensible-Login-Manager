@@ -1,0 +1,26 @@
+/* *****************************************************************************
+ * 
+ * Name:    powerbuttons.h
+ * Author:  Gabriel Gonzalez
+ * Email:   gabeg@bu.edu
+ * License: The MIT License (MIT)
+ * 
+ * Description: Display power buttons that control shutting down and rebooting
+ *              the system.
+ * 
+ * Notes: None.
+ * 
+ * *****************************************************************************
+ */
+
+/* Header guard */
+#ifndef ELM_POWER_BUTTONS_H
+#define ELM_POWER_BUTTONS_H
+
+/* Includes */
+#include "elmapp.h"
+
+/* Public functions */
+ElmApp * display_power_buttons(ElmCallback callback);
+
+#endif /* ELM_POWER_BUTTONS_H */

@@ -1,0 +1,9 @@
+[Unit]
+Description=Extensible Login Manager
+After=systemd-user-sessions.service 
+
+[Service]
+ExecStart=/etc/X11/elm/elm -v
+
+[Install]
+Alias=display-manager.service

@@ -1,0 +1,42 @@
+.Reboot {
+    background-image:none;
+    background-color:#00a400;
+    border-color:transparent;
+    border-radius:10px;
+    border-width:0;
+}
+.Reboot:hover {
+    background-image: -gtk-gradient (linear,
+                                     0 0, 0 1,
+                                     from(#4cbf4c), to(#00a400));
+}
+
+.Refresh {
+    background-image:none;
+    background-color:#ffa500;
+    border-color:transparent;
+    border-radius:10px;
+    border-width:0;
+}
+.Refresh:hover {
+    background-image: -gtk-gradient (linear,
+                                     0 0, 0 1,
+                                     from(#ffc04c), to(#ffa500));
+}
+
+.Shutdown {
+    background-image:none;
+    background-color:#ff0000;
+    border-color:transparent;
+    border-radius:10px;
+    border-width:0;
+}
+.Shutdown:hover {
+    background-image: -gtk-gradient (linear,
+                                     0 0, 0 1,
+                                     from(#ff4c4c), to(#ff0000));
+}
+
+.Window {
+    background-color:transparent;
+}
