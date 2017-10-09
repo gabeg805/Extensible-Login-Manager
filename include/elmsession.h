@@ -30,7 +30,7 @@ typedef struct
 {
     char *username;
     char *password;
-    char *windowmanager;
+    char *xsession;
 } ElmLoginInfo;
 
 typedef struct

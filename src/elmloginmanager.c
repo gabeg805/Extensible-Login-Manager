@@ -27,21 +27,20 @@
 #include <systemd/sd-daemon.h>
 
 /* Private functions */
-static int  elm_login_manager_run(void);
-static int  elm_login_manager_setup_signal_catcher(void);
-static int  elm_login_manager_xinit(void);
-static int  elm_login_manager_xstyle(void);
-static int  elm_login_manager_prompt(void);
-static void * elm_login_manager_user_session(void*);
-static void   elm_login_manager_signal_catcher(int, siginfo_t *, void *);
-static void   elm_login_manager_signal_user1(int, siginfo_t *, void *);
-static int elm_login_manager_build(void);
-static int elm_login_manager_show(void);
-static int elm_login_manager_hide(void);
+static int      elm_login_manager_run(void);
+static void *   elm_login_manager_login_session(void*);
+static int      elm_login_manager_login_prompt(void);
+static int      elm_login_manager_xinit(void);
+static int      elm_login_manager_xstyle(void);
+static int      elm_login_manager_setup_signal_catcher(void);
+static void     elm_login_manager_signal_catcher(int, siginfo_t *, void *);
+static void     elm_login_manager_set_preview_mode(int);
+static int      elm_login_manager_build(void);
+static int      elm_login_manager_show(void);
+static int      elm_login_manager_hide(void);
 static gboolean elm_login_manager_thread(GtkWidget *, void *);
-static int elm_login_manager_alloc(void);
-static int elm_login_manager_alloc_apps(size_t);
-static void elm_login_manager_set_preview_mode(int);
+static int      elm_login_manager_alloc(void);
+static int      elm_login_manager_alloc_apps(size_t);
 
 /* Private globals */
 static ElmLoginManager  *Manager = NULL;
@@ -62,13 +61,13 @@ ElmLoginManager * elm_new_login_manager(void)
         exit(ELM_EXIT_LOGIN_MANAGER_APP);
 
     /* Define methods */
-    Manager->run              = &elm_login_manager_run;
-    Manager->sigcatcher       = &elm_login_manager_setup_signal_catcher;
-    Manager->xinit            = &elm_login_manager_xinit;
-    Manager->xstyle           = &elm_login_manager_xstyle;
-    Manager->prompt           = &elm_login_manager_prompt;
-    Manager->usersession      = &elm_login_manager_user_session;
-    Manager->set_preview_mode = &elm_login_manager_set_preview_mode;
+    Manager->run                  = &elm_login_manager_run;
+    Manager->login_session        = &elm_login_manager_login_session;
+    Manager->login_prompt         = &elm_login_manager_login_prompt;
+    Manager->xinit                = &elm_login_manager_xinit;
+    Manager->xstyle               = &elm_login_manager_xstyle;
+    Manager->setup_signal_catcher = &elm_login_manager_setup_signal_catcher;
+    Manager->set_preview_mode     = &elm_login_manager_set_preview_mode;
 
     return Manager;
 }
@@ -83,15 +82,16 @@ int elm_login_manager_run(void)
     }
 
     elmprintf(LOG, "Starting Extensible Login Manager (ELM).");
-    if (Manager->sigcatcher() != 0)
+    if (Manager->setup_signal_catcher() != 0)
         return ELM_EXIT_LOGIN_MANAGER_SETUP_SIGNAL_CATCHER;
     if (Manager->xinit() != 0)
         return ELM_EXIT_LOGIN_MANAGER_XINIT;
 
     while (1) {
+        elmprintf(LOG, "Iterating through run loop.");
         if (Manager->xstyle() != 0)
             return ELM_EXIT_LOGIN_MANAGER_XSTYLE;
-        if (Manager->prompt() != 0)
+        if (Manager->login_prompt() != 0)
             return ELM_EXIT_LOGIN_MANAGER_PROMPT;
     }
 
@@ -99,26 +99,79 @@ int elm_login_manager_run(void)
 }
 
 /* ************************************************************************** */
-/* Setup signal catcher */
-int elm_login_manager_setup_signal_catcher(void)
+/* Run login session */
+void * elm_login_manager_login_session(void *arg)
 {
     if (Manager == NULL) {
-        elmprintf(LOG, "Unable to setup signal catcher: Login Manager does not exist.");
+        elmprintf(LOG, "Unable to run user session: Login Manager does not exist.");
+        return NULL;
+    }
+
+    elmprintf(LOG, "Running login session.");
+    ElmLoginInfo *info    = (ElmLoginInfo*)arg;
+    ElmSession   *session = elm_new_session(info);
+    int           status;
+
+    /* Authenticate */
+    if ((status=session->authenticate()) != 0)
+        return NULL;
+    else {
+        elm_login_manager_hide();
+        sleep(1);
+        elm_login_manager_hide();
+        sleep(1);
+    }
+
+    /* End here during preview mode */
+    if (Preview) {
+        elmprintf(LOG, "Login successful.");
+        elm_login_manager_show();
+        return NULL;
+    }
+
+    /* Login */
+    if ((status=session->login()) != 0)
+        return NULL;
+
+    /* Wait for session to end */
+    int wstatus;
+    if ((status=waitpid(session->pid, &wstatus, 0)) == -1)
+        elmprintf(LOG, "Waitpid errored: %s.", strerror(errno));
+
+    if (WIFEXITED(wstatus))
+        elmprintf(LOG, "Exited with status '%d'.", WEXITSTATUS(wstatus));
+    else if (WIFSIGNALED(wstatus))
+        elmprintf(LOG, "Killed by signal '%d'.", WTERMSIG(wstatus));
+    else if (WIFSTOPPED(wstatus))
+        elmprintf(LOG, "Stopped by signal '%d'.", WSTOPSIG(wstatus));
+    else if (WIFCONTINUED(wstatus))
+        elmprintf(LOG, "Resumed by delivery of SIGCONT.");
+    else
+        ;
+
+    /* Logout */
+    if ((status=session->logout()) != 0)
+        return NULL;
+    elm_login_manager_show();
+
+    return NULL;
+}
+
+/* ************************************************************************** */
+/* Display GUI login manager prompt */
+int elm_login_manager_login_prompt(void)
+{
+    if (Manager == NULL) {
+        elmprintf(LOG, "Unable to display login prompt: Login Manager does not exist.");
         return 1;
     }
 
-    struct sigaction act, actuser;
-    act.sa_flags         = SA_SIGINFO;
-    actuser.sa_flags     = SA_SIGINFO;
-    act.sa_sigaction     = &elm_login_manager_signal_catcher;
-    actuser.sa_sigaction = &elm_login_manager_signal_user1;
-    sigaction(SIGQUIT, &act,     NULL);
-    sigaction(SIGTERM, &act,     NULL);
-    sigaction(SIGKILL, &act,     NULL);
-    sigaction(SIGINT,  &act,     NULL);
-    sigaction(SIGHUP,  &act,     NULL);
-    sigaction(SIGPIPE, &act,     NULL);
-    sigaction(SIGUSR1, &actuser, NULL);
+    elmprintf(LOG, "Displaying login prompt.");
+    gtk_init(NULL, NULL);
+    elm_login_manager_build();
+    elm_login_manager_show();
+    sd_notify(0, "READY=1");
+    gtk_main();
 
     return 0;
 }
@@ -133,10 +186,11 @@ int elm_login_manager_xinit(void)
     }
 
     /* Can maybe move this down after Xdisplay is set? */
-    if (!Preview)
-        xstart();
-    else
+    elmprintf(LOG, "Initializing X server.");
+    if (Preview)
         elmprintf(LOG, "Skipping X server 'start' due to Preview Mode.");
+    else
+        xstart();
     xcompmanager();
 
     return 0;
@@ -151,86 +205,36 @@ int elm_login_manager_xstyle(void)
         return 1;
     }
 
-    if (!Preview)
-        xsetstyle();
-    else
+    elmprintf(LOG, "Setting X server style.");
+    if (Preview)
         elmprintf(LOG, "Skipping X server 'setstyle' due to Preview Mode (To-Do: should not skip this).");
+    else
+        xsetstyle();
 
     return 0;
 }
 
 /* ************************************************************************** */
-/* Display login manager GUI application prompt */
-int elm_login_manager_prompt(void)
+/* Setup signal catcher */
+int elm_login_manager_setup_signal_catcher(void)
 {
     if (Manager == NULL) {
-        elmprintf(LOG, "Unable to display login manager prompt: Login Manager does not exist.");
+        elmprintf(LOG, "Unable to setup signal catcher: Login Manager does not exist.");
         return 1;
     }
 
-    gtk_init(NULL, NULL);
-    elm_login_manager_build();
-    elm_login_manager_show();
-    sd_notify(0, "READY=1");
-    gtk_main();
+    elmprintf(LOG, "Setting up signal catcher.");
+    struct sigaction act;
+    act.sa_flags     = SA_SIGINFO;
+    act.sa_sigaction = &elm_login_manager_signal_catcher;
+    sigaction(SIGQUIT, &act, NULL);
+    sigaction(SIGTERM, &act, NULL);
+    sigaction(SIGKILL, &act, NULL);
+    sigaction(SIGINT,  &act, NULL);
+    sigaction(SIGHUP,  &act, NULL);
+    sigaction(SIGPIPE, &act, NULL);
 
     return 0;
-}
-
-/* ************************************************************************** */
-/* Run user session */
-void * elm_login_manager_user_session(void *arg)
-{
-    if (Manager == NULL) {
-        elmprintf(LOG, "Unable to run user session: Login Manager does not exist.");
-        return NULL;
-    }
-
-    ElmLoginInfo *info    = (ElmLoginInfo*)arg;
-    ElmSession   *session = elm_new_session(info);
-    int           status;
-
-    /* Authenticate */
-    elmprintf(LOG, "Authenticate.");
-    if ((status=session->authenticate()) != 0)
-        return NULL;
-    elm_login_manager_hide();
-    sleep(1);
-    elm_login_manager_hide();
-    sleep(1);
-
-    if (Preview) {
-        elmprintf(LOG, "Login successful.");
-        return NULL;
-    }
-
-    /* Login */
-    elmprintf(LOG, "Login.");
-    if ((status=session->login()) != 0)
-        return NULL;
-    int wstatus;
-    status = waitpid(session->pid, &wstatus, 0);
-    if (status == -1)
-        elmprintf(LOG, "Waitpid errored: %s.", strerror(errno));
-    if (WIFEXITED(wstatus))
-        elmprintf(LOG, "Exited with status '%d'.", WEXITSTATUS(wstatus));
-    else if (WIFSIGNALED(wstatus))
-        elmprintf(LOG, "Killed by signal '%d'.", WTERMSIG(wstatus));
-    else if (WIFSTOPPED(wstatus))
-        elmprintf(LOG, "Stopped by signal '%d'.", WSTOPSIG(wstatus));
-    else if (WIFCONTINUED(wstatus))
-        elmprintf(LOG, "Continued.");
-    else
-        ;
-
-    /* Logout */
-    elmprintf(LOG, "Logout.");
-    if ((status=session->logout()) != 0)
-        return NULL;
-    elm_login_manager_show();
-    /* Manager->xinit(); */
-
-    return NULL;
 }
 
 /* ************************************************************************** */
@@ -249,6 +253,7 @@ void elm_login_manager_signal_catcher(int sig, siginfo_t *info, void *context)
     elmprintf(LOG, "pid:    %ld.", info->si_pid);
     elmprintf(LOG, "uid:    %ld.", info->si_uid);
     elmprintf(LOG, "status: %d.", info->si_status);
+
     int   signo = info->si_signo;
     pid_t pid   = info->si_pid;
     if (signo == SIGTERM) {
@@ -266,20 +271,10 @@ void elm_login_manager_signal_catcher(int sig, siginfo_t *info, void *context)
 }
 
 /* ************************************************************************** */
-/* Handle SIGUSR1 signal */
-void elm_login_manager_signal_user1(int sig, siginfo_t *info, void *context)
+/* Set preview mode flag */
+void elm_login_manager_set_preview_mode(int flag)
 {
-    elmprintf(LOG, "User signal: %d.", sig);
-    elmprintf(LOG, "signo:  %d.", info->si_signo);
-    elmprintf(LOG, "code:   %d.", info->si_code);
-    elmprintf(LOG, "errno:  %d.", info->si_errno);
-    elmprintf(LOG, "pid:    %ld.", info->si_pid);
-    elmprintf(LOG, "uid:    %ld.", info->si_uid);
-    elmprintf(LOG, "status: %d.", info->si_status);
-    struct sigaction actuser;
-    actuser.sa_flags     = SA_SIGINFO;
-    actuser.sa_sigaction = &elm_login_manager_signal_user1;
-	sigaction(sig, &actuser, NULL);
+    Preview = flag;
 }
 
 /* ************************************************************************** */
@@ -318,8 +313,10 @@ int elm_login_manager_show(void)
     /* Figure out how to design without Size. Do I really even need it? */
     size_t i;
     for (i=0; i < Size-1; ++i) {
+        printf("Showing apps: %lu\n", i);
         Apps[i]->set_self(Apps[i]);
         Apps[i]->show_all();
+        sleep(1);
     }
 
     return 0;
@@ -348,7 +345,9 @@ gboolean elm_login_manager_thread(GtkWidget *widget, void *arg)
         elmprintf(LOG, "Unable to thread login manager: Login Manager does not exist.");
         return FALSE;
     }
-    pthread_create(&Thread, NULL, Manager->usersession, arg);
+
+    pthread_create(&Thread, NULL, Manager->login_session, arg);
+
     return TRUE;
 }
 
@@ -356,7 +355,7 @@ gboolean elm_login_manager_thread(GtkWidget *widget, void *arg)
 /* Allocate login manager object */
 int elm_login_manager_alloc(void)
 {
-    Manager = (ElmLoginManager*)calloc(1, sizeof(ElmLoginManager));
+    Manager = calloc(1, sizeof(ElmLoginManager));
     if (Manager == NULL) {
         elmprintf(LOG, "Unable to initialize login manager: Login Manager does not exist.");
         return 1;
@@ -371,13 +370,14 @@ int elm_login_manager_alloc_apps(size_t size)
     if (size == 0)
         return 1;
 
-    Apps = (ElmApp**)realloc(Apps, size*sizeof(ElmApp*));
+    Apps = realloc(Apps, size*sizeof(ElmApp*));
     if (Apps == NULL) {
         elmprintf(LOG, "Unable to allocate application container with size '%u'.",
                   size);
         return -1;
     }
-    Apps[size-1] = (ElmApp*)calloc(1, sizeof(ElmApp));
+
+    Apps[size-1] = calloc(1, sizeof(ElmApp));
     if (Apps[0] == NULL) {
         elmprintf(LOG, "Unable to allocate application subcontainer.");
         return -1;
@@ -385,11 +385,4 @@ int elm_login_manager_alloc_apps(size_t size)
 
     Size = size;
     return 0;
-}
-
-/* ************************************************************************** */
-/* Set preview mode flag */
-void elm_login_manager_set_preview_mode(int flag)
-{
-    Preview = flag;
 }

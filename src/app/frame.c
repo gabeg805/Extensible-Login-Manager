@@ -24,16 +24,19 @@ static gboolean draw_frame(gpointer data);
 ElmApp * display_frame(ElmCallback callback)
 {
     elmprintf(LOG, "Displaying login frame...");
+
     static GtkWidget *drawing;
     static ElmApp    *frame;
-    frame = elm_new_app();
+    frame   = elm_new_app();
+    drawing = gtk_drawing_area_new();
+
     frame->new_window(GTK_WINDOW_POPUP);
     frame->set_position(550, 267);
     frame->set_size(270, 175);
-    drawing = gtk_drawing_area_new();
     frame->set_self(frame);
     frame->add_container(drawing);
     g_signal_connect(drawing, "draw", G_CALLBACK(draw_frame), NULL);
+
     return frame;
 }
 
@@ -47,6 +50,7 @@ gboolean draw_frame(gpointer data)
     double     height  = 175;
     double     curve   = 5;
     double     deg     = M_PI / 180.0;
+
     cairo_set_source_rgba(cr, 0, 0, 0, 0);
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
     cairo_paint(cr);
@@ -61,5 +65,6 @@ gboolean draw_frame(gpointer data)
     cairo_fill_preserve(cr);
     cairo_stroke (cr);
     cairo_destroy(cr);
+
     return FALSE;
 }

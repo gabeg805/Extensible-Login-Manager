@@ -55,6 +55,8 @@ int elm_session_authenticate(void)
 
     char *username = Session->_info->username;
     char *password = Session->_info->password;
+    elmprintf(LOG, "Authenticating credentials of '%s'." , username);
+
     return elm_authenticate(username, password);
 }
 
@@ -67,8 +69,10 @@ int elm_session_login(void)
         return -1;
     }
 
-    char *windowmanager = Session->_info->windowmanager;
-    return elm_login(windowmanager, &Session->pid);
+    char *xsession = Session->_info->xsession;
+    elmprintf(LOG, "Logging into session '%s'.", xsession);
+
+    return elm_login(xsession, &Session->pid);
 }
 
 /* ************************************************************************** */
@@ -80,6 +84,9 @@ int elm_session_logout(void)
         return -1;
     }
 
+    char *username = Session->_info->username;
+    elmprintf(LOG, "Logging out of user session for '%s'.", username);
+
     return elm_logout();
 }
 
@@ -87,7 +94,7 @@ int elm_session_logout(void)
 /* Allocate session object */
 int elm_session_alloc(void)
 {
-    Session = (ElmSession*)calloc(1, sizeof(ElmSession));
+    Session = calloc(1, sizeof(ElmSession));
     if (Session == NULL) {
         elmprintf(LOG, "Unable to initialize user session.");
         return 1;

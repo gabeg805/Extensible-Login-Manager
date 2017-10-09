@@ -37,7 +37,7 @@ static int Verbose = 0;
 void elmprintf(ElmPrint_t mode, const char *fmt, ...)
 {
     /* Format line label */
-    static const char *timefmt = "%Y-%m-%d %X";
+    static const char *timefmt = "%Y-%m-%d %I:%M:%S %p";
     static char label[128];
     static char linefmt[256];
     snprintf(label, sizeof(label), "[%s] %s:", strtimenow(timefmt),

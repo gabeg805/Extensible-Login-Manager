@@ -24,11 +24,11 @@
 typedef struct
 {
     int    (*run)(void);
-    int    (*sigcatcher)(void);
+    void * (*login_session)(void *arg);
+    int    (*login_prompt)(void);
     int    (*xinit)(void);
     int    (*xstyle)(void);
-    int    (*prompt)(void);
-    void * (*usersession)(void *arg);
+    int    (*setup_signal_catcher)(void);
     void   (*set_preview_mode)(int flag);
 } ElmLoginManager;
 
