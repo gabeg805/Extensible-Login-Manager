@@ -1,9 +1,9 @@
 .Reboot {
-    background-image:none;
-    background-color:#00a400;
-    border-color:transparent;
-    border-radius:10px;
-    border-width:0;
+    background-image: none;
+    background-color: #00a400;
+    border-color:     transparent;
+    border-radius:    10px;
+    border-width:     0;
 }
 .Reboot:hover {
     background-image: -gtk-gradient (linear,
@@ -12,11 +12,11 @@
 }
 
 .Refresh {
-    background-image:none;
-    background-color:#ffa500;
-    border-color:transparent;
-    border-radius:10px;
-    border-width:0;
+    background-image: none;
+    background-color: #ffa500;
+    border-color:     transparent;
+    border-radius:    10px;
+    border-width:     0;
 }
 .Refresh:hover {
     background-image: -gtk-gradient (linear,
@@ -25,11 +25,11 @@
 }
 
 .Shutdown {
-    background-image:none;
-    background-color:#ff0000;
-    border-color:transparent;
-    border-radius:10px;
-    border-width:0;
+    background-image: none;
+    background-color: #ff0000;
+    border-color:     transparent;
+    border-radius:    10px;
+    border-width:     0;
 }
 .Shutdown:hover {
     background-image: -gtk-gradient (linear,
@@ -38,5 +38,5 @@
 }
 
 .Window {
-    background-color:transparent;
+    background-color: transparent;
 }

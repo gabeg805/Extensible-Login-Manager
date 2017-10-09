@@ -20,23 +20,19 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 
-/* Defines */
-#define ELM_EXIT_LOGIN_MANAGER_NEW    1
-#define ELM_EXIT_LOGIN_MANAGER_APP    2
-#define ELM_EXIT_LOGIN_MANAGER_RUN    3
-#define ELM_EXIT_LOGIN_MANAGER_XINIT  4
-#define ELM_EXIT_LOGIN_MANAGER_PROMPT 5
-
 /* Typedefs */
 typedef struct
 {
     int    (*run)(void);
+    int    (*sigcatcher)(void);
     int    (*xinit)(void);
+    int    (*xstyle)(void);
     int    (*prompt)(void);
-    void * (*usersession)(void*);
+    void * (*usersession)(void *arg);
+    void   (*set_preview_mode)(int flag);
 } ElmLoginManager;
 
 /* Public functions  */
-ElmLoginManager * elm_new_login_manager(int argc, char **argv);
+ElmLoginManager * elm_new_login_manager(void);
 
 #endif /* ELM_LOGIN_MANAGER_H */

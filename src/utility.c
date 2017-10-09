@@ -5,7 +5,7 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Common functions used by the Elysia Login Manager.
+ * Description: Common functions used by ELM.
  *              
  * Notes: None.
  * 
@@ -14,66 +14,16 @@
 
 /* Includes */
 #include "utility.h"
-#include "elyglobal.h"
-#include <assert.h>
-#include <getopt.h>
+#include <ctype.h>
+#include <dirent.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
-#include <stdbool.h>
 #include <string.h>
-#include <signal.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <dirent.h>
-#include <gtk/gtk.h>
-
-#include <ctype.h>
-#include <sys/stat.h>
 #include <unistd.h>
-#include "elm.h"
-
-/* ************************************************************************** */
-/* Print program usage */
-void usage()
-{
-    printf("Usage: %s [option]\n", PROGRAM);
-    printf("\n");
-    printf("Options:\n");
-    printf("\t-h, --help       Print program usage.\n");
-    printf("\t-v, --verbose    Print program information verbosely.\n");
-    printf("\t-p, --preview    Run the login manager in Preview Mode, does not paint a new X window.\n");
-}
-
-/* ************************************************************************** */
-/* Parse the command line arguments */
-void parse_argv(int argc, char **argv)
-{
-    const struct option long_options[] = {
-        {"help",    optional_argument, 0, 'h'},
-        {"verbose", optional_argument, 0, 'v'},
-        {"preview", optional_argument, 0, 'p'},
-        {0, 0, 0, 0}
-    };
-
-    int opt;
-    while ( (opt=getopt_long(argc, argv, "hvp", long_options, 0)) != -1 ) {
-        switch (opt) {
-        case 'h':
-            usage(argv[0]);
-            exit(0);
-            break;
-        case 'v':
-            VERBOSE = true;
-            break;
-        case 'p':
-            PREVIEW = true;
-            break;
-        default:
-            break;
-        }
-    }
-}
 
 /* ************************************************************************** */
 /* Return the basename of a path*/
@@ -103,27 +53,31 @@ char * basename(const char *string)
 /* Read process info/enironment variables */
 /* char * pinfo/penv() */
 
+#include "elmio.h"
+
 /* ************************************************************************** */
 long pgrep(const char *program)
 {
     DIR  *dstream = opendir("/proc");
     uid_t uid     = getuid();
-    FILE *fstream;
-    char *endptr;
+    char *ptr;
+    char *end;
     char  fpath[64];
-    char  fcontents[128];
-    char  substr[128];
+    char  buffer[256];
+    int   fd;
+    int   nbytes;
     pid_t pid;
     struct dirent *entry;
     struct stat    buf;
 
     /* Loop through process directory */
-    while ((entry=readdir(dstream)) != NULL) {
+    while ((entry=readdir(dstream)) != NULL)
+    {
         /* Determine directory name (equates to PID) */
         if (entry->d_type != DT_DIR)
             continue;
-        pid = strtol(entry->d_name, &endptr, 10);
-        if ((pid == 0) || (*endptr != '\0'))
+        pid = strtol(entry->d_name, &ptr, 10);
+        if ((pid == 0) || (*ptr != '\0'))
             continue;
 
         /* Check PID file permissions */
@@ -134,20 +88,24 @@ long pgrep(const char *program)
             continue;
         if (access(fpath, R_OK))
             continue;
-        fstream = fopen(fpath, "r");
-        if (fstream == NULL)
-            continue;
 
         /* Read PID file */
-        if (fgets(fcontents, sizeof(fcontents), fstream) != NULL) {
-            memcpy(substr, fcontents, sizeof(fcontents));
-            if (substring(program, substr) != NULL) {
+        if ((fd=open(fpath, O_RDONLY)) < 0)
+            continue;
+        if ((nbytes=read(fd, buffer, sizeof buffer)) <= 0)
+            continue;
+
+        /* Parse PID file */
+        end = buffer + nbytes;
+        for (ptr=buffer; ptr < end; ) {
+            if (strstr(ptr, program) != NULL)
                 return pid;
-            }
+            while(*ptr++);
         }
-        fclose(fstream);
+        close(fd);
     }
     closedir(dstream);
+
     return 0;
 }
 

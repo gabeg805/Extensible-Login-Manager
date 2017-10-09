@@ -1,47 +1,52 @@
 .Title {
-    font:Arial 15;
-    color:#FFA500;
-    background-color:transparent;
+    font-family:      'Arial';
+    font-size:        15px;
+    color:            #ffa500;
+    background-color: transparent;
 }
 
 .Username {
-    font:  Arial 10;
-    border-color:transparent;
-    border-radius:5px;
-    border-width:0;
+    font-family:   'Arial';
+    font-size:     10px;
+    border-color:  transparent;
+    border-radius: 5px;
+    border-width:  0;
 }
 
 .Password {
-    font:  Arial 10;
-    border-color:transparent;
-    border-radius:5px;
-    border-width:0;
+    font-family:   'Arial';
+    font-size:     10px;
+    border-color:  transparent;
+    border-radius: 5px;
+    border-width:  0;
 }
 
 .Login {
-    font:  Arial 10;
-    border-radius:10px;
-    border-width:0;
-    color: white;
-    border-image: none;
+    font-family:      'Arial';
+    font-size:        10px;
+    color:            white;
+    border-radius:    10px;
+    border-width:     0;
+    border-image:     none;
     background-image: none;
-    background-color: #FFA500;
+    background-color: #ffa500;
 }
 .Login:hover {
-    font:  Arial 10;
-    color: white;
+    font-family:      'Arial';
+    font-size:        10px;
+    color:            white;
     background-image: -gtk-gradient (linear,
                                      0 0, 0 1,
-                                     from(#FFC966), to(#FFA500));
+                                     from(#ffc966), to(#ffa500));
 }
 
 .WindowManager {
-    color:#ffa500;
-    background-color:#e5e5e5;
-    background-image:none;
-    border-color:transparent;
-    border-radius:10px;
-    border-width:0;
+    color:            #ffa500;
+    background-color: #e5e5e5;
+    background-image: none;
+    border-color:     transparent;
+    border-radius:    10px;
+    border-width:     0;
 }
 .WindowManager:hover {
     background-image: -gtk-gradient (linear,

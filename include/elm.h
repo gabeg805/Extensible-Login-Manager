@@ -19,6 +19,7 @@
 /* Includes */
 #include "elmapp.h"
 #include "elmauthenticate.h"
+#include "elmdef.h"
 #include "elmloginmanager.h"
 #include "elmsession.h"
 #include "elminterface.h"
@@ -26,15 +27,14 @@
 #include "elmx.h"
 #include <cairo.h>
 #include <dirent.h>
+#include <getopt.h>
 #include <math.h>
+#include <signal.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <gtk/gtk.h>
 #include <sys/types.h>
-
-/* Defines */
-#define PROGRAM "elm"
 
 #endif /* ELM_H */

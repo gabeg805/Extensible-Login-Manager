@@ -28,5 +28,6 @@ typedef enum { NONE, INFO, WARNING, ERROR, LOG, DEBUG } ElmPrint_t;
 
 /* Public functions  */
 void elmprintf(ElmPrint_t mode, const char *fmt, ...);
+void elm_set_verbose(int flag);
 
 #endif /* ELM_IO_H */

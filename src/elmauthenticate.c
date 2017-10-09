@@ -29,6 +29,7 @@
 #include <sys/types.h>
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
+#include <systemd/sd-login.h>
 
 #include <time.h>
 #include <utmp.h>
@@ -57,6 +58,7 @@ int init_env(struct passwd *pw)
 {
     elmprintf(LOG, "%s", "Initializing environment variables...");
 
+
     set_env("HOME", pw->pw_dir);
     set_env("PWD", pw->pw_dir);
     set_env("SHELL", pw->pw_shell);
@@ -64,40 +66,42 @@ int init_env(struct passwd *pw)
     set_env("LOGNAME", pw->pw_name);
 
     char xauthority[64];
-    snprintf(xauthority,  sizeof(xauthority),  "%s/.Xauthority", pw->pw_dir);
+    snprintf(xauthority, sizeof(xauthority), "%s/.Xauthority", pw->pw_dir);
     set_env("XAUTHORITY", xauthority);
 
-    /* /\* Loginctl XDG commands from the config file *\/ */
-    /* const char *loginctl = "/usr/bin/loginctl"; */
-    /* const char *grep     = "/usr/bin/grep"; */
-    /* const char *awk      = "/usr/bin/awk"; */
-    /* const char *cmd_fmt  = "%s | %s %s | %s '{ print %s }'"; */
-    /* char seat_cmd[MAX_CMD_LEN]; */
-    /* char session_id_cmd[MAX_CMD_LEN]; */
-    /* snprintf(seat_cmd, sizeof(seat_cmd), cmd_fmt, loginctl, grep, pw->pw_name, */
-    /*          awk, "$1"); */
-    /* snprintf(seat_cmd, sizeof(seat_cmd), cmd_fmt, loginctl, grep, pw->pw_name, */
-    /*          awk, "$4"); */
 
-    /* /\* Define environment variables *\/ */
-    /* char seat[MAX_STR_LEN]; */
-    /* char session_id[MAX_STR_LEN]; */
-    /* char vtnr[MAX_NUM_LEN]; */
-    /* char runtime_dir[MAX_LOC_LEN]; */
-    /* get_cmd_output(seat,       sizeof(seat),       seat_cmd); */
-    /* get_cmd_output(session_id, sizeof(session_id), session_id_cmd); */
-    /* snprintf(vtnr,        sizeof(vtnr),        "%d",    TTYN); */
-    /* snprintf(runtime_dir, sizeof(runtime_dir), "%s/%d", "/run/user", pw->pw_uid); */
-
-    /* /\* Set environment variables *\/ */
-    /* if ( setenv("XDG_VTNR", vtnr, 1) == -1 ) */
-    /*     elmprintf(LOG, "Error setting environment variable: %s", strerror(errno)); */
-    /* if ( setenv("XDG_SEAT", seat, 1) == -1 ) */
-    /*     elmprintf(LOG, "Error setting environment variable: %s", strerror(errno)); */
-    /* if ( setenv("XDG_SESSION_ID", session_id, 1) == -1 ) */
-    /*     elmprintf(LOG, "Error setting environment variable: %s", strerror(errno)); */
-    /* if ( setenv("XDG_RUNTIME_DIR", runtime_dir, 1) == -1 ) */
-    /*     elmprintf(LOG, "Error setting environment variable: %s", strerror(errno)); */
+    /* /\* XDG environment variables *\/ */
+    /* int           status; */
+    /* char         *session; */
+    /* char         *seat; */
+    /* unsigned int  vt; */
+    /* char          runtimedir[64]; */
+    /* if ((status=sd_session_get_vt(session, &vt)) != 0) { */
+    /*     elmprintf(LOG, "Error getting loginctl virtual terminal. Setting vtnr to '%s'.", getenv("TTYN")); */
+    /*     set_env("XDG_VTNR", getenv("TTYN")); */
+    /* } */
+    /* else { */
+    /*     elmprintf(LOG, "Setting loginctl virtual terminal to '%u'."); */
+    /*     char value = ((char)vt)+'0'; */
+    /*     set_env("XDG_VTNR", &value); */
+    /* } */
+    /* if ((status=sd_session_get_seat(session, &seat)) != 0) { */
+    /*     elmprintf(LOG, "Error getting loginctl seat. Setting seat to 'seat0'."); */
+    /*     set_env("XDG_SEAT", "seat0"); */
+    /* } */
+    /* else { */
+    /*     elmprintf(LOG, "Setting loginctl seat to '%s'.", seat); */
+    /*     set_env("XDG_SEAT", seat); */
+    /* } */
+    /* if ((status=sd_uid_get_display(pw->pw_uid, &session)) < 0) */
+    /*     elmprintf(LOG, "Error getting loginctl session."); */
+    /* else { */
+    /*     elmprintf(LOG, "Setting loginctl session to '%s'.", session); */
+    /*     set_env("XDG_SESSION_ID", session); */
+    /* } */
+    /* snprintf(runtimedir, sizeof(runtimedir), "/run/user/%d", pw->pw_uid); */
+    /* elmprintf(LOG, "Setting runtime directory to '%s'.", runtimedir); */
+    /* set_env("XDG_RUNTIME_DIR", runtimedir); */
 
     elmprintf(LOG, "%s", "Done initializing environment variables.");
     return 0;
@@ -108,23 +112,26 @@ int init_env(struct passwd *pw)
 /* Set environment variables */
 int set_env(char *name, char *value)
 {
-    size_t  length = strlen(name) + strlen(value) + 2;
-    char   *pair   = (char*)malloc(length);
-    snprintf(pair, length,  "%s=%s", name, value);
-    int result = pam_putenv(pamh, pair);
+    size_t  name_value_len = strlen(name) + strlen(value) + 2;
+    char   *name_value     = (char*)malloc(name_value_len);
+    snprintf(name_value, name_value_len,  "%s=%s", name, value);
+
+    /* int result = pam_misc_setenv(pamh, name, value, 0); */
+    int result = pam_putenv(pamh, name_value);
     int ret    = 0;
     if (pam_failure("pam_putenv", result)) {
         elmprintf(LOG,
-                  "Error occurred setting pam environment variable: '%s'.",
-                  pair);
+                  "Error occurred setting pam environment variable: '%s=%s'.",
+                  name, value);
         ret = 1;
     }
     if (setenv(name, value, 1) < 0) {
-        elmprintf(LOG, "Error setting environment variable: '%s'.", pair);
+        elmprintf(LOG, "Error setting environment variable '%s=%s': %s.", name,
+                  value, strerror(errno));
         ret = 1;
     }
-    elmprintf(LOG, "Set environment variable: '%s'.", pair);
-    free(pair);
+    elmprintf(LOG, "Set environment variable: '%s=%s'.", name, value);
+    free(name_value);
     return ret;
 }
 
@@ -153,6 +160,18 @@ int elm_authenticate(const char *username, const char *password)
     if (pam_failure("pam_start", result))
         return 1;
 
+    /* Set items */
+    result = pam_set_item(pamh, PAM_TTY, getenv("DISPLAY"));
+    if (pam_failure("pam_set_item PAM_TTY", result))
+        return 1;
+    result = pam_set_item(pamh, PAM_RUSER, "root");
+    if (pam_failure("pam_set_item PAM_RUSER", result))
+        return 1;
+    result = pam_set_item(pamh, PAM_USER, username);
+    if (pam_failure("pam_set_item", result))
+        return 1;
+
+
     /* Authenticate PAM user */
     result = pam_authenticate(pamh, 0);
     if (pam_failure("pam_authenticate", result))
@@ -174,11 +193,6 @@ int elm_authenticate(const char *username, const char *password)
 /* Read man page of PAM functions for better info, and for initgroups */
 int elm_login(const char *session, pid_t *parentpid)
 {
-    if (PREVIEW) {
-        elmprintf(LOG, "Login successful! (Preview Mode)");
-        exit(ELM_EXIT_AUTHENTICATE_PREVIEW);
-    }
-
     const char *username = get_username();
     int         result;
 
@@ -193,14 +207,39 @@ int elm_login(const char *session, pid_t *parentpid)
 
     /* Get password entry for user */
     struct passwd *pw = getpwnam(username);
+    endpwent();
     if (pw == NULL) {
         elmprintf(LOG, "Error getting password structure for user '%s': %s",
                   username, strerror(errno));
         return 1;
     }
 
+    char **child_env = pam_getenvlist(pamh);
+    uint8_t i = 0;
+    while (child_env[i] != NULL) {
+        elmprintf(LOG, "child_env[%u]: %s", i, child_env[i]);
+        ++i;
+        if (i > 100)
+            break;
+    }
+    
+/* 		const int Num_Of_Variables = 11; /\* Number of env. variables + 1 *\/ */
+/* # endif /\* USE_CONSOLEKIT *\/ */
+/* 		char** child_env = static_cast<char**>(malloc(sizeof(char*)*Num_Of_Variables)); */
+/* 		int n = 0; */
+/* 		if(term) child_env[n++]=StrConcat("TERM=", term); */
+/* 		child_env[n++]=StrConcat("HOME=", pw->pw_dir); */
+/* 		child_env[n++]=StrConcat("PWD=", pw->pw_dir); */
+/* 		child_env[n++]=StrConcat("SHELL=", pw->pw_shell); */
+/* 		child_env[n++]=StrConcat("USER=", pw->pw_name); */
+/* 		child_env[n++]=StrConcat("LOGNAME=", pw->pw_name); */
+/* 		child_env[n++]=StrConcat("PATH=", cfg->getOption("default_path").c_str()); */
+/* 		child_env[n++]=StrConcat("DISPLAY=", DisplayName); */
+/* 		child_env[n++]=StrConcat("MAIL=", maildir.c_str()); */
+/* 		child_env[n++]=StrConcat("XAUTHORITY=", xauthority.c_str()); */
+
+
     /* Setup and execute user session */
-    /* signal(SIGCHLD, cleanup_child); */
     const char *xinitrcfile = "/etc/X11/elm/util/xinit/xinitrc";
     pid_t pid = fork();
     switch (pid) {
@@ -208,8 +247,6 @@ int elm_login(const char *session, pid_t *parentpid)
         elmprintf(LOG, "Setting up user session...");
 
         /* Begin setup of user session */
-        /* Should hide my windows!! */
-        /* system("xwininfo -root -children | grep '  0x' | cut -d' ' -f6 | xargs -n1 xkill -id"); */
         utmp_record();
         chdir(pw->pw_dir);
         chown(xinitrcfile, pw->pw_uid, pw->pw_gid);
@@ -227,12 +264,20 @@ int elm_login(const char *session, pid_t *parentpid)
             return 1;
         }
         init_env(pw);
+        i = 0;
+        while (child_env[i] != NULL) {
+            elmprintf(LOG, "child_env[%u]: %s", i, child_env[i]);
+            ++i;
+            if (i > 100)
+                break;
+        }
 
         /* Start user X session with xinitrc */
         xinitrc();
         elmprintf(LOG, "Starting user session.");
         char cmd[128];
         snprintf(cmd, sizeof(cmd), "exec /bin/bash --login %s %s", xinitrcfile, session);
+        /* snprintf(cmd, sizeof(cmd), "exec /bin/bash --login %s", session); */
         execl(pw->pw_shell, pw->pw_shell, "-c", cmd, NULL);
         elmprintf(LOG, "Error starting login shell: %s.", strerror(errno));
         exit(ELM_EXIT_AUTHENTICATE_LOGIN);
@@ -253,7 +298,6 @@ int elm_login(const char *session, pid_t *parentpid)
 int elm_logout(void)
 {
     utmp_clear();
-
     elmprintf(LOG, "Closing PAM session");
 
     /* Close PAM session */
@@ -283,7 +327,6 @@ int elm_logout(void)
     }
 
     elmprintf(LOG, "Done PAM");
-
     return 0;
 }
 

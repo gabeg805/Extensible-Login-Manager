@@ -126,7 +126,6 @@ int elm_app_new_window(ElmApp *self, GtkWindowType type)
 {
     self->_window      = gtk_window_new(type);
     GtkWidget *window = self->get_window();
-    elmprintf(LOG, "Window %p", window);
     elm_app_set_window_transparent(window);
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     return 0;
@@ -312,7 +311,6 @@ int elm_app_show_all(ElmApp *self)
     if (window == NULL)
         return 1;
     gtk_widget_show_all(window);
-    elmprintf(LOG, "Showing %p", window);
     return 0;
 }
 
@@ -329,13 +327,6 @@ int elm_app_hide_all(ElmApp *self)
     if (window == NULL)
         return 1;
     gtk_widget_hide(window);
-    elmprintf(LOG, "Hiding %p", window);
-    /* GtkWidget **widgets = self->get_widgets(); */
-    /* uint8_t     length  = self->get_length(); */
-    /* uint8_t     i; */
-    /* for (i=0; i < length; ++i) { */
-    /*     gtk_widget_hide(widgets[i]); */
-    /* } */
     return 0;
 }
 

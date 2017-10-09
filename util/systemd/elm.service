@@ -1,9 +1,14 @@
 [Unit]
 Description=Extensible Login Manager
-After=systemd-user-sessions.service 
+Conflicts=getty@tty1.service
+After=getty@tty1.service systemd-user-sessions.service
+# After=systemd-user-sessions.service 
 
 [Service]
-ExecStart=/etc/X11/elm/elm -v
+ExecStart=/etc/X11/elm/elm -vr
+#Restart=always
+IgnoreSIGPIPE=no
+BusName=org.freedesktop.DisplayManager
 
 [Install]
 Alias=display-manager.service

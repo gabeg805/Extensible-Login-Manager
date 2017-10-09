@@ -1,54 +1,57 @@
+# ------------------------------------------------------------------------------
+# Project
+PROJECT = elm
+
+# ------------------------------------------------------------------------------
 # Compiler settings
-# -----------------
 CC      = gcc
-PKGS    = gtk+-3.0 cairo
+PKGS    = gtk+-3.0 cairo libsystemd
 CFLAGS  = -g -Wall
-CLIBS   = -lpam -lX11 -lutil `pkg-config $(PKGS) --cflags --libs`
+LIBS   = -lpam -lpam_misc -lX11 -lImlib2 -lutil `pkg-config $(PKGS) --cflags --libs`
 
-# Program Files
-# -------------
-EXE = elm
-LOG = /tmp/elm.log
+# ------------------------------------------------------------------------------
+# Directories
+BUILDDIR  = .
+OBJDIR    = $(BUILDDIR)/obj
+SRCDIR    = $(BUILDDIR)/src
+INCDIR    = $(BUILDDIR)/include
+OBJDIR    = $(BUILDDIR)/obj
+APPSRCDIR = $(SRCDIR)/app
+APPINCDIR = $(INCDIR)/app
 
-# Directory paths
-# ---------------
-ROOT_DIR = .
-OBJ_DIR  = $(ROOT_DIR)/obj
-SRC_DIR  = $(ROOT_DIR)/src
-INC_DIR  = $(ROOT_DIR)/include
-OBJ_DIR  = $(ROOT_DIR)/obj
-APP_SRC_DIR = $(ROOT_DIR)/src/app
+# ------------------------------------------------------------------------------
+# Files
+SRC = $(wildcard $(SRCDIR)/*.c) $(wildcard $(APPSRCDIR)/*.c)
+OBJ = $(addprefix $(OBJDIR)/, $(notdir $(SRC:.c=.o)))
+LOG = /tmp/$(PROJECT).log
 
-# Source files
-# ------------
-SRC = $(wildcard $(SRC_DIR)/*.c) $(wildcard $(APP_SRC_DIR)/*.c)
-OBJ = $(addprefix $(OBJ_DIR)/, $(notdir $(SRC:.c=.o)))
+# ------------------------------------------------------------------------------
+# Redefine compiler settings
+CFLAGS += -I$(INCDIR) -I$(APPINCDIR)
 
-# Make Rules
-# ----------
-CFLAGS += -I $(INC_DIR)
+# ------------------------------------------------------------------------------
+# Targets
+all: $(PROJECT)
 
-all: $(EXE)
-
-$(EXE): $(OBJ)
+$(PROJECT): $(OBJ)
 	$(CC) $(CFLAGS) \
-		-o $(EXE) $(OBJ) \
-		$(CLIBS)
+		-o $(PROJECT) $(OBJ) \
+		$(LIBS)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c 
-	$(CC) $(CFLAGS) \
-		-c $< \
-		-o $@ \
-		$(CLIBS)
-
-$(OBJ_DIR)/%.o: $(APP_SRC_DIR)/%.c 
+$(OBJDIR)/%.o: $(SRCDIR)/%.c 
 	$(CC) $(CFLAGS) \
 		-c $< \
 		-o $@ \
-		$(CLIBS)
+		$(LIBS)
+
+$(OBJDIR)/%.o: $(APPSRCDIR)/%.c 
+	$(CC) $(CFLAGS) \
+		-c $< \
+		-o $@ \
+		$(LIBS)
 
 .PHONY: all clean
 clean : 
 	@rm -v -f $(OBJ)/*.o
-	@rm -v -f $(EXE)
+	@rm -v -f $(PROJECT)
 	@rm -v -f $(LOG)

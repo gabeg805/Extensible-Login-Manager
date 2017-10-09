@@ -14,13 +14,13 @@
 
 /* Includes */
 #include "elmio.h"
-#include "elyglobal.h"
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 
+/* Private functions */
 static char * modetostr(ElmPrint_t mode);
 static char * strtimenow(const char *fmt);
 static void infoprintf(const char *fmt, va_list ap);
@@ -28,6 +28,9 @@ static void warnprintf(const char *fmt, va_list ap);
 static void errprintf(const char *fmt, va_list ap);
 static void logprintf(const char *fmt, va_list ap);
 static void debugprintf(const char *fmt, va_list ap);
+
+/* Private variables */
+static int Verbose = 0;
 
 /* ************************************************************************** */
 /* Print */
@@ -133,4 +136,11 @@ void debugprintf(const char *fmt, va_list ap)
 {
     infoprintf(fmt, ap);
     logprintf(fmt, ap);
+}
+
+/* ************************************************************************** */
+/* Set verbose flag */
+void elm_set_verbose(int flag)
+{
+    Verbose = flag;
 }

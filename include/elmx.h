@@ -18,16 +18,17 @@
 
 /* Defines */
 #define ELM_EXIT_X_START    10
-#define ELM_EXIT_X_DISPLAY  11
-#define ELM_EXIT_X_TTY      12
-#define ELM_EXIT_X_WAIT     13
-#define ELM_EXIT_X_IO       14
-#define ELM_EXIT_X_XCOMPMGR 15
+#define ELM_EXIT_X_OPEN     11
+#define ELM_EXIT_X_WAIT     12
+#define ELM_EXIT_X_STOP     13
+#define ELM_EXIT_X_DISPLAY  14
+#define ELM_EXIT_X_TTY      15
+#define ELM_EXIT_X_XCOMPMGR 16
 
 /* Public functions */
-int xstartserver(void);
+int xstart(void);
 int xcompmanager(void);
-int xstyleserver(void);
+int xsetstyle(void);
 int xinitrc(void);
 
 #endif /* ELM_X_H */

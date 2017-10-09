@@ -1,15 +1,17 @@
 .Date {
-    font:Droid Sans 27;
-    color:white;
-    background-color:transparent;
+    font-family:      'Droid Sans';
+    font-size:        27px;
+    color:            white;
+    background-color: transparent;
 }
 
 .Time {
-    font:Droid Sans 47;
-    color:white;
-    background-color:transparent;
+    font-family:      'Droid Sans';
+    font-size:        47px;
+    color:            white;
+    background-color: transparent;
 }
 
 .Window {
-    background-color:transparent;
+    background-color: transparent;
 }
