@@ -21,6 +21,6 @@
 #include "elmapp.h"
 
 /* Public functions */
-ElmAppBuilder * login_interface(void);
+ElmApp * login_interface(void);
 
 #endif /* ELM_INTERFACE_H */

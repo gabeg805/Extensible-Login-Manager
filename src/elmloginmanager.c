@@ -44,10 +44,16 @@ static int      elm_login_manager_alloc_apps(size_t);
 
 /* Private globals */
 static ElmLoginManager  *Manager = NULL;
-static ElmApp          **Apps    = NULL;
-static size_t            Size    = 0;
+/* static ElmApp          **Apps    = NULL; */
+/* static size_t            Size    = 0; */
 static int               Preview = 0;
 static pthread_t         Thread;
+
+
+static GtkWidget  *Window     = NULL;
+static GtkWidget  *Container  = NULL;
+static GtkWidget  *Background = NULL;
+static GtkWidget **Widgets    = NULL;
 
 /* ************************************************************************** */
 /* Create Extensible Login Manager base structure */
@@ -281,27 +287,46 @@ void elm_login_manager_set_preview_mode(int flag)
 /* Build login manager applications */
 int elm_login_manager_build(void)
 {
-    ElmAppBuilder *builder = login_interface();
-    size_t         i = 0;
-    int            status;
-    while (builder[i] != NULL) {
-        if ((i+1) >= Size) {
-            /* Allocate application */
-            if ((status=elm_login_manager_alloc_apps(Size+1)) < 0)
-                exit(ELM_EXIT_LOGIN_MANAGER_APP);
+    Window     = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    Container  = gtk_fixed_new();
+    Background = gtk_image_new_from_file("/home/gabeg/tree.jpg");
 
-            /* Set application to list */
-            switch (i) {
-            case 3:
-                Apps[i] = builder[i](elm_login_manager_thread);
-                break;
-            default:
-                Apps[i] = builder[i](NULL);
-                break;
-            }
-        }
-        ++i;
+    gtk_window_set_default_size(GTK_WINDOW(Window), 1920, 1080);
+    gtk_container_add(GTK_CONTAINER(Window), Container);
+    gtk_fixed_put(GTK_FIXED(Container), Background, 0, 0);
+
+
+    ElmApp   *apps = login_interface();
+    size_t    i    = 0;
+    uint16_t  x;
+    uint16_t  y;
+    uint8_t   flag;
+
+    while (apps[i].display)
+    {
+        /* Allocate application */
+        if (elm_login_manager_alloc_apps(i+1) < 0)
+            exit(ELM_EXIT_LOGIN_MANAGER_APP);
+
+        flag = apps[i].callflag;
+        x    = apps[i].x;
+        y    = apps[i].y;
+
+        /* Add widget to list */
+        if (flag)
+            Widgets[i] = apps[i].display(elm_login_manager_thread);
+        else
+            Widgets[i] = apps[i].display(NULL);
+
+        /* Set widget onto container */
+        gtk_fixed_put(GTK_FIXED(Container), Widgets[i], x, y);
+
+        i++;
     }
+
+    gtk_widget_show(Background);
+    gtk_widget_show(Container);
+    gtk_widget_show(Window);
 
     return 0;
 }
@@ -310,12 +335,11 @@ int elm_login_manager_build(void)
 /* Show login manager applications */
 int elm_login_manager_show(void)
 {
-    /* Figure out how to design without Size. Do I really even need it? */
     size_t i;
-    for (i=0; i < Size-1; ++i) {
-        printf("Showing apps: %lu\n", i);
-        Apps[i]->set_self(Apps[i]);
-        Apps[i]->show_all();
+    for (i=0; Widgets[i] != NULL; i++)
+    {
+        printf("Showing widgets: %lu\n", i);
+        gtk_widget_show_all(Widgets[i]);
         sleep(1);
     }
 
@@ -327,11 +351,11 @@ int elm_login_manager_show(void)
 int elm_login_manager_hide(void)
 {
     size_t i;
-    for (i=0; i < Size-1; ++i) {
-        Apps[i]->set_self(Apps[i]);
-        Apps[i]->hide_all();
-        /* sleep(1); */
-        /* Apps[i]->hide_all(); */
+    for (i=0; Widgets[i] != NULL; i++)
+    {
+        printf("Hiding widgets: %lu\n", i);
+        gtk_widget_hide(Widgets[i]);
+        sleep(1);
     }
 
     return 0;
@@ -356,10 +380,11 @@ gboolean elm_login_manager_thread(GtkWidget *widget, void *arg)
 int elm_login_manager_alloc(void)
 {
     Manager = calloc(1, sizeof(ElmLoginManager));
-    if (Manager == NULL) {
+    if (!Manager) {
         elmprintf(LOG, "Unable to initialize login manager: Login Manager does not exist.");
         return 1;
     }
+
     return 0;
 }
 
@@ -370,19 +395,18 @@ int elm_login_manager_alloc_apps(size_t size)
     if (size == 0)
         return 1;
 
-    Apps = realloc(Apps, size*sizeof(ElmApp*));
-    if (Apps == NULL) {
-        elmprintf(LOG, "Unable to allocate application container with size '%u'.",
+    Widgets = realloc(Widgets, size*sizeof(GtkWidget*));
+    if (!Widgets) {
+        elmprintf(LOG, "Unable to allocate widget list with size '%lu'.",
                   size);
         return -1;
     }
 
-    Apps[size-1] = calloc(1, sizeof(ElmApp));
-    if (Apps[0] == NULL) {
-        elmprintf(LOG, "Unable to allocate application subcontainer.");
+    Widgets[size-1] = calloc(1, sizeof(*Widgets));
+    if (!Widgets[size-1]) {
+        elmprintf(LOG, "Unable to allocate widget in list.");
         return -1;
     }
 
-    Size = size;
     return 0;
 }

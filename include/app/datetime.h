@@ -5,7 +5,7 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Display the date and time on the Extensible Login Manager.
+ * Description: Display the date and time.
  *              
  * Notes: None.
  * 
@@ -20,6 +20,6 @@
 #include "elmapp.h"
 
 /* Public functions */
-ElmApp * display_datetime(ElmCallback callback);
+GtkWidget * display_datetime(ElmCallback callback);
 
 #endif /* ELM_DATETIME_H */

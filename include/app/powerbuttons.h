@@ -21,6 +21,6 @@
 #include "elmapp.h"
 
 /* Public functions */
-ElmApp * display_power_buttons(ElmCallback callback);
+GtkWidget * display_power_buttons(ElmCallback callback);
 
 #endif /* ELM_POWER_BUTTONS_H */

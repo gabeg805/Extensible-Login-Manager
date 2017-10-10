@@ -17,15 +17,26 @@
 #include "elminterface.h"
 #include "app/datetime.h"
 #include "app/frame.h"
-#include "app/powerbuttons.h"
 #include "app/login.h"
+#include "app/powerbuttons.h"
 
 /* ************************************************************************** */
 /* Display the login interface */
-ElmAppBuilder * login_interface(void)
+ElmApp * login_interface(void)
 {
-    static ElmAppBuilder builder[] = {display_frame, display_datetime,
-                                      display_power_buttons, display_login,
-                                      NULL};
-    return builder;
+    static ElmApp apps[] = {
+        {display_datetime,       110, 595, 0},
+        {display_power_buttons, 1270, 725, 0},
+        {0,                     0, 0, 0}
+    };
+
+   /* static ElmAppBuilder builder[] = { */
+   /*      /\* {display_frame,         0, 0, 0}, *\/ */
+   /*      {display_datetime,      110, 595, 0}, */
+   /*      {display_power_buttons, 1270, 725, 0}, */
+   /*      /\* {display_login,         0, 0, 1}, *\/ */
+   /*      {0,                     0, 0, 0} */
+   /*  }; */
+
+    return apps;
 }
