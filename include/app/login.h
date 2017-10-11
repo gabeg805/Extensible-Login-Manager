@@ -22,6 +22,6 @@
 #include "elmapp.h"
 
 /* Public functions */
-ElmApp * display_login(ElmCallback callback);
+GtkWidget * display_login(ElmCallback callback);
 
 #endif /* ELM_LOGIN_H */

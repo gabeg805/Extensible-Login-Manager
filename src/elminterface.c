@@ -25,18 +25,12 @@
 ElmApp * login_interface(void)
 {
     static ElmApp apps[] = {
-        {display_datetime,       110, 595, 0},
-        {display_power_buttons, 1270, 725, 0},
-        {0,                     0, 0, 0}
+        {display_frame,          550, 230, false},
+        {display_datetime,       110, 595, false},
+        {display_power_buttons, 1270, 725, false},
+        {display_login,          570, 240, true},
+        {0,                        0,   0, 0}
     };
-
-   /* static ElmAppBuilder builder[] = { */
-   /*      /\* {display_frame,         0, 0, 0}, *\/ */
-   /*      {display_datetime,      110, 595, 0}, */
-   /*      {display_power_buttons, 1270, 725, 0}, */
-   /*      /\* {display_login,         0, 0, 1}, *\/ */
-   /*      {0,                     0, 0, 0} */
-   /*  }; */
 
     return apps;
 }

@@ -24,7 +24,7 @@ static int     set_xsession_menu(GtkWidget *menu);
 /* Private variables */
 static       GtkWidget *Xbutton = NULL;
 static       GtkWidget *Xmenu   = NULL;
-static const char      *Style   = "/etc/X11/elm/src/app/style/login.css";
+static const char      *Style   = "/etc/X11/elm/src/app/style/xsession.css";
 
 /* ************************************************************************** */
 /* Create xsession menu button */
@@ -36,6 +36,7 @@ GtkWidget * new_xsession_widget(void)
     set_xsession_menu(Xmenu);
     gtk_button_set_relief(GTK_BUTTON(Xbutton), GTK_RELIEF_HALF);
     gtk_menu_button_set_popup(GTK_MENU_BUTTON(Xbutton), Xmenu);
+    elm_set_widget_style(&Xbutton, "XSession", Style);
 
     return Xbutton;
 }

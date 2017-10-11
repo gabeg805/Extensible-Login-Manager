@@ -39,8 +39,6 @@ GtkWidget * display_datetime(ElmCallback callback)
     date = gtk_label_new("");
     time = gtk_label_new("");
 
-    /* gtk_label_set_xalign(GTK_LABEL(date), 0); */
-    /* gtk_label_set_xalign(GTK_LABEL(time), 0); */
     gtk_box_pack_start(GTK_BOX(box), time, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(box), date, TRUE, TRUE, 0);
     gtk_widget_set_halign(date, GTK_ALIGN_CENTER);

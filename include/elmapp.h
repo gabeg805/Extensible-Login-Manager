@@ -18,6 +18,7 @@
 #define ELM_APP_H
 
 /* Includes */
+#include <stdbool.h>
 #include <stdint.h>
 #include <gtk/gtk.h>
 
@@ -29,7 +30,7 @@ typedef struct ElmApp
     GtkWidget * (*display)(ElmCallback);
     uint16_t      x;
     uint16_t      y;
-    uint8_t       callflag;
+    bool          callflag;
 } ElmApp;
 
 typedef ElmApp * (*ElmAppBuilder)(ElmCallback);
@@ -42,5 +43,7 @@ int elm_set_default_widget(GtkWidget **window, GtkWidget **widget);
 int elm_set_widget_size(GtkWidget **widget, size_t width, size_t height);
 int elm_set_widget_style(GtkWidget **widget, const char *name,
                          const char *file);
+GtkWidget * elm_get_window(GtkWidget **widget);
+GdkWindow * elm_get_gdkwindow(GtkWidget **widget);
 
 #endif /* ELM_APP_H */

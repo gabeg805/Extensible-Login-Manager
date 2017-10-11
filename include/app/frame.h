@@ -5,7 +5,7 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Display the login frame for the Extensible Login Manager.
+ * Description: Display the login frame.
  * 
  * Notes: None.
  * 
@@ -20,6 +20,6 @@
 #include "elmapp.h"
 
 /* Public functions */
-ElmApp * display_frame(ElmCallback callback);
+GtkWidget * display_frame(ElmCallback callback);
 
 #endif /* ELM_FRAME_H */

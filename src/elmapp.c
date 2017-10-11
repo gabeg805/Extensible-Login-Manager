@@ -17,8 +17,10 @@
 #include "elmapp.h"
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <gtk/gtk.h>
+#include <gdk/gdk.h>
 
 /* ************************************************************************** */
 /* Set window position */
@@ -79,4 +81,23 @@ int elm_set_widget_style(GtkWidget **widget, const char *name, const char *file)
     gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(css), 
                                    GTK_STYLE_PROVIDER_PRIORITY_USER);
     return 0;
+}
+
+/* ************************************************************************** */
+/* Return toplevel window */
+GtkWidget * elm_get_window(GtkWidget **widget)
+{
+    GtkWidget *window = calloc(1, sizeof(GtkWindow));
+    window = gtk_widget_get_toplevel(*widget);
+    if (gtk_widget_is_toplevel(window))
+        return window;
+    else
+        return NULL;
+}
+
+/* ************************************************************************** */
+/* Return Gdk window */
+GdkWindow * elm_get_gdkwindow(GtkWidget **widget)
+{
+    return gtk_widget_get_window(*widget);
 }
