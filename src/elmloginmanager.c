@@ -111,7 +111,7 @@ void * elm_login_manager_login_session(void *arg)
     }
 
     elmprintf(LOG, "Running login session.");
-    ElmLogin   *info    = (ElmLogin*)arg;
+    ElmLogin   *info    = arg;
     ElmSession *session = elm_new_session(info);
     int         status;
 
@@ -120,9 +120,7 @@ void * elm_login_manager_login_session(void *arg)
         return NULL;
     else {
         elm_login_manager_hide();
-        sleep(1);
-        elm_login_manager_hide();
-        sleep(1);
+        sleep(2);
     }
 
     /* End here during preview mode */

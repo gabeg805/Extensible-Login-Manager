@@ -1,42 +1,24 @@
-.Reboot {
-    background-image: none;
-    background-color: #00a400;
-    border-color:     transparent;
-    border-radius:    10px;
-    border-width:     0;
+.System
+{
+    /* background-color: rgba(255,255,255,0.75); */
+    background-color: transparent;
+    border-radius:    4px;
+    padding:          2px;
 }
-.Reboot:hover {
-    background-image: -gtk-gradient (linear,
-                                     0 0, 0 1,
-                                     from(#4cbf4c), to(#00a400));
-}
-
-.Refresh {
-    background-image: none;
-    background-color: #ffa500;
-    border-color:     transparent;
-    border-radius:    10px;
-    border-width:     0;
-}
-.Refresh:hover {
-    background-image: -gtk-gradient (linear,
-                                     0 0, 0 1,
-                                     from(#ffc04c), to(#ffa500));
+.System:hover
+{
+    background-color: rgba(255,255,255,0.75);
+    padding:          10px;
 }
 
 .Shutdown {
     background-image: none;
-    background-color: #ff0000;
+    background-color: #e28693;
     border-color:     transparent;
-    border-radius:    10px;
     border-width:     0;
 }
 .Shutdown:hover {
-    background-image: -gtk-gradient (linear,
-                                     0 0, 0 1,
-                                     from(#ff4c4c), to(#ff0000));
-}
-
-.Window {
-    background-color: transparent;
+    background-image: -gtk-gradient(linear,
+                                    0 0, 0 1,
+                                    from(#e79aa5), to(#e28693));
 }

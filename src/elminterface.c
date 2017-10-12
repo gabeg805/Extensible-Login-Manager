@@ -27,7 +27,7 @@ ElmApp * login_interface(void)
     static ElmApp apps[] = {
         {display_frame,          570, 230, false},
         {display_datetime,       110, 595, false},
-        {display_power_buttons, 1270, 725, false},
+        {display_power_buttons, 1320,  20, false},
         {display_login,          590, 250, true},
         {0,                        0,   0, 0}
     };

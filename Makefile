@@ -52,6 +52,6 @@ $(OBJDIR)/%.o: $(APPSRCDIR)/%.c
 
 .PHONY: all clean
 clean : 
-	@rm -v -f $(OBJ)/*.o
+	@rm -v -f $(OBJDIR)/*.o
 	@rm -v -f $(PROJECT)
 	@rm -v -f $(LOG)
