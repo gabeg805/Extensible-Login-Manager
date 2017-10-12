@@ -15,7 +15,6 @@
 
 /* Includes */
 #include "app/powerbuttons.h"
-#include "elmio.h"
 
 /* Private functions */
 static void system_shutdown(void);
@@ -30,7 +29,7 @@ static const char *ShutdownFile = "/etc/X11/elm/img/shutdown.png";
 /* Create power button application */
 GtkWidget * display_power_buttons(ElmCallback callback)
 {
-    elmprintf(LOG, "Displaying power buttons...");
+    elmprintf(LOG, "Displaying power buttons.");
 
     GtkWidget        *rbimg = gtk_image_new_from_file(RebootFile);
     GtkWidget        *sdimg = gtk_image_new_from_file(ShutdownFile);
@@ -59,7 +58,7 @@ GtkWidget * display_power_buttons(ElmCallback callback)
 /* Shutdown */
 void system_shutdown(void)
 {
-    elmprintf(LOG, "Shutting down...");
+    elmprintf(LOG, "Shutting down.");
     const char *poweroff = "/usr/bin/poweroff";
     execl(poweroff, poweroff, NULL);
 }
@@ -68,7 +67,7 @@ void system_shutdown(void)
 /* Reboot */
 void system_reboot(void)
 {
-    elmprintf(LOG, "Rebooting...");
+    elmprintf(LOG, "Rebooting.");
     const char *reboot = "/usr/bin/reboot";
     execl(reboot, reboot, NULL);
 }

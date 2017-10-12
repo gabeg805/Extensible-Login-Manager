@@ -5,7 +5,8 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Construct a user session for the Extensible Login Manager.
+ * Description: Create a user session which handles authenticating, logging in,
+ *              and logging out.
  * 
  * Notes: None.
  * 
@@ -29,7 +30,7 @@ static ElmSession *Session = NULL;
 
 /* ************************************************************************** */
 /* Create Extensible Login Manager base structure */
-ElmSession * elm_new_session(ElmLoginInfo *info)
+ElmSession * elm_new_session(ElmLogin *info)
 {
     /* Allocate user session object */
     int status;
@@ -39,7 +40,7 @@ ElmSession * elm_new_session(ElmLoginInfo *info)
     Session->authenticate = &elm_session_authenticate;
     Session->login        = &elm_session_login;
     Session->logout       = &elm_session_logout;
-    Session->_info        = info;
+    Session->info         = info;
 
     return Session;
 }
@@ -53,8 +54,8 @@ int elm_session_authenticate(void)
         return -1;
     }
 
-    char *username = Session->_info->username;
-    char *password = Session->_info->password;
+    char *username = Session->info->username;
+    char *password = Session->info->password;
     elmprintf(LOG, "Authenticating credentials of '%s'." , username);
 
     return elm_authenticate(username, password);
@@ -69,7 +70,7 @@ int elm_session_login(void)
         return -1;
     }
 
-    char *xsession = Session->_info->xsession;
+    char *xsession = Session->info->xsession;
     elmprintf(LOG, "Logging into session '%s'.", xsession);
 
     return elm_login(xsession, &Session->pid);
@@ -84,7 +85,7 @@ int elm_session_logout(void)
         return -1;
     }
 
-    char *username = Session->_info->username;
+    char *username = Session->info->username;
     elmprintf(LOG, "Logging out of user session for '%s'.", username);
 
     return elm_logout();

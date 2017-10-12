@@ -21,20 +21,19 @@
 #include "elm.h"
 
 /* Private functions */
-static GtkWidget * new_login_title(const char *text);
 static GtkWidget * new_login_button(const char *text);
 static int         set_callback_data(GtkWidget *widget, gpointer data);
 static int         set_default_widget(GtkWidget *widget, gpointer data);
 
 /* Private variables */
-static ElmLoginInfo LoginInfo;
-const  char *Style = "/etc/X11/elm/src/app/style/login.css";
+static ElmLogin  Info;
+const  char     *Style = "/etc/X11/elm/src/app/style/login.css";
 
 /* ************************************************************************** */
 /* Create login fields application */
 GtkWidget * display_login(ElmCallback callback)
 {
-    elmprintf(LOG, "Displaying password entry box application...");
+    elmprintf(LOG, "Displaying password entry box application.");
 
     static GtkWidget *container;
     static GtkWidget *entrybox;
@@ -43,19 +42,15 @@ GtkWidget * display_login(ElmCallback callback)
     entrybox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,    5);
     buttonbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
 
-
-    static GtkWidget *title;
     static GtkWidget *username;
     static GtkWidget *password;
     static GtkWidget *xsession;
     static GtkWidget *button;
-    title    = new_login_title("Login");
     username = new_username_widget();
     password = new_password_widget();
     xsession = new_xsession_widget();
-    button   = new_login_button("Log in");
+    button   = new_login_button("Login");
 
-    gtk_box_pack_start(GTK_BOX(container), title,     FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(container), entrybox,  FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(container), buttonbox, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(entrybox),  username,  FALSE, FALSE, 0);
@@ -63,22 +58,9 @@ GtkWidget * display_login(ElmCallback callback)
     gtk_box_pack_end(GTK_BOX(buttonbox),   xsession,  FALSE, FALSE, 0);
     gtk_box_pack_end(GTK_BOX(buttonbox),   button,    FALSE, FALSE, 0);
 
-    g_signal_connect(button, "clicked", G_CALLBACK(callback), &LoginInfo);
+    g_signal_connect(button, "clicked", G_CALLBACK(callback), &Info);
 
     return container;
-}
-
-/* ************************************************************************** */
-/* Create login title */
-GtkWidget * new_login_title(const char *text)
-{
-    static GtkWidget *title;
-    title = gtk_label_new(text);
-
-    gtk_widget_set_halign(title, GTK_ALIGN_START);
-    elm_set_widget_style(&title, "LoginTitle", Style);
-
-    return title;
 }
 
 /* ************************************************************************** */
@@ -98,23 +80,25 @@ GtkWidget * new_login_button(const char *text)
 }
 
 /* ************************************************************************** */
-/* Set data to be handed off to callback */
+/* Set data to be handed off to callback 
+ * 
+ * To-do: If size of username/password is greater than set array size, logging
+ * in will always fail. Similarly, for xsession, starting the X session will
+ * always fail. 
+ */
 int set_callback_data(GtkWidget *widget, gpointer data)
 {
     const char *username = get_username();
     const char *password = get_password();
     const char *xsession = get_xsession();
-    size_t      ulen     = strlen(username)+1;
-    size_t      plen     = strlen(password)+1;
-    size_t      xlen     = strlen(xsession)+1;
 
-    LoginInfo.username = calloc(ulen, sizeof(*username));
-    LoginInfo.password = calloc(plen, sizeof(*password));
-    LoginInfo.xsession = calloc(xlen, sizeof(*xsession));
+    memset(Info.username, 0, sizeof(Info.username));
+    memset(Info.password, 0, sizeof(Info.password));
+    memset(Info.xsession, 0, sizeof(Info.xsession));
 
-    snprintf(LoginInfo.username, ulen, username);
-    snprintf(LoginInfo.password, plen, password);
-    snprintf(LoginInfo.xsession, xlen, xsession);
+    strncpy(Info.username, username, sizeof(Info.username)-1);
+    strncpy(Info.password, password, sizeof(Info.password)-1);
+    strncpy(Info.xsession, xsession, sizeof(Info.xsession)-1);
 
     return 0;
 }

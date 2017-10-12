@@ -14,7 +14,7 @@
 
 /* Includes */
 #include "app/frame.h"
-#include "elm.h"
+#include <math.h>
 
 /* Private functions */
 static gboolean draw_frame(gpointer data);
@@ -23,12 +23,12 @@ static gboolean draw_frame(gpointer data);
 /* Create login frame application */
 GtkWidget * display_frame(ElmCallback callback)
 {
-    elmprintf(LOG, "Displaying login frame...");
+    elmprintf(LOG, "Displaying login frame.");
 
     static GtkWidget *drawing;
     drawing = gtk_drawing_area_new();
 
-    elm_set_widget_size(&drawing, 270, 175);
+    elm_set_widget_size(&drawing, 270, 155);
     g_signal_connect(drawing, "draw", G_CALLBACK(draw_frame), NULL);
 
     return drawing;
@@ -38,6 +38,8 @@ GtkWidget * display_frame(ElmCallback callback)
 /* Draw login frame */
 gboolean draw_frame(gpointer data)
 { 
+    elmprintf(LOG, "Drawing login frame.");
+
     GtkWidget *drawing = (GtkWidget*)data;
     GdkWindow *window  = elm_get_gdkwindow(&drawing);
     guint      width   = gtk_widget_get_allocated_width(drawing);
@@ -58,7 +60,7 @@ gboolean draw_frame(gpointer data)
     cairo_arc(cr, 1.0*width-curve, 1.0*height-curve, curve,   0*deg,  90*deg);
     cairo_arc(cr, curve,           1.0*height-curve, curve,  90*deg, 180*deg);
     cairo_arc(cr, curve,           curve,            curve, 180*deg, 270*deg);
-    cairo_set_source_rgba(cr, 1, 1, 1, 0.5);
+    cairo_set_source_rgba(cr, 1, 1, 1, 0.75);
     cairo_fill(cr);
     gdk_window_end_draw_frame(window, context);
     cairo_region_destroy(region);

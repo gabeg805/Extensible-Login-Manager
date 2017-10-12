@@ -1,13 +1,6 @@
-.LoginTitle {
-    font-family:      'Arial';
-    font-size:        15px;
-    color:            #ffa500;
-    background-color: transparent;
-}
-
 .LoginButton {
     font-family:      'Arial';
-    font-size:        10px;
+    font-size:        14px;
     color:            white;
     border-radius:    10px;
     border-width:     0;
@@ -17,13 +10,9 @@
 }
 .LoginButton:hover {
     font-family:      'Arial';
-    font-size:        10px;
+    font-size:        13px;
     color:            white;
     background-image: -gtk-gradient (linear,
                                      0 0, 0 1,
                                      from(#ffc966), to(#ffa500));
-}
-
-.Window {
-    background-color: transparent;
 }

@@ -14,7 +14,6 @@
 
 /* Includes */
 #include "app/datetime.h"
-#include "elmio.h"
 #include <time.h>
 
 /* Private functions */
@@ -30,7 +29,7 @@ static const char *TimeFormat = "%-I:%M %p";
 /* Create date and time application */
 GtkWidget * display_datetime(ElmCallback callback)
 {
-    elmprintf(LOG, "Displaying date and time...");
+    elmprintf(LOG, "Displaying date and time.");
 
     static GtkWidget *box;
     static GtkWidget *date;

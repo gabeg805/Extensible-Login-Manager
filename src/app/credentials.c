@@ -5,8 +5,8 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Create username and password widgets.
- *              
+ * Description: Display username and password entries.
+ * 
  * Notes: None.
  * 
  * *****************************************************************************
@@ -30,6 +30,8 @@ static       int         EntryLength = 32;
 /* Create username entry */
 GtkWidget * new_username_widget(void)
 {
+    elmprintf(LOG, "Displaying username entry.");
+
     Username = gtk_entry_new();
 
     set_entry_buffer(Username, "Username");
@@ -46,6 +48,8 @@ GtkWidget * new_username_widget(void)
 /* Create password entry */
 GtkWidget * new_password_widget(void)
 {
+    elmprintf(LOG, "Displaying password entry.");
+
     Password = gtk_entry_new();
 
     set_entry_buffer(Password, "Password");

@@ -5,8 +5,8 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Application builder, in the form of C-Style class, for the
- *              Extensible Login Manager.
+ * Description: GTK+3 wrapper to set/get common attributes and name functions
+ *              more meaningful names.
  *              
  * Notes: None.
  * 
@@ -15,12 +15,6 @@
 
 /* Includes */
 #include "elmapp.h"
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <gtk/gtk.h>
-#include <gdk/gdk.h>
 
 /* ************************************************************************** */
 /* Set window position */

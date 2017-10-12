@@ -5,8 +5,8 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Create button widget to choose which X Session to start after 
- *              logging in.
+ * Description: Display button which allows a user to select which X Session to
+ *              start after logging in.
  * 
  * Notes: None.
  * 
@@ -15,7 +15,6 @@
 
 /* Includes */
 #include "app/xsession.h"
-#include "elm.h"
 
 /* Private functions */
 static char ** get_available_xsessions(void);
@@ -66,7 +65,11 @@ const char * get_xsession(void)
 }
 
 /* ************************************************************************** */
-/* Return all avaiable xsessions on the system */
+/* Return all avaiable xsessions on the system 
+ * 
+ * To-do: Read through file and search for Name= and Exec=. Display the Name=
+ * strings and execute (with ElmLogin.xsession) the Exec= lines.
+ */
 char ** get_available_xsessions(void)
 {
     DIR           *dstream  = opendir("/usr/share/xsessions/");
@@ -84,7 +87,7 @@ char ** get_available_xsessions(void)
     char   **xsessions = calloc(1, sizeof(filename));
     size_t   i         = 0;
 
-    while ((entry=readdir(dstream)) != NULL)
+    while ((entry=readdir(dstream)))
     {
         /* Check extension of file is correct */
         filename = entry->d_name;
@@ -121,7 +124,7 @@ int set_xsession_menu(GtkWidget *menu)
         return 1;
 
     /* Create the radio buttons for the window managers */
-    for (i=0; xsessions[i] != NULL; i++)
+    for (i=0; xsessions[i]; i++)
     {
         menuitem = gtk_radio_menu_item_new_with_label(group, xsessions[i]);
         group    = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));

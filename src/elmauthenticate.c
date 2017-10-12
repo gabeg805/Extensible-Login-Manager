@@ -56,7 +56,7 @@ static struct utmp utmpr;
 /* Set environment variables for USER */
 int init_env(struct passwd *pw)
 {
-    elmprintf(LOG, "%s", "Initializing environment variables...");
+    elmprintf(LOG, "%s", "Initializing environment variables.");
 
 
     set_env("HOME", pw->pw_dir);
@@ -244,7 +244,7 @@ int elm_login(const char *session, pid_t *parentpid)
     pid_t pid = fork();
     switch (pid) {
     case 0:
-        elmprintf(LOG, "Setting up user session...");
+        elmprintf(LOG, "Setting up user session.");
 
         /* Begin setup of user session */
         utmp_record();
@@ -387,7 +387,7 @@ static int conv(int num_msg,
                 struct pam_response **resp,
                 void *appdata_ptr)
 {
-    elmprintf(LOG, "%s", "Converting PAM login information...");
+    elmprintf(LOG, "%s", "Converting PAM login information.");
 
     *resp = calloc(num_msg, sizeof(struct pam_response));
     if ( *resp == NULL )

@@ -5,8 +5,8 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Useful functions to style and build widgets and applications for
- *              ELM.
+ * Description: GTK+3 wrapper to set/get common attributes and name functions
+ *              more meaningful names.
  *              
  * Notes: None.
  * 
@@ -18,8 +18,13 @@
 #define ELM_APP_H
 
 /* Includes */
+#include "elmio.h"
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
 /* Typedefs */

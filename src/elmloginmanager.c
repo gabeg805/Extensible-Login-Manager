@@ -111,9 +111,9 @@ void * elm_login_manager_login_session(void *arg)
     }
 
     elmprintf(LOG, "Running login session.");
-    ElmLoginInfo *info    = (ElmLoginInfo*)arg;
-    ElmSession   *session = elm_new_session(info);
-    int           status;
+    ElmLogin   *info    = (ElmLogin*)arg;
+    ElmSession *session = elm_new_session(info);
+    int         status;
 
     /* Authenticate */
     if ((status=session->authenticate()) != 0)
@@ -314,6 +314,8 @@ int elm_login_manager_build(void)
         else
             Widgets[i] = apps[i].display(NULL);
 
+        printf("Widget %lu ptr: %p\n", i, Widgets[i]);
+
         /* Add widget to container */
         gtk_fixed_put(GTK_FIXED(Container), Widgets[i], x, y);
 
@@ -332,8 +334,10 @@ int elm_login_manager_build(void)
 int elm_login_manager_show(void)
 {
     size_t i;
-    for (i=0; Widgets[i]; i++)
+    for (i=0; Widgets[i]; i++) {
+        printf("Showing widget %lu ptr: %p\n", i, Widgets[i]);
         gtk_widget_show_all(Widgets[i]);
+    }
 
     return 0;
 }
@@ -343,8 +347,10 @@ int elm_login_manager_show(void)
 int elm_login_manager_hide(void)
 {
     size_t i;
-    for (i=0; Widgets[i]; i++)
+    for (i=0; Widgets[i]; i++) {
+        printf("Hiding widget %lu ptr: %p\n", i, Widgets[i]);
         gtk_widget_hide(Widgets[i]);
+    }
 
     return 0;
 }

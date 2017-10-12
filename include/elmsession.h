@@ -5,7 +5,8 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Create a user session for the Extensible Login Manager.
+ * Description: Create a user session which handles authenticating, logging in,
+ *              and logging out.
  * 
  * Notes: None.
  * 
@@ -28,22 +29,21 @@
 /* Typedefs */
 typedef struct
 {
-    char *username;
-    char *password;
-    char *xsession;
-} ElmLoginInfo;
+    char username[64];
+    char password[64];
+    char xsession[64];
+} ElmLogin;
 
 typedef struct
 {
-    int (*authenticate)(void);
-    int (*login)(void);
-    int (*logout)(void);
-
-    ElmLoginInfo *_info;
-    pid_t         pid;
+    int      (*authenticate)(void);
+    int      (*login)(void);
+    int      (*logout)(void);
+    ElmLogin  *info;
+    pid_t      pid;
 } ElmSession;
 
 /* Public functions  */
-ElmSession * elm_new_session(ElmLoginInfo*);
+ElmSession * elm_new_session(ElmLogin *info);
 
 #endif /* ELM_SESSION_H */

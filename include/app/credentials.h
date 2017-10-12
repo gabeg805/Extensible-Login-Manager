@@ -5,8 +5,8 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Display username and password fields for ELM.
- *              
+ * Description: Display username and password entries.
+ * 
  * Notes: None.
  * 
  * *****************************************************************************
