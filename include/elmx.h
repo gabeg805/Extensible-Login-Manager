@@ -30,5 +30,7 @@ int xstart(void);
 int xcompmanager(void);
 int xsetstyle(void);
 int xinitrc(void);
+int get_root_display_dimensions(int *width, int *height);
+int get_display_dimensions(int *width, int *height);
 
 #endif /* ELM_X_H */

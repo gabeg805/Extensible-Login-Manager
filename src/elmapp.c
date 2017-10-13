@@ -5,7 +5,7 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: GTK+3 wrapper to set/get common attributes and name functions
+ * Description: GTK+3 wrapper to set/get common attributes and rename functions
  *              more meaningful names.
  *              
  * Notes: None.

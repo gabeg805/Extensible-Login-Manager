@@ -20,6 +20,6 @@
 #include "elmapp.h"
 
 /* Public functions */
-GtkWidget * display_frame(ElmCallback callback);
+GtkWidget * new_frame_widget(void);
 
 #endif /* ELM_FRAME_H */

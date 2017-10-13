@@ -625,3 +625,66 @@ uint8_t get_ntty(void)
 
     return Xntty;
 }
+
+/* ************************************************************************** */
+/* Return screen width and height dimensions for root window */
+int get_root_display_dimensions(int *width, int *height)
+{
+    Display *display = XOpenDisplay(NULL);
+    if (!display) {
+        elmprintf(LOG, "Unable to get display dimensions: Failed to open display.");
+        *width  = -1;
+        *height = -1;
+        return -1;
+    }
+
+    Window window = DefaultRootWindow(display);
+    if (window < 0) {
+        elmprintf(LOG, "Unable to get display dimensions: Failed to get window ID.");
+        *width  = -1;
+        *height = -1;
+        return -2;
+    }
+
+    XWindowAttributes attr;
+    Status status = XGetWindowAttributes(display, window, &attr);
+    if (!status) {
+        elmprintf(LOG, "Unable to get display dimensions: Failed getting window attributes.");
+        *width  = -1;
+        *height = -1;
+        return -3;
+    }
+
+    *width  = attr.width;
+    *height = attr.height;
+    XCloseDisplay(display);
+
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Return screen width and height dimensions */
+int get_display_dimensions(int *width, int *height)
+{
+    Display *display = XOpenDisplay(NULL);
+    if (!display) {
+        elmprintf(LOG, "Unable to get display dimensions: Failed to open display.");
+        *width  = -1;
+        *height = -1;
+        return -1;
+    }
+
+    Screen *screen = DefaultScreenOfDisplay(display);
+    if (!screen) {
+        elmprintf(LOG, "Unable to get display dimensions: Failed to get default screen.");
+        *width  = -1;
+        *height = -1;
+        return -2;
+    }
+
+    *width  = screen->width;
+    *height = screen->height;
+    XCloseDisplay(display);
+
+    return 0;
+}

@@ -21,17 +21,20 @@ static gboolean draw_frame(gpointer data);
 
 /* ************************************************************************** */
 /* Create login frame application */
-GtkWidget * display_frame(ElmCallback callback)
+GtkWidget * new_frame_widget(void)
 {
     elmprintf(LOG, "Displaying login frame.");
 
+    static GtkWidget *container;
     static GtkWidget *drawing;
-    drawing = gtk_drawing_area_new();
+    container = gtk_fixed_new();
+    drawing   = gtk_drawing_area_new();
 
-    elm_set_widget_size(&drawing, 270, 155);
+    gtk_fixed_put(GTK_FIXED(container), drawing, 0, 0);
+    elm_set_widget_size(&drawing, 270, 150);
     g_signal_connect(drawing, "draw", G_CALLBACK(draw_frame), NULL);
 
-    return drawing;
+    return container;
 }
 
 /* ************************************************************************** */

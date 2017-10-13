@@ -17,6 +17,7 @@
 /* Includes */
 #include "app/login.h"
 #include "app/credentials.h"
+#include "app/frame.h"
 #include "app/xsession.h"
 #include "elm.h"
 
@@ -35,9 +36,11 @@ GtkWidget * display_login(ElmCallback callback)
 {
     elmprintf(LOG, "Displaying password entry box application.");
 
+    static GtkWidget *frame;
     static GtkWidget *container;
     static GtkWidget *entrybox;
     static GtkWidget *buttonbox;
+    frame     = new_frame_widget();
     container = gtk_box_new(GTK_ORIENTATION_VERTICAL,   15);
     entrybox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,    5);
     buttonbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
@@ -51,16 +54,18 @@ GtkWidget * display_login(ElmCallback callback)
     xsession = new_xsession_widget();
     button   = new_login_button("Login");
 
-    gtk_box_pack_start(GTK_BOX(container), entrybox,  FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(container), buttonbox, FALSE, FALSE, 0);
+    gtk_fixed_put(GTK_FIXED(frame), container, 0, 0);
+    gtk_box_pack_start(GTK_BOX(container), entrybox,  TRUE,  TRUE,  0);
+    gtk_box_pack_start(GTK_BOX(container), buttonbox, TRUE,  TRUE,  0);
     gtk_box_pack_start(GTK_BOX(entrybox),  username,  FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(entrybox),  password,  FALSE, FALSE, 0);
     gtk_box_pack_end(GTK_BOX(buttonbox),   xsession,  FALSE, FALSE, 0);
     gtk_box_pack_end(GTK_BOX(buttonbox),   button,    FALSE, FALSE, 0);
-
+    gtk_widget_set_margin_top(container,   20);
+    gtk_widget_set_margin_start(container, 20);
     g_signal_connect(button, "clicked", G_CALLBACK(callback), &Info);
 
-    return container;
+    return frame;
 }
 
 /* ************************************************************************** */

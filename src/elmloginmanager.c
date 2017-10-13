@@ -282,19 +282,24 @@ void elm_login_manager_set_preview_mode(int flag)
 /* Build login manager applications */
 int elm_login_manager_build(void)
 {
+    int width;
+    int height;
+    get_display_dimensions(&width, &height);
+    printf("Width: %d | Height: %d\n", width, height);
+
     Window     = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     Container  = gtk_fixed_new();
-    Background = gtk_image_new_from_file("/home/gabeg/tree.jpg");
+    Background = gtk_image_new_from_file("/etc/X11/elm/img/tree.jpg");
 
-    gtk_window_set_default_size(GTK_WINDOW(Window), 1920, 1080);
+    gtk_window_set_default_size(GTK_WINDOW(Window), width, height);
     gtk_container_add(GTK_CONTAINER(Window), Container);
     gtk_fixed_put(GTK_FIXED(Container), Background, 0, 0);
 
-    ElmApp   *apps = login_interface();
-    size_t    i    = 0;
-    uint16_t  x;
-    uint16_t  y;
-    uint8_t   flag;
+    ElmApp     *apps = login_interface();
+    size_t      i    = 0;
+    ElmGravity  gravity;
+    uint16_t    x;
+    uint16_t    y;
 
     while (apps[i].display)
     {
@@ -302,19 +307,35 @@ int elm_login_manager_build(void)
         if (elm_login_manager_alloc_apps(i+1) < 0)
             exit(ELM_EXIT_LOGIN_MANAGER_APP);
 
-        flag = apps[i].callflag;
-        x    = apps[i].x;
-        y    = apps[i].y;
-
         /* Append widget to list */
-        if (flag)
-            Widgets[i] = apps[i].display(elm_login_manager_thread);
-        else
-            Widgets[i] = apps[i].display(NULL);
-
-        printf("Widget %lu ptr: %p\n", i, Widgets[i]);
+        Widgets[i] = apps[i].display(elm_login_manager_thread);
 
         /* Add widget to container */
+        gravity = apps[i].gravity;
+        x       = apps[i].x;
+        y       = apps[i].y;
+
+        switch (gravity) {
+        case ELM_GRAV_TOP_LEFT:
+            break;
+        case ELM_GRAV_TOP_RIGHT:
+            x = width - x;
+            break;
+        case ELM_GRAV_CENTER:
+            x = width/2  + x;
+            y = height/2 + y;
+            break;
+        case ELM_GRAV_BOTTOM_LEFT:
+            y = height - y;
+            break;
+        case ELM_GRAV_BOTTOM_RIGHT:
+            x = width  - x;
+            y = height - y;
+            break;
+        default:
+            break;
+        }
+
         gtk_fixed_put(GTK_FIXED(Container), Widgets[i], x, y);
 
         i++;
@@ -332,10 +353,8 @@ int elm_login_manager_build(void)
 int elm_login_manager_show(void)
 {
     size_t i;
-    for (i=0; Widgets[i]; i++) {
-        printf("Showing widget %lu ptr: %p\n", i, Widgets[i]);
+    for (i=0; Widgets[i]; i++)
         gtk_widget_show_all(Widgets[i]);
-    }
 
     return 0;
 }
@@ -345,10 +364,8 @@ int elm_login_manager_show(void)
 int elm_login_manager_hide(void)
 {
     size_t i;
-    for (i=0; Widgets[i]; i++) {
-        printf("Hiding widget %lu ptr: %p\n", i, Widgets[i]);
+    for (i=0; Widgets[i]; i++)
         gtk_widget_hide(Widgets[i]);
-    }
 
     return 0;
 }
@@ -371,7 +388,7 @@ gboolean elm_login_manager_thread(GtkWidget *widget, void *arg)
 /* Allocate login manager object */
 int elm_login_manager_alloc(void)
 {
-    Manager = calloc(1, sizeof(ElmLoginManager));
+    Manager = calloc(1, sizeof(*Manager));
     if (!Manager) {
         elmprintf(LOG, "Unable to initialize login manager: Login Manager does not exist.");
         return 1;
@@ -386,7 +403,7 @@ int elm_login_manager_alloc_apps(size_t s)
 {
     size_t size = s+1;
 
-    Widgets = realloc(Widgets, size*sizeof(GtkWidget*));
+    Widgets = realloc(Widgets, size*sizeof(*Widgets));
     if (!Widgets) {
         elmprintf(LOG, "Unable to allocate widget list with size '%lu'.",
                   size);
