@@ -19,6 +19,7 @@
 
 /* Includes */
 #include "elmapp.h"
+#include "elmgtk.h"
 
 /* Public functions */
 ElmApp * login_interface(void);

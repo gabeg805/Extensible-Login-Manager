@@ -41,8 +41,6 @@ GtkWidget * new_frame_widget(void)
 /* Draw login frame */
 gboolean draw_frame(gpointer data)
 { 
-    elmprintf(LOG, "Drawing login frame.");
-
     GtkWidget *drawing = data;
     GdkWindow *window  = elm_get_gdkwindow(&drawing);
     guint      width   = gtk_widget_get_allocated_width(drawing);

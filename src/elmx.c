@@ -35,34 +35,36 @@
 #include <Imlib2.h>
 
 /* Private functions */
-static void xstop(void);
-static void xrestart(void);
-static int xopen(void);
-static int xblank(void);
-static int xtimeout(uint8_t timeout);
-static int xwait(void);
-static int xignoreio(Display *display);
-static int xioerror(Display *display);
-static int xsetbackground(void);
-static int xsetcursor(void);
-static int set_display(char *display);
-static int set_tty(char *tty);
-static int set_ntty(uint8_t n);
-static char * get_display(void);
-static char * get_tty(void);
+static void    xstop(void);
+static void    xrestart(void);
+static int     xopen(void);
+static int     xblank(void);
+static int     xtimeout(uint8_t timeout);
+static int     xwait(void);
+static int     xignoreio(Display *display);
+static int     xioerror(Display *display);
+static int     set_display(char *display);
+static int     set_tty(char *tty);
+static int     set_ntty(uint8_t n);
+static char *  get_display(void);
+static char *  get_tty(void);
 static uint8_t get_ntty(void);
 
 /* Private variables */
-static uint8_t  Xstarted   = 0;
-static char    *Xdispenv   = NULL;
-static pid_t    Xpid       = -1;
 static Display *Xdisplay   = NULL;
-static Window   Xwindow    = -1;
 static Screen  *Xscreen    = NULL;
+static Window   Xwindow    = -1;
+static uint8_t  Xstarted   = 0;
+static pid_t    Xpid       = -1;
 static int      Xscreennum = -1;
+static char    *Xdispenv   = NULL;
 static char    *Xtty       = NULL;
 static uint8_t  Xntty      = 0;
 
+static int ScreenWidth  = 0;
+static int ScreenHeight = 0;
+
+/* Not sure what this does (Slim) */
 jmp_buf xcloseenv;
 
 /* ************************************************************************** */
@@ -288,130 +290,6 @@ int xioerror(Display *display)
 }
 
 /* ************************************************************************** */
-/* Start compositing manager (for transparency) */
-int xcompmanager(void)
-{
-    const char *xcompmgr = "/usr/bin/xcompmgr";
-    if (pgrep(basename(xcompmgr))) {
-        elmprintf(LOG, "X composite manager already started.");
-        return 1;
-    }
-    pid_t pid = fork();
-    switch (pid) {
-    case 0:
-        execl(xcompmgr, xcompmgr, NULL);
-        elmprintf(LOG, "Error exec-ing %s: %s", xcompmgr, strerror(errno));
-        exit(ELM_EXIT_X_XCOMPMGR);
-        break;
-    case -1:
-        elmprintf(LOG, "Error forking to start %s: %s.", xcompmgr,
-                  strerror(errno));
-        return -1;
-    default:
-        waitpid(pid, NULL, WNOHANG);
-        sleep(2);
-        break;
-    }
-    return 0;
-}
-
-/* ************************************************************************** */
-/* Set X server style */
-int xsetstyle(void)
-{
-    xsetcursor();
-    xsetbackground();
-    return 0;
-}
-
-/* ************************************************************************** */
-/* Set background image */
-int xsetbackground(void)
-{
-    /* Load background image */
-    const char *filename = "/etc/X11/elm/img/tree.jpg";
-    Imlib_Image image    = imlib_load_image(filename);
-    if (!image) {
-        elmprintf(LOG, "Unable to load image '%s': %s.", filename, strerror(errno));
-        return 1;
-    }
-    imlib_context_set_image(image);
-
-    /* Create X window pixmap */
-    elmprintf(LOG, "Creating pixmap.");
-    int    width  = imlib_image_get_width();
-    int    height = imlib_image_get_height();
-    int    depth  = DefaultDepthOfScreen(Xscreen);
-    Pixmap pixmap = XCreatePixmap(Xdisplay, Xwindow, width, height, depth);
-    switch (pixmap) {
-    case BadAlloc:
-        elmprintf(LOG, "Unable to create pixmap: Bad allocation: '%s'.", strerror(errno));
-        return 1;
-    case BadDrawable:
-        elmprintf(LOG, "Unable to create pixmap: Bad drawable: '%s'.", strerror(errno));
-        return 2;
-    case BadValue:
-        elmprintf(LOG, "Unable to create pixmap: Bad value: '%s'.", strerror(errno));
-        return 3;
-    default:
-        break;
-    }
-
-    /* Prepare setting of background image */
-    elmprintf(LOG, "Preparing to set background image.");
-    Visual *visual = DefaultVisualOfScreen(Xscreen);
-    if (visual == NULL) {
-        elmprintf(LOG, "Unable to get visual of screen: %s.", strerror(errno));
-        return 5;
-    }
-    Colormap colormap = DefaultColormapOfScreen(Xscreen);
-    imlib_context_set_display(Xdisplay);
-    imlib_context_set_visual(visual);
-    imlib_context_set_colormap(colormap);
-    imlib_context_set_drawable(pixmap);
-    imlib_render_image_on_drawable(0, 0);
-
-    /* Set background image */
-    elmprintf(LOG, "Setting background pixmap.");
-    int status;
-    status = XSetWindowBackgroundPixmap(Xdisplay, Xwindow, pixmap);
-    switch (status) {
-    case BadMatch:
-        elmprintf(LOG, "Unable to set background pixmap: Bad match: '%s'.", strerror(errno));
-        return 10;
-    case BadPixmap:
-        elmprintf(LOG, "Unable to set background pixmap: Bad pixmap: '%s'.", strerror(errno));
-        return 11;
-    case BadWindow:
-        elmprintf(LOG, "Unable to set background pixmap: Bad window: '%s'.", strerror(errno));
-        return 12;
-    default:
-        break;
-    }
-
-    /* elmprintf(LOG, "Clearing window."); */
-    /* status = XClearWindow(Xdisplay, Xwindow); */
-    /* switch (status) { */
-    /* case BadMatch: */
-    /*     elmprintf(LOG, "Unable to clear window: Bad match: '%s'.", strerror(errno)); */
-    /*     return 1; */
-    /* case BadWindow: */
-    /*     elmprintf(LOG, "Unable to clear window: Bad window: '%s'.", strerror(errno)); */
-    /*     return 1; */
-    /* default: */
-    /*     break; */
-    /* } */
-
-    /* Flush events to X server */
-    XFlush(Xdisplay);
-    /* XFreePixmap(Xdisplay, pixmap); */
-    /* imlib_free_image(); */
-    /* /\* XCloseDisplay(Xdisplay); *\/ */
-
-    return 0;
-}
-
-/* ************************************************************************** */
 /* Set cursor */
 int xsetcursor(void)
 {
@@ -445,6 +323,34 @@ int xsetcursor(void)
     /* Flush events to X server */
     XFlush(Xdisplay);
 
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Start compositing manager (for transparency) */
+int xcompmanager(void)
+{
+    const char *xcompmgr = "/usr/bin/xcompmgr";
+    if (pgrep(basename(xcompmgr))) {
+        elmprintf(LOG, "X composite manager already started.");
+        return 1;
+    }
+    pid_t pid = fork();
+    switch (pid) {
+    case 0:
+        execl(xcompmgr, xcompmgr, NULL);
+        elmprintf(LOG, "Error exec-ing %s: %s", xcompmgr, strerror(errno));
+        exit(ELM_EXIT_X_XCOMPMGR);
+        break;
+    case -1:
+        elmprintf(LOG, "Error forking to start %s: %s.", xcompmgr,
+                  strerror(errno));
+        return -1;
+    default:
+        waitpid(pid, NULL, WNOHANG);
+        sleep(2);
+        break;
+    }
     return 0;
 }
 
@@ -627,22 +533,22 @@ uint8_t get_ntty(void)
 }
 
 /* ************************************************************************** */
-/* Return screen width and height dimensions for root window */
-int get_root_display_dimensions(int *width, int *height)
+/* Set screen width and height. These are the dimensions of the root window */
+int set_screen_dimensions(void)
 {
     Display *display = XOpenDisplay(NULL);
     if (!display) {
         elmprintf(LOG, "Unable to get display dimensions: Failed to open display.");
-        *width  = -1;
-        *height = -1;
+        ScreenWidth  = 0;
+        ScreenHeight = 0;
         return -1;
     }
 
     Window window = DefaultRootWindow(display);
     if (window < 0) {
         elmprintf(LOG, "Unable to get display dimensions: Failed to get window ID.");
-        *width  = -1;
-        *height = -1;
+        ScreenWidth  = 0;
+        ScreenHeight = 0;
         return -2;
     }
 
@@ -650,41 +556,28 @@ int get_root_display_dimensions(int *width, int *height)
     Status status = XGetWindowAttributes(display, window, &attr);
     if (!status) {
         elmprintf(LOG, "Unable to get display dimensions: Failed getting window attributes.");
-        *width  = -1;
-        *height = -1;
+        ScreenWidth  = 0;
+        ScreenHeight = 0;
         return -3;
     }
 
-    *width  = attr.width;
-    *height = attr.height;
+    ScreenWidth  = attr.width;
+    ScreenHeight = attr.height;
     XCloseDisplay(display);
 
     return 0;
 }
 
 /* ************************************************************************** */
-/* Return screen width and height dimensions */
-int get_display_dimensions(int *width, int *height)
+/* Return screen width */
+int get_screen_width(void)
 {
-    Display *display = XOpenDisplay(NULL);
-    if (!display) {
-        elmprintf(LOG, "Unable to get display dimensions: Failed to open display.");
-        *width  = -1;
-        *height = -1;
-        return -1;
-    }
+    return ScreenWidth;
+}
 
-    Screen *screen = DefaultScreenOfDisplay(display);
-    if (!screen) {
-        elmprintf(LOG, "Unable to get display dimensions: Failed to get default screen.");
-        *width  = -1;
-        *height = -1;
-        return -2;
-    }
-
-    *width  = screen->width;
-    *height = screen->height;
-    XCloseDisplay(display);
-
-    return 0;
+/* ************************************************************************** */
+/* Return screen height */
+int get_screen_height(void)
+{
+    return ScreenHeight;
 }

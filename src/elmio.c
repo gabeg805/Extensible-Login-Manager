@@ -47,18 +47,25 @@ void elmprintf(ElmPrint_t mode, const char *fmt, ...)
     /* Call appropriate logging function */
     va_list arglist;
     va_start(arglist, fmt);
-    if (mode == INFO)
+    if (mode == INFO) {
         infoprintf(linefmt, arglist);
-    else if (mode == WARNING)
+    }
+    else if (mode == WARNING) {
         warnprintf(linefmt, arglist);
-    else if (mode == ERROR)
+    }
+    else if (mode == ERROR) {
         errprintf(linefmt, arglist);
-    else if (mode == LOG)
-        logprintf(linefmt, arglist);
-    else if (mode == DEBUG)
-        debugprintf(linefmt, arglist);
-    else if (mode == NONE)
+    }
+    else if (mode == LOG) {
         infoprintf(linefmt, arglist);
+        /* logprintf(linefmt, arglist); */
+    }
+    else if (mode == DEBUG) {
+        debugprintf(linefmt, arglist);
+    }
+    else if (mode == NONE) {
+        infoprintf(linefmt, arglist);
+    }
     else
         ;
     va_end(arglist);
@@ -96,6 +103,7 @@ char * strtimenow(const char *fmt)
     time_t       now     = time(0);
     struct tm   *tstruct = localtime(&now);
     static char  buf[128];
+    memset(&buf, 0, sizeof(buf));
     strftime(buf, sizeof(buf), fmt, tstruct);
     return buf;
 }

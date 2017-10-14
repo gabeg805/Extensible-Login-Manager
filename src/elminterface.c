@@ -31,11 +31,5 @@ ElmApp * login_interface(void)
         {0,                     ELM_GRAV_NONE,         0,    0}
     };
 
-        /* {display_datetime,      ELM_GRAV_BOTTOM_LEFT, 110,  595}, */
-        /* {display_frame,         ELM_GRAV_CENTER,      570,  230}, */
-        /* {display_login,         ELM_GRAV_CENTER,      590,  250}, */
-        /* {display_power_buttons, ELM_GRAV_TOP_RIGHT,   1320, 20}, */
-        /* {0,                     ELM_GRAV_NONE,        0,    0} */
-
     return apps;
 }

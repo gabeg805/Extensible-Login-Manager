@@ -29,6 +29,10 @@ typedef struct
     int    (*xinit)(void);
     int    (*xstyle)(void);
     int    (*setup_signal_catcher)(void);
+    int    (*build_window)(void);
+    int    (*build_apps)(void);
+    int    (*show_apps)(void);
+    int    (*hide_apps)(void);
     void   (*set_preview_mode)(int flag);
 } ElmLoginManager;
 

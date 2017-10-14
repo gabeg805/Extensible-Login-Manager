@@ -28,9 +28,10 @@
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
-/* Typedefs */
+/* Callback function */
 typedef int (*ElmCallback)(GtkWidget*, void*);
 
+/* Position gravity */
 typedef enum ElmGravity {
     ELM_GRAV_NONE=0,
     ELM_GRAV_TOP_LEFT,
@@ -40,6 +41,7 @@ typedef enum ElmGravity {
     ELM_GRAV_BOTTOM_RIGHT
 } ElmGravity;
 
+/* Application structure */
 typedef struct ElmApp
 {
     GtkWidget *     (*display)(ElmCallback);
@@ -47,18 +49,5 @@ typedef struct ElmApp
     int16_t           x;
     int16_t           y;
 } ElmApp;
-
-typedef ElmApp * (*ElmAppBuilder)(ElmCallback);
-
-/* Public functions */
-int elm_set_window_position(GtkWidget **window, int16_t x, int16_t y);
-int elm_set_window_size(GtkWidget **window, size_t width, size_t height);
-int elm_set_window_transparent(GtkWidget **window);
-int elm_set_default_widget(GtkWidget **window, GtkWidget **widget);
-int elm_set_widget_size(GtkWidget **widget, size_t width, size_t height);
-int elm_set_widget_style(GtkWidget **widget, const char *name,
-                         const char *file);
-GtkWidget * elm_get_window(GtkWidget **widget);
-GdkWindow * elm_get_gdkwindow(GtkWidget **widget);
 
 #endif /* ELM_APP_H */

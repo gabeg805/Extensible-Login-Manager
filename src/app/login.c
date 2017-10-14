@@ -23,12 +23,13 @@
 
 /* Private functions */
 static GtkWidget * new_login_button(const char *text);
-static int         set_callback_data(GtkWidget *widget, gpointer data);
-static int         set_default_widget(GtkWidget *widget, gpointer data);
+static void        set_callback_data(GtkWidget *widget, gpointer data);
+static void        set_default_widget(GtkWidget *widget, gpointer data);
+static void        set_focus_on_widget(GtkWidget *widget, gpointer data);
 
 /* Private variables */
-static ElmLogin  Info;
-const  char     *Style = "/etc/X11/elm/src/app/style/login.css";
+static ElmLogin   Info;
+const  char      *Style = "/etc/X11/elm/src/app/style/login.css";
 
 /* ************************************************************************** */
 /* Create login fields application */
@@ -45,25 +46,28 @@ GtkWidget * display_login(ElmCallback callback)
     entrybox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,    5);
     buttonbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
 
+
     static GtkWidget *username;
     static GtkWidget *password;
     static GtkWidget *xsession;
     static GtkWidget *button;
-    username = new_username_widget();
-    password = new_password_widget();
-    xsession = new_xsession_widget();
-    button   = new_login_button("Login");
+    username  = new_username_widget();
+    password  = new_password_widget();
+    xsession  = new_xsession_widget();
+    button    = new_login_button("Login");
 
     gtk_fixed_put(GTK_FIXED(frame), container, 0, 0);
     gtk_box_pack_start(GTK_BOX(container), entrybox,  TRUE,  TRUE,  0);
     gtk_box_pack_start(GTK_BOX(container), buttonbox, TRUE,  TRUE,  0);
     gtk_box_pack_start(GTK_BOX(entrybox),  username,  FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(entrybox),  password,  FALSE, FALSE, 0);
-    gtk_box_pack_end(GTK_BOX(buttonbox),   xsession,  FALSE, FALSE, 0);
-    gtk_box_pack_end(GTK_BOX(buttonbox),   button,    FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(buttonbox), button,    FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(buttonbox), xsession,  FALSE, FALSE, 0);
     gtk_widget_set_margin_top(container,   20);
     gtk_widget_set_margin_start(container, 20);
     g_signal_connect(button, "clicked", G_CALLBACK(callback), &Info);
+    g_signal_connect(frame,  "show", G_CALLBACK(set_default_widget), &button);
+    g_signal_connect(frame,  "show", G_CALLBACK(set_focus_on_widget), &username);
 
     return frame;
 }
@@ -79,7 +83,6 @@ GtkWidget * new_login_button(const char *text)
     elm_set_widget_style(&button, "LoginButton", Style);
 
     g_signal_connect(button, "clicked", G_CALLBACK(set_callback_data), NULL);
-    g_signal_connect(button, "show",    G_CALLBACK(set_default_widget), NULL);
 
     return button;
 }
@@ -91,7 +94,7 @@ GtkWidget * new_login_button(const char *text)
  * in will always fail. Similarly, for xsession, starting the X session will
  * always fail. 
  */
-int set_callback_data(GtkWidget *widget, gpointer data)
+void set_callback_data(GtkWidget *widget, gpointer data)
 {
     const char *username = get_username();
     const char *password = get_password();
@@ -104,17 +107,21 @@ int set_callback_data(GtkWidget *widget, gpointer data)
     strncpy(Info.username, username, sizeof(Info.username)-1);
     strncpy(Info.password, password, sizeof(Info.password)-1);
     strncpy(Info.xsession, xsession, sizeof(Info.xsession)-1);
-
-    return 0;
 }
 
 /* ************************************************************************** */
-/* Set button as the default widget when widget is shown (for sure is attached
- * to a window by then) */
-int set_default_widget(GtkWidget *widget, gpointer data)
+/* Set button as the default widget when widget is shown */
+void set_default_widget(GtkWidget *widget, gpointer data)
 {
-    printf("Setting default widget\n");
-    GtkWidget *window = elm_get_window(&widget);
-    elm_set_default_widget(&window, &widget);
-    return 0;
+    GtkWidget  *window = elm_get_window(&widget);
+    GtkWidget **button = data;
+    elm_set_default_widget(&window, button);
+}
+
+/* ************************************************************************** */
+/* Set focus on widget */
+void set_focus_on_widget(GtkWidget *widget, gpointer data)
+{
+    GtkWidget **username = data;
+    gtk_widget_grab_focus(*username);
 }

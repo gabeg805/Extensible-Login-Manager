@@ -1,6 +1,6 @@
 /* *****************************************************************************
  * 
- * Name:    elmapp.c
+ * Name:    elmgtk.c
  * Author:  Gabriel Gonzalez
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
@@ -14,7 +14,7 @@
  */
 
 /* Includes */
-#include "elmapp.h"
+#include "elmgtk.h"
 
 /* ************************************************************************** */
 /* Set window position */

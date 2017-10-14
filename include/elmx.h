@@ -27,10 +27,11 @@
 
 /* Public functions */
 int xstart(void);
+int xsetcursor(void);
 int xcompmanager(void);
-int xsetstyle(void);
 int xinitrc(void);
-int get_root_display_dimensions(int *width, int *height);
-int get_display_dimensions(int *width, int *height);
+int set_screen_dimensions(void);
+int get_screen_width(void);
+int get_screen_height(void);
 
 #endif /* ELM_X_H */

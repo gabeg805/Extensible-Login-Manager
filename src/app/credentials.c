@@ -18,7 +18,6 @@
 /* Private functions */
 static const gchar * get_entry_buffer_text(GtkWidget *widget, char **field);
 static       int     set_entry_buffer(GtkWidget *widget, char *placeholder);
-static       int     set_focus_on_widget(GtkWidget *widget, gpointer data);
 
 /* Private variables */
 static       GtkWidget  *Username    = NULL;
@@ -39,7 +38,6 @@ GtkWidget * new_username_widget(void)
     gtk_entry_set_activates_default(GTK_ENTRY(Username), TRUE);
     elm_set_widget_size(&Username, 230, 0);
     elm_set_widget_style(&Username, "Username", Style);
-    g_signal_connect(Username, "show", G_CALLBACK(set_focus_on_widget), NULL);    
 
     return Username;
 }
@@ -117,14 +115,5 @@ int set_entry_buffer(GtkWidget *widget, char *placeholder)
     if (placeholder != NULL)
         gtk_entry_set_placeholder_text(GTK_ENTRY(widget), placeholder);
 
-    return 0;
-}
-
-/* ************************************************************************** */
-/* Set focus on widget */
-int set_focus_on_widget(GtkWidget *widget, gpointer data)
-{
-    printf("Setting focus on widget\n");
-    gtk_widget_grab_focus(Username);
     return 0;
 }
