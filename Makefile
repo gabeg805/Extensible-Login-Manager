@@ -7,7 +7,7 @@ PROJECT = elm
 CC      = gcc
 PKGS    = gtk+-3.0 cairo libsystemd
 CFLAGS  = -g -Wall
-LIBS   = -lpam -lpam_misc -lX11 -lImlib2 -lutil `pkg-config $(PKGS) --cflags --libs`
+LIBS   = -lpam -lpam_misc -lX11 -lXrandr -lutil `pkg-config $(PKGS) --cflags --libs`
 
 # ------------------------------------------------------------------------------
 # Directories

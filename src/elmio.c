@@ -57,8 +57,8 @@ void elmprintf(ElmPrint_t mode, const char *fmt, ...)
         errprintf(linefmt, arglist);
     }
     else if (mode == LOG) {
-        infoprintf(linefmt, arglist);
-        /* logprintf(linefmt, arglist); */
+        /* infoprintf(linefmt, arglist); */
+        logprintf(linefmt, arglist);
     }
     else if (mode == DEBUG) {
         debugprintf(linefmt, arglist);

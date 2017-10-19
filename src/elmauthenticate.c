@@ -143,6 +143,7 @@ int pam_failure(const char *name, int result)
         elmprintf(LOG, "%s: %s", name, pam_strerror(pamh, result));
         return 1;
     }
+
     return 0;
 }
 
@@ -151,6 +152,7 @@ int pam_failure(const char *name, int result)
 int elm_authenticate(const char *username, const char *password)
 {
     elmprintf(LOG, "Authenticating username and password.");
+
     const char      *data[2]  = {username, password};
     struct pam_conv  pam_conv = {conv, data};
     int              result;
@@ -186,6 +188,7 @@ int elm_authenticate(const char *username, const char *password)
     result = pam_setcred(pamh, PAM_ESTABLISH_CRED);
     if (pam_failure("pam_setcred", result))
         return 1;
+
     return 0;
 }
 
@@ -208,7 +211,7 @@ int elm_login(const char *session, pid_t *parentpid)
     /* Get password entry for user */
     struct passwd *pw = getpwnam(username);
     endpwent();
-    if (pw == NULL) {
+    if (!pw) {
         elmprintf(LOG, "Error getting password structure for user '%s': %s",
                   username, strerror(errno));
         return 1;
@@ -216,13 +219,13 @@ int elm_login(const char *session, pid_t *parentpid)
 
     char **child_env = pam_getenvlist(pamh);
     uint8_t i = 0;
-    while (child_env[i] != NULL) {
+    while (child_env[i]) {
         elmprintf(LOG, "child_env[%u]: %s", i, child_env[i]);
         ++i;
         if (i > 100)
             break;
     }
-    
+
 /* 		const int Num_Of_Variables = 11; /\* Number of env. variables + 1 *\/ */
 /* # endif /\* USE_CONSOLEKIT *\/ */
 /* 		char** child_env = static_cast<char**>(malloc(sizeof(char*)*Num_Of_Variables)); */
@@ -242,7 +245,10 @@ int elm_login(const char *session, pid_t *parentpid)
     /* Setup and execute user session */
     const char *xinitrcfile = "/etc/X11/elm/util/xinit/xinitrc";
     pid_t pid = fork();
-    switch (pid) {
+
+    switch (pid)
+    {
+    /* Child */
     case 0:
         elmprintf(LOG, "Setting up user session.");
 
@@ -251,18 +257,22 @@ int elm_login(const char *session, pid_t *parentpid)
         chdir(pw->pw_dir);
         chown(xinitrcfile, pw->pw_uid, pw->pw_gid);
         chown(ELM_LOG, pw->pw_uid, pw->pw_gid);
+
         if (initgroups(pw->pw_name, pw->pw_gid) < 0) {
             elmprintf(LOG, "Error setting initgroups: %s.", strerror(errno));
             return 1;
         }
+
         if (setgid(pw->pw_gid) < 0) {
             elmprintf(LOG, "Error setting GID: %s.", strerror(errno));
             return 1;
         }
+
         if (setuid(pw->pw_uid) < 0) {
             elmprintf(LOG, "Error setting UID: %s.", strerror(errno));
             return 1;
         }
+
         init_env(pw);
         i = 0;
         while (child_env[i] != NULL) {
@@ -273,20 +283,28 @@ int elm_login(const char *session, pid_t *parentpid)
         }
 
         /* Start user X session with xinitrc */
-        xinitrc();
         elmprintf(LOG, "Starting user session.");
+
         char cmd[128];
+
+        elm_x_load_user_preferences();
         snprintf(cmd, sizeof(cmd), "exec /bin/bash --login %s %s", xinitrcfile, session);
         /* snprintf(cmd, sizeof(cmd), "exec /bin/bash --login %s", session); */
         execl(pw->pw_shell, pw->pw_shell, "-c", cmd, NULL);
+
         elmprintf(LOG, "Error starting login shell: %s.", strerror(errno));
         exit(ELM_EXIT_AUTHENTICATE_LOGIN);
         break;
+
+    /* Fork failed */
     case -1:
         elmprintf(LOG, "Error forking to start user session: %s.", strerror(errno));
         exit(ELM_EXIT_AUTHENTICATE_LOGIN);
         break;
+
+    /* Parent */
     default:
+        elmprintf(LOG, "Setting parent PID to '%d'.", pid);
         *parentpid = pid;
         break;
     }

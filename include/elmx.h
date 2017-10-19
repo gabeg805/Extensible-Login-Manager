@@ -5,8 +5,8 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Setup the X server for the Extensible Login Manager.
- *              
+ * Description: Setup the X server.
+ * 
  * Notes: None.
  * 
  * *****************************************************************************
@@ -26,12 +26,13 @@
 #define ELM_EXIT_X_XCOMPMGR 16
 
 /* Public functions */
-int xstart(void);
-int xsetcursor(void);
-int xcompmanager(void);
-int xinitrc(void);
-int set_screen_dimensions(void);
-int get_screen_width(void);
-int get_screen_height(void);
+int elm_x_init(void);
+int elm_x_start(void);
+int elm_x_set_cursor(void);
+int elm_x_set_transparency(int flag);
+int elm_x_load_user_preferences(void);
+int elm_x_set_screen_dimensions(void);
+int elm_x_get_screen_width(void);
+int elm_x_get_screen_height(void);
 
 #endif /* ELM_X_H */

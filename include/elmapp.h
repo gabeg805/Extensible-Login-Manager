@@ -29,7 +29,7 @@
 #include <gtk/gtk.h>
 
 /* Callback function */
-typedef int (*ElmCallback)(GtkWidget*, void*);
+typedef void (*ElmCallback)(GtkWidget*, gpointer);
 
 /* Position gravity */
 typedef enum ElmGravity {

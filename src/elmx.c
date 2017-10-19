@@ -5,9 +5,8 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Setup the X server and all its components (composite manager, 
- *              background, etc.) for the Extensible Login Manager.
- *              
+ * Description: Setup the X server.
+ * 
  * Notes: None.
  * 
  * *****************************************************************************
@@ -32,87 +31,111 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/cursorfont.h>
-#include <Imlib2.h>
+#include <X11/extensions/Xrandr.h>
 
 /* Private functions */
 static void    xstop(void);
 static void    xrestart(void);
-static int     xopen(void);
-static int     xblank(void);
 static int     xtimeout(uint8_t timeout);
 static int     xwait(void);
 static int     xignoreio(Display *display);
 static int     xioerror(Display *display);
-static int     set_display(char *display);
-static int     set_tty(char *tty);
-static int     set_ntty(uint8_t n);
-static char *  get_display(void);
-static char *  get_tty(void);
-static uint8_t get_ntty(void);
+
+static int elm_x_is_running(void);
+static int elm_x_set_display_env(void);
+static int elm_x_set_tty_env(void);
+static int elm_x_set_ttyn_env(void);
 
 /* Private variables */
 static Display *Xdisplay   = NULL;
-static Screen  *Xscreen    = NULL;
 static Window   Xwindow    = -1;
-static uint8_t  Xstarted   = 0;
 static pid_t    Xpid       = -1;
-static int      Xscreennum = -1;
-static char    *Xdispenv   = NULL;
-static char    *Xtty       = NULL;
-static uint8_t  Xntty      = 0;
-
-static int ScreenWidth  = 0;
-static int ScreenHeight = 0;
+static int      ScreenWidth  = -1;
+static int      ScreenHeight = -1;
 
 /* Not sure what this does (Slim) */
 jmp_buf xcloseenv;
+
+/* ************************************************************************** */
+/* Initialize X window attributes */
+int elm_x_init(void)
+{
+    elmprintf(LOG, "Opening X display.");
+
+    /* Set X display */
+    char *display = getenv("DISPLAY");
+
+    if (!(Xdisplay=XOpenDisplay(display))) {
+        elmprintf(LOG, "Unabled to open display on '%s': %s.", display,
+                  strerror(errno));
+        /* xstop(); */
+        exit(ELM_EXIT_X_OPEN);
+    }
+
+    /* Set root window */
+    Xwindow = DefaultRootWindow(Xdisplay);
+
+    return 0;
+}
 
 /* ************************************************************************** */
 /* Start the X server */
 /* Note: I added a check if Xorg is already running, but if multiple instances 
  * can be run, it needs to be removed 
  */
-int xstart(void)
+int elm_x_start(void)
 {
-    if (Xstarted) {
+    elmprintf(LOG, "X server is starting.");
+    if (elm_x_is_running()) {
         elmprintf(LOG, "X server already started.");
         return 0;
     }
 
     /* Setup X environment variables */
-    elmprintf(LOG, "X server is starting.");
-    Xdispenv = get_display();
-    Xtty     = get_tty();
-    Xntty    = get_ntty();
-    set_display(Xdispenv);
-    set_tty(Xtty);
-    set_ntty(Xntty);
+    elm_x_set_display_env();
+    elm_x_set_tty_env();
+    elm_x_set_ttyn_env();
 
     /* Start X server */
-    const char *xorg = "/usr/bin/Xorg";
     Xpid = fork();
-    switch (Xpid) {
+    switch (Xpid)
+    {
+    /* Child */
     case 0:
         signal(SIGTTIN, SIG_IGN); /* Slim */
         signal(SIGTTOU, SIG_IGN); /* Slim */
         signal(SIGUSR1, SIG_IGN); /* Slim */
-        setpgid(0, getpid()); /* Slim */
+        setpgid(0, getpid());     /* Slim */
 
+        const char *xorg     = "/usr/bin/Xorg";
         const char *authfile = "/tmp/elm.auth";
         const char *logfile  = "/var/log/xserver.log";
         char vt[5];
-        snprintf(vt, sizeof(vt), "vt%02u", Xntty);
-        execl(xorg, xorg, "-logverbose", "-logfile", logfile,
-              "-keeptty", "-seat", "seat0", "-auth", authfile, Xdispenv, vt, NULL);
-        elmprintf(LOG, "Error exec-ing %s: %s.", xorg, strerror(errno));
+        snprintf(vt, sizeof(vt), "vt%s", getenv("TTYN"));
+
+        execl(xorg, xorg,
+              /* "-background", "none", */
+              /* "-noreset", */
+              /* "-keeptty", */
+              "-nolisten", "tcp",
+              "-seat", "seat0",
+              "-auth", authfile,
+              "-logverbose", "-logfile", logfile,
+              getenv("DISPLAY"), vt, NULL);
+
+        elmprintf(LOG, "Error running Xorg: %s.", strerror(errno));
         exit(ELM_EXIT_X_START);
         break;
+
+    /* Fork error */
     case -1:
-        elmprintf(LOG, "Error forking to start %s: %s.", xorg, strerror(errno));
+        elmprintf(LOG, "Error forking to start Xorg: %s.", strerror(errno));
         exit(ELM_EXIT_X_START);
         break;
+
+    /* Parent */
     default:
-        /* sleep(1); */
+        sleep(1);
         if(xtimeout(0)) {
             Xpid = -1;
             return Xpid;
@@ -126,10 +149,6 @@ int xstart(void)
         }
         break;
     }
-
-    xopen();
-    xblank();
-    Xstarted = 1;
 
     return 0;
 }
@@ -148,22 +167,26 @@ void xstop(void)
 
 	/* Catch X error */
     elmprintf(LOG, "Catching X server error.");
+
 	XSetIOErrorHandler(xignoreio);
 	if(!setjmp(xcloseenv) && Xdisplay)
 		XCloseDisplay(Xdisplay);
 
 	/* Send HUP to process group */
     elmprintf(LOG, "Sending HUP to X server process group.");
+
 	errno = 0;
 	if((killpg(getpid(), SIGHUP) != 0) && (errno != ESRCH))
 		elmprintf(LOG, "Unable to send HUP to process group '%d'.", getpid());
 
 	/* Send TERM to server */
     elmprintf(LOG, "Sending TERM to X server process group.");
+
 	if(Xpid < 0) {
         elmprintf(LOG, "X server has invalid pid '%lu'. Exiting.", Xpid);
 		return;
     }
+
 	errno = 0;
 	if(killpg(Xpid, SIGTERM) < 0) {
 		if(errno == EPERM) {
@@ -176,6 +199,7 @@ void xstop(void)
 
 	/* Wait for server to shut down */
     elmprintf(LOG, "Waiting for X server to shut down.");
+
 	if(xtimeout(10)) {
         elmprintf(LOG, "X server shutting down.");
 		return;
@@ -184,6 +208,7 @@ void xstop(void)
 
 	/* Send KILL to server */
     elmprintf(LOG, "Sending KILL to X server process group.");
+
 	errno = 0;
 	if(killpg(Xpid, SIGKILL) < 0) {
 		if(errno == ESRCH)
@@ -202,42 +227,11 @@ void xstop(void)
 void xrestart(void)
 {
     elmprintf(LOG, "X server is restarting.");
+
     xstop();
     while (waitpid(-1, NULL, WNOHANG) > 0); /* Collect all dead children */
-    xstart();
-}
-
-/* ************************************************************************** */
-/* Open X window */
-int xopen(void)
-{
-    /* Open display */
-    if ((Xdisplay=XOpenDisplay(Xdispenv)) == 0) {
-        elmprintf(LOG, "Unabled to open display: %s.", strerror(errno));
-        /* xstop(); */
-        exit(ELM_EXIT_X_OPEN);
-    }
-
-    /* Get screen and root window */
-    Xscreennum = DefaultScreen(Xdisplay);
-    Xscreen    = DefaultScreenOfDisplay(Xdisplay);
-    Xwindow    = RootWindow(Xdisplay, Xscreennum);
-
-    return 0;
-}
-
-/* ************************************************************************** */
-/* Blank screen */
-int xblank(void)
-{
-	GC gc = XCreateGC(Xdisplay, Xwindow, 0, 0);
-	XSetForeground(Xdisplay, gc, BlackPixel(Xdisplay, Xscreennum));
-	XFillRectangle(Xdisplay, Xwindow, gc, 0, 0,
-				   XWidthOfScreen(ScreenOfDisplay(Xdisplay, Xscreennum)),
-				   XHeightOfScreen(ScreenOfDisplay(Xdisplay, Xscreennum)));
-	XFlush(Xdisplay);
-	XFreeGC(Xdisplay, gc);
-    return 0;
+    elm_x_start();
+    elm_x_init();
 }
 
 /* ************************************************************************** */
@@ -246,12 +240,14 @@ int xtimeout(uint8_t timeout)
 {
     pid_t   pid;
     uint8_t i;
+
     for (i=0; i <= timeout; ++i) {
         if ((pid=waitpid(Xpid, NULL, WNOHANG)) == Xpid)
             return 1;
         if (timeout)
             sleep(1);
     }
+
     return 0;
 }
 
@@ -259,18 +255,21 @@ int xtimeout(uint8_t timeout)
 /* Wait for server to start */
 int xwait(void)
 {
-    uint8_t ntimeout = 120;
-    uint8_t i;
+    char    *display  = getenv("DISPLAY");
+    uint8_t  ntimeout = 120;
+    uint8_t  i;
 
     for (i=0; i < ntimeout; ++i) {
-        if ((Xdisplay=XOpenDisplay(Xdispenv))) {
+        if ((Xdisplay=XOpenDisplay(display))) {
             XSetIOErrorHandler(xioerror);
             return 0;
         }
-        else
+        else {
             if (xtimeout(1))
                 break;
+        }
     }
+
     return 1;
 }
 
@@ -291,7 +290,7 @@ int xioerror(Display *display)
 
 /* ************************************************************************** */
 /* Set cursor */
-int xsetcursor(void)
+int elm_x_set_cursor(void)
 {
     /* Set cursor */
     Cursor cursor = XCreateFontCursor(Xdisplay, XC_left_ptr);
@@ -328,42 +327,61 @@ int xsetcursor(void)
 
 /* ************************************************************************** */
 /* Start compositing manager (for transparency) */
-int xcompmanager(void)
+int elm_x_set_transparency(int flag)
 {
+    /* Do not run if flag not set */
+    if (!flag)
+        return 1;
+
+    /* Check if transparency program is running */
     const char *xcompmgr = "/usr/bin/xcompmgr";
+
     if (pgrep(basename(xcompmgr))) {
         elmprintf(LOG, "X composite manager already started.");
         return 1;
     }
+
+    /* Execute xcompmgr */
     pid_t pid = fork();
-    switch (pid) {
+
+    switch (pid)
+    {
+    /* Child */
     case 0:
         execl(xcompmgr, xcompmgr, NULL);
         elmprintf(LOG, "Error exec-ing %s: %s", xcompmgr, strerror(errno));
         exit(ELM_EXIT_X_XCOMPMGR);
         break;
+
+    /* Fork failed */
     case -1:
         elmprintf(LOG, "Error forking to start %s: %s.", xcompmgr,
                   strerror(errno));
         return -1;
+
+    /* Wait until process is ~probably~ fully started */
     default:
         waitpid(pid, NULL, WNOHANG);
         sleep(2);
         break;
     }
+
     return 0;
 }
 
 /* ************************************************************************** */
-/* Load xinitrc */
-int xinitrc(void)
+/* Load preferences from Xresources and Xmodmap */
+int elm_x_load_user_preferences(void)
 {
     char *home = getenv("HOME");
+    char  xresources[64];
+    char  xmodmap[64];
     char  cmd[128];
 
-    /* Load .Xresources */
-    char xresources[64];
     snprintf(xresources, sizeof(xresources), "%s/.Xresources", home);
+    snprintf(xmodmap,    sizeof(xmodmap),    "%s/.Xmodmap",    home);
+
+    /* Load .Xresources */
     if (access(xresources, F_OK) == 0) {
         snprintf(cmd, sizeof(cmd), "/usr/bin/xrdb -merge %s", xresources);
         elmprintf(LOG, "Executing: %s", cmd);
@@ -371,8 +389,6 @@ int xinitrc(void)
     }
 
     /* Load .Xmodmap */
-    char xmodmap[64];
-    snprintf(xmodmap, sizeof(xmodmap), "%s/.Xmodmap", home);
     if (access(xmodmap, F_OK) == 0) {
         snprintf(cmd, sizeof(cmd), "/usr/bin/xmodmap %s", xmodmap);
         elmprintf(LOG, "Executing: %s", cmd);
@@ -384,200 +400,175 @@ int xinitrc(void)
 
 /* ************************************************************************** */
 /* Set DISPLAY environment variable */
-int set_display(char *display)
+int elm_x_set_display_env(void)
 {
-    if (display == NULL)
+    elmprintf(LOG, "Setting DISPLAY environment variable.");
+    if (getenv("DISPLAY")) {
+        elmprintf(LOG, "DISPLAY environment variable already set.");
         return 1;
-    if (setenv("DISPLAY", display, 1) < 0) {
-        elmprintf(LOG, "Error setting DISPLAY environment variable: %s.",
-                  strerror(errno));
+    }
+
+    /* Find an open display */
+    char file[15];
+    int  val = -1;
+    int  i;
+
+    for (i=0; i < 10; i++) {
+        snprintf(file, sizeof(file), "/tmp/.X%d-lock", i);
+        if (access(file, F_OK)) {
+            val = i;
+            break;
+        }
+    }
+
+    /* Check display value */
+    if (val < 0) {
+        elmprintf(LOG, "Unable to find an open display.");
         exit(ELM_EXIT_X_DISPLAY);
     }
+
+    /* Set display environment variable */
+    char display[3] = {':', i+'0', 0};
+
+    if (elm_setenv("DISPLAY", display) < 0)
+        exit(ELM_EXIT_X_DISPLAY);
+
     return 0;
 }
 
 /* ************************************************************************** */
-/* Set TTY environment variable */
-int set_tty(char *tty)
+/* Set currently used tty */
+int elm_x_set_tty_env(void)
 {
-    if (tty == NULL)
-        return 1;
-    if (setenv("TTY", tty, 1) < 0) {
-        elmprintf(LOG, "Error setting TTY environment variable: %s.",
+    /* Open tty file descriptor */
+    int   master;
+    int   slave;
+
+    if (openpty(&master, &slave, NULL, NULL, NULL) < 0) {
+        elmprintf(LOG, "Error finding open tty: %s.", strerror(errno));
+        exit(ELM_EXIT_X_TTY);
+    }
+
+    /* Get tty path from file descriptor */
+    char *tty = ttyname(slave);
+
+    if (!tty) {
+        elmprintf(LOG, "Error finding terminal device path name: %s.",
                   strerror(errno));
         exit(ELM_EXIT_X_TTY);
     }
+
+    /* Set tty environment variable */
+    if (elm_setenv("TTY", tty) < 0)
+        exit(ELM_EXIT_X_TTY);
+
     return 0;
 }
 
 /* ************************************************************************** */
 /* Set TTYN environment variable */
-int set_ntty(uint8_t n)
+int elm_x_set_ttyn_env(void)
 {
-    if (n == 0) {
-        elmprintf(LOG, "Invalid tty number '%u' found.", n);
+    /* Get tty number from name in path */
+    char   *tty    = getenv("TTY");
+    int     ttyn   = 0;
+    size_t  shift  = 0;
+    size_t  length = strlen(tty);
+
+    while ((!isdigit(tty[shift])) && (shift < length))
+        ++shift;
+    ttyn = atoi(tty+shift);
+    /* ttyn = (strstr(tty, "pts")) ? ttyn+2 : ttyn; */
+    if (strstr(tty, "pts"))
+        ttyn += 2;
+
+    /* Check tty number */
+    if ((ttyn <= 0) || (ttyn > 9)) {
+        elmprintf(LOG, "Invalid number from tty '%s'.", tty);
         exit(ELM_EXIT_X_TTY);
     }
-    char str[3];
-    snprintf(str, sizeof(str), "%u", n);
-    if (setenv("TTYN", str, 1) < 0) {
-        elmprintf(LOG, "Error setting TTYN environment variable: %s.",
-                  strerror(errno));
+
+    /* Set ttyn environment variable */
+    char str[2] = {ttyn+'0', 0};
+
+    if (elm_setenv("TTYN", str) < 0)
         exit(ELM_EXIT_X_TTY);
-    }
+
     return 0;
 }
 
 /* ************************************************************************** */
-/* Return open display */
-char * get_display(void)
+/* Set screen width and height. These are the dimensions of the active
+ * monitor.
+ */
+int elm_x_set_screen_dimensions(void)
 {
-    /* Set global display variable */
-    if (Xdispenv == NULL) {
-        /* Find an open display */
-        int val = -1;
-        char file[15];
-        int  i;
-        for (i=0; i < 20; ++i) {
-            snprintf(file, sizeof(file), "/tmp/.X%d-lock", i);
-            if (access(file, F_OK)) {
-                val = i;
-                break;
-            }
+    XRRScreenResources *screen = XRRGetScreenResources(Xdisplay, DefaultRootWindow(Xdisplay));
+    ScreenWidth  = -1;
+    ScreenHeight = -1;
+
+    /* Unable to determine screen info */
+    if (!screen) {
+        elmprintf(LOG, "Unable to set screen dimensions.");
+        return 1;
+    }
+
+    ScreenWidth  = 0;
+    ScreenHeight = 0;
+    int          num = screen->ncrtc;
+    int          i;
+    XRRCrtcInfo *info;
+
+    /* Set screen dimensions for monitor at x=0 */
+    for (i=0; i < num; i++) {
+        info = XRRGetCrtcInfo(Xdisplay, screen, screen->crtcs[i]);
+
+        if (info->x == 0) {
+            ScreenWidth  = info->width;
+            ScreenHeight = info->height;
+            XRRFreeCrtcInfo(info);
+            break;
         }
 
-        /* Set open display */
-        if (val < 0) {
-            elmprintf(LOG, "Unable to find a free display.");
-            exit(ELM_EXIT_X_DISPLAY);
-        }
-
-        size_t size = sizeof(int)+2;
-        Xdispenv = (char*) calloc(size, sizeof(char));
-        snprintf(Xdispenv, size, ":%d", val);
+        XRRFreeCrtcInfo(info);
     }
 
-    return Xdispenv;
-}
-
-/* ************************************************************************** */
-/* Return open tty */
-char * get_tty(void)
-{
-    /* Find open tty */
-    if (Xtty == NULL) {
-        /* Return tty file descriptor */
-        int master, slave;
-        if (openpty(&master, &slave, NULL, NULL, NULL) < 0) {
-            elmprintf(LOG, "Error finding open tty: %s.", strerror(errno));
-            exit(ELM_EXIT_X_TTY);
-        }
-
-        /* Convert file descriptor to tty path */
-        char *name = ttyname(slave);
-        if (name == NULL) {
-            elmprintf(LOG, "Error finding terminal device path name: %s.",
-                      strerror(errno));
-            exit(ELM_EXIT_X_TTY);
-        }
-
-        /* Convert basename of file path to tty */
-        size_t size = strlen(name)+1;
-        Xtty = (char*) calloc(size, sizeof(char));
-        snprintf(Xtty, size, "%s", name);
-
-
-        /* snprintf(tty, sizeof(tty), "/dev/tty7"); */
-        /* const char *agetty = "/sbin/agetty"; */
-        /* pid_t pid = fork(); */
-        /* switch (pid) { */
-        /* case 0: */
-        /*     elmprintf(LOG, "Executing agetty."); */
-        /*     system("/sbin/agetty --noclear tty7 linux"); */
-        /*     /\* execl(agetty, agetty, "--noclear", "tty7", "linux", NULL); *\/ */
-        /*     elmprintf(LOG, "Done with agetty."); */
-        /*     exit(ELM_EXIT_X_START); */
-        /*     break; */
-        /* case -1: */
-        /*     elmprintf(LOG, "Error while forking for tty."); */
-        /*     break; */
-        /* default: */
-        /*     break; */
-        /* } */
-    }
-
-    return Xtty;
-}
-
-/* ************************************************************************** */
-/* Return open tty number */
-uint8_t get_ntty(void)
-{
-    /* Check for unset tty */
-    if (Xtty == NULL)
-        return 0;
-
-    /* Find open tty */
-    if (Xntty == 0) {
-        /* Convert basename of file path to tty number */
-        size_t length = strlen(Xtty);
-        size_t shift  = 0;
-        while ((!isdigit(Xtty[shift])) && (shift < length))
-            ++shift;
-        Xntty = (uint8_t)atoi(Xtty+shift);
-        if (strstr(Xtty, "pts") != NULL)
-            Xntty += 2;
-    }
-
-    return Xntty;
-}
-
-/* ************************************************************************** */
-/* Set screen width and height. These are the dimensions of the root window */
-int set_screen_dimensions(void)
-{
-    Display *display = XOpenDisplay(NULL);
-    if (!display) {
-        elmprintf(LOG, "Unable to get display dimensions: Failed to open display.");
-        ScreenWidth  = 0;
-        ScreenHeight = 0;
-        return -1;
-    }
-
-    Window window = DefaultRootWindow(display);
-    if (window < 0) {
-        elmprintf(LOG, "Unable to get display dimensions: Failed to get window ID.");
-        ScreenWidth  = 0;
-        ScreenHeight = 0;
-        return -2;
-    }
-
-    XWindowAttributes attr;
-    Status status = XGetWindowAttributes(display, window, &attr);
-    if (!status) {
-        elmprintf(LOG, "Unable to get display dimensions: Failed getting window attributes.");
-        ScreenWidth  = 0;
-        ScreenHeight = 0;
-        return -3;
-    }
-
-    ScreenWidth  = attr.width;
-    ScreenHeight = attr.height;
-    XCloseDisplay(display);
+    XRRFreeScreenResources(screen);
 
     return 0;
 }
 
 /* ************************************************************************** */
 /* Return screen width */
-int get_screen_width(void)
+int elm_x_get_screen_width(void)
 {
     return ScreenWidth;
 }
 
 /* ************************************************************************** */
 /* Return screen height */
-int get_screen_height(void)
+int elm_x_get_screen_height(void)
 {
     return ScreenHeight;
 }
+
+/* ************************************************************************** */
+/* Check if X is running */
+int elm_x_is_running(void)
+{
+    return (getenv("DISPLAY")) ? 1 : 0;
+}
+
+    /* GdkDisplay   *dsp = gdk_display_get_default(); */
+    /* GdkMonitor   *mon; */
+    /* GdkRectangle  rect; */
+    /* int           num_monitors = gdk_display_get_n_monitors(dsp); */
+    /* int           i; */
+
+    /* for (i = 0; i < num_monitors; i++) { */
+    /*     mon = gdk_display_get_monitor(dsp, i); */
+    /*     gdk_monitor_get_geometry(mon, &rect); */
+    /*     printf ("monitor %d: offsets (%d, %d), size (%d, %d)\n", */
+    /*             i, rect.x, rect.y, rect.width, rect.height); */
+    /* } */
+

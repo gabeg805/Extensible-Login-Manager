@@ -34,6 +34,7 @@ ElmSession * elm_new_session(ElmLogin *info)
 {
     /* Allocate user session object */
     int status;
+
     if ((status=elm_session_alloc()) != 0)
         exit(ELM_EXIT_SESSION_NEW);
 
@@ -49,8 +50,8 @@ ElmSession * elm_new_session(ElmLogin *info)
 /* Authenticate login credentials */
 int elm_session_authenticate(void)
 {
-    if (Session == NULL) {
-        elmprintf(LOG, "Unable to authenticate login credentials.");
+    if (!Session) {
+        elmprintf(LOG, "Unable to authenticate login credentials: Session does not exist.");
         return -1;
     }
 
@@ -65,8 +66,8 @@ int elm_session_authenticate(void)
 /* Login to user session */
 int elm_session_login(void)
 {
-    if (Session == NULL) {
-        elmprintf(LOG, "Unable to login to user session.");
+    if (!Session) {
+        elmprintf(LOG, "Unable to login to user session: Session does not exist.");
         return -1;
     }
 
@@ -80,8 +81,8 @@ int elm_session_login(void)
 /* Logout of session */
 int elm_session_logout(void)
 {
-    if (Session == NULL) {
-        elmprintf(LOG, "Unable to logout of user session.");
+    if (!Session) {
+        elmprintf(LOG, "Unable to logout of user session: Session does not exist.");
         return -1;
     }
 
@@ -96,8 +97,9 @@ int elm_session_logout(void)
 int elm_session_alloc(void)
 {
     Session = calloc(1, sizeof(ElmSession));
-    if (Session == NULL) {
-        elmprintf(LOG, "Unable to initialize user session.");
+
+    if (!Session) {
+        elmprintf(LOG, "Unable to initialize user session: Error allocating memory.");
         return 1;
     }
 

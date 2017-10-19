@@ -10,7 +10,7 @@
 }
 .LoginButton:hover {
     font-family:      'Arial';
-    font-size:        13px;
+    font-size:        14px;
     color:            white;
     background-image: -gtk-gradient (linear,
                                      0 0, 0 1,

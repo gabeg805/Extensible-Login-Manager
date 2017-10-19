@@ -14,8 +14,10 @@
 
 /* Includes */
 #include "utility.h"
+#include "elmio.h"
 #include <ctype.h>
 #include <dirent.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,6 +26,20 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
+/* ************************************************************************** */
+/* Set environment variables */
+int elm_setenv(char *name, char *value)
+{
+    elmprintf(LOG, "Setting environment variable: '%s=%s'.", name, value);
+    if (setenv(name, value, 1) < 0) {
+        elmprintf(LOG, "Unable to set environment variable '%s=%s': %s.", name,
+                  value, strerror(errno));
+        return 1;
+    }
+
+    return 0;
+}
 
 /* ************************************************************************** */
 /* Return the basename of a path*/

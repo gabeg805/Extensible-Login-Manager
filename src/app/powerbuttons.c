@@ -52,7 +52,7 @@ void system_prompt(GtkButton *button, gpointer data)
     GtkWidget *shutdown  = gtk_button_new_with_label("Shutdown");
     GtkWidget *reboot    = gtk_button_new_with_label("Reboot");
     GtkWidget *cancel    = gtk_button_new_with_label("Cancel");
-    GtkWidget *label     = gtk_label_new("What action would you like to do?");
+    GtkWidget *label     = gtk_label_new("Do you really want to shutdown?");
     GtkWidget *container = gtk_bin_get_child(GTK_BIN(dialog));
     GtkWidget *buttonbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, margin);
     GtkWidget *systembox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, margin/2);
