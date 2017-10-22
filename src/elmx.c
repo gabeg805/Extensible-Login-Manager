@@ -33,18 +33,16 @@
 #include <X11/cursorfont.h>
 #include <X11/extensions/Xrandr.h>
 
-/* Private functions */
-static void    xstop(void);
-static void    xrestart(void);
-static int     xtimeout(uint8_t timeout);
-static int     xwait(void);
-static int     xignoreio(Display *display);
-static int     xioerror(Display *display);
+/* #include <dbus/dbus.h> */
 
-static int elm_x_is_running(void);
-static int elm_x_set_display_env(void);
-static int elm_x_set_tty_env(void);
-static int elm_x_set_ttyn_env(void);
+/* Private functions */
+static void elm_x_init(void);
+static void elm_x_wait_startup(void);
+static int  elm_x_stop(Display *display);
+static int  elm_x_set_display_env(void);
+static int  elm_x_set_tty_env(void);
+static int  elm_x_set_ttyn_env(void);
+static int  elm_x_is_running(void);
 
 /* Private variables */
 static Display *Xdisplay   = NULL;
@@ -57,37 +55,17 @@ static int      ScreenHeight = -1;
 jmp_buf xcloseenv;
 
 /* ************************************************************************** */
-/* Initialize X window attributes */
-int elm_x_init(void)
-{
-    elmprintf(LOG, "Opening X display.");
-
-    /* Set X display */
-    char *display = getenv("DISPLAY");
-
-    if (!(Xdisplay=XOpenDisplay(display))) {
-        elmprintf(LOG, "Unabled to open display on '%s': %s.", display,
-                  strerror(errno));
-        /* xstop(); */
-        exit(ELM_EXIT_X_OPEN);
-    }
-
-    /* Set root window */
-    Xwindow = DefaultRootWindow(Xdisplay);
-
-    return 0;
-}
-
-/* ************************************************************************** */
 /* Start the X server */
 /* Note: I added a check if Xorg is already running, but if multiple instances 
  * can be run, it needs to be removed 
  */
-int elm_x_start(void)
+int elm_x_run(void)
 {
     elmprintf(LOG, "X server is starting.");
+
     if (elm_x_is_running()) {
         elmprintf(LOG, "X server already started.");
+        elm_x_init();
         return 0;
     }
 
@@ -102,9 +80,9 @@ int elm_x_start(void)
     {
     /* Child */
     case 0:
-        signal(SIGTTIN, SIG_IGN); /* Slim */
-        signal(SIGTTOU, SIG_IGN); /* Slim */
-        signal(SIGUSR1, SIG_IGN); /* Slim */
+        signal(SIGTTIN, SIG_IGN);
+        signal(SIGTTOU, SIG_IGN);
+        signal(SIGUSR1, SIG_IGN);
         setpgid(0, getpid());     /* Slim */
 
         const char *xorg     = "/usr/bin/Xorg";
@@ -113,15 +91,22 @@ int elm_x_start(void)
         char vt[5];
         snprintf(vt, sizeof(vt), "vt%s", getenv("TTYN"));
 
+       /* └─287 /usr/bin/Xorg.bin :0 -background none -noreset -verbose 3 
+        * -logfile /dev/null -auth /var/run/gdm/auth-for-gdm-4X6qTS/database 
+        * -seat seat0 -nolisten tcp vt1 */
+        /* create var run directory for elm? */
+        /* create var log directory for elm? */
+
         execl(xorg, xorg,
-              /* "-background", "none", */
-              /* "-noreset", */
-              /* "-keeptty", */
-              "-nolisten", "tcp",
-              "-seat", "seat0",
+              getenv("DISPLAY"),
+              "-background", "none",
+              "-noreset",
+              "-verbose", "3", "-logverbose",
+              "-logfile", logfile,
               "-auth", authfile,
-              "-logverbose", "-logfile", logfile,
-              getenv("DISPLAY"), vt, NULL);
+              "-seat", "seat0",
+              "-nolisten", "tcp",
+              vt, NULL);
 
         elmprintf(LOG, "Error running Xorg: %s.", strerror(errno));
         exit(ELM_EXIT_X_START);
@@ -135,29 +120,80 @@ int elm_x_start(void)
 
     /* Parent */
     default:
-        sleep(1);
-        if(xtimeout(0)) {
-            Xpid = -1;
-            return Xpid;
-        }
-
-        /* Wait for server to start up */
-        if(xwait()) {
-            xstop();
-            Xpid = -1;
-            exit(ELM_EXIT_X_WAIT);
-        }
+        elm_x_wait_startup();
+        elm_x_init();
         break;
     }
+
+
+    /* DBusError derr; */
+    /* dbus_err_init(&derr); */
+
+    /* DBusConnection *dcon = dbus_bus_get(DBUS_BUS_SYSTEM */
+
 
     return 0;
 }
 
 /* ************************************************************************** */
-/* Stop X server */
-void xstop(void)
+/* Initialize X window attributes */
+void elm_x_init(void)
 {
-    elmprintf(LOG, "Stopping X server.");
+    elmprintf(LOG, "Opening X display.");
+
+    /* Set X display */
+    char *display = getenv("DISPLAY");
+
+    if (!(Xdisplay=XOpenDisplay(display))) {
+        elmprintf(LOG, "Unabled to open display on '%s': %s.", display,
+                  strerror(errno));
+        elm_x_stop(Xdisplay);
+        exit(ELM_EXIT_X_OPEN);
+    }
+
+    /* Set root window */
+    Xwindow = DefaultRootWindow(Xdisplay);
+
+    /* Set I/O error handler */
+    XSetIOErrorHandler(elm_x_stop);
+}
+
+/* ************************************************************************** */
+/* Wait for SIGUSR1 from Xorg, indicating it started successfully. Timeout in 30
+ * seconds */
+void elm_x_wait_startup(void)
+{
+    elmprintf(LOG, "Waiting for X to startup.");
+
+    const struct timespec timeout = {30, 0};
+    sigset_t  set;
+    siginfo_t info;
+
+    if (sigemptyset(&set)) {
+        elmprintf(LOG, "Unable to empty signal set: %s.", strerror(errno));
+        exit(ELM_EXIT_X_WAIT);
+    }
+
+    if (sigaddset(&set, SIGUSR1)) {
+        elmprintf(LOG, "Unable to add signal to set: %s.", strerror(errno));
+        exit(ELM_EXIT_X_WAIT);
+    }
+
+    /* Wait for signal */
+    if (sigtimedwait(&set, &info, &timeout) <= 0) {
+        elmprintf(LOG, "Error waiting for signal: %s.", strerror(errno));
+        exit(ELM_EXIT_X_WAIT);
+    }
+}
+
+
+
+/* ************************************************************************** */
+/* Stop X server */
+int elm_x_stop(Display *display)
+{
+	elmprintf(LOG, "Connection to X server lost.");
+
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT,  SIG_IGN);
 	signal(SIGHUP,  SIG_IGN);
@@ -165,127 +201,64 @@ void xstop(void)
 	signal(SIGTERM, SIG_DFL);
 	signal(SIGKILL, SIG_DFL);
 
-	/* Catch X error */
-    elmprintf(LOG, "Catching X server error.");
-
-	XSetIOErrorHandler(xignoreio);
-	if(!setjmp(xcloseenv) && Xdisplay)
+	/* Close display */
+	if(Xdisplay) {
 		XCloseDisplay(Xdisplay);
+    }
 
 	/* Send HUP to process group */
     elmprintf(LOG, "Sending HUP to X server process group.");
 
 	errno = 0;
-	if((killpg(getpid(), SIGHUP) != 0) && (errno != ESRCH))
+	if((killpg(getpid(), SIGHUP) != 0) && (errno != ESRCH)) {
 		elmprintf(LOG, "Unable to send HUP to process group '%d'.", getpid());
+    }
 
 	/* Send TERM to server */
     elmprintf(LOG, "Sending TERM to X server process group.");
 
 	if(Xpid < 0) {
         elmprintf(LOG, "X server has invalid pid '%lu'. Exiting.", Xpid);
-		return;
+    }
+    else {
+        errno = 0;
+        if(killpg(Xpid, SIGTERM) < 0) {
+            elmprintf(LOG, "Unable to terminate X server process group: %s.",
+                      strerror(errno));
+            exit(ELM_EXIT_X_STOP);
+        }
     }
 
-	errno = 0;
-	if(killpg(Xpid, SIGTERM) < 0) {
-		if(errno == EPERM) {
-			elmprintf(LOG, "Unable to terminate X server process group.");
-			exit(ELM_EXIT_X_STOP);
-		}
-		if(errno == ESRCH)
-			return;
-	}
-
-	/* Wait for server to shut down */
+	/* Wait 10 sec for server to shut down */
     elmprintf(LOG, "Waiting for X server to shut down.");
 
-	if(xtimeout(10)) {
-        elmprintf(LOG, "X server shutting down.");
-		return;
+    int i;
+    for (i=0; i < 10; i++)
+    {
+        if (waitpid(Xpid, NULL, WNOHANG) == Xpid) {
+            elmprintf(LOG, "X server shutting down.");
+            exit(ELM_EXIT_X_STOP);
+        }
+
+        sleep(1);
     }
-    elmprintf(LOG, "X server is slow to shut down. Sending KILL signal.");
 
 	/* Send KILL to server */
-    elmprintf(LOG, "Sending KILL to X server process group.");
+    elmprintf(LOG, "%s. %s", "X server is slow to shut down.",
+              "Sending KILL to X server process group.");
 
 	errno = 0;
 	if(killpg(Xpid, SIGKILL) < 0) {
-		if(errno == ESRCH)
-			return;
+        elmprintf(LOG, "Unable to KILL X server process group: %s.",
+                  strerror(errno));
 	}
 
-	/* Wait for server to die */
-	if(!xtimeout(3)) {
-		elmprintf(LOG, "Unable to kill server");
-		exit(ELM_EXIT_X_STOP);
-	}
-}
+    /* Collect all dead children */
+    elmprintf(LOG, "Collecting all dead children.");
 
-/* ************************************************************************** */
-/* Restart X server */
-void xrestart(void)
-{
-    elmprintf(LOG, "X server is restarting.");
+    while (waitpid(-1, NULL, WNOHANG) > 0);
 
-    xstop();
-    while (waitpid(-1, NULL, WNOHANG) > 0); /* Collect all dead children */
-    elm_x_start();
-    elm_x_init();
-}
-
-/* ************************************************************************** */
-/* Wait for server to timeout */
-int xtimeout(uint8_t timeout)
-{
-    pid_t   pid;
-    uint8_t i;
-
-    for (i=0; i <= timeout; ++i) {
-        if ((pid=waitpid(Xpid, NULL, WNOHANG)) == Xpid)
-            return 1;
-        if (timeout)
-            sleep(1);
-    }
-
-    return 0;
-}
-
-/* ************************************************************************** */
-/* Wait for server to start */
-int xwait(void)
-{
-    char    *display  = getenv("DISPLAY");
-    uint8_t  ntimeout = 120;
-    uint8_t  i;
-
-    for (i=0; i < ntimeout; ++i) {
-        if ((Xdisplay=XOpenDisplay(display))) {
-            XSetIOErrorHandler(xioerror);
-            return 0;
-        }
-        else {
-            if (xtimeout(1))
-                break;
-        }
-    }
-
-    return 1;
-}
-
-/* ************************************************************************** */
-/* Ignore X server I/O */
-int xignoreio(Display *display) {
-	elmprintf(LOG, "Connection to X server lost.");
-	longjmp(xcloseenv, 1);
-}
-
-/* ************************************************************************** */
-/* Handle X input/output errors */
-int xioerror(Display *display)
-{
-    xrestart();
-    return 0;
+    exit(ELM_EXIT_X_STOP);
 }
 
 /* ************************************************************************** */
@@ -503,7 +476,8 @@ int elm_x_set_ttyn_env(void)
  */
 int elm_x_set_screen_dimensions(void)
 {
-    XRRScreenResources *screen = XRRGetScreenResources(Xdisplay, DefaultRootWindow(Xdisplay));
+    Window              window = DefaultRootWindow(Xdisplay);
+    XRRScreenResources *screen = XRRGetScreenResources(Xdisplay, window);
     ScreenWidth  = -1;
     ScreenHeight = -1;
 
@@ -526,6 +500,7 @@ int elm_x_set_screen_dimensions(void)
         if (info->x == 0) {
             ScreenWidth  = info->width;
             ScreenHeight = info->height;
+            elmprintf(LOG, "Set screen Width x Height: '%d x %d'.", ScreenWidth, ScreenHeight);
             XRRFreeCrtcInfo(info);
             break;
         }
@@ -558,17 +533,3 @@ int elm_x_is_running(void)
 {
     return (getenv("DISPLAY")) ? 1 : 0;
 }
-
-    /* GdkDisplay   *dsp = gdk_display_get_default(); */
-    /* GdkMonitor   *mon; */
-    /* GdkRectangle  rect; */
-    /* int           num_monitors = gdk_display_get_n_monitors(dsp); */
-    /* int           i; */
-
-    /* for (i = 0; i < num_monitors; i++) { */
-    /*     mon = gdk_display_get_monitor(dsp, i); */
-    /*     gdk_monitor_get_geometry(mon, &rect); */
-    /*     printf ("monitor %d: offsets (%d, %d), size (%d, %d)\n", */
-    /*             i, rect.x, rect.y, rect.width, rect.height); */
-    /* } */
-

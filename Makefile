@@ -11,7 +11,9 @@ LIBS   = -lpam -lpam_misc -lX11 -lXrandr -lutil `pkg-config $(PKGS) --cflags --l
 
 # ------------------------------------------------------------------------------
 # Directories
-BUILDDIR  = .
+BUILDDIR  = $(CURDIR)
+LOGDIR    = /var/log/$(PROJECT)
+DATADIR   = $(BUILDDIR)/data
 OBJDIR    = $(BUILDDIR)/obj
 SRCDIR    = $(BUILDDIR)/src
 INCDIR    = $(BUILDDIR)/include
@@ -50,8 +52,24 @@ $(OBJDIR)/%.o: $(APPSRCDIR)/%.c
 		-o $@ \
 		$(LIBS)
 
-.PHONY: all clean
+.PHONY: all clean install uninstall
 clean : 
 	@rm -v -f $(OBJDIR)/*.o
 	@rm -v -f $(PROJECT)
 	@rm -v -f $(LOG)
+
+install:
+	@echo ":: Installing '$(PROJECT)'."
+	@ln -svf $(CURDIR)/$(PROJECT) /usr/bin/
+	@cp -av $(DATADIR)/$(PROJECT).pam /etc/pam.d/$(PROJECT)
+	@cp -av $(DATADIR)/$(PROJECT).service /usr/lib/systemd/system/
+	@systemctl enable $(PROJECT).service
+	@mkdir -pv $(LOGDIR)
+
+uninstall:
+	@echo ":: Uninstalling '$(PROJECT)'."
+	@rm -v /usr/bin/$(PROJECT)
+	@rm -v /etc/pam.d/$(PROJECT)
+	@rm -v /usr/lib/systemd/system/$(PROJECT).service
+	@systemctl disable $(PROJECT).service
+	@rm -rvf $(LOGDIR)

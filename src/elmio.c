@@ -148,7 +148,7 @@ void debugprintf(const char *fmt, va_list ap)
 
 /* ************************************************************************** */
 /* Set verbose flag */
-void elm_set_verbose(int flag)
+void elm_io_set_verbose(int flag)
 {
     Verbose = flag;
 }

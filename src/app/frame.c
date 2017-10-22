@@ -30,9 +30,11 @@ GtkWidget * new_frame_widget(void)
     container = gtk_fixed_new();
     drawing   = gtk_drawing_area_new();
 
-    gtk_fixed_put(GTK_FIXED(container), drawing, 0, 0);
     elm_set_widget_size(&drawing, 270, 150);
+    gtk_fixed_put(GTK_FIXED(container), drawing, 0, 0);
     g_signal_connect(drawing, "draw", G_CALLBACK(draw_frame), NULL);
+    gtk_widget_show(drawing);
+    gtk_widget_show(container);
 
     return container;
 }

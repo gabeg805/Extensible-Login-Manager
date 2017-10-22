@@ -1,0 +1,23 @@
+.System
+{
+    background-color: transparent;
+    border-radius:    4px;
+    padding:          4px;
+}
+.System:hover
+{
+    background-color: rgba(255,255,255,0.75);
+}
+
+.Shutdown {
+    background-image: -gtk-gradient (linear,
+                                     0 0, 0 1,
+                                     from(#ffa500), to(#e59400));
+    border-color:     transparent;
+    border-width:     0;
+}
+.Shutdown:hover {
+    background-image: -gtk-gradient (linear,
+                                     0 0, 0 1,
+                                     from(#ffb732), to(#ffa500));
+}

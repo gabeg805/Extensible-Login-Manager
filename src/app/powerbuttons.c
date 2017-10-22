@@ -23,7 +23,7 @@ static void system_reboot(GtkButton   *button, gpointer data);
 static void system_cancel(GtkButton   *button, gpointer data);
 
 /* Private variables */
-static const char *Style    = "/etc/X11/elm/src/app/style/powerbuttons.css";
+static const char *Style    = "/etc/X11/elm/style/css/powerbuttons.css";
 static const char *Shutdown = "/usr/bin/poweroff";
 static const char *Reboot   = "/usr/bin/reboot";
 
@@ -39,6 +39,7 @@ GtkWidget * display_power_buttons(ElmCallback callback)
     gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
     elm_set_widget_style(&button, "System", Style);
     g_signal_connect(button, "clicked", G_CALLBACK(system_prompt), NULL);
+    gtk_widget_show(button);
 
     return button;
 }
@@ -52,9 +53,9 @@ void system_prompt(GtkButton *button, gpointer data)
     GtkWidget *shutdown  = gtk_button_new_with_label("Shutdown");
     GtkWidget *reboot    = gtk_button_new_with_label("Reboot");
     GtkWidget *cancel    = gtk_button_new_with_label("Cancel");
-    GtkWidget *label     = gtk_label_new("Do you really want to shutdown?");
+    GtkWidget *label     = gtk_label_new("Do you really want to shutdown the computer?");
     GtkWidget *container = gtk_bin_get_child(GTK_BIN(dialog));
-    GtkWidget *buttonbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, margin);
+    GtkWidget *buttonbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, margin*2);
     GtkWidget *systembox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, margin/2);
     GtkWidget *widget    = GTK_WIDGET(button);
     GtkWindow *window    = GTK_WINDOW(elm_get_window(&widget));

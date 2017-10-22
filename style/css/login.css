@@ -5,8 +5,9 @@
     border-radius:    10px;
     border-width:     0;
     border-image:     none;
-    background-image: none;
-    background-color: #ffa500;
+    background-image: -gtk-gradient (linear,
+                                     0 0, 0 1,
+                                     from(#ffa500), to(#e59400));
 }
 .LoginButton:hover {
     font-family:      'Arial';
@@ -14,5 +15,5 @@
     color:            white;
     background-image: -gtk-gradient (linear,
                                      0 0, 0 1,
-                                     from(#ffc966), to(#ffa500));
+                                     from(#ffb732), to(#ffa500));
 }

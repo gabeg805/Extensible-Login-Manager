@@ -18,12 +18,12 @@
 
 /* Private functions */
 static char ** get_available_xsessions(void);
-static int     set_xsession_menu(GtkWidget *menu);
+static int     set_xsession_menu(GtkWidget **menu);
 
 /* Private variables */
 static       GtkWidget *Xbutton = NULL;
 static       GtkWidget *Xmenu   = NULL;
-static const char      *Style   = "/etc/X11/elm/src/app/style/xsession.css";
+static const char      *Style   = "/etc/X11/elm/style/css/xsession.css";
 
 /* ************************************************************************** */
 /* Create xsession menu button */
@@ -32,10 +32,12 @@ GtkWidget * new_xsession_widget(void)
     Xbutton = gtk_menu_button_new();
     Xmenu   = gtk_menu_new();
 
-    set_xsession_menu(Xmenu);
+    set_xsession_menu(&Xmenu);
     gtk_button_set_relief(GTK_BUTTON(Xbutton), GTK_RELIEF_HALF);
     gtk_menu_button_set_popup(GTK_MENU_BUTTON(Xbutton), Xmenu);
     elm_set_widget_style(&Xbutton, "XSession", Style);
+    gtk_widget_show_all(Xmenu);
+    gtk_widget_show_all(Xbutton);
 
     return Xbutton;
 }
@@ -61,6 +63,7 @@ const char * get_xsession(void)
     GtkWidget   *menuitem = gtk_menu_get_active(GTK_MENU(Xmenu));
     const gchar *text     = gtk_menu_item_get_label(GTK_MENU_ITEM(menuitem));
     printf("WM: %s~\n", text);
+
     return text;
 }
 
@@ -113,7 +116,7 @@ char ** get_available_xsessions(void)
 
 /* ************************************************************************** */
 /* Populate menu with xsession(s) on system */
-int set_xsession_menu(GtkWidget *menu)
+int set_xsession_menu(GtkWidget **menu)
 {
     char     **xsessions = get_available_xsessions();
     GSList    *group     = NULL;
@@ -129,7 +132,7 @@ int set_xsession_menu(GtkWidget *menu)
         menuitem = gtk_radio_menu_item_new_with_label(group, xsessions[i]);
         group    = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
 
-        gtk_menu_attach(GTK_MENU(menu), menuitem, 0, 1, i, i+1);
+        gtk_menu_attach(GTK_MENU(*menu), menuitem, 0, 1, i, i+1);
         gtk_widget_show(menuitem);
 
         free(xsessions[i]);

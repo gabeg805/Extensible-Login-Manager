@@ -70,7 +70,21 @@ int init_env(struct passwd *pw)
     set_env("XAUTHORITY", xauthority);
 
 
-    /* /\* XDG environment variables *\/ */
+    /* XDG environment variables */
+    /* 
+     * elm_setenv("XDG_CACHE_HOME", "/home/gabeg/.cache");
+     * elm_setenv("XDG_CONFIG_HOME", "/home/gabeg/.config");
+     * elm_setenv("XDG_DATA_HOME", "/home/gabeg/.local/share");
+     * elm_setenv("XDG_DATA_DIRS", "/usr/local/share/:/usr/share/");
+     * elm_setenv("XDG_CONFIG_DIRS", "/etc/xdg");
+     * 
+     * elm_setenv("XDG_SEAT", "seat0");
+     * elm_setenv("XDG_VTNR", getenv("TTYN"));
+     * elm_setenv("XDG_SESSION_CLASS", "user");
+     * elm_setenv("XDG_SESSION_TYPE", "x11");
+     */
+
+
     /* int           status; */
     /* char         *session; */
     /* char         *seat; */

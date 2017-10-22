@@ -44,6 +44,6 @@ typedef struct
 } ElmSession;
 
 /* Public functions  */
-ElmSession * elm_new_session(ElmLogin *info);
+ElmSession * elm_session_new(ElmLogin *info);
 
 #endif /* ELM_SESSION_H */

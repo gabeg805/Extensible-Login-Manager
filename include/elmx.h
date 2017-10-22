@@ -26,8 +26,7 @@
 #define ELM_EXIT_X_XCOMPMGR 16
 
 /* Public functions */
-int elm_x_init(void);
-int elm_x_start(void);
+int elm_x_run(void);
 int elm_x_set_cursor(void);
 int elm_x_set_transparency(int flag);
 int elm_x_load_user_preferences(void);

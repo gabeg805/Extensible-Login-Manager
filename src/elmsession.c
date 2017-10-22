@@ -30,7 +30,7 @@ static ElmSession *Session = NULL;
 
 /* ************************************************************************** */
 /* Create Extensible Login Manager base structure */
-ElmSession * elm_new_session(ElmLogin *info)
+ElmSession * elm_session_new(ElmLogin *info)
 {
     /* Allocate user session object */
     int status;

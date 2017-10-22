@@ -28,8 +28,8 @@ static void        set_default_widget(GtkWidget *widget, gpointer data);
 static void        set_focus_on_widget(GtkWidget *widget, gpointer data);
 
 /* Private variables */
-static ElmLogin   Info;
-const  char      *Style = "/etc/X11/elm/src/app/style/login.css";
+static       ElmLogin   Info;
+static const char      *Style = "/etc/X11/elm/style/css/login.css";
 
 /* ************************************************************************** */
 /* Create login fields application */
@@ -45,7 +45,6 @@ GtkWidget * display_login(ElmCallback callback)
     container = gtk_box_new(GTK_ORIENTATION_VERTICAL,   15);
     entrybox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,    5);
     buttonbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
-
 
     static GtkWidget *username;
     static GtkWidget *password;
@@ -65,9 +64,19 @@ GtkWidget * display_login(ElmCallback callback)
     gtk_box_pack_start(GTK_BOX(buttonbox), xsession,  FALSE, FALSE, 0);
     gtk_widget_set_margin_top(container,   20);
     gtk_widget_set_margin_start(container, 20);
-    g_signal_connect(button, "clicked", G_CALLBACK(callback), &Info);
-    g_signal_connect(frame,  "show", G_CALLBACK(set_default_widget), &button);
-    g_signal_connect(frame,  "show", G_CALLBACK(set_focus_on_widget), &username);
+    g_signal_connect(button, "clicked", G_CALLBACK(callback),            &Info);
+    g_signal_connect(frame,  "show",    G_CALLBACK(set_default_widget),  &button);
+    g_signal_connect(frame,  "show",    G_CALLBACK(set_focus_on_widget), &username);
+    g_signal_connect(frame,  "map",     G_CALLBACK(set_default_widget),  &button);
+    g_signal_connect(frame,  "map",     G_CALLBACK(set_focus_on_widget), &username);
+    gtk_widget_show(username);
+    gtk_widget_show(password);
+    gtk_widget_show(xsession);
+    gtk_widget_show(button);
+    gtk_widget_show(entrybox);
+    gtk_widget_show(buttonbox);
+    gtk_widget_show(container);
+    gtk_widget_show(frame);
 
     return frame;
 }

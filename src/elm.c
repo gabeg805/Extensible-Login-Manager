@@ -5,7 +5,7 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Display the Extensible Login Manager.
+ * Description: Display and run the Extensible Login Manager.
  * 
  * Notes: None.
  * 
@@ -22,6 +22,8 @@ static void usage(void);
 /* Display the Extensible Login Manager  */
 int main(int argc, char **argv)
 {
+    sleep(3);
+
     /* Check if no arguments given */
     if (argc == 0) {
         usage();
@@ -55,7 +57,7 @@ int main(int argc, char **argv)
             exit(0);
         case 'v':
             Verbose = 1;
-            elm_set_verbose(Verbose);
+            elm_io_set_verbose(Verbose);
             break;
         case 'p':
             Preview = 1;
@@ -71,7 +73,7 @@ int main(int argc, char **argv)
 
     /* Run login manager */
     if (Run) {
-        ElmLoginManager *manager = elm_new_login_manager();
+        ElmLoginManager *manager = elm_login_manager_new();
         manager->set_preview_mode(Preview);
         return manager->run();
     }

@@ -22,7 +22,7 @@ static       int     set_entry_buffer(GtkWidget *widget, char *placeholder);
 /* Private variables */
 static       GtkWidget  *Username    = NULL;
 static       GtkWidget  *Password    = NULL;
-static const char       *Style       = "/etc/X11/elm/src/app/style/credentials.css";
+static const char       *Style       = "/etc/X11/elm/style/css/credentials.css";
 static       int         EntryLength = 32;
 
 /* ************************************************************************** */
@@ -38,6 +38,7 @@ GtkWidget * new_username_widget(void)
     gtk_entry_set_activates_default(GTK_ENTRY(Username), TRUE);
     elm_set_widget_size(&Username, 230, 0);
     elm_set_widget_style(&Username, "Username", Style);
+    gtk_widget_show(Username);
 
     return Username;
 }
@@ -56,6 +57,7 @@ GtkWidget * new_password_widget(void)
     gtk_entry_set_activates_default(GTK_ENTRY(Password), TRUE);
     elm_set_widget_size(&Password, 230, 0);
     elm_set_widget_style(&Password, "Password", Style);
+    gtk_widget_show(Password);
 
     return Password;
 }

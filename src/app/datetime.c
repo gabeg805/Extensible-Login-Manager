@@ -21,7 +21,7 @@ static gboolean set_date(gpointer data);
 static gboolean set_time(gpointer data);
 
 /* Private variables */
-static const char *Style      = "/etc/X11/elm/src/app/style/datetime.css";
+static const char *Style      = "/etc/X11/elm/style/css/datetime.css";
 static const char *DateFormat = "%A, %B %-d";
 static const char *TimeFormat = "%-I:%M %p";
 
@@ -48,6 +48,9 @@ GtkWidget * display_datetime(ElmCallback callback)
     set_time(&time);
     g_timeout_add_seconds(5, set_date, &date);
     g_timeout_add_seconds(5, set_time, &time);
+    gtk_widget_show(date);
+    gtk_widget_show(time);
+    gtk_widget_show(box);
 
     return box;
 }

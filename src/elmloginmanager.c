@@ -5,7 +5,7 @@
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Construct the Extensible Login Manager (C-type) object.
+ * Description: Control setting up, building, and displaying the ELM.
  * 
  * Notes: None.
  * 
@@ -16,25 +16,24 @@
 #include "elmloginmanager.h"
 #include "elmdef.h"
 #include "elminterface.h"
-#include "elmsession.h"
 #include "elmio.h"
+#include "elmsession.h"
 #include "elmx.h"
 #include "utility.h"
 #include <pthread.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/wait.h>
-#include <systemd/sd-daemon.h>
-
+#
 /* Private functions */
 static int    elm_login_manager_run(void);
-static void * elm_login_manager_login_session(void *data);
 static int    elm_login_manager_login_prompt(void);
+static void * elm_login_manager_login_session(void *data);
 static int    elm_login_manager_build_window(void);
 static int    elm_login_manager_build_apps(void);
 static int    elm_login_manager_show_apps(void);
 static int    elm_login_manager_hide_apps(void);
-static int    elm_login_manager_xsetup(void);
+static int    elm_login_manager_setup_x(void);
 static int    elm_login_manager_setup_signal_catcher(void);
 static void   elm_login_manager_signal_catcher(int sig, siginfo_t *info,
                                                void *context);
@@ -47,14 +46,14 @@ static int    elm_login_manager_alloc_apps(size_t s);
 static ElmLoginManager  *Manager    = NULL;
 static GtkWidget        *Window     = NULL;
 static GtkWidget        *Container  = NULL;
-static GtkWidget        *Background = NULL;
 static GtkWidget       **Widgets    = NULL;
 static pthread_t         Thread;
 static int               Preview    = 0;
+static const char      * Style      = "/etc/X11/elm/style/css/loginmanager.css";
 
 /* ************************************************************************** */
 /* Create Extensible Login Manager base structure */
-ElmLoginManager * elm_new_login_manager(void)
+ElmLoginManager * elm_login_manager_new(void)
 {
     /* Allocate login manager object and applications container */
     int status;
@@ -67,7 +66,7 @@ ElmLoginManager * elm_new_login_manager(void)
     Manager->run                  = &elm_login_manager_run;
     Manager->login_session        = &elm_login_manager_login_session;
     Manager->login_prompt         = &elm_login_manager_login_prompt;
-    Manager->xsetup               = &elm_login_manager_xsetup;
+    Manager->setup_x              = &elm_login_manager_setup_x;
     Manager->setup_signal_catcher = &elm_login_manager_setup_signal_catcher;
     Manager->set_preview_mode     = &elm_login_manager_set_preview_mode;
     Manager->build_window         = &elm_login_manager_build_window;
@@ -92,15 +91,33 @@ int elm_login_manager_run(void)
     /* Setup */
     if (Manager->setup_signal_catcher() != 0)
         return ELM_EXIT_LOGIN_MANAGER_SETUP_SIGNAL_CATCHER;
-    if (Manager->xsetup() != 0)
+    if (Manager->setup_x() != 0)
         return ELM_EXIT_LOGIN_MANAGER_XINIT;
 
     /* Prompt for username/password */
     while (1) {
-        elmprintf(LOG, "Requesting username and password for login.");
         if (Manager->login_prompt() != 0)
             return ELM_EXIT_LOGIN_MANAGER_PROMPT;
     }
+
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Display GUI login manager prompt */
+int elm_login_manager_login_prompt(void)
+{
+    elmprintf(LOG, "Displaying login prompt.");
+
+    if (!Manager) {
+        elmprintf(LOG, "Unable to display login prompt: Login Manager does not exist.");
+        return 1;
+    }
+
+    gtk_init(0, 0);
+    Manager->build_window();
+    Manager->build_apps();
+    gtk_main();
 
     return 0;
 }
@@ -117,24 +134,29 @@ void * elm_login_manager_login_session(void *data)
     }
 
     ElmLogin   *info    = data;
-    ElmSession *session = elm_new_session(info);
+    ElmSession *session = elm_session_new(info);
     int         status;
 
     /* Authenticate */
     if ((status=session->authenticate()) != 0) {
+        /* This does not work, causes SIGSEGV for some reason */
+        /* Manager->hide_apps(); */
+        /* sleep(2); */
+        /* Manager->show_apps(); */
         return NULL;
     }
     else {
         Manager->hide_apps();
-        sleep(2);
+
+        /* End here during preview mode */
+        if (Preview) {
+            elmprintf(LOG, "Preview Mode login successful.");
+            sleep(2);
+            Manager->show_apps();
+            return NULL;
+        }
     }
 
-    /* End here during preview mode */
-    if (Preview) {
-        elmprintf(LOG, "Preview Mode login successful.");
-        Manager->show_apps();
-        return NULL;
-    }
 
     /* Login */
     if ((status=session->login()) != 0) {
@@ -169,28 +191,6 @@ void * elm_login_manager_login_session(void *data)
 }
 
 /* ************************************************************************** */
-/* Display GUI login manager prompt */
-int elm_login_manager_login_prompt(void)
-{
-    elmprintf(LOG, "Displaying login prompt.");
-
-    if (!Manager) {
-        elmprintf(LOG, "Unable to display login prompt: Login Manager does not exist.");
-        return 1;
-    }
-
-    /* system("xterm &"); */
-
-    gtk_init(0, 0);
-    Manager->build_window();
-    Manager->build_apps();
-    /* sd_notify(0, "READY=1"); */
-    gtk_main();
-
-    return 0;
-}
-
-/* ************************************************************************** */
 /* Build login manager applications */
 int elm_login_manager_build_window(void)
 {
@@ -200,18 +200,14 @@ int elm_login_manager_build_window(void)
     int width  = elm_x_get_screen_width();
     int height = elm_x_get_screen_height();
 
-    elmprintf(LOG, "Set screen Width x Height: '%d x %d'.", width, height);
-
     Window     = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     Container  = gtk_fixed_new();
-    Background = gtk_image_new_from_file("/etc/X11/elm/img/tree.jpg");
 
+    elm_set_widget_style(&Window, "LoginManager", Style);
     gtk_window_set_default_size(GTK_WINDOW(Window), width, height);
     gtk_container_add(GTK_CONTAINER(Window), Container);
-    gtk_fixed_put(GTK_FIXED(Container), Background, 0, 0);
-    gtk_widget_show(Background);
     gtk_widget_show(Container);
-    gtk_widget_show(Window);
+    gtk_widget_show_all(Window);
 
     return 0;
 }
@@ -233,6 +229,8 @@ int elm_login_manager_build_apps(void)
 
     for (apps=login_interface(), i=0; apps[i].display; i++)
     {
+        elmprintf(LOG, "Adding app '%d' to login manager.", i);
+
         /* Allocate application */
         if (elm_login_manager_alloc_apps(i+1) < 0)
             exit(ELM_EXIT_LOGIN_MANAGER_APP);
@@ -267,7 +265,6 @@ int elm_login_manager_build_apps(void)
         }
 
         gtk_fixed_put(GTK_FIXED(Container), Widgets[i], x, y);
-        gtk_widget_show_all(Widgets[i]);
     }
 
     return 0;
@@ -281,9 +278,7 @@ int elm_login_manager_show_apps(void)
 
     size_t i;
     for (i=0; Widgets[i]; i++)
-        gtk_widget_show_all(Widgets[i]);
-
-    gtk_widget_show(Background);
+        gtk_widget_show(Widgets[i]);
     gtk_widget_show(Container);
     gtk_widget_show(Window);
 
@@ -299,8 +294,6 @@ int elm_login_manager_hide_apps(void)
     size_t i;
     for (i=0; Widgets[i]; i++)
         gtk_widget_hide(Widgets[i]);
-
-    gtk_widget_hide(Background);
     gtk_widget_hide(Container);
     gtk_widget_hide(Window);
 
@@ -309,7 +302,7 @@ int elm_login_manager_hide_apps(void)
 
 /* ************************************************************************** */
 /* Setting up X server */
-int elm_login_manager_xsetup(void)
+int elm_login_manager_setup_x(void)
 {
     elmprintf(LOG, "Setting up X server.");
 
@@ -318,8 +311,7 @@ int elm_login_manager_xsetup(void)
         return 1;
     }
 
-    elm_x_start();
-    elm_x_init();
+    elm_x_run();
     elm_x_set_transparency(1);
     elm_x_set_cursor();
 
