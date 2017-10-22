@@ -15,19 +15,19 @@ The following packages are required:
 To install the _Extensible Login Manager_, run the following commands as root:
 
 ```
-# git clone https://github.com/gabeg805/Extensible-Login-Manager
-# mv Extensible-Login-Manager /etc/X11/elm
-# cd /etc/X11/elm
-# make
-# make install
+git clone https://github.com/gabeg805/Extensible-Login-Manager
+mv Extensible-Login-Manager /etc/X11/elm
+cd /etc/X11/elm
+make
+make install
 ```
 
 ## Uninstall
 
-To uninstall the _Extensible Login Manager_, run:
+To uninstall the _Extensible Login Manager_, run the following command as root:
 
 ```
-# make uninstall
+make uninstall
 ```
 
 Note: The current directory containing all the Makefile, README, code, etc. will
