@@ -20,14 +20,21 @@
 #include <errno.h>
 #include <string.h>
 
-/* Defines */
-#define ELM_LOG "/tmp/elm.log"
-
 /* Typedefs */
-typedef enum { NONE, INFO, WARNING, ERROR, LOG, DEBUG } ElmPrint_t;
+typedef enum
+{
+    NONE,
+    INFO,
+    WARNING,
+    ERROR,
+    LOG,
+    LOGINFO,
+    LOGWARN,
+    LOGERR,
+} ElmPrint;
 
 /* Public functions  */
-void elmprintf(ElmPrint_t mode, const char *fmt, ...);
+void elmprintf(ElmPrint mode, const char *vafmt, ...);
 void elm_io_set_verbose(int flag);
 
 #endif /* ELM_IO_H */

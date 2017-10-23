@@ -15,6 +15,7 @@
 
 /* Includes */
 #include "elmauthenticate.h"
+#include "elmdef.h"
 #include "elmio.h"
 #include "elmx.h"
 #include "utility.h"
@@ -65,9 +66,11 @@ int init_env(struct passwd *pw)
     set_env("USER", pw->pw_name);
     set_env("LOGNAME", pw->pw_name);
 
-    char xauthority[64];
-    snprintf(xauthority, sizeof(xauthority), "%s/.Xauthority", pw->pw_dir);
-    set_env("XAUTHORITY", xauthority);
+    elmprintf(LOGINFO, "Checking if XAUTHORITY is set: %s.", getenv("XAUTHORITY"));
+
+    /* char xauthority[64]; */
+    /* snprintf(xauthority, sizeof(xauthority), "%s/.Xauthority", pw->pw_dir); */
+    /* set_env("XAUTHORITY", xauthority); */
 
 
     /* XDG environment variables */
@@ -270,6 +273,10 @@ int elm_login(const char *session, pid_t *parentpid)
         utmp_record();
         chdir(pw->pw_dir);
         chown(xinitrcfile, pw->pw_uid, pw->pw_gid);
+        if (getenv("XAUTHORITY")) {
+            elmprintf(LOGINFO, "Xauthority is set to '%s'. Changing permissions ownership of file to me", getenv("XAUTHORITY"));
+            chown(getenv("XAUTHORITY"), pw->pw_uid, pw->pw_gid);
+        }
         chown(ELM_LOG, pw->pw_uid, pw->pw_gid);
 
         if (initgroups(pw->pw_name, pw->pw_gid) < 0) {

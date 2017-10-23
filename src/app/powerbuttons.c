@@ -24,8 +24,6 @@ static void system_cancel(GtkButton   *button, gpointer data);
 
 /* Private variables */
 static const char *Style    = "/etc/X11/elm/style/css/powerbuttons.css";
-static const char *Shutdown = "/usr/bin/poweroff";
-static const char *Reboot   = "/usr/bin/reboot";
 
 /* ************************************************************************** */
 /* Display system action options */
@@ -92,7 +90,7 @@ void system_prompt(GtkButton *button, gpointer data)
 void system_shutdown(GtkButton *button, gpointer data)
 {
     elmprintf(LOG, "Shutting down.");
-    execl(Shutdown, Shutdown, NULL);
+    execl(ELM_CMD_SHUTDOWN, ELM_CMD_SHUTDOWN, NULL);
 }
 
 /* ************************************************************************** */
@@ -100,7 +98,7 @@ void system_shutdown(GtkButton *button, gpointer data)
 void system_reboot(GtkButton *button, gpointer data)
 {
     elmprintf(LOG, "Rebooting.");
-    execl(Reboot, Reboot, NULL);
+    execl(ELM_CMD_REBOOT, ELM_CMD_REBOOT, NULL);
 }
 
 /* ************************************************************************** */

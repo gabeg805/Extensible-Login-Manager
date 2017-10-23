@@ -24,6 +24,7 @@ static int elm_session_authenticate(void);
 static int elm_session_login(void);
 static int elm_session_logout(void);
 static int elm_session_alloc(void);
+static int elm_session_exists(char *message);
 
 /* Private globals */
 static ElmSession *Session = NULL;
@@ -32,11 +33,14 @@ static ElmSession *Session = NULL;
 /* Create Extensible Login Manager base structure */
 ElmSession * elm_session_new(ElmLogin *info)
 {
+    elmprintf(LOGINFO, "Preparing new Session object.");
+
     /* Allocate user session object */
     int status;
 
-    if ((status=elm_session_alloc()) != 0)
+    if ((status=elm_session_alloc()) != 0) {
         exit(ELM_EXIT_SESSION_NEW);
+    }
 
     Session->authenticate = &elm_session_authenticate;
     Session->login        = &elm_session_login;
@@ -50,14 +54,16 @@ ElmSession * elm_session_new(ElmLogin *info)
 /* Authenticate login credentials */
 int elm_session_authenticate(void)
 {
-    if (!Session) {
-        elmprintf(LOG, "Unable to authenticate login credentials: Session does not exist.");
+    elmprintf(LOGINFO, "Preparing to authenticate login credentials.");
+
+    if (!elm_session_exists("authenticate login credentials")) {
         return -1;
     }
 
     char *username = Session->info->username;
     char *password = Session->info->password;
-    elmprintf(LOG, "Authenticating credentials of '%s'." , username);
+
+    elmprintf(LOGINFO, "Authenticating credentials of '%s'." , username);
 
     return elm_authenticate(username, password);
 }
@@ -66,13 +72,15 @@ int elm_session_authenticate(void)
 /* Login to user session */
 int elm_session_login(void)
 {
-    if (!Session) {
-        elmprintf(LOG, "Unable to login to user session: Session does not exist.");
+    elmprintf(LOGINFO, "Preparing to login to user session.");
+
+    if (!elm_session_exists("login to user session")) {
         return -1;
     }
 
     char *xsession = Session->info->xsession;
-    elmprintf(LOG, "Logging into session '%s'.", xsession);
+
+    elmprintf(LOGINFO, "Logging into session '%s'.", xsession);
 
     return elm_login(xsession, &Session->pid);
 }
@@ -81,12 +89,14 @@ int elm_session_login(void)
 /* Logout of session */
 int elm_session_logout(void)
 {
-    if (!Session) {
-        elmprintf(LOG, "Unable to logout of user session: Session does not exist.");
+    elmprintf(LOGINFO, "Preparing to logout of user session");
+
+    if (!elm_session_exists("logout of user session")) {
         return -1;
     }
 
     char *username = Session->info->username;
+
     elmprintf(LOG, "Logging out of user session for '%s'.", username);
 
     return elm_logout();
@@ -96,12 +106,28 @@ int elm_session_logout(void)
 /* Allocate session object */
 int elm_session_alloc(void)
 {
+    elmprintf(LOGINFO, "Allocating Session object.");
+
     Session = calloc(1, sizeof(ElmSession));
 
     if (!Session) {
-        elmprintf(LOG, "Unable to initialize user session: Error allocating memory.");
+        elmprintf(LOGERR, "%s: %s",
+                  "Unable to initialize user session", strerror(errno));
         return 1;
     }
 
     return 0;
+}
+
+/* ************************************************************************** */
+/* Check if session object exists. Print message if it does not. */
+int elm_session_exists(char *message)
+{
+    if (!Session) {
+        elmprintf(LOGERR, "Unable to %s: Session object does not exist.",
+                  message);
+        return 0;
+    }
+
+    return 1;
 }

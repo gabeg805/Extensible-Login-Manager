@@ -14,136 +14,91 @@
 
 /* Includes */
 #include "elmio.h"
+#include "elmdef.h"
 #include <stdarg.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 
 /* Private functions */
-static char * modetostr(ElmPrint_t mode);
-static char * strtimenow(const char *fmt);
-static void infoprintf(const char *fmt, va_list ap);
-static void warnprintf(const char *fmt, va_list ap);
-static void errprintf(const char *fmt, va_list ap);
-static void logprintf(const char *fmt, va_list ap);
-static void debugprintf(const char *fmt, va_list ap);
+static void   elm_io_info(char *preamble, va_list ap);
+static void   elm_io_warn(char *preamble, va_list ap);
+static void   elm_io_err(char *preamble, va_list ap);
+static void   elm_io_log(char *preamble, va_list ap);
+static int    elm_io_is_mode_info(ElmPrint mode);
+static int    elm_io_is_mode_warn(ElmPrint mode);
+static int    elm_io_is_mode_err(ElmPrint mode);
+static int    elm_io_is_mode_log(ElmPrint mode);
+static char * elm_io_mode_to_string(ElmPrint mode);
+static char * elm_io_time_now(void);
 
 /* Private variables */
 static int Verbose = 0;
 
 /* ************************************************************************** */
-/* Print */
-void elmprintf(ElmPrint_t mode, const char *fmt, ...)
+/* Print wrapper */
+void elmprintf(ElmPrint mode, const char *vafmt, ...)
 {
     /* Format line label */
-    static const char *timefmt = "%Y-%m-%d %I:%M:%S %p";
-    static char label[128];
-    static char linefmt[256];
-    snprintf(label, sizeof(label), "[%s] %s:", strtimenow(timefmt),
-             modetostr(mode));
-    snprintf(linefmt, sizeof(linefmt), "%s %s\n", label, fmt);
+    static char preamble[256];
 
-    /* Call appropriate logging function */
-    va_list arglist;
-    va_start(arglist, fmt);
-    if (mode == INFO) {
-        infoprintf(linefmt, arglist);
-    }
-    else if (mode == WARNING) {
-        warnprintf(linefmt, arglist);
-    }
-    else if (mode == ERROR) {
-        errprintf(linefmt, arglist);
-    }
-    else if (mode == LOG) {
-        /* infoprintf(linefmt, arglist); */
-        logprintf(linefmt, arglist);
-    }
-    else if (mode == DEBUG) {
-        debugprintf(linefmt, arglist);
-    }
-    else if (mode == NONE) {
-        infoprintf(linefmt, arglist);
-    }
-    else
-        ;
-    va_end(arglist);
-}
+    snprintf(preamble, sizeof(preamble), "[%s] %s %s\n",
+             elm_io_time_now(), elm_io_mode_to_string(mode), vafmt);
 
-/* ************************************************************************** */
-/* Convert print mode to string */
-char * modetostr(ElmPrint_t mode)
-{
-    static char str[10];
-    if (mode == INFO)
-        strncpy(str, "INFO", 4);
-    else if (mode == WARNING)
-        strncpy(str, "WARNING", 7);
-    else if (mode == ERROR)
-        strncpy(str, "ERROR", 5);
-    else if (mode == DEBUG)
-        strncpy(str, "DEBUG", 5);
-    else if (mode == LOG)
-        strncpy(str, "LOG", 3);
-    else
-        str[0] = '\0';
+    /* Call appropriate printing function */
+    va_list ap;
+    va_list aq;
+    va_start(ap, vafmt);
+    va_copy(aq, ap);
 
-    uint8_t len = strlen(str);
-    if (len >= 10)
-        len = 9;
-    str[len] = '\0';
-    return str;
-}
+    if (elm_io_is_mode_info(mode)) {
+        elm_io_info(preamble, ap);
+    }
+    else if (elm_io_is_mode_warn(mode)) {
+        elm_io_warn(preamble, ap);
+    }
+    else if (elm_io_is_mode_err(mode)) {
+        elm_io_err(preamble, ap);
+    }
+    else {
+    }
 
-/* ************************************************************************** */
-/* Return current time string */
-char * strtimenow(const char *fmt)
-{
-    time_t       now     = time(0);
-    struct tm   *tstruct = localtime(&now);
-    static char  buf[128];
-    memset(&buf, 0, sizeof(buf));
-    strftime(buf, sizeof(buf), fmt, tstruct);
-    return buf;
+    if (elm_io_is_mode_log(mode)) {
+        elm_io_log(preamble, aq);
+    }
+
+    va_end(aq);
+    va_end(ap);
 }
 
 /* ************************************************************************** */
 /* Print informational messages to stdout */
-void infoprintf(const char *fmt, va_list ap)
+void elm_io_info(char *preamble, va_list ap)
 {
-    vprintf(fmt, ap);
+    vfprintf(stdout, preamble, ap);
 }
 
 /* ************************************************************************** */
 /* Print warning messages to stdout */
-void warnprintf(const char *fmt, va_list ap)
+void elm_io_warn(char *preamble, va_list ap)
 {
-    vprintf(fmt, ap);
+    vfprintf(stdout, preamble, ap);
 }
 
 /* ************************************************************************** */
 /* Print error messages to stderr */
-void errprintf(const char *fmt, va_list ap)
+void elm_io_err(char *preamble, va_list ap)
 {
-    vfprintf(stderr, fmt, ap);
+    vfprintf(stderr, preamble, ap);
 }
 
 /* ************************************************************************** */
 /* Print messages for logging to log */
-void logprintf(const char *fmt, va_list ap)
+void elm_io_log(char *preamble, va_list ap)
 {
     FILE *stream = fopen(ELM_LOG, "a+");
-    vfprintf(stream, fmt, ap);
+    vfprintf(stream, preamble, ap);
     fclose(stream);
-}
-
-/* ************************************************************************** */
-/* Print debug messages to stdout and to the log */
-void debugprintf(const char *fmt, va_list ap)
-{
-    infoprintf(fmt, ap);
-    logprintf(fmt, ap);
 }
 
 /* ************************************************************************** */
@@ -151,4 +106,80 @@ void debugprintf(const char *fmt, va_list ap)
 void elm_io_set_verbose(int flag)
 {
     Verbose = flag;
+}
+
+/* ************************************************************************** */
+/* Check if INFO mode */
+int elm_io_is_mode_info(ElmPrint mode)
+{
+    return ((mode == INFO) || (mode == LOGINFO)) ? 1 : 0;
+}
+
+/* ************************************************************************** */
+/* Check if WARNING mode */
+int elm_io_is_mode_warn(ElmPrint mode)
+{
+    return ((mode == WARNING) || (mode == LOGWARN)) ? 1 : 0;
+}
+
+/* ************************************************************************** */
+/* Check if ERROR mode */
+int elm_io_is_mode_err(ElmPrint mode)
+{
+    return ((mode == ERROR) || (mode == LOGERR)) ? 1 : 0;
+}
+
+/* ************************************************************************** */
+/* Check if LOG mode */
+int elm_io_is_mode_log(ElmPrint mode)
+{
+    return ((mode == LOG) \
+            || (mode == LOGINFO) \
+            || (mode == LOGWARN) \
+            || (mode == LOGERR)) \
+        ? 1 : 0;
+}
+
+/* ************************************************************************** */
+/* Convert print mode to string */
+char * elm_io_mode_to_string(ElmPrint mode)
+{
+    static char str[10];
+
+    if (elm_io_is_mode_log(mode)) {
+        strncpy(str, "LOG", 3);
+    }
+
+    if (elm_io_is_mode_info(mode)) {
+        strncpy(str, "INFO", 4);
+    }
+    else if (elm_io_is_mode_warn(mode)) {
+        strncpy(str, "WARNING", 7);
+    }
+    else if (elm_io_is_mode_err(mode)) {
+        strncpy(str, "ERROR", 5);
+    }
+    else {
+        return "";
+    }
+
+    size_t len = strlen(str);
+    str[(len >= 10) ? 9 : len] = '\0';
+
+    return str;
+}
+
+/* ************************************************************************** */
+/* Return current time string */
+char * elm_io_time_now(void)
+{
+    static const char *fmt     = "%Y-%m-%d %I:%M:%S %p";
+    time_t             now     = time(0);
+    struct tm         *tstruct = localtime(&now);
+    static char        buf[128];
+
+    memset(&buf, 0, sizeof(buf));
+    strftime(buf, sizeof(buf), fmt, tstruct);
+
+    return buf;
 }

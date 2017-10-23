@@ -14,12 +14,14 @@
 
 /* Includes */
 #include "elmx.h"
+#include "elmdef.h"
 #include "elmio.h"
 #include "utility.h"
 #include <ctype.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
 #include <pty.h>
-#include <setjmp.h>
 #include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -27,7 +29,10 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/wait.h>
+#include <X11/Xauth.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/cursorfont.h>
@@ -36,23 +41,30 @@
 /* #include <dbus/dbus.h> */
 
 /* Private functions */
+static void elm_x_sigusr(int sig, siginfo_t *info, void *context);
+static void elm_x_wait_sigusr(void);
 static void elm_x_init(void);
-static void elm_x_wait_startup(void);
 static int  elm_x_stop(Display *display);
 static int  elm_x_set_display_env(void);
 static int  elm_x_set_tty_env(void);
 static int  elm_x_set_ttyn_env(void);
+static int  elm_x_set_xauthority_env(void);
 static int  elm_x_is_running(void);
 
+static int elm_x_get_vt(char *vt, size_t size);
+static int elm_x_get_localhost(char *localhost, size_t size);
+static int elm_x_get_xauth_file(char *file, size_t size);
+static int elm_x_set_xauth_entry(char *filename, char *localhost);
+static int elm_x_get_random_bytes(char **bytes, size_t size);
+
 /* Private variables */
-static Display *Xdisplay   = NULL;
-static Window   Xwindow    = -1;
-static pid_t    Xpid       = -1;
+static Display *Xdisplay     = NULL;
+static Window   Xwindow      = -1;
+static pid_t    Xpid         = -1;
+static int      Xsigusr      = 0;
 static int      ScreenWidth  = -1;
 static int      ScreenHeight = -1;
 
-/* Not sure what this does (Slim) */
-jmp_buf xcloseenv;
 
 /* ************************************************************************** */
 /* Start the X server */
@@ -61,10 +73,10 @@ jmp_buf xcloseenv;
  */
 int elm_x_run(void)
 {
-    elmprintf(LOG, "X server is starting.");
+    elmprintf(LOGINFO, "Preparing to run X server."); 
 
     if (elm_x_is_running()) {
-        elmprintf(LOG, "X server already started.");
+        elmprintf(LOGINFO, "X server already started.");
         elm_x_init();
         return 0;
     }
@@ -73,54 +85,61 @@ int elm_x_run(void)
     elm_x_set_display_env();
     elm_x_set_tty_env();
     elm_x_set_ttyn_env();
+    elm_x_set_xauthority_env();
+
+    elmprintf(LOGINFO, "XAUTHORITY environment variable is now set: %s.", getenv("XAUTHORITY"));
+
+    /* Handle SIGUSR1 signal, sent out by Xorg when server is ready */
+    struct sigaction act;
+    act.sa_flags     = SA_SIGINFO;
+    act.sa_sigaction = &elm_x_sigusr;
+
+    sigaction(SIGUSR1, &act, NULL);
 
     /* Start X server */
-    Xpid = fork();
-    switch (Xpid)
+    switch ((Xpid=fork()))
     {
     /* Child */
     case 0:
         signal(SIGTTIN, SIG_IGN);
         signal(SIGTTOU, SIG_IGN);
         signal(SIGUSR1, SIG_IGN);
-        setpgid(0, getpid());     /* Slim */
+        setpgid(0, getpid());
 
-        const char *xorg     = "/usr/bin/Xorg";
-        const char *authfile = "/tmp/elm.auth";
-        const char *logfile  = "/var/log/xserver.log";
+        elmprintf(LOGINFO, "Setting up X authority file."); 
+
         char vt[5];
-        snprintf(vt, sizeof(vt), "vt%s", getenv("TTYN"));
+        elm_x_get_vt(vt, 5);
 
-       /* └─287 /usr/bin/Xorg.bin :0 -background none -noreset -verbose 3 
-        * -logfile /dev/null -auth /var/run/gdm/auth-for-gdm-4X6qTS/database 
-        * -seat seat0 -nolisten tcp vt1 */
-        /* create var run directory for elm? */
-        /* create var log directory for elm? */
+        /* snprintf(authfile, sizeof(authfile), "/tmp/elmxauth"); */
 
-        execl(xorg, xorg,
+        elmprintf(LOGINFO, "Running X server.");
+
+        execl(ELM_CMD_XORG, ELM_CMD_XORG,
               getenv("DISPLAY"),
               "-background", "none",
               "-noreset",
               "-verbose", "3", "-logverbose",
-              "-logfile", logfile,
-              "-auth", authfile,
+              "-logfile", ELM_XLOG,
+              "-auth", getenv("XAUTHORITY"),
               "-seat", "seat0",
               "-nolisten", "tcp",
               vt, NULL);
 
-        elmprintf(LOG, "Error running Xorg: %s.", strerror(errno));
+        elmprintf(LOGERR, "Error running '%s': %s.", ELM_CMD_XORG, strerror(errno));
         exit(ELM_EXIT_X_START);
         break;
 
     /* Fork error */
     case -1:
-        elmprintf(LOG, "Error forking to start Xorg: %s.", strerror(errno));
+        elmprintf(LOGERR, "Error forking to start '%s': %s.", ELM_CMD_XORG,
+                  strerror(errno));
         exit(ELM_EXIT_X_START);
         break;
 
     /* Parent */
     default:
-        elm_x_wait_startup();
+        elm_x_wait_sigusr();
         elm_x_init();
         break;
     }
@@ -136,16 +155,47 @@ int elm_x_run(void)
 }
 
 /* ************************************************************************** */
+/* Catch SIGUSR1 signal sent out by Xorg to indicate X is ready */
+void elm_x_sigusr(int sig, siginfo_t *info, void *context)
+{
+    elmprintf(LOGINFO, "Caught SIGUSR1 signal (%d).", info->si_signo);
+    Xsigusr = 1;
+}
+
+/* ************************************************************************** */
+/* Wait for SIGUSR1 from Xorg, indicating it started successfully. Timeout in 30
+ * seconds */
+void elm_x_wait_sigusr(void)
+{
+    elmprintf(LOGINFO, "Waiting for X to send out SIGUSR1 signal.");
+
+    int timeout = 30;
+    int sec     = 0;
+
+    while ((sec < timeout) && !Xsigusr) {
+        sleep(1);
+        sec++;
+    }
+
+    if (!Xsigusr) {
+        elmprintf(LOGINFO, "%s: %s",
+                  "X server is unable to be used",
+                  "SIGUSR signal was never send/received.");
+        exit(ELM_EXIT_X_WAIT);
+    }
+}
+
+/* ************************************************************************** */
 /* Initialize X window attributes */
 void elm_x_init(void)
 {
-    elmprintf(LOG, "Opening X display.");
+    elmprintf(LOGINFO, "Preparing to open X display.");
 
     /* Set X display */
     char *display = getenv("DISPLAY");
 
     if (!(Xdisplay=XOpenDisplay(display))) {
-        elmprintf(LOG, "Unabled to open display on '%s': %s.", display,
+        elmprintf(LOGERR, "Unable to open display on '%s': %s.", display,
                   strerror(errno));
         elm_x_stop(Xdisplay);
         exit(ELM_EXIT_X_OPEN);
@@ -159,40 +209,10 @@ void elm_x_init(void)
 }
 
 /* ************************************************************************** */
-/* Wait for SIGUSR1 from Xorg, indicating it started successfully. Timeout in 30
- * seconds */
-void elm_x_wait_startup(void)
-{
-    elmprintf(LOG, "Waiting for X to startup.");
-
-    const struct timespec timeout = {30, 0};
-    sigset_t  set;
-    siginfo_t info;
-
-    if (sigemptyset(&set)) {
-        elmprintf(LOG, "Unable to empty signal set: %s.", strerror(errno));
-        exit(ELM_EXIT_X_WAIT);
-    }
-
-    if (sigaddset(&set, SIGUSR1)) {
-        elmprintf(LOG, "Unable to add signal to set: %s.", strerror(errno));
-        exit(ELM_EXIT_X_WAIT);
-    }
-
-    /* Wait for signal */
-    if (sigtimedwait(&set, &info, &timeout) <= 0) {
-        elmprintf(LOG, "Error waiting for signal: %s.", strerror(errno));
-        exit(ELM_EXIT_X_WAIT);
-    }
-}
-
-
-
-/* ************************************************************************** */
 /* Stop X server */
 int elm_x_stop(Display *display)
 {
-	elmprintf(LOG, "Connection to X server lost.");
+	elmprintf(LOGWARN, "Connection to X server lost.");
 
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT,  SIG_IGN);
@@ -207,36 +227,36 @@ int elm_x_stop(Display *display)
     }
 
 	/* Send HUP to process group */
-    elmprintf(LOG, "Sending HUP to X server process group.");
+    elmprintf(LOGWARN, "Sending HUP to X server process group.");
 
 	errno = 0;
 	if((killpg(getpid(), SIGHUP) != 0) && (errno != ESRCH)) {
-		elmprintf(LOG, "Unable to send HUP to process group '%d'.", getpid());
+		elmprintf(LOGERR, "Unable to send HUP to process group '%d'.", getpid());
     }
 
 	/* Send TERM to server */
-    elmprintf(LOG, "Sending TERM to X server process group.");
+    elmprintf(LOGWARN, "Sending TERM to X server process group.");
 
 	if(Xpid < 0) {
-        elmprintf(LOG, "X server has invalid pid '%lu'. Exiting.", Xpid);
+        elmprintf(LOGERR, "X server has invalid pid '%lu'. Exiting.", Xpid);
     }
     else {
         errno = 0;
         if(killpg(Xpid, SIGTERM) < 0) {
-            elmprintf(LOG, "Unable to terminate X server process group: %s.",
+            elmprintf(LOGERR, "Unable to terminate X server process group: %s.",
                       strerror(errno));
             exit(ELM_EXIT_X_STOP);
         }
     }
 
 	/* Wait 10 sec for server to shut down */
-    elmprintf(LOG, "Waiting for X server to shut down.");
+    elmprintf(LOGWARN, "Waiting for X server to shut down.");
 
     int i;
     for (i=0; i < 10; i++)
     {
         if (waitpid(Xpid, NULL, WNOHANG) == Xpid) {
-            elmprintf(LOG, "X server shutting down.");
+            elmprintf(LOGWARN, "X server shutting down.");
             exit(ELM_EXIT_X_STOP);
         }
 
@@ -244,17 +264,17 @@ int elm_x_stop(Display *display)
     }
 
 	/* Send KILL to server */
-    elmprintf(LOG, "%s. %s", "X server is slow to shut down.",
+    elmprintf(LOGWARN, "%s. %s", "X server is slow to shut down.",
               "Sending KILL to X server process group.");
 
 	errno = 0;
 	if(killpg(Xpid, SIGKILL) < 0) {
-        elmprintf(LOG, "Unable to KILL X server process group: %s.",
+        elmprintf(LOGERR, "Unable to KILL X server process group: %s.",
                   strerror(errno));
 	}
 
     /* Collect all dead children */
-    elmprintf(LOG, "Collecting all dead children.");
+    elmprintf(LOGWARN, "Collecting all dead children.");
 
     while (waitpid(-1, NULL, WNOHANG) > 0);
 
@@ -269,26 +289,26 @@ int elm_x_set_cursor(void)
     Cursor cursor = XCreateFontCursor(Xdisplay, XC_left_ptr);
     switch (cursor) {
     case BadAlloc:
-        elmprintf(LOG, "Unable to create font cursor: Bad allocation: '%s'.", strerror(errno));
+        elmprintf(LOGERR, "Unable to create font cursor: Bad allocation: '%s'.", strerror(errno));
         return 1;
     case BadValue:
-        elmprintf(LOG, "Unable to create font cursor: Bad value: '%s'.", strerror(errno));
+        elmprintf(LOGERR, "Unable to create font cursor: Bad value: '%s'.", strerror(errno));
         return 1;
     default:
-        elmprintf(LOG, "Creating font cursor.");
+        elmprintf(LOGINFO, "Creating font cursor.");
         break;
     }
 
     int status = XDefineCursor(Xdisplay, Xwindow, cursor);
     switch (status) {
     case BadCursor:
-        elmprintf(LOG, "Unable to define cursor: Bad cursor: '%s'.", strerror(errno));
+        elmprintf(LOGERR, "Unable to define cursor: Bad cursor: '%s'.", strerror(errno));
         return 1;
     case BadWindow:
-        elmprintf(LOG, "Unable to define cursor: Bad window: '%s'.", strerror(errno));
+        elmprintf(LOGERR, "Unable to define cursor: Bad window: '%s'.", strerror(errno));
         return 1;
     default:
-        elmprintf(LOG, "Defining font cursor.");
+        elmprintf(LOGINFO, "Defining font cursor.");
         break;
     }
 
@@ -307,10 +327,8 @@ int elm_x_set_transparency(int flag)
         return 1;
 
     /* Check if transparency program is running */
-    const char *xcompmgr = "/usr/bin/xcompmgr";
-
-    if (pgrep(basename(xcompmgr))) {
-        elmprintf(LOG, "X composite manager already started.");
+    if (pgrep(basename(ELM_CMD_XCOMPMGR))) {
+        elmprintf(LOGINFO, "X composite manager already started.");
         return 1;
     }
 
@@ -321,14 +339,15 @@ int elm_x_set_transparency(int flag)
     {
     /* Child */
     case 0:
-        execl(xcompmgr, xcompmgr, NULL);
-        elmprintf(LOG, "Error exec-ing %s: %s", xcompmgr, strerror(errno));
+        execl(ELM_CMD_XCOMPMGR, ELM_CMD_XCOMPMGR, NULL);
+
+        elmprintf(LOGERR, "Error running '%s': %s", ELM_CMD_XCOMPMGR, strerror(errno));
         exit(ELM_EXIT_X_XCOMPMGR);
         break;
 
     /* Fork failed */
     case -1:
-        elmprintf(LOG, "Error forking to start %s: %s.", xcompmgr,
+        elmprintf(LOGERR, "Error forking to start '%s': %s.", ELM_CMD_XCOMPMGR,
                   strerror(errno));
         return -1;
 
@@ -356,15 +375,15 @@ int elm_x_load_user_preferences(void)
 
     /* Load .Xresources */
     if (access(xresources, F_OK) == 0) {
-        snprintf(cmd, sizeof(cmd), "/usr/bin/xrdb -merge %s", xresources);
-        elmprintf(LOG, "Executing: %s", cmd);
+        snprintf(cmd, sizeof(cmd), "%s -merge %s", ELM_CMD_XRDB, xresources);
+        elmprintf(LOGINFO, "Executing: %s", cmd);
         system(cmd);
     }
 
     /* Load .Xmodmap */
     if (access(xmodmap, F_OK) == 0) {
-        snprintf(cmd, sizeof(cmd), "/usr/bin/xmodmap %s", xmodmap);
-        elmprintf(LOG, "Executing: %s", cmd);
+        snprintf(cmd, sizeof(cmd), "%s %s", ELM_CMD_XMODMAP, xmodmap);
+        elmprintf(LOGINFO, "Executing: %s", cmd);
         system(cmd);
     }
 
@@ -375,9 +394,10 @@ int elm_x_load_user_preferences(void)
 /* Set DISPLAY environment variable */
 int elm_x_set_display_env(void)
 {
-    elmprintf(LOG, "Setting DISPLAY environment variable.");
+    elmprintf(LOGINFO, "Setting DISPLAY environment variable.");
+
     if (getenv("DISPLAY")) {
-        elmprintf(LOG, "DISPLAY environment variable already set.");
+        elmprintf(LOGINFO, "DISPLAY environment variable already set.");
         return 1;
     }
 
@@ -396,15 +416,16 @@ int elm_x_set_display_env(void)
 
     /* Check display value */
     if (val < 0) {
-        elmprintf(LOG, "Unable to find an open display.");
+        elmprintf(LOGERR, "Unable to find an open display.");
         exit(ELM_EXIT_X_DISPLAY);
     }
 
     /* Set display environment variable */
     char display[3] = {':', i+'0', 0};
 
-    if (elm_setenv("DISPLAY", display) < 0)
+    if (elm_setenv("DISPLAY", display) < 0) {
         exit(ELM_EXIT_X_DISPLAY);
+    }
 
     return 0;
 }
@@ -418,7 +439,7 @@ int elm_x_set_tty_env(void)
     int   slave;
 
     if (openpty(&master, &slave, NULL, NULL, NULL) < 0) {
-        elmprintf(LOG, "Error finding open tty: %s.", strerror(errno));
+        elmprintf(LOGERR, "Error finding open tty: %s.", strerror(errno));
         exit(ELM_EXIT_X_TTY);
     }
 
@@ -426,14 +447,15 @@ int elm_x_set_tty_env(void)
     char *tty = ttyname(slave);
 
     if (!tty) {
-        elmprintf(LOG, "Error finding terminal device path name: %s.",
+        elmprintf(LOGERR, "Error finding terminal device path name: %s.",
                   strerror(errno));
         exit(ELM_EXIT_X_TTY);
     }
 
     /* Set tty environment variable */
-    if (elm_setenv("TTY", tty) < 0)
+    if (elm_setenv("TTY", tty) < 0) {
         exit(ELM_EXIT_X_TTY);
+    }
 
     return 0;
 }
@@ -457,15 +479,34 @@ int elm_x_set_ttyn_env(void)
 
     /* Check tty number */
     if ((ttyn <= 0) || (ttyn > 9)) {
-        elmprintf(LOG, "Invalid number from tty '%s'.", tty);
+        elmprintf(LOGERR, "Invalid number from tty '%s'.", tty);
         exit(ELM_EXIT_X_TTY);
     }
 
     /* Set ttyn environment variable */
     char str[2] = {ttyn+'0', 0};
 
-    if (elm_setenv("TTYN", str) < 0)
+    if (elm_setenv("TTYN", str) < 0) {
         exit(ELM_EXIT_X_TTY);
+    }
+
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Set XAUTHORITY environment variable */
+int elm_x_set_xauthority_env(void)
+{
+    char localhost[HOST_NAME_MAX+1];
+    char authfile[64];
+
+    elm_x_get_localhost(localhost, sizeof(localhost)-1);
+    elm_x_get_xauth_file(authfile, sizeof(authfile)-1);
+    elm_x_set_xauth_entry(authfile, localhost);
+
+    if (elm_setenv("XAUTHORITY", authfile) < 0) {
+        exit(100);
+    }
 
     return 0;
 }
@@ -483,7 +524,7 @@ int elm_x_set_screen_dimensions(void)
 
     /* Unable to determine screen info */
     if (!screen) {
-        elmprintf(LOG, "Unable to set screen dimensions.");
+        elmprintf(LOGERR, "Unable to set screen dimensions.");
         return 1;
     }
 
@@ -500,7 +541,7 @@ int elm_x_set_screen_dimensions(void)
         if (info->x == 0) {
             ScreenWidth  = info->width;
             ScreenHeight = info->height;
-            elmprintf(LOG, "Set screen Width x Height: '%d x %d'.", ScreenWidth, ScreenHeight);
+            elmprintf(LOGINFO, "Set screen Width x Height: '%d x %d'.", ScreenWidth, ScreenHeight);
             XRRFreeCrtcInfo(info);
             break;
         }
@@ -525,6 +566,176 @@ int elm_x_get_screen_width(void)
 int elm_x_get_screen_height(void)
 {
     return ScreenHeight;
+}
+
+/* ************************************************************************** */
+/* Return the VT to use in Xorg command */
+int elm_x_get_vt(char *vt, size_t size)
+{
+    snprintf(vt, size, "vt%s", getenv("TTYN"));
+
+    elmprintf(LOGINFO, "Xorg VT: %s.", vt);
+
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Return the localhost for the Xauthority entry */
+int elm_x_get_localhost(char *localhost, size_t size)
+{
+    if (gethostname(localhost, size)) {
+        elmprintf(LOGERR, "Unable to 'gethostname'.");
+        strncpy(localhost, "localhost", size);
+    }
+
+    elmprintf(LOGINFO, "X authority localhost: %s.", localhost); 
+
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Return the Xauthority file path */
+int elm_x_get_xauth_file(char *file, size_t size)
+{
+    char *home = getenv("HOME");
+
+    /* if (home) { */
+    /*     snprintf(file, size, "%s/.Xauthority", home); */
+    /* } */
+    /* else { */
+        if (access(ELM_VAR_RUN_DIR, W_OK) == 0) {
+            snprintf(file, size, "%s/.Xauthority", ELM_VAR_RUN_DIR);
+        }
+        else {
+            snprintf(file, size, "/tmp/.Xauthority");
+        }
+    /* } */
+
+    elmprintf(LOGINFO, "X authority file: '%s'.", file); 
+
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Return the Xauthority entry */
+int elm_x_set_xauth_entry(char *filename, char *localhost)
+{
+    Xauth entry = {0};
+    entry.family         = FamilyLocal;
+    entry.address        = localhost;
+    entry.address_length = strlen(entry.address);
+    entry.name           = "MIT-MAGIC-COOKIE-1";
+    entry.name_length    = strlen(entry.name);
+    entry.data_length    = 16;
+    elm_x_get_random_bytes(&entry.data, entry.data_length);
+
+    /* Open file for writing */
+    int   fd;
+    FILE *handle;
+
+    elmprintf(LOGINFO, "Opening Xauthority file: '%s'.", filename); 
+
+    if ((fd=open(filename, (O_RDWR | O_CREAT | O_TRUNC), 0700)) < 0) {
+        elmprintf(LOGERR, "Unable to open Xauthority file '%s': %s.", filename,
+                  strerror(errno));
+        free(entry.data);
+        return -1;
+    }
+
+    elmprintf(LOGINFO, "Opening Xauthority file descriptor: '%d'.", fd); 
+
+    if (!(handle=fdopen(fd, "w+"))) {
+        elmprintf(LOGERR, "Unable to open Xauthority file descriptor '%d':%s.",
+                  fd, strerror(errno));
+        free(entry.data);
+        close(fd);
+        return -2;
+    }
+
+    elmprintf(LOGINFO, "Writing to Xauthority file."); 
+
+    /* Write to xauthority file */
+    int status = 0;
+    if (!XauWriteAuth(handle, &entry))
+        status = 1;
+
+    elmprintf(LOGINFO, "Fflushing writes to Xauthority file."); 
+
+    if (fflush(handle))
+        status += 2;
+
+    elmprintf(LOGINFO, "Status: %d", status);
+
+    if (status != 0) {
+        elmprintf(LOGERR, "Unable to write to local Xauthority file: '%s'.",
+                  filename);
+        free(entry.data);
+        close(fd);
+        fclose(handle);
+        return -3;
+    }
+
+    /* if (!XauWriteAuth(handle, &entry) || fflush(handle)) { */
+    /*     elmprintf(LOGERR, "Unable to write to local Xauthority file: '%s'.", */
+    /*               filename); */
+    /*     free(entry.data); */
+    /*     close(fd); */
+    /*     fclose(handle); */
+    /*     return -3; */
+    /* } */
+
+    elmprintf(LOGINFO, "Writing to wild Xauthority file."); 
+
+    entry.family = FamilyWild;
+    if (!XauWriteAuth(handle, &entry) || fflush(handle)) {
+        elmprintf(LOGERR, "Unable to write to wild Xauthority file: '%s'.",
+                  filename);
+        free(entry.data);
+        close(fd);
+        fclose(handle);
+        return -4;
+    }
+
+    free(entry.data);
+    close(fd);
+    fclose(handle);
+
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Return random number of bytes */
+int elm_x_get_random_bytes(char **bytes, size_t size)
+{
+    char randfile[] = "/dev/urandom";
+    int  fd         = open(randfile, O_RDONLY);
+
+    /* Check urandom file */
+    if (fd < 0) {
+        elmprintf(LOG, "Unable to open '%s' file descriptor: %s.",
+                  randfile, strerror(errno));
+        return -1;
+    }
+
+    if (lseek(fd, 0, SEEK_SET) < 0) {
+        elmprintf(LOG, "Unable to seek file descriptor '%d': %s.", fd,
+                  strerror(errno));
+        return -2;
+    }
+
+    /* Copy from urandom */
+    *bytes = malloc(size);
+    if (read(fd, *bytes, size) < 0) {
+        elmprintf(LOG, "Unable to read file descriptor '%d': %s.", fd,
+                  strerror(errno));
+        return -3;
+    }
+
+    close (fd);
+
+    elmprintf(LOGINFO, "Random bytes of length '%lu'.", size);
+
+    return 0;
 }
 
 /* ************************************************************************** */

@@ -7,13 +7,13 @@ PROJECT = elm
 CC      = gcc
 PKGS    = gtk+-3.0 cairo libsystemd
 CFLAGS  = -g -Wall
-LIBS   = -lpam -lpam_misc -lX11 -lXrandr -lutil `pkg-config $(PKGS) --cflags --libs`
+LIBS   = -lpam -lpam_misc -lX11 -lXau -lXrandr -lutil `pkg-config $(PKGS) --cflags --libs`
 
 # ------------------------------------------------------------------------------
 # Directories
-BUILDDIR  = $(CURDIR)
+BUILDDIR  = .
 LOGDIR    = /var/log/$(PROJECT)
-DATADIR   = $(BUILDDIR)/data
+DATADIR   = $(CURDIR)/data
 OBJDIR    = $(BUILDDIR)/obj
 SRCDIR    = $(BUILDDIR)/src
 INCDIR    = $(BUILDDIR)/include
@@ -25,7 +25,7 @@ APPINCDIR = $(INCDIR)/app
 # Files
 SRC = $(wildcard $(SRCDIR)/*.c) $(wildcard $(APPSRCDIR)/*.c)
 OBJ = $(addprefix $(OBJDIR)/, $(notdir $(SRC:.c=.o)))
-LOG = /tmp/$(PROJECT).log
+LOG = $(LOGDIR)/$(PROJECT).log
 
 # ------------------------------------------------------------------------------
 # Redefine compiler settings

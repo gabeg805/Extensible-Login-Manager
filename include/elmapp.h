@@ -18,6 +18,7 @@
 #define ELM_APP_H
 
 /* Includes */
+#include "elmdef.h"
 #include "elmio.h"
 #include <stdbool.h>
 #include <stddef.h>
