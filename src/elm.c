@@ -78,13 +78,13 @@ int main(int argc, char **argv)
 
         case 0:
             options.logout = 1;
-            elmprintf(LOG, "Logout needs to be implemented. EXiting.");
-            exit(100);
+            elmprintf(LOG, "Logout needs to be implemented. Exiting.");
+            exit(5);
             break;
 
         default:
             elmprintf(LOGERR, "Unknown option specified '%c'. Exiting", c);
-            exit(ELM_EXIT_INVALID_OPTION);
+            exit(ELM_EXIT_INV_OPT);
         }
     }
 

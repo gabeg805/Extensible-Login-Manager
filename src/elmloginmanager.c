@@ -63,11 +63,12 @@ ElmLoginManager * elm_login_manager_new(void)
     /* Allocate login manager object and applications container */
     int status;
 
-    if ((status=elm_login_manager_alloc()) != 0) {
-        exit(ELM_EXIT_LOGIN_MANAGER_NEW);
+    if ((status=elm_login_manager_alloc()) < 0) {
+        exit(ELM_EXIT_MNGR_NEW);
     }
+
     if ((status=elm_login_manager_alloc_apps(1)) < 0) {
-        exit(ELM_EXIT_LOGIN_MANAGER_APP);
+        exit(ELM_EXIT_MNGR_APP);
     }
 
     /* Define methods */
@@ -92,26 +93,29 @@ int elm_login_manager_run(void)
     elmprintf(LOGINFO, "Preparing to run the Extensible Login Manager (ELM).");
 
     if (!elm_login_manager_exists("run the Extensible Login Manager")) {
-        return ELM_EXIT_LOGIN_MANAGER_RUN;
+        return ELM_EXIT_MNGR_RUN;
     }
 
     /* Setup */
     if (mkdir(ELM_VAR_RUN_DIR, (S_IRWXU | S_IRWXG | S_IRWXO)) < 0) {
-        elmprintf(LOGERR, "%s '%s' directory: %s",
-                  "Unable to create", ELM_VAR_RUN_DIR, strerror(errno));
-        return ELM_EXIT_LOGIN_MANAGER_SETUP_SIGNAL_CATCHER;
+        elmprintf(LOGERR, "%s '%s': %s",
+                  "Unable to create directory", ELM_VAR_RUN_DIR,
+                  strerror(errno));
+        return ELM_EXIT_MNGR_MKDIR;
     }
-    if (Manager->setup_signal_catcher() != 0) {
-        return ELM_EXIT_LOGIN_MANAGER_SETUP_SIGNAL_CATCHER;
+
+    if (Manager->setup_signal_catcher() < 0) {
+        return ELM_EXIT_MNGR_SIG_SETUP;
     }
-    if (Manager->setup_x() != 0) {
-        return ELM_EXIT_LOGIN_MANAGER_XINIT;
+
+    if (Manager->setup_x() < 0) {
+        return ELM_EXIT_MNGR_X;
     }
 
     /* Prompt for username/password */
     while (1) {
-        if (Manager->login_prompt() != 0)
-            return ELM_EXIT_LOGIN_MANAGER_PROMPT;
+        if (Manager->login_prompt() < 0)
+            return ELM_EXIT_MNGR_PROMPT;
     }
 
     return 0;
@@ -124,14 +128,21 @@ int elm_login_manager_login_prompt(void)
     elmprintf(LOGINFO, "Preparing to display login prompt.");
 
     if (!elm_login_manager_exists("display login prompt")) {
-        return 1;
+        return -1;
     }
 
     elmprintf(LOGINFO, "Displaying login prompt.");
 
     gtk_init(0, 0);
-    Manager->build_window();
-    Manager->build_apps();
+
+    if (Manager->build_window() < 0) {
+        exit(ELM_EXIT_MNGR_BUILD_WIN);
+    }
+
+    if (Manager->build_apps() < 0) {
+        exit(ELM_EXIT_MNGR_BUILD_APP);
+    }
+
     gtk_main();
 
     return 0;
@@ -252,7 +263,7 @@ int elm_login_manager_build_apps(void)
 
         /* Allocate application */
         if (elm_login_manager_alloc_apps(i+1) < 0) {
-            exit(ELM_EXIT_LOGIN_MANAGER_APP);
+            exit(ELM_EXIT_MNGR_APP);
         }
 
         /* Append widget to list */
@@ -297,8 +308,9 @@ int elm_login_manager_show_apps(void)
     elmprintf(LOGINFO, "Showing login manager.");
 
     size_t i;
-    for (i=0; Widgets[i]; i++)
+    for (i=0; Widgets[i]; i++) {
         gtk_widget_show(Widgets[i]);
+    }
     gtk_widget_show(Container);
     gtk_widget_show(Window);
 
@@ -312,8 +324,9 @@ int elm_login_manager_hide_apps(void)
     elmprintf(LOGINFO, "Hiding login manager.");
 
     size_t i;
-    for (i=0; Widgets[i]; i++)
+    for (i=0; Widgets[i]; i++) {
         gtk_widget_hide(Widgets[i]);
+    }
     gtk_widget_hide(Container);
     gtk_widget_hide(Window);
 
@@ -330,9 +343,17 @@ int elm_login_manager_setup_x(void)
         return 1;
     }
 
-    elm_x_run();
-    elm_x_set_transparency(1);
-    elm_x_set_cursor();
+    /* X setup */
+    if (elm_x_run() < 0) {
+        return -1;
+    }
+
+    if (elm_x_set_transparency(1) < 0) {
+        return -2;
+    }
+
+    if (elm_x_set_cursor() < 0) {
+    }
 
     return 0;
 }
@@ -344,7 +365,7 @@ int elm_login_manager_setup_signal_catcher(void)
     elmprintf(LOGINFO, "Setting up signal catcher.");
 
     if (!elm_login_manager_exists("setup signal catcher")) {
-        return 1;
+        return -1;
     }
 
     struct sigaction act;
@@ -366,7 +387,7 @@ int elm_login_manager_setup_signal_catcher(void)
 void elm_login_manager_signal_catcher(int sig, siginfo_t *info, void *context)
 {
     if (!elm_login_manager_exists("catch signals")) {
-        exit(ELM_EXIT_LOGIN_MANAGER_SIGNAL_CATCHER);
+        exit(ELM_EXIT_MNGR_SIG);
     }
 
     elmprintf(LOG, "Unexpected signal: %d.", sig);
@@ -392,7 +413,7 @@ void elm_login_manager_signal_catcher(int sig, siginfo_t *info, void *context)
         return;
     }
 
-	exit(ELM_EXIT_LOGIN_MANAGER_SIGNAL_CATCHER);
+	exit(ELM_EXIT_MNGR_SIG);
 }
 
 /* ************************************************************************** */
@@ -417,7 +438,7 @@ void elm_login_manager_thread(GtkWidget *widget, gpointer data)
 
     if ((status=pthread_create(&Thread, 0, Manager->login_session, data))) {
         elmprintf(LOG, "Error creating thread.");
-        return;
+        exit(ELM_EXIT_MNGR_PTHREAD);
     }
 }
 
@@ -432,7 +453,7 @@ int elm_login_manager_alloc(void)
     if (!Manager) {
         elmprintf(LOGERR, "%s: %s",
                   "Unable to initialize login manager", strerror(errno));
-        return 1;
+        return -1;
     }
 
     return 0;
