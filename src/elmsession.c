@@ -15,7 +15,7 @@
 
 /* Includes */
 #include "elmsession.h"
-#include "elmauthenticate.h"
+#include "elmpam.h"
 #include "elmio.h"
 #include <stdlib.h>
 
@@ -78,11 +78,12 @@ int elm_session_login(void)
         return -1;
     }
 
+    char *username = Session->info->username;
     char *xsession = Session->info->xsession;
 
     elmprintf(LOGINFO, "Logging into session '%s'.", xsession);
 
-    return elm_login(xsession, &Session->pid);
+    return elm_login(username, xsession, &Session->pid);
 }
 
 /* ************************************************************************** */

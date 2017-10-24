@@ -385,7 +385,6 @@ int elm_x_set_transparency(int flag)
     /* Wait until process is ~probably~ fully started */
     default:
         waitpid(pid, 0, WNOHANG);
-        sleep(2);
         break;
     }
 

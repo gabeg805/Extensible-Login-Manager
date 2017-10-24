@@ -44,6 +44,8 @@
 #define ELM_EXIT_X_STOP            29
 #define ELM_EXIT_X_XCOMPMGR        30
 
+#define ELM_EXIT_PAM_LOGIN         31
+
 #define ELM_VAR_RUN_DIR                                "/var/run/" PROGRAM
 
 #define ELM_CMD_SHUTDOWN "/usr/bin/poweroff"

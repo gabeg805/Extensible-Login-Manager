@@ -1,12 +1,12 @@
 /* *****************************************************************************
  * 
- * Name:    elmauthenticate.h
+ * Name:    elmpam.h
  * Author:  Gabriel Gonzalez
  * Email:   gabeg@bu.edu
  * License: The MIT License (MIT)
  * 
- * Description: Authenticate username and password for the Extensible Login
- *              Manager.
+ * Description: Authenticate username and password using the Pluggable
+ *              Authentication Module (PAM).
  * 
  * Notes: None.
  * 
@@ -14,8 +14,8 @@
  */
 
 /* Header guard */
-#ifndef ELM_AUTHENTICATE_H
-#define ELM_AUTHENTICATE_H
+#ifndef ELM_PAM_H
+#define ELM_PAM_H
 
 /* Includes */
 #include <unistd.h>
@@ -27,8 +27,8 @@
 #define ELM_EXIT_AUTHENTICATE_PREVIEW 22
 
 /* Public functions */
-int elm_authenticate(const char *username, const char *password);
-int elm_login(const char *session, pid_t *parentpid);
+int elm_login(char *username, char *xsession, pid_t *parentpid);
 int elm_logout(void);
+int elm_authenticate(const char *username, const char *password);
 
-#endif /* ELM_AUTHENTICATE_H */
+#endif /* ELM_PAM_H */

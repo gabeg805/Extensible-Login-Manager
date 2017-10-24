@@ -309,9 +309,12 @@ int elm_login_manager_show_apps(void)
 
     size_t i;
     for (i=0; Widgets[i]; i++) {
+        elmprintf(LOGINFO, "Showing widget %d: %p.", i, Widgets[i]);
         gtk_widget_show(Widgets[i]);
     }
+    elmprintf(LOGINFO, "Showing Container: %p.", Container);
     gtk_widget_show(Container);
+    elmprintf(LOGINFO, "Showing Window: %p.", Window);
     gtk_widget_show(Window);
 
     return 0;
@@ -325,9 +328,12 @@ int elm_login_manager_hide_apps(void)
 
     size_t i;
     for (i=0; Widgets[i]; i++) {
+        elmprintf(LOGINFO, "Hiding widget %d: %p.", i, Widgets[i]);
         gtk_widget_hide(Widgets[i]);
     }
+    elmprintf(LOGINFO, "Hiding Container: %p.", Container);
     gtk_widget_hide(Container);
+    elmprintf(LOGINFO, "Hiding Window: %p.", Window);
     gtk_widget_hide(Window);
 
     return 0;
