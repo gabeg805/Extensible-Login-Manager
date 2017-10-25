@@ -204,6 +204,8 @@ int elm_x_wait_sigusr(void)
         return -4;
     }
 
+    elmprintf(LOGINFO, "Done waiting for 'SIGUSR1' signal.");
+
     return 0;
 }
 

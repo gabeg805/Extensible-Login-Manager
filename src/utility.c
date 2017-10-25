@@ -31,10 +31,12 @@
 /* Set environment variables */
 int elm_setenv(char *name, char *value)
 {
-    elmprintf(LOG, "Setting environment variable: '%s=%s'.", name, value);
+    elmprintf(LOGINFO, "Setting environment variable: '%s=%s'.", name, value);
+
     if (setenv(name, value, 1) < 0) {
-        elmprintf(LOG, "Unable to set environment variable '%s=%s': %s.", name,
-                  value, strerror(errno));
+        elmprintf(LOGERR, "%s '%s=%s': %s.",
+                  "Unable to set environment variable", name, value,
+                  strerror(errno));
         return 1;
     }
 

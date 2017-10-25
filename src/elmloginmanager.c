@@ -433,17 +433,16 @@ void elm_login_manager_set_preview_mode(int flag)
 /* Thread login manger between GTK and user session */
 void elm_login_manager_thread(GtkWidget *widget, gpointer data)
 {
-    elmprintf(LOG, "Creating login thread.");
+    elmprintf(LOGINFO, "Creating login thread.");
 
-    if (!Manager) {
-        elmprintf(LOG, "Unable to create login thread: Login Manager does not exist.");
-        return;
+    if (!elm_login_manager_exists("create login thread")) {
+        exit(ELM_EXIT_MNGR_PTHREAD);
     }
 
     int status;
 
     if ((status=pthread_create(&Thread, 0, Manager->login_session, data))) {
-        elmprintf(LOG, "Error creating thread.");
+        elmprintf(LOGERR, "Error creating thread.");
         exit(ELM_EXIT_MNGR_PTHREAD);
     }
 }
@@ -472,7 +471,7 @@ int elm_login_manager_alloc_apps(size_t s)
     elmprintf(LOGINFO, "Allocating Login Manager applications.");
 
     size_t size = s+1;
-    Widgets     = realloc(Widgets, size*sizeof(*Widgets));
+    Widgets     = realloc(Widgets, size * sizeof(*Widgets));
 
     if (!Widgets) {
         elmprintf(LOGERR, "%s '%lu': %s",
