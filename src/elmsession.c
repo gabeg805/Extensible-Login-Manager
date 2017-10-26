@@ -35,10 +35,7 @@ ElmSession * elm_session_new(ElmLogin *info)
 {
     elmprintf(LOGINFO, "Preparing new Session object.");
 
-    /* Allocate user session object */
-    int status;
-
-    if ((status=elm_session_alloc()) != 0) {
+    if (elm_session_alloc() < 0) {
         exit(ELM_EXIT_SESSION_NEW);
     }
 
@@ -96,9 +93,8 @@ int elm_session_logout(void)
         return -1;
     }
 
-    char *username = Session->info->username;
-
-    elmprintf(LOG, "Logging out of user session for '%s'.", username);
+    elmprintf(LOG, "%s '%s'.",
+              "Logging out of user session for", Session->info->username);
 
     return elm_logout();
 }
@@ -112,9 +108,8 @@ int elm_session_alloc(void)
     Session = calloc(1, sizeof(ElmSession));
 
     if (!Session) {
-        elmprintf(LOGERR, "%s: %s",
-                  "Unable to initialize user session", strerror(errno));
-        return 1;
+        elmprintf(LOGERRNO, "Unable to initialize user session");
+        return -1;
     }
 
     return 0;
@@ -125,8 +120,8 @@ int elm_session_alloc(void)
 int elm_session_exists(char *message)
 {
     if (!Session) {
-        elmprintf(LOGERR, "Unable to %s: Session object does not exist.",
-                  message);
+        elmprintf(LOGERR, "%s %s: %s",
+                  "Unable to", message, "Session object does not exist.");
         return 0;
     }
 

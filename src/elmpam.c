@@ -37,13 +37,14 @@
 #include <ctype.h>
 
 /* Private functions */
+static int    elm_pam_login_exec(struct passwd *pw, char *xsession, pid_t *parentpid);
 static int    elm_pam_session_open(void);
 static int    elm_pam_session_setup(struct passwd *pw);
 static int    elm_pam_session_setup_misc(char *name , char *dir);
 static int    elm_pam_session_setup_files(uid_t uid, gid_t gid);
 static int    elm_pam_session_setup_id(char *name, uid_t uid, gid_t gid);
 static char * elm_pam_session_cmd(char *xsession);
-static int    elm_pam_session_close(void);
+static struct passwd * elm_session_get_passwd(char *username);
 static int    elm_pam_session_end(void);
 static int    elm_pam_utmp_write(char *username);
 static int    elm_pam_utmp_clear(void);
@@ -66,61 +67,50 @@ int elm_login(char *username, char *xsession, pid_t *parentpid)
 {
     elmprintf(LOGINFO, "Logging into PAM session for user.");
 
-    /* Open pam session */
+    struct passwd *pw;
+
     if (elm_pam_session_open() < 0) {
         return -1;
     }
 
-    elmprintf(LOGINFO, "Getting user's password database information.");
-
-    /* Get password entry for user */
-    struct passwd *pw;
-
-    if (!(pw=getpwnam(username))) {
-        elmprintf(LOGERR, "%s '%s': %s.",
-                  "Unable to get password structure for user", username,
-                  strerror(errno));
+    if (!(pw=elm_session_get_passwd(username))) {
         return -2;
     }
 
-    endpwent();
+    elmprintf(LOGINFO, "PWENT: %p.", pw);
 
+    elm_pam_login_exec(pw, xsession, parentpid);
+
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Execute login command */
+int elm_pam_login_exec(struct passwd *pw, char *xsession, pid_t *parentpid)
+{
     /* User session login */
-    pid_t pid;
+    char  *argv[] = {pw->pw_shell, "-c", elm_pam_session_cmd(xsession), NULL};
+    pid_t  pid;
 
     switch ((pid=fork()))
     {
-    /* Child */
     case 0:
-        /* Setup user session */
         if (elm_pam_session_setup(pw) < 0) {
             return -3;
         }
 
-        elmprintf(LOGINFO, "Running user login session.");
-
-        /* Run user session */
-        execl(pw->pw_shell, pw->pw_shell, "-c",
-              elm_pam_session_cmd(xsession),
-              NULL);
-
-        elmprintf(LOGERR, "%s: %s.",
-                  "Error starting user login session", strerror(errno));
+        elm_exec(argv[0], argv);
         exit(ELM_EXIT_PAM_LOGIN);
-
-    /* Fork error */
     case -1:
-        elmprintf(LOGERR, "%s: %s.",
-                  "Error during fork to start user login session",
-                  strerror(errno));
+        elmprintf(LOGERRNO, "%s '%s'", "Error during fork to start", argv[0]);
         exit(ELM_EXIT_PAM_LOGIN);
-
-    /* Parent */
     default:
-        elmprintf(LOGINFO, "Setting parent PID: '%d'.", pid);
-        *parentpid = pid;
         break;
     }
+
+    elmprintf(LOGINFO, "Setting parent PID: '%d'.", pid);
+
+    *parentpid = pid;
 
     return 0;
 }
@@ -131,19 +121,12 @@ int elm_logout(void)
 {
     elmprintf(LOGINFO, "Preparing to logout of user session.");
 
-    /* Clear utmp file */
     if (elm_pam_utmp_clear() < 0) {
         return -1;
     }
 
-    /* Close pam session */
-    if (elm_pam_session_close() < 0) {
-        return -2;
-    }
-
-    /* End pam session */
     if (elm_pam_session_end() < 0) {
-        return -3;
+        return -2;
     }
 
     return 0;
@@ -362,10 +345,34 @@ char * elm_pam_session_cmd(char *xsession)
 }
 
 /* ************************************************************************** */
-/* Close pam login session */
-int elm_pam_session_close(void)
+/* Return password database entry */
+struct passwd * elm_session_get_passwd(char *username)
 {
-    elmprintf(LOGINFO, "Preparing to close PAM login session.");
+    elmprintf(LOGINFO, "Determining user's password database entry.");
+
+    struct passwd *pw;
+
+    if (!(pw=getpwnam(username))) {
+        elmprintf(LOGERRNO, "%s '%s'",
+                  "Unable to get password database entry for user", username);
+        errno = 0;
+        return NULL;
+    }
+
+    elmprintf(LOGINFO, "PWENT: %p.", pw);
+
+    endpwent();
+
+    elmprintf(LOGINFO, "PWEND: %p.", pw);
+
+    return pw;
+}
+
+/* ************************************************************************** */
+/* End pam login session */
+int elm_pam_session_end(void)
+{
+    elmprintf(LOGINFO, "Preparing to end PAM login session");
 
     int status = 0;
 
@@ -383,26 +390,15 @@ int elm_pam_session_close(void)
         status = -2;
     }
 
-    elmprintf(LOGINFO, "PAM_SUCCESS returned? %d.", PamResult);
-
-    return status;
-}
-
-/* ************************************************************************** */
-/* End pam login session */
-int elm_pam_session_end(void)
-{
-    elmprintf(LOGINFO, "Preparing to end PAM login session");
-
     /* End pam session */
     PamResult = pam_end(PamHandle, PamResult);
 
     if (!elm_pam_success("end session")) {
         PamHandle = NULL;
-        return -1;
+        status = -3;
     }
 
-    return 0;
+    return status;
 }
 
 /* ************************************************************************** */

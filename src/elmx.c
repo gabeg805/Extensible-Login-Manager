@@ -41,21 +41,22 @@
 /* #include <dbus/dbus.h> */
 
 /* Private functions */
-static int elm_x_wait_sigusr(void);
-static int elm_x_init(void);
-static int elm_x_stop(Display *display);
-static int elm_x_set_env(void);
-static int elm_x_set_display_env(void);
-static int elm_x_set_tty_env(void);
-static int elm_x_set_ttyn_env(void);
-static int elm_x_set_xauthority_env(void);
-static int elm_x_set_xorgvt_env(void);
-static int elm_x_get_vt(char *vt, size_t size);
-static int elm_x_get_localhost(char *localhost, size_t size);
-static int elm_x_get_xauth_file(char *file, size_t size);
-static int elm_x_set_xauth_entry(char *filename, char *localhost);
-static int elm_x_get_random_bytes(char **bytes, size_t size);
-static int elm_x_is_running(void);
+static void elm_x_exec(void);
+static int  elm_x_wait_sigusr(void);
+static int  elm_x_init(void);
+static int  elm_x_stop(Display *display);
+static int  elm_x_set_env(void);
+static int  elm_x_set_display_env(void);
+static int  elm_x_set_tty_env(void);
+static int  elm_x_set_ttyn_env(void);
+static int  elm_x_set_xauthority_env(void);
+static int  elm_x_set_xorgvt_env(void);
+static int  elm_x_get_vt(char *vt, size_t size);
+static int  elm_x_get_localhost(char *localhost, size_t size);
+static int  elm_x_get_xauth_file(char *file, size_t size);
+static int  elm_x_set_xauth_entry(char *filename, char *localhost);
+static int  elm_x_get_random_bytes(char **bytes, size_t size);
+static int  elm_x_is_running(void);
 
 /* Private variables */
 static Display *Xdisplay     = NULL;
@@ -87,6 +88,19 @@ int elm_x_run(void)
 
     elm_x_set_env();
 
+    elm_x_exec();
+
+    /* DBusError derr; */
+    /* dbus_err_init(&derr); */
+    /* DBusConnection *dcon = dbus_bus_get(DBUS_BUS_SYSTEM */
+
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Execute X command */
+void elm_x_exec(void)
+{
     char *display    = getenv("DISPLAY");
     char *xauthority = getenv("XAUTHORITY");
     char *vt         = getenv("XORGVT");
@@ -98,7 +112,6 @@ int elm_x_run(void)
     /* Start X server */
     switch ((Xpid=fork()))
     {
-    /* Child */
     case 0:
         elmprintf(LOGINFO, "Preparing to run X server.");
 
@@ -107,48 +120,25 @@ int elm_x_run(void)
         signal(SIGUSR1, SIG_IGN);
         setpgid(0, getpid());
 
-        elm_exec(ELM_CMD_XORG, argv);
-
-        /* execl(ELM_CMD_XORG, ELM_CMD_XORG, */
-        /*       display, */
-        /*       "-background", "none", */
-        /*       "-noreset", */
-        /*       "-verbose", "3", "-logverbose", */
-        /*       "-logfile", ELM_XLOG, */
-        /*       "-auth", xauthority, */
-        /*       "-seat", "seat0", */
-        /*       "-nolisten", "tcp", */
-        /*       vt, NULL); */
-
-        /* elmprintf(LOGERRNO, "%s '%s'", "Error running", ELM_CMD_XORG); */
-
+        elm_exec(argv[0], argv);
         exit(ELM_EXIT_X_RUN);
-
-    /* Fork error */
     case -1:
-        elmprintf(LOGERRNO, "%s '%s'",
-                  "Error during fork to start", ELM_CMD_XORG);
+        elmprintf(LOGERRNO, "%s '%s'", "Error during fork to start", argv[0]);
         exit(ELM_EXIT_X_RUN);
-
-    /* Parent */
     default:
-        elmprintf(LOGINFO, "Preparing to initialize X server display."); 
-
-        if (elm_x_wait_sigusr() < 0) {
-            exit(ELM_EXIT_X_WAIT);
-        }
-
-        if (elm_x_init() < 0) {
-            exit(ELM_EXIT_X_INIT);
-        }
         break;
     }
 
-    /* DBusError derr; */
-    /* dbus_err_init(&derr); */
-    /* DBusConnection *dcon = dbus_bus_get(DBUS_BUS_SYSTEM */
+    /* Initialize X server once it's fully operational */
+    elmprintf(LOGINFO, "Preparing to initialize X server display."); 
 
-    return 0;
+    if (elm_x_wait_sigusr() < 0) {
+        exit(ELM_EXIT_X_WAIT);
+    }
+
+    if (elm_x_init() < 0) {
+        exit(ELM_EXIT_X_INIT);
+    }
 }
 
 /* ************************************************************************** */
@@ -348,20 +338,12 @@ int elm_x_set_transparency(int flag)
     {
     /* Child */
     case 0:
-        elm_exec(ELM_CMD_XCOMPMGR, argv);
-
-        /* elmprintf(LOGINFO, "Running X composite manager."); */
-
-        /* execl(ELM_CMD_XCOMPMGR, ELM_CMD_XCOMPMGR, NULL); */
-
-        /* elmprintf(LOGERR, "%s '%s': %s.", */
-        /*           "Error running", ELM_CMD_XCOMPMGR, strerror(errno)); */
+        elm_exec(argv[0], argv);
         return 1;
 
     /* Fork failed */
     case -1:
-        elmprintf(LOGERRNO, "%s '%s'",
-                  "Error during fork to start", ELM_CMD_XCOMPMGR);
+        elmprintf(LOGERRNO, "%s '%s'", "Error during fork to start", argv[0]);
         return 2;
 
     /* Wait until process is ~probably~ fully started */

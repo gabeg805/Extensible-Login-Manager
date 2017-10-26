@@ -465,7 +465,7 @@ int elm_login_manager_alloc(void)
     Manager = calloc(1, sizeof(*Manager));
 
     if (!Manager) {
-        elmprintf(LOGERRNO, "%s", "Unable to initialize login manager");
+        elmprintf(LOGERRNO, "Unable to initialize login manager");
         return -1;
     }
 
