@@ -52,7 +52,7 @@ static int    elm_pam_conversation(int num, const struct pam_message **messages,
                                    struct pam_response **responses, void *data);
 static int    elm_pam_success(char *message);
 
-static int init_env(struct passwd *pw);
+static int elm_pam_session_env(struct passwd *pw);
 static int elm_pam_setenv(char *name, char *value);
 
 /* Private variables */
@@ -77,11 +77,7 @@ int elm_login(char *username, char *xsession, pid_t *parentpid)
         return -2;
     }
 
-    elmprintf(LOGINFO, "PWENT: %p.", pw);
-
-    elm_pam_login_exec(pw, xsession, parentpid);
-
-    return 0;
+    return elm_pam_login_exec(pw, xsession, parentpid);
 }
 
 /* ************************************************************************** */
@@ -105,12 +101,10 @@ int elm_pam_login_exec(struct passwd *pw, char *xsession, pid_t *parentpid)
         elmprintf(LOGERRNO, "%s '%s'", "Error during fork to start", argv[0]);
         exit(ELM_EXIT_PAM_LOGIN);
     default:
+        elmprintf(LOGINFO, "Setting parent PID: '%d'.", pid);
+        *parentpid = pid;
         break;
     }
-
-    elmprintf(LOGINFO, "Setting parent PID: '%d'.", pid);
-
-    *parentpid = pid;
 
     return 0;
 }
@@ -165,12 +159,6 @@ int elm_authenticate(const char *username, const char *password)
         return -3;
     }
 
-    /* PamResult = pam_set_item(PamHandle, PAM_RUSER, "root"); */
-
-    /* if (!elm_pam_success("set RUSER item")) { */
-    /*     return -3; */
-    /* } */
-
     PamResult = pam_set_item(PamHandle, PAM_USER, username);
 
     if (!elm_pam_success("set USER item")) {
@@ -179,18 +167,21 @@ int elm_authenticate(const char *username, const char *password)
 
     /* Authenticate pam user */
     PamResult = pam_authenticate(PamHandle, 0);
+
     if (!elm_pam_success("authenticate user")) {
         return -5;
     }
 
     /* Check if user account is valid */
     PamResult = pam_acct_mgmt(PamHandle, 0);
+
     if (!elm_pam_success("manage user account")) {
         return -6;
     }
 
     /* Establish credentials */
     PamResult = pam_setcred(PamHandle, PAM_ESTABLISH_CRED);
+
     if (!elm_pam_success("establish credentials")) {
         return -7;
     }
@@ -241,7 +232,7 @@ int elm_pam_session_setup(struct passwd *pw)
     }
 
     /* Initialize environment variables */
-    init_env(pw);
+    elm_pam_session_env(pw);
 
     /* Load Xresources and Xmodmap configs */
     if (elm_x_load_user_preferences() < 0) {
@@ -359,11 +350,7 @@ struct passwd * elm_session_get_passwd(char *username)
         return NULL;
     }
 
-    elmprintf(LOGINFO, "PWENT: %p.", pw);
-
     endpwent();
-
-    elmprintf(LOGINFO, "PWEND: %p.", pw);
 
     return pw;
 }
@@ -405,7 +392,7 @@ int elm_pam_session_end(void)
 /* Manager utmp/wtmp login records */
 int elm_pam_utmp_write(char *username)
 {
-    elmprintf(LOG, "Writing utmp login records.");
+    elmprintf(LOGINFO, "Writing utmp login records.");
 
     /* what is LOGIN_PROCESS */
 
@@ -423,8 +410,7 @@ int elm_pam_utmp_write(char *username)
     setutent();
 
     if (!pututline(&utmpr)) {
-        elmprintf(LOGERR, "%s: %s.",
-                  "Unable to write utmp login records.", strerror(errno));
+        elmprintf(LOGERRNO, "Unable to write utmp login records");
         return -1;
     }
 
@@ -435,7 +421,7 @@ int elm_pam_utmp_write(char *username)
 /* Clear utmp/wtmp login records */
 int elm_pam_utmp_clear(void)
 {
-    elmprintf(LOG, "Clearing utmp login records.");
+    elmprintf(LOGINFO, "Clearing utmp login records.");
 
     utmpr.ut_type = DEAD_PROCESS;
     utmpr.ut_time = 0;
@@ -446,8 +432,7 @@ int elm_pam_utmp_clear(void)
     setutent();
 
     if (!pututline(&utmpr)) {
-        elmprintf(LOGERR, "%s: %s.",
-                  "Unable to clear utmp login records.", strerror(errno));
+        elmprintf(LOGERRNO, "Unable to clear utmp login records");
         return 1;
     }
 
@@ -558,25 +543,19 @@ int elm_pam_success(char *message)
 }
 
 /* ************************************************************************** */
-/* Cleanup zombie processes */
-void cleanup_child(int signal)
-{
-    wait(NULL);
-}
-
-/* ************************************************************************** */
 /* Set environment variables for USER */
-int init_env(struct passwd *pw)
+int elm_pam_session_env(struct passwd *pw)
 {
     elmprintf(LOGINFO, "%s", "Initializing environment variables.");
 
-
+    /* Default environment variables */
     elm_pam_setenv("HOME", pw->pw_dir);
     elm_pam_setenv("PWD", pw->pw_dir);
     elm_pam_setenv("SHELL", pw->pw_shell);
     elm_pam_setenv("USER", pw->pw_name);
     elm_pam_setenv("LOGNAME", pw->pw_name);
 
+    /* Missing environment variables that are set by pam */
     char **envvars = pam_getenvlist(PamHandle);
     char *name;
     char *value;
@@ -584,10 +563,7 @@ int init_env(struct passwd *pw)
     int   i;
 
     for (i=0; envvars[i] && (i < 30); i++) {
-        elmprintf(LOGINFO, "envvars[%u]: %s", i, envvars[i]);
-
-        c = strchr(envvars[i], '=');
-        if (!c) {
+        if (!(c=strchr(envvars[i], '='))) {
             continue;
         }
 
@@ -595,21 +571,17 @@ int init_env(struct passwd *pw)
         name  = envvars[i];
         value = c+1;
 
-        elmprintf(LOGINFO, "'%s'='%s'", name, value);
-
         if (!getenv(name)) {
-            elmprintf(LOGWARN, "Environment variable '%s' not in user list (%s).", name, value);
+            elmprintf(LOGWARN, "Environment variable '%s=%s' not set.", name, value);
             if (elm_setenv(name, value) < 0) {
-                elmprintf(LOGERR, "AHHHHH!");
             }
         }
 
     }
 
-
-    /* char xauthority[64]; */
-    /* snprintf(xauthority, sizeof(xauthority), "%s/.Xauthority", pw->pw_dir); */
-    /* elm_pam_setenv("XAUTHORITY", xauthority); */
+    /* Extraneous XDG environment variables */
+    /* Test where the best place to set these is by setting one of the *_HOME or
+     * *_DIRS around different pam commands */
 
     /* XDG environment variables */
     /* 
@@ -623,41 +595,8 @@ int init_env(struct passwd *pw)
      * elm_setenv("XDG_VTNR", getenv("TTYN"));
      * elm_setenv("XDG_SESSION_CLASS", "user");
      * elm_setenv("XDG_SESSION_TYPE", "x11");
+     * elm_setenv("XDG_RUNTIME_DIR", runtimedir)
      */
-
-    /* int           status; */
-    /* char         *session; */
-    /* char         *seat; */
-    /* unsigned int  vt; */
-    /* char          runtimedir[64]; */
-    /* if ((status=sd_session_get_vt(session, &vt)) != 0) { */
-    /*     elmprintf(LOG, "Error getting loginctl virtual terminal. Setting vtnr to '%s'.", getenv("TTYN")); */
-    /*     elm_pam_setenv("XDG_VTNR", getenv("TTYN")); */
-    /* } */
-    /* else { */
-    /*     elmprintf(LOG, "Setting loginctl virtual terminal to '%u'."); */
-    /*     char value = ((char)vt)+'0'; */
-    /*     elm_pam_setenv("XDG_VTNR", &value); */
-    /* } */
-    /* if ((status=sd_session_get_seat(session, &seat)) != 0) { */
-    /*     elmprintf(LOG, "Error getting loginctl seat. Setting seat to 'seat0'."); */
-    /*     elm_pam_setenv("XDG_SEAT", "seat0"); */
-    /* } */
-    /* else { */
-    /*     elmprintf(LOG, "Setting loginctl seat to '%s'.", seat); */
-    /*     elm_pam_setenv("XDG_SEAT", seat); */
-    /* } */
-    /* if ((status=sd_uid_get_display(pw->pw_uid, &session)) < 0) */
-    /*     elmprintf(LOG, "Error getting loginctl session."); */
-    /* else { */
-    /*     elmprintf(LOG, "Setting loginctl session to '%s'.", session); */
-    /*     elm_pam_setenv("XDG_SESSION_ID", session); */
-    /* } */
-    /* snprintf(runtimedir, sizeof(runtimedir), "/run/user/%d", pw->pw_uid); */
-    /* elmprintf(LOG, "Setting runtime directory to '%s'.", runtimedir); */
-    /* elm_pam_setenv("XDG_RUNTIME_DIR", runtimedir); */
-
-    elmprintf(LOGINFO, "%s", "Done initializing environment variables.");
 
     return 0;
 }
