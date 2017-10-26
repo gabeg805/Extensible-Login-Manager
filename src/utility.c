@@ -28,6 +28,19 @@
 #include <unistd.h>
 
 /* ************************************************************************** */
+/* Execute a command/file */
+int elm_exec(char *file, char *const argv[])
+{
+    elmprintf(LOGINFO, "%s '%s'.", "Running", file);
+
+    execvp(file, argv);
+
+    elmprintf(LOGERRNO, "%s '%s'", "Error trying to run", file);
+
+    return -1;
+}
+
+/* ************************************************************************** */
 /* Set environment variables */
 int elm_setenv(char *name, char *value)
 {

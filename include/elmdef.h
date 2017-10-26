@@ -16,16 +16,18 @@
 #ifndef ELM_DEF_H
 #define ELM_DEF_H
 
+/* Includes */
+#include <errno.h>
+
 /* Defines */
 #define PROGRAM "elm"
 
-/* Defines */
 #define ELM_EXIT_SUCCESS           0
 #define ELM_EXIT_INV_OPT           1
 #define ELM_EXIT_MNGR_NEW          10
 #define ELM_EXIT_MNGR_APP          11
 #define ELM_EXIT_MNGR_RUN          12
-#define ELM_EXIT_MNGR_MKDIR        13
+#define ELM_EXIT_MNGR_DIR          13
 #define ELM_EXIT_MNGR_SIG_SETUP    14
 #define ELM_EXIT_MNGR_SIG          15
 #define ELM_EXIT_MNGR_X            16
@@ -57,5 +59,7 @@
 
 #define ELM_LOG  "/var/log/elm/elm.log"
 #define ELM_XLOG "/var/log/elm/Xorg.log"
+
+#define ELM_MAX_MSG_LEN 256
 
 #endif /* ELM_DEF_H */

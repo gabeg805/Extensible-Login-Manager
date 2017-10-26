@@ -27,10 +27,12 @@ typedef enum
     INFO,
     WARNING,
     ERROR,
+    ERRNO,
     LOG,
     LOGINFO,
     LOGWARN,
     LOGERR,
+    LOGERRNO
 } ElmPrint;
 
 /* Public functions  */

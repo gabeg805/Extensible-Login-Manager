@@ -31,6 +31,7 @@ typedef struct
     int    (*build_apps)(void);
     int    (*show_apps)(void);
     int    (*hide_apps)(void);
+    int    (*setup_dir)(void);
     int    (*setup_x)(void);
     int    (*setup_signal_catcher)(void);
     void   (*set_preview_mode)(int flag);

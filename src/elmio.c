@@ -15,6 +15,7 @@
 /* Includes */
 #include "elmio.h"
 #include "elmdef.h"
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -25,12 +26,13 @@ static void   elm_io_info(char *preamble, va_list ap);
 static void   elm_io_warn(char *preamble, va_list ap);
 static void   elm_io_err(char *preamble, va_list ap);
 static void   elm_io_log(char *preamble, va_list ap);
+static char * elm_io_get_preamble(ElmPrint mode, const char *vafmt);
+static char * elm_io_get_time(void);
 static int    elm_io_is_mode_info(ElmPrint mode);
 static int    elm_io_is_mode_warn(ElmPrint mode);
 static int    elm_io_is_mode_err(ElmPrint mode);
 static int    elm_io_is_mode_log(ElmPrint mode);
 static char * elm_io_mode_to_string(ElmPrint mode);
-static char * elm_io_time_now(void);
 
 /* Private variables */
 static int Verbose = 0;
@@ -39,15 +41,11 @@ static int Verbose = 0;
 /* Print wrapper */
 void elmprintf(ElmPrint mode, const char *vafmt, ...)
 {
-    /* Format line label */
-    static char preamble[256];
-
-    snprintf(preamble, sizeof(preamble), "[%s] %s %s\n",
-             elm_io_time_now(), elm_io_mode_to_string(mode), vafmt);
-
     /* Call appropriate printing function */
-    va_list ap;
-    va_list aq;
+    char    *preamble = elm_io_get_preamble(mode, vafmt);
+    va_list  ap;
+    va_list  aq;
+
     va_start(ap, vafmt);
     va_copy(aq, ap);
 
@@ -109,6 +107,59 @@ void elm_io_set_verbose(int flag)
 }
 
 /* ************************************************************************** */
+/* Return the preamble of the print statement */
+char * elm_io_get_preamble(ElmPrint mode, const char *vafmt)
+{
+    static char preamble[ELM_MAX_MSG_LEN];
+
+    /* Default preamble (excluding trailing newline) */
+    snprintf(preamble, sizeof(preamble), "[%s] %s %s",
+             elm_io_get_time(), elm_io_mode_to_string(mode), vafmt);
+
+    /* Determine if more can be appended to message */
+    size_t length    = strlen(preamble)+1;        /* Includes newline */
+    size_t available = sizeof(preamble)-1-length; /* Includes null terminator */
+
+    if ((length < sizeof(preamble)) && (available > 0)) {
+
+        /* Add errno message to string */
+        if ((mode == ERRNO) || (mode == LOGERRNO)) {
+            if (available >= 2) {
+                strncat(preamble, ": ", 2);
+                available -= 2;
+            }
+
+            char   *errmsg = strerror(errno);
+            size_t  errlen = strlen(errmsg)+1;
+
+            if (available >= errlen) {
+                strncat(preamble, errmsg, errlen);
+                strncat(preamble, ".", 1);
+            }
+        }
+
+        strncat(preamble, "\n", 1);
+    }
+
+    return preamble;
+}
+
+/* ************************************************************************** */
+/* Return current time string */
+char * elm_io_get_time(void)
+{
+    static const char *fmt     = "%Y-%m-%d %I:%M:%S %p";
+    time_t             now     = time(0);
+    struct tm         *tstruct = localtime(&now);
+    static char        buf[128];
+
+    memset(&buf, 0, sizeof(buf));
+    strftime(buf, sizeof(buf), fmt, tstruct);
+
+    return buf;
+}
+
+/* ************************************************************************** */
 /* Check if INFO mode */
 int elm_io_is_mode_info(ElmPrint mode)
 {
@@ -126,7 +177,7 @@ int elm_io_is_mode_warn(ElmPrint mode)
 /* Check if ERROR mode */
 int elm_io_is_mode_err(ElmPrint mode)
 {
-    return ((mode == ERROR) || (mode == LOGERR)) ? 1 : 0;
+    return ((mode == ERROR) || (mode == ERRNO) || (mode == LOGERR)) ? 1 : 0;
 }
 
 /* ************************************************************************** */
@@ -136,7 +187,8 @@ int elm_io_is_mode_log(ElmPrint mode)
     return ((mode == LOG) \
             || (mode == LOGINFO) \
             || (mode == LOGWARN) \
-            || (mode == LOGERR)) \
+            || (mode == LOGERR) \
+            || (mode == LOGERRNO)) \
         ? 1 : 0;
 }
 
@@ -167,19 +219,4 @@ char * elm_io_mode_to_string(ElmPrint mode)
     str[(len >= 10) ? 9 : len] = '\0';
 
     return str;
-}
-
-/* ************************************************************************** */
-/* Return current time string */
-char * elm_io_time_now(void)
-{
-    static const char *fmt     = "%Y-%m-%d %I:%M:%S %p";
-    time_t             now     = time(0);
-    struct tm         *tstruct = localtime(&now);
-    static char        buf[128];
-
-    memset(&buf, 0, sizeof(buf));
-    strftime(buf, sizeof(buf), fmt, tstruct);
-
-    return buf;
 }

@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     };
 
     /* Parse options */
-    ElmOptions options = {0, 0, 0, 0, 0};
+    ElmOptions options = {0};
     int        index   = 0;
     int        c;
 
@@ -90,8 +90,11 @@ int main(int argc, char **argv)
 
     /* Run login manager */
     if (options.run) {
+        elmprintf(LOGINFO, "Starting the Extensible Login Manager (ELM)!");
+
         ElmLoginManager *manager = elm_login_manager_new();
         manager->set_preview_mode(options.preview);
+
         return manager->run();
     }
 

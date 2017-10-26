@@ -35,6 +35,7 @@ static int    elm_login_manager_build_window(void);
 static int    elm_login_manager_build_apps(void);
 static int    elm_login_manager_show_apps(void);
 static int    elm_login_manager_hide_apps(void);
+static int    elm_login_manager_setup_dir(void);
 static int    elm_login_manager_setup_x(void);
 static int    elm_login_manager_setup_signal_catcher(void);
 static void   elm_login_manager_signal_catcher(int sig, siginfo_t *info,
@@ -60,14 +61,11 @@ ElmLoginManager * elm_login_manager_new(void)
 {
     elmprintf(LOGINFO, "Preparing new Login Manager object.");
 
-    /* Allocate login manager object and applications container */
-    int status;
-
-    if ((status=elm_login_manager_alloc()) < 0) {
+    if (elm_login_manager_alloc() < 0) {
         exit(ELM_EXIT_MNGR_NEW);
     }
 
-    if ((status=elm_login_manager_alloc_apps(1)) < 0) {
+    if (elm_login_manager_alloc_apps(1) < 0) {
         exit(ELM_EXIT_MNGR_APP);
     }
 
@@ -75,6 +73,7 @@ ElmLoginManager * elm_login_manager_new(void)
     Manager->run                  = &elm_login_manager_run;
     Manager->login_session        = &elm_login_manager_login_session;
     Manager->login_prompt         = &elm_login_manager_login_prompt;
+    Manager->setup_dir            = &elm_login_manager_setup_dir;
     Manager->setup_x              = &elm_login_manager_setup_x;
     Manager->setup_signal_catcher = &elm_login_manager_setup_signal_catcher;
     Manager->set_preview_mode     = &elm_login_manager_set_preview_mode;
@@ -97,11 +96,8 @@ int elm_login_manager_run(void)
     }
 
     /* Setup */
-    if (mkdir(ELM_VAR_RUN_DIR, (S_IRWXU | S_IRWXG | S_IRWXO)) < 0) {
-        elmprintf(LOGERR, "%s '%s': %s",
-                  "Unable to create directory", ELM_VAR_RUN_DIR,
-                  strerror(errno));
-        return ELM_EXIT_MNGR_MKDIR;
+    if (Manager->setup_dir() < 0) {
+        return ELM_EXIT_MNGR_DIR;
     }
 
     if (Manager->setup_signal_catcher() < 0) {
@@ -191,8 +187,9 @@ void * elm_login_manager_login_session(void *data)
 
     /* Wait for session to end */
     int wstatus;
+
     if ((status=waitpid(session->pid, &wstatus, 0)) == -1) {
-        elmprintf(LOGERR, "Waitpid errored: %s.", strerror(errno));
+        elmprintf(LOGERRNO, "Waitpid errored");
     }
 
     if (WIFEXITED(wstatus)) {
@@ -230,8 +227,8 @@ int elm_login_manager_build_window(void)
     int width  = elm_x_get_screen_width();
     int height = elm_x_get_screen_height();
 
-    Window     = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    Container  = gtk_fixed_new();
+    Window    = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    Container = gtk_fixed_new();
 
     elm_set_widget_style(&Window, "LoginManager", Style);
     gtk_window_set_default_size(GTK_WINDOW(Window), width, height);
@@ -340,7 +337,20 @@ int elm_login_manager_hide_apps(void)
 }
 
 /* ************************************************************************** */
-/* Setting up X server */
+/* Setup run directory */
+int elm_login_manager_setup_dir(void)
+{
+    if (mkdir(ELM_VAR_RUN_DIR, (S_IRWXU | S_IRWXG | S_IRWXO)) < 0) {
+        elmprintf(LOGERRNO, "%s '%s'",
+                  "Unable to create directory", ELM_VAR_RUN_DIR);
+        return -1;
+    }
+
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Setup X server */
 int elm_login_manager_setup_x(void)
 {
     elmprintf(LOGINFO, "Setting up X server.");
@@ -349,7 +359,6 @@ int elm_login_manager_setup_x(void)
         return 1;
     }
 
-    /* X setup */
     if (elm_x_run() < 0) {
         return -1;
     }
@@ -409,7 +418,7 @@ void elm_login_manager_signal_catcher(int sig, siginfo_t *info, void *context)
     pid_t pid   = info->si_pid;
 
     if ((signo == SIGTERM) && (pid == 1)) {
-        elmprintf(LOG, "Ignoring signal '%d' from PID '%lu'.", signo, pid);
+        elmprintf(LOGWARN, "Ignoring signal '%d' from PID '%lu'.", signo, pid);
 
         struct sigaction act;
         act.sa_flags     = SA_SIGINFO;
@@ -456,8 +465,7 @@ int elm_login_manager_alloc(void)
     Manager = calloc(1, sizeof(*Manager));
 
     if (!Manager) {
-        elmprintf(LOGERR, "%s: %s",
-                  "Unable to initialize login manager", strerror(errno));
+        elmprintf(LOGERRNO, "%s", "Unable to initialize login manager");
         return -1;
     }
 
@@ -474,9 +482,8 @@ int elm_login_manager_alloc_apps(size_t s)
     Widgets     = realloc(Widgets, size * sizeof(*Widgets));
 
     if (!Widgets) {
-        elmprintf(LOGERR, "%s '%lu': %s",
-                  "Unable to allocate widget list with size", size,
-                  strerror(errno));
+        elmprintf(LOGERR, "%s '%lu'",
+                  "Unable to allocate widget list with size", size);
         return -1;
     }
 
@@ -490,8 +497,8 @@ int elm_login_manager_alloc_apps(size_t s)
 int elm_login_manager_exists(char *message)
 {
     if (!Manager) {
-        elmprintf(LOGERR, "Unable to %s: Login Manager object does not exist.",
-                  message);
+        elmprintf(LOGERR, "%s %s: %s.",
+                  "Unable to", message, "Login Manager object does not exist");
         return 0;
     }
 

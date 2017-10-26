@@ -27,6 +27,7 @@
 #define MAX_NUM_LEN    32
 
 /* Public functions  */
+int elm_exec(char *file, char *const argv[]);
 int elm_setenv(char *name, char *value);
 char * basename(const char *string);
 long pgrep(const char *program);
