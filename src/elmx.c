@@ -42,7 +42,7 @@
 
 /* Private functions */
 static void elm_x_exec(void);
-static int  elm_x_wait_sigusr(void);
+static int  elm_x_wait(void);
 static int  elm_x_init(void);
 static int  elm_x_stop(Display *display);
 static int  elm_x_set_env(void);
@@ -132,7 +132,7 @@ void elm_x_exec(void)
     /* Initialize X server once it's fully operational */
     elmprintf(LOGINFO, "Preparing to initialize X server display."); 
 
-    if (elm_x_wait_sigusr() < 0) {
+    if (elm_x_wait() < 0) {
         exit(ELM_EXIT_X_WAIT);
     }
 
@@ -144,7 +144,7 @@ void elm_x_exec(void)
 /* ************************************************************************** */
 /* Wait for SIGUSR1 from Xorg, indicating it started successfully. Timeout in 30
  * seconds */
-int elm_x_wait_sigusr(void)
+int elm_x_wait(void)
 {
     elmprintf(LOGINFO, "Setting up wait for 'SIGUSR1' signal.");
 
@@ -497,8 +497,6 @@ int elm_x_set_ttyn_env(void)
         ++shift;
     ttyn = atoi(tty+shift);
     ttyn = (strstr(tty, "pts")) ? ttyn+2 : ttyn;
-    /* if (strstr(tty, "pts")) */
-    /*     ttyn += 2; */
 
     /* Check tty number */
     if ((ttyn <= 0) || (ttyn > 9)) {
@@ -670,49 +668,47 @@ int elm_x_set_xauth_entry(char *filename, char *localhost)
     }
 
     /* Open file for writing */
+    int   status = 0;
     int   fd;
     FILE *handle;
 
     if ((fd=open(filename, (O_RDWR | O_CREAT | O_TRUNC), 0700)) < 0) {
         elmprintf(LOGERRNO, "%s '%s'",
                   "Unable to open Xauthority file", filename);
-        free(entry.data);
-        return -2;
+        status = -2;
+        goto cleanup;
     }
 
     if (!(handle=fdopen(fd, "w+"))) {
         elmprintf(LOGERR, "%s '%d'",
                   "Unable to open Xauthority file descriptor", fd);
-        free(entry.data);
-        close(fd);
-        return -3;
+        status = -3;
+        goto cleanup;
     }
 
     /* Write to xauthority file */
     if (!XauWriteAuth(handle, &entry) || fflush(handle)) {
         elmprintf(LOGERR, "%s: '%s'.",
                   "Unable to write to local Xauthority file", filename);
-        free(entry.data);
-        close(fd);
-        fclose(handle);
-        return -4;
+        status = -4;
+        goto cleanup;
     }
 
     entry.family = FamilyWild;
     if (!XauWriteAuth(handle, &entry) || fflush(handle)) {
         elmprintf(LOGERR, "%s: '%s'.",
                   "Unable to write to wild Xauthority file", filename);
-        free(entry.data);
-        close(fd);
-        fclose(handle);
-        return -5;
+        status = -5;
+        goto cleanup;
     }
+
+cleanup:
 
     free(entry.data);
     close(fd);
     fclose(handle);
 
-    return 0;
+    return status;
 }
 
 /* ************************************************************************** */
