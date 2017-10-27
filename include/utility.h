@@ -17,7 +17,6 @@
 #define ELM_UTILITY_H
 
 /* Includes */
-#include "benchmark.h"
 #include <unistd.h>
 
 /* Maximum lengths for different strings */
