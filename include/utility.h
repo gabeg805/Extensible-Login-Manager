@@ -16,6 +16,8 @@
 #ifndef ELM_UTILITY_H
 #define ELM_UTILITY_H
 
+#include <unistd.h>
+
 /* Public functions  */
 int elm_exec(char *file, char *const argv[]);
 int elm_setenv(char *name, char *value);

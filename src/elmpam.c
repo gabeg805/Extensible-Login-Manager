@@ -17,6 +17,7 @@
 #include "elmpam.h"
 #include "elmdef.h"
 #include "elmio.h"
+#include "elmsession.h"
 #include "elmx.h"
 #include "utility.h"
 #include <stdio.h>
@@ -37,62 +38,154 @@
 #include <ctype.h>
 
 /* Private functions */
-static int    elm_pam_login_exec(struct passwd *pw, char *xsession, pid_t *parentpid);
-static int    elm_pam_session_open(void);
-static int    elm_pam_session_setup(struct passwd *pw);
-static int    elm_pam_session_setup_misc(char *name , char *dir);
-static int    elm_pam_session_setup_files(uid_t uid, gid_t gid);
-static int    elm_pam_session_setup_id(char *name, uid_t uid, gid_t gid);
-static char * elm_pam_session_cmd(char *xsession);
-static struct passwd * elm_session_get_passwd(char *username);
-static int    elm_pam_session_end(void);
-static int    elm_pam_utmp_write(char *username);
-static int    elm_pam_utmp_clear(void);
-static int    elm_pam_conversation(int num, const struct pam_message **messages,
-                                   struct pam_response **responses, void *data);
-static int    elm_pam_success(char *message);
+static        int      elm_pam_login_exec(void);
+static        int      elm_pam_session_open(void);
+static        int      elm_pam_session_setup(struct passwd *pw);
+static        int      elm_pam_session_setup_misc(char *dir);
+static        int      elm_pam_session_setup_files(uid_t uid, gid_t gid);
+static        int      elm_pam_session_setup_id(uid_t uid, gid_t gid);
+static        int      elm_pam_session_end(void);
+static        int      elm_pam_utmp_write(void);
+static        int      elm_pam_utmp_clear(void);
+static        int      elm_pam_conversation(int num,
+                                            const struct pam_message **messages,
+                                            struct pam_response **responses,
+                                            void *data);
+static        char *   elm_pam_get_login_cmd(void);
+static struct passwd * elm_pam_get_passwd_entry(void);
+static        int      elm_pam_success(char *message);
 
 static int elm_pam_session_env(struct passwd *pw);
 static int elm_pam_setenv(char *name, char *value);
 
 /* Private variables */
 static pam_handle_t *PamHandle = NULL;
+static ElmLogin     *PamInfo   = NULL;
 static int           PamResult = -1;
 static struct utmp utmpr;
 
-/* ************************************************************************** */
-/* Read man page of pam functions for better info, and for initgroups */
-/* Could clear ElmSession password field and just pass in that struct? */
-int elm_login(char *username, char *xsession, pid_t *parentpid)
-{
-    elmprintf(LOGINFO, "Logging into PAM session for user.");
 
-    struct passwd *pw;
+/* ************************************************************************** */
+/* Start PAM transaction */
+int elm_pam_init(ElmLogin *info)
+{
+    PamInfo = info;
+
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Authenticate user credentials with PAM */
+int elm_pam_auth(void)
+{
+    elmprintf(LOGINFO, "%s '%s'.",
+              "Starting PAM transaction for user", PamInfo->username);
+
+    const  char     *service      = PROGRAM;
+    const  char     *username     = PamInfo->username;
+    const  char     *password     = PamInfo->password;
+    const  char     *data[2]      = {username, password};
+    struct pam_conv  conversation = {elm_pam_conversation, data};
+    int              status;
+
+    /* Start pam */
+    PamResult = pam_start(service, username, &conversation, &PamHandle);
+
+    if (!elm_pam_success("start service")) {
+        status = -1;
+        goto cleanup;
+    }
+
+    /* Have a pam_fail_delay */
+    /* PAM_XAUTH_DATA? */
+
+    /* Set items */
+    PamResult = pam_set_item(PamHandle, PAM_XDISPLAY, getenv("DISPLAY"));
+
+    if (!elm_pam_success("set DISPLAY item")) {
+        status = -2;
+    }
+
+    PamResult = pam_set_item(PamHandle, PAM_TTY, getenv("DISPLAY"));
+
+    if (!elm_pam_success("set TTY item")) {
+        status = -3;
+    }
+
+    PamResult = pam_set_item(PamHandle, PAM_USER, username);
+
+    if (!elm_pam_success("set USER item")) {
+        status = -4;
+    }
+
+    elmprintf(LOGINFO, "Authenticating username and password.");
+
+    /* Authenticate pam user */
+    PamResult = pam_authenticate(PamHandle, 0);
+
+    if (!elm_pam_success("authenticate user")) {
+        status = -5;
+        goto cleanup;
+    }
+
+    /* Check if user account is valid */
+    PamResult = pam_acct_mgmt(PamHandle, 0);
+
+    if (!elm_pam_success("manage user account")) {
+        status = -6;
+        goto cleanup;
+    }
+
+    /* Establish credentials */
+    PamResult = pam_setcred(PamHandle, PAM_ESTABLISH_CRED);
+
+    if (!elm_pam_success("establish credentials")) {
+        status = -7;
+        goto cleanup;
+    }
+
+    return 0;
+
+cleanup:
+    PamInfo = NULL;
+    elm_pam_session_end();
+    return status;
+}
+
+/* ************************************************************************** */
+/* Login and start the user session */
+/* Could clear ElmSession password field and just pass in that struct? */
+int elm_pam_login(void)
+{
+    elmprintf(LOGINFO, "Preparing to login and start user session.");
 
     if (elm_pam_session_open() < 0) {
         return -1;
     }
 
-    if (!(pw=elm_session_get_passwd(username))) {
-        return -2;
-    }
-
-    return elm_pam_login_exec(pw, xsession, parentpid);
+    return elm_pam_login_exec();
 }
 
 /* ************************************************************************** */
 /* Execute login command */
-int elm_pam_login_exec(struct passwd *pw, char *xsession, pid_t *parentpid)
+int elm_pam_login_exec(void)
 {
-    /* User session login */
-    char  *argv[] = {pw->pw_shell, "-c", elm_pam_session_cmd(xsession), NULL};
+    struct passwd *pw;
+
+    if (!(pw=elm_pam_get_passwd_entry())) {
+        return -1;
+    }
+
+    /* Run command */
+    char  *cmd    = elm_pam_get_login_cmd();
+    char  *argv[] = {pw->pw_shell, "-c", cmd, NULL};
     pid_t  pid;
 
     switch ((pid=fork()))
     {
     case 0:
         if (elm_pam_session_setup(pw) < 0) {
-            return -3;
+            return -2;
         }
 
         elm_exec(argv[0], argv);
@@ -101,9 +194,34 @@ int elm_pam_login_exec(struct passwd *pw, char *xsession, pid_t *parentpid)
         elmprintf(LOGERRNO, "%s '%s'", "Error during fork to start", argv[0]);
         exit(ELM_EXIT_PAM_LOGIN);
     default:
-        elmprintf(LOGINFO, "Setting parent PID: '%d'.", pid);
-        *parentpid = pid;
         break;
+    }
+
+    /* Wait for session to end */
+    elmprintf(LOGINFO, "Waiting for login session to end (pid=%d).", pid);
+
+    int status;
+
+    if (waitpid(pid, &status, 0) == -1) {
+        elmprintf(LOGERRNO, "Error while waiting for pid  errored");
+        elm_pam_logout();
+        return -3;
+    }
+
+    /* Check reason for session ending */
+    if (WIFEXITED(status)) {
+        elmprintf(LOGERR, "Exited with status '%d'.", WEXITSTATUS(status));
+    }
+    else if (WIFSIGNALED(status)) {
+        elmprintf(LOGERR, "Killed by signal '%d'.", WTERMSIG(status));
+    }
+    else if (WIFSTOPPED(status)) {
+        elmprintf(LOGERR, "Stopped by signal '%d'.", WSTOPSIG(status));
+    }
+    else if (WIFCONTINUED(status)) {
+        elmprintf(LOGERR, "Resumed by delivery of SIGCONT.");
+    }
+    else {
     }
 
     return 0;
@@ -111,7 +229,7 @@ int elm_pam_login_exec(struct passwd *pw, char *xsession, pid_t *parentpid)
 
 /* ************************************************************************** */
 /* Logout of user session */
-int elm_logout(void)
+int elm_pam_logout(void)
 {
     elmprintf(LOGINFO, "Preparing to logout of user session.");
 
@@ -127,73 +245,10 @@ int elm_logout(void)
 }
 
 /* ************************************************************************** */
-/* Read man page of pam functions for better info, and for initgroups */
-int elm_authenticate(const char *username, const char *password)
-{
-    elmprintf(LOGINFO, "Authenticating username and password.");
-
-    const char      *service  = PROGRAM;
-    const char      *data[2]  = {username, password};
-    struct pam_conv  pam_conv = {elm_pam_conversation, data};
-
-    /* Start pam */
-    PamResult = pam_start(service, username, &pam_conv, &PamHandle);
-
-    if (!elm_pam_success("start service")) {
-        return -1;
-    }
-
-    /* Have a pam_fail_delay */
-    /* PAM_XAUTH_DATA? */
-
-    /* Set items */
-    PamResult = pam_set_item(PamHandle, PAM_XDISPLAY, getenv("DISPLAY"));
-
-    if (!elm_pam_success("set DISPLAY item")) {
-        return -2;
-    }
-
-    PamResult = pam_set_item(PamHandle, PAM_TTY, getenv("TTY"));
-
-    if (!elm_pam_success("set TTY item")) {
-        return -3;
-    }
-
-    PamResult = pam_set_item(PamHandle, PAM_USER, username);
-
-    if (!elm_pam_success("set USER item")) {
-        return -4;
-    }
-
-    /* Authenticate pam user */
-    PamResult = pam_authenticate(PamHandle, 0);
-
-    if (!elm_pam_success("authenticate user")) {
-        return -5;
-    }
-
-    /* Check if user account is valid */
-    PamResult = pam_acct_mgmt(PamHandle, 0);
-
-    if (!elm_pam_success("manage user account")) {
-        return -6;
-    }
-
-    /* Establish credentials */
-    PamResult = pam_setcred(PamHandle, PAM_ESTABLISH_CRED);
-
-    if (!elm_pam_success("establish credentials")) {
-        return -7;
-    }
-
-    return 0;
-}
-
-/* ************************************************************************** */
 /* Open pam session */
 int elm_pam_session_open(void)
 {
-    elmprintf(LOGINFO, "Preparing to open PAM login session.");
+    elmprintf(LOGINFO, "Preparing to open PAM session.");
 
     PamResult = pam_open_session(PamHandle, 0);
 
@@ -217,7 +272,7 @@ int elm_pam_session_setup(struct passwd *pw)
     elmprintf(LOGINFO, "Setting up user login with PAM.");
 
     /* Setup miscellaneous items */
-    if (elm_pam_session_setup_misc(pw->pw_name, pw->pw_dir) < 0) {
+    if (elm_pam_session_setup_misc(pw->pw_dir) < 0) {
         return -1;
     }
 
@@ -227,7 +282,7 @@ int elm_pam_session_setup(struct passwd *pw)
     }
 
     /* Setup user's uid, gid, etc. */
-    if (elm_pam_session_setup_id(pw->pw_name, pw->pw_uid, pw->pw_gid) < 0) {
+    if (elm_pam_session_setup_id(pw->pw_uid, pw->pw_gid) < 0) {
         return -3;
     }
 
@@ -243,19 +298,18 @@ int elm_pam_session_setup(struct passwd *pw)
 
 /* ************************************************************************** */
 /* Setup miscellaneous items */
-int elm_pam_session_setup_misc(char *name, char *dir)
+int elm_pam_session_setup_misc(char *dir)
 {
     elmprintf(LOGINFO, "Setting up miscellaneous items for the authenticated.");
 
     /* Write to utmp file */
-    if (elm_pam_utmp_write(name) < 0) {
+    if (elm_pam_utmp_write() < 0) {
         return -1;
     }
 
     /* Change directory to authenticated user's home */
     if (chdir(dir) < 0) {
-        elmprintf(LOGERR, "%s: %s.",
-                  "Unable to change directory", strerror(errno));
+        elmprintf(LOGERRNO, "Unable to change directory");
         return -2;
     }
 
@@ -297,62 +351,27 @@ int elm_pam_session_setup_files(uid_t uid, gid_t gid)
 
 /* ************************************************************************** */
 /* Setup user's ID for session login */
-int elm_pam_session_setup_id(char *name, uid_t uid, gid_t gid)
+int elm_pam_session_setup_id(uid_t uid, gid_t gid)
 {
     /* Set initgroups */
-    if (initgroups(name, gid) < 0) {
-        elmprintf(LOGERR, "Error setting initgroups: %s.", strerror(errno));
+    if (initgroups(PamInfo->username, gid) < 0) {
+        elmprintf(LOGERRNO, "Error setting initgroups");
         return -1;
     }
 
     /* Set group ID */
     if (setgid(gid) < 0) {
-        elmprintf(LOGERR, "Error setting GID: %s.", strerror(errno));
+        elmprintf(LOGERRNO, "Error setting GID");
         return -2;
     }
 
     /* Set user ID */
     if (setuid(uid) < 0) {
-        elmprintf(LOGERR, "Error setting UID: %s.", strerror(errno));
+        elmprintf(LOGERRNO, "Error setting UID");
         return -3;
     }
 
     return 0;
-}
-
-/* ************************************************************************** */
-/* Return pam session command */
-char * elm_pam_session_cmd(char *xsession)
-{
-    static char cmd[128];
-
-    memset(cmd, 0, sizeof(cmd));
-    snprintf(cmd, sizeof(cmd),
-             "exec dbus-launch --exit-with-session /usr/bin/%s", xsession);
-
-    elmprintf(LOGINFO, "PAM login session command: %s.", cmd);
-
-    return cmd;
-}
-
-/* ************************************************************************** */
-/* Return password database entry */
-struct passwd * elm_session_get_passwd(char *username)
-{
-    elmprintf(LOGINFO, "Determining user's password database entry.");
-
-    struct passwd *pw;
-
-    if (!(pw=getpwnam(username))) {
-        elmprintf(LOGERRNO, "%s '%s'",
-                  "Unable to get password database entry for user", username);
-        errno = 0;
-        return NULL;
-    }
-
-    endpwent();
-
-    return pw;
 }
 
 /* ************************************************************************** */
@@ -385,12 +404,14 @@ int elm_pam_session_end(void)
         status = -3;
     }
 
+    PamInfo = NULL;
+
     return status;
 }
 
 /* ************************************************************************** */
 /* Manager utmp/wtmp login records */
-int elm_pam_utmp_write(char *username)
+int elm_pam_utmp_write(void)
 {
     elmprintf(LOGINFO, "Writing utmp login records.");
 
@@ -400,9 +421,9 @@ int elm_pam_utmp_write(char *username)
     utmpr.ut_type = USER_PROCESS;
     utmpr.ut_pid  = getpid();
     utmpr.ut_addr = 0;
-    strncpy(utmpr.ut_line, getenv("TTY"),  sizeof(utmpr.ut_line)-1);
-    strncpy(utmpr.ut_id,   getenv("TTYN"), sizeof(utmpr.ut_id)-1);
-    strncpy(utmpr.ut_user, username,       sizeof(utmpr.ut_user)-1);
+    strncpy(utmpr.ut_line, getenv("TTY"),     sizeof(utmpr.ut_line)-1);
+    strncpy(utmpr.ut_id,   getenv("TTYN"),    sizeof(utmpr.ut_id)-1);
+    strncpy(utmpr.ut_user, PamInfo->username, sizeof(utmpr.ut_user)-1);
     memset(utmpr.ut_host, 0, UT_HOSTSIZE);
     time((time_t*)&utmpr.ut_time);
 
@@ -526,6 +547,43 @@ fail:
     *responses = 0;
 
     return PAM_CONV_ERR;
+}
+
+/* ************************************************************************** */
+/* Return pam session command */
+char * elm_pam_get_login_cmd(void)
+{
+    static char cmd[128];
+
+    memset(cmd, 0, sizeof(cmd));
+    snprintf(cmd, sizeof(cmd),
+             "exec dbus-launch --exit-with-session /usr/bin/%s",
+             PamInfo->xsession);
+
+    elmprintf(LOGINFO, "PAM login session command: %s.", cmd);
+
+    return cmd;
+}
+
+/* ************************************************************************** */
+/* Return password database entry */
+struct passwd * elm_pam_get_passwd_entry(void)
+{
+    elmprintf(LOGINFO, "Determining user's password database entry.");
+
+    struct passwd *pw;
+
+    if (!(pw=getpwnam(PamInfo->username))) {
+        elmprintf(LOGERRNO, "%s '%s'",
+                  "Unable to get password database entry for user",
+                  PamInfo->username);
+        errno = 0;
+        return NULL;
+    }
+
+    endpwent();
+
+    return pw;
 }
 
 /* ************************************************************************** */

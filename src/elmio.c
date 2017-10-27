@@ -110,7 +110,7 @@ void elm_io_set_verbose(int flag)
 /* Return the preamble of the print statement */
 char * elm_io_get_preamble(ElmPrint mode, const char *vafmt)
 {
-    static char preamble[ELM_MAX_MSG_LEN];
+    static char preamble[ELM_MAX_MSG_SIZE];
 
     /* Default preamble (excluding trailing newline) */
     snprintf(preamble, sizeof(preamble), "[%s] %s %s",

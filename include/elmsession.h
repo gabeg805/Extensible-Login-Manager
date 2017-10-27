@@ -18,29 +18,23 @@
 #define ELM_SESSION_H
 
 /* Includes */
+#include "elmdef.h"
 #include <stdlib.h>
-
-/* Defines */
-#define ELM_EXIT_SESSION_NEW    100
-#define ELM_EXIT_SESSION_AUTH   110
-#define ELM_EXIT_SESSION_LOGIN  120
-#define ELM_EXIT_SESSION_LOGOUT 130
 
 /* Typedefs */
 typedef struct
 {
-    char username[64];
-    char password[64];
-    char xsession[64];
+    char  username[ELM_MAX_CRED_SIZE];
+    char  password[ELM_MAX_CRED_SIZE];
+    char  xsession[ELM_MAX_CRED_SIZE];
 } ElmLogin;
 
 typedef struct
 {
-    int      (*authenticate)(void);
+    int      (*auth)(void);
     int      (*login)(void);
     int      (*logout)(void);
     ElmLogin  *info;
-    pid_t      pid;
 } ElmSession;
 
 /* Public functions  */

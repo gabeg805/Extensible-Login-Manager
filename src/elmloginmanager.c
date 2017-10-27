@@ -31,6 +31,7 @@
 static int    elm_login_manager_run(void);
 static int    elm_login_manager_login_prompt(void);
 static void * elm_login_manager_login_session(void *data);
+static int    elm_login_manager_preview_login(void);
 static int    elm_login_manager_build_window(void);
 static int    elm_login_manager_build_apps(void);
 static int    elm_login_manager_show_apps(void);
@@ -156,65 +157,49 @@ void * elm_login_manager_login_session(void *data)
 
     ElmLogin   *info    = data;
     ElmSession *session = elm_session_new(info);
-    int         status;
 
-    /* Authenticate */
-    if ((status=session->authenticate()) != 0) {
+    if (!session) {
+        exit(ELM_EXIT_SESS_NEW);
+    }
+
+    if (session->auth() < 0) {
         /* This does not work, causes SIGSEGV for some reason */
         /* Manager->hide_apps(); */
         /* sleep(2); */
         /* Manager->show_apps(); */
         return NULL;
     }
-    else {
-        Manager->hide_apps();
 
-        /* End here during preview mode */
-        if (Preview) {
-            elmprintf(LOGINFO, "Preview Mode login successful.");
-            sleep(2);
-            Manager->show_apps();
-            return NULL;
-        }
+    if (elm_login_manager_preview_login()) {
+        exit(ELM_EXIT_MNGR_PREVIEW);
     }
 
-    /* Login */
-    if ((status=session->login()) != 0) {
-        elmprintf(LOGERR, "Login error.");
+    Manager->hide_apps();
+
+    if (session->login() < 0) {
         Manager->show_apps();
         return NULL;
     }
 
-    /* Wait for session to end */
-    int wstatus;
-
-    if ((status=waitpid(session->pid, &wstatus, 0)) == -1) {
-        elmprintf(LOGERRNO, "Waitpid errored");
-    }
-
-    if (WIFEXITED(wstatus)) {
-        elmprintf(LOGERR, "Exited with status '%d'.", WEXITSTATUS(wstatus));
-    }
-    else if (WIFSIGNALED(wstatus)) {
-        elmprintf(LOGERR, "Killed by signal '%d'.", WTERMSIG(wstatus));
-    }
-    else if (WIFSTOPPED(wstatus)) {
-        elmprintf(LOGERR, "Stopped by signal '%d'.", WSTOPSIG(wstatus));
-    }
-    else if (WIFCONTINUED(wstatus)) {
-        elmprintf(LOGERR, "Resumed by delivery of SIGCONT.");
-    }
-    else {
-    }
-
-    /* Logout */
-    if ((status=session->logout()) != 0) {
-        elmprintf(LOGERR, "Logout error.");
+    if (session->logout() < 0) {
     }
 
     Manager->show_apps();
 
     return NULL;
+}
+
+/* ************************************************************************** */
+/* Check if login in Preview mode is underway. Exit if it is: login was
+ * successful. */
+int elm_login_manager_preview_login(void)
+{
+    if (Preview) {
+        elmprintf(LOGINFO, "Login successful in Preview Mode.");
+        return 1;
+    }
+
+    return 0;
 }
 
 /* ************************************************************************** */
@@ -340,10 +325,15 @@ int elm_login_manager_hide_apps(void)
 /* Setup run directory */
 int elm_login_manager_setup_dir(void)
 {
-    if (mkdir(ELM_VAR_RUN_DIR, (S_IRWXU | S_IRWXG | S_IRWXO)) < 0) {
+    if (access(ELM_VAR_RUN_DIR, F_OK)) {
         elmprintf(LOGERRNO, "%s '%s'",
-                  "Unable to create directory", ELM_VAR_RUN_DIR);
-        return -1;
+                  "Unable to find directory", ELM_VAR_RUN_DIR);
+
+        if (mkdir(ELM_VAR_RUN_DIR, (S_IRWXU | S_IRWXG | S_IRWXO)) < 0) {
+            elmprintf(LOGERRNO, "%s '%s'",
+                      "Unable to create directory", ELM_VAR_RUN_DIR);
+            return -1;
+        }
     }
 
     return 0;
@@ -364,7 +354,7 @@ int elm_login_manager_setup_x(void)
     }
 
     if (elm_x_set_transparency(1) < 0) {
-        return -2;
+        return 2;
     }
 
     if (elm_x_set_cursor() < 0) {

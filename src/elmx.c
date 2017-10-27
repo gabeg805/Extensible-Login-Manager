@@ -346,13 +346,13 @@ int elm_x_set_transparency(int flag)
 
     /* Do not run if flag not set */
     if (!flag) {
-        return -1;
+        return 1;
     }
 
     /* Check if transparency program is running */
     if (pgrep(basename(ELM_CMD_XCOMPMGR))) {
         elmprintf(LOGINFO, "X composite manager already started.");
-        return -2;
+        return 2;
     }
 
     return elm_x_exec_xcompmgr();

@@ -15,12 +15,13 @@
 
 /* Includes */
 #include "elmsession.h"
-#include "elmpam.h"
+#include "elmdef.h"
 #include "elmio.h"
+#include "elmpam.h"
 #include <stdlib.h>
 
 /* Private functions */
-static int elm_session_authenticate(void);
+static int elm_session_auth(void);
 static int elm_session_login(void);
 static int elm_session_logout(void);
 static int elm_session_alloc(void);
@@ -36,20 +37,20 @@ ElmSession * elm_session_new(ElmLogin *info)
     elmprintf(LOGINFO, "Preparing new Session object.");
 
     if (elm_session_alloc() < 0) {
-        exit(ELM_EXIT_SESSION_NEW);
+        exit(ELM_EXIT_SESS_NEW);
     }
 
-    Session->authenticate = &elm_session_authenticate;
-    Session->login        = &elm_session_login;
-    Session->logout       = &elm_session_logout;
-    Session->info         = info;
+    Session->auth   = &elm_session_auth;
+    Session->login  = &elm_session_login;
+    Session->logout = &elm_session_logout;
+    Session->info   = info;
 
     return Session;
 }
 
 /* ************************************************************************** */
 /* Authenticate login credentials */
-int elm_session_authenticate(void)
+int elm_session_auth(void)
 {
     elmprintf(LOGINFO, "Preparing to authenticate login credentials.");
 
@@ -57,12 +58,15 @@ int elm_session_authenticate(void)
         return -1;
     }
 
-    char *username = Session->info->username;
-    char *password = Session->info->password;
+    if (elm_pam_init(Session->info) < 0) {
+        return -2;
+    }
 
-    elmprintf(LOGINFO, "Authenticating credentials of '%s'." , username);
+    if (elm_pam_auth() < 0) {
+        return -3;
+    }
 
-    return elm_authenticate(username, password);
+    return 0;
 }
 
 /* ************************************************************************** */
@@ -75,12 +79,11 @@ int elm_session_login(void)
         return -1;
     }
 
-    char *username = Session->info->username;
-    char *xsession = Session->info->xsession;
+    if (elm_pam_login() < 0) {
+        return -2;
+    }
 
-    elmprintf(LOGINFO, "Logging into session '%s'.", xsession);
-
-    return elm_login(username, xsession, &Session->pid);
+    return 0;
 }
 
 /* ************************************************************************** */
@@ -93,10 +96,11 @@ int elm_session_logout(void)
         return -1;
     }
 
-    elmprintf(LOG, "%s '%s'.",
-              "Logging out of user session for", Session->info->username);
+    if (elm_pam_logout() < 0) {
+        return -2;
+    }
 
-    return elm_logout();
+    return 0;
 }
 
 /* ************************************************************************** */
