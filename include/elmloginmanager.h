@@ -29,11 +29,11 @@ typedef struct
     void * (*login_session)(void *arg);
     int    (*build_window)(void);
     int    (*build_apps)(void);
+    int    (*setup_dir)(void);
+    int    (*setup_xserver)(void);
+    int    (*setup_signal_catcher)(void);
     int    (*show_apps)(void);
     int    (*hide_apps)(void);
-    int    (*setup_dir)(void);
-    int    (*setup_x)(void);
-    int    (*setup_signal_catcher)(void);
     void   (*set_preview_mode)(int flag);
 } ElmLoginManager;
 

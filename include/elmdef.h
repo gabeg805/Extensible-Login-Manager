@@ -43,7 +43,7 @@
 #define ELM_EXIT_X_ENV_TTYN     25
 #define ELM_EXIT_X_ENV_XAUTH    26
 #define ELM_EXIT_X_ENV_VT       27
-#define ELM_EXIT_X_RUN          28
+#define ELM_EXIT_X_EXEC         28
 #define ELM_EXIT_X_WAIT         29
 #define ELM_EXIT_X_STOP         30
 #define ELM_EXIT_X_XCOMPMGR     31
@@ -59,12 +59,15 @@
 #define ELM_CMD_XMODMAP  "/usr/bin/xmodmap"
 
 /* Paths */
-#define ELM_VAR_RUN_DIR "/var/run/" PROGRAM
-#define ELM_LOG         "/var/log/elm/elm.log"
-#define ELM_XLOG        "/var/log/elm/Xorg.log"
+#define ELM_RUN_DIR "/var/run/" PROGRAM
+#define ELM_LOG_DIR "/var/log/" PROGRAM
+#define ELM_LOG     ELM_LOG_DIR "/elm.log"
+#define ELM_XLOG    ELM_LOG_DIR "/Xorg.log"
 
 /* Sizes */
 #define ELM_MAX_CRED_SIZE 64
+#define ELM_MAX_PATH_SIZE 128
+#define ELM_MAX_CMD_SIZE  128
 #define ELM_MAX_MSG_SIZE  256
 
 #endif /* ELM_DEF_H */

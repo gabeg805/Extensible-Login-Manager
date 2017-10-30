@@ -19,12 +19,10 @@
 #include <unistd.h>
 
 /* Public functions  */
-int elm_exec(char *file, char *const argv[]);
-int elm_setenv(char *name, char *value);
-char * basename(const char *string);
-long pgrep(const char *program);
-char * substring(const char *string, char *line);
-void get_cmd_output(char *arr, int size, char *cmd);
-pid_t exec_proc(char *cmd);
+int    elm_sys_exec(char *file, char *const argv[]);
+int    elm_setenv(char *name, char *value);
+char * elm_sys_basename(const char *string);
+pid_t  elm_sys_pgrep(const char *program);
+char ** elm_sys_get_proc(void);
 
 #endif /* ELM_UTILITY_H */

@@ -14,6 +14,7 @@
 
 /* Includes */
 #include "utility.h"
+#include "elmdef.h"
 #include "elmio.h"
 #include <ctype.h>
 #include <dirent.h>
@@ -29,12 +30,10 @@
 
 /* ************************************************************************** */
 /* Execute a command/file */
-int elm_exec(char *file, char *const argv[])
+int elm_sys_exec(char *file, char *const argv[])
 {
     elmprintf(LOGINFO, "%s '%s'.", "Running", file);
-
     execvp(file, argv);
-
     elmprintf(LOGERRNO, "%s '%s'", "Error trying to run", file);
 
     return -1;
@@ -58,139 +57,121 @@ int elm_setenv(char *name, char *value)
 
 /* ************************************************************************** */
 /* Return the basename of a path*/
-char * basename(const char *string)
+char * elm_sys_basename(const char *string)
 {
-    /* Copy string contents */
-    static  char buf[128];
-    size_t  size = strlen(string)+1;
-    if (sizeof(buf) < size)
-        size = sizeof(buf);
+    size_t      size = strlen(string)+1;
+    static char buf[ELM_MAX_PATH_SIZE];
+
+    size = (sizeof(buf) < size) ? sizeof(buf)-1 : size;
+
     memcpy(buf, string, size);
-    char   *ret   = &*buf;
 
     /* Find path basename */
-    char    sep   = '/';
+    char   *ret   = buf;
     size_t  shift = 0;
-    size_t  i     = 0;
-    while ( ret[i] != '\0' ) {
-        if ( ret[i] == sep )
-            shift = i+1;
-        ++i;
+    size_t  i;
+
+    for (i=0; ret[i] != '\0'; i++) {
+        shift = (ret[i] == '/') ? i+1 : shift;
     }
+
     ret += shift;
+
     return ret;
 }
 
-/* Read process info/enironment variables */
-/* char * pinfo/penv() */
-
-#include "elmio.h"
-
 /* ************************************************************************** */
-long pgrep(const char *program)
+/* Search for a process that matches the input name and return its PID */
+pid_t elm_sys_pgrep(const char *program)
 {
-    DIR  *dstream = opendir("/proc");
-    uid_t uid     = getuid();
-    char *ptr;
-    char *end;
-    char  fpath[64];
-    char  buffer[256];
-    int   fd;
-    int   nbytes;
-    pid_t pid;
-    struct dirent *entry;
-    struct stat    buf;
+    char        **procs = elm_sys_get_proc();
+    uid_t         uid   = getuid();
+    pid_t         pid   = 0;
+    struct stat   info;
+    char         *ptr;
+    char         *end;
+    char          fpath[ELM_MAX_PATH_SIZE];
+    char          buffer[ELM_MAX_MSG_SIZE];
+    int           nbytes;
+    int           fd;
+    int           i;
 
-    /* Loop through process directory */
-    while ((entry=readdir(dstream)) != NULL)
+    /* Search for a process that matches the input name */
+    for (i=0; procs[i]; free(procs[i]), i++)
     {
-        /* Determine directory name (equates to PID) */
-        if (entry->d_type != DT_DIR)
+        /* Focus on freeing memory once pid is set */
+        if (pid > 0) {
             continue;
-        pid = strtol(entry->d_name, &ptr, 10);
-        if ((pid == 0) || (*ptr != '\0'))
-            continue;
+        }
 
-        /* Check PID file permissions */
-        snprintf(fpath, sizeof(fpath), "/proc/%d/cmdline", pid);
-        if (stat(fpath, &buf) != 0)
-            continue;
-        if ((uid > 0) && (buf.st_uid != uid))
-            continue;
-        if (access(fpath, R_OK))
-            continue;
+        /* Make sure user spawned process */
+        snprintf(fpath, sizeof(fpath), "/proc/%s/cmdline", procs[i]);
 
-        /* Read PID file */
-        if ((fd=open(fpath, O_RDONLY)) < 0)
+        if (   (stat(fpath, &info) < 0) \
+            || ((info.st_uid != uid) && (uid > 0)) \
+            || (access(fpath, R_OK) < 0))
+        {
             continue;
-        if ((nbytes=read(fd, buffer, sizeof buffer)) <= 0)
-            continue;
+        }
 
-        /* Parse PID file */
+        /* Read cmdline file for pid */
+        if (   ((fd=open(fpath, O_RDONLY)) < 0) \
+            || ((nbytes=read(fd, buffer, sizeof(buffer))) <= 0))
+        {
+            continue;
+        }
+
+        /* Set pid if program is found in cmdline */
         end = buffer + nbytes;
         for (ptr=buffer; ptr < end; ) {
-            if (strstr(ptr, program) != NULL)
-                return pid;
-            while(*ptr++);
+            if (strstr(ptr, program)) {
+                pid = strtol(procs[i], 0, 10);
+                break;
+            }
+
+            while (*ptr++) {}
         }
+
         close(fd);
     }
+
+    free(procs);
+
+    return pid;
+}
+
+/* ************************************************************************** */
+/* Look to see if name corresponds to a running process. Return PID if it
+ * does. */
+char ** elm_sys_get_proc(void)
+{
+    DIR            *dstream = opendir("/proc");
+    char          **procs   = calloc(1, sizeof(*procs));
+    char           *endptr;
+    struct dirent  *entry;
+    size_t          size    = 1;
+    size_t          length  = 0;
+
+    while ((entry=readdir(dstream))) {
+        if (entry->d_type != DT_DIR) {
+            continue;
+        }
+
+        if (!strtol(entry->d_name, &endptr, 10) || (*endptr != '\0')) {
+            continue;
+        }
+
+        length        = strlen(entry->d_name)+1;
+        procs[size-1] = calloc(length, sizeof(*procs[0]));
+
+        strncpy(procs[size-1], entry->d_name, length);
+
+        procs = realloc(procs, (++size)*sizeof(*procs));
+    }
+
     closedir(dstream);
 
-    return 0;
-}
+    procs[size-1] = NULL;
 
-/* ************************************************************************** */
-/* Return substring found in line */
-char * substring(const char *string, char *line)
-{
-    size_t  i = 0;
-    char    c;
-    while ((c=line[i]) != '\0') {
-        if (isspace(c)) {
-            line[i] = '\0';
-            break;
-        }
-        if (c == string[i])
-            ++i;
-        else {
-            ++line;
-            i = 0;
-        }
-    }
-    return (i > 0) ? line : NULL;
-}
-
-/* ************************************************************************** */
-/* Store command output as a string inside variable */
-void get_cmd_output(char *arr, int size, char *cmd) /* Add size to parameters */
-{
-    FILE *stream = popen(cmd, "r");
-    size_t i     = 0;
-    size_t j     = 0;
-    char line[512]; /* Remove this const value */
-    memset(arr, 0, size);
-
-    /* Append process output to return array */
-    while ( fgets(line, sizeof(line), stream) != 0 ) {
-        i = 0;
-        while ( (line[i] != '\0') && (j < size) ) {
-            arr[j] = line[i];
-            ++i;
-            ++j;
-        }
-    }
-    pclose(stream);
-    arr[size-1] = 0;
-}
-
-/* ************************************************************************** */
-/* Execute process in the background */
-pid_t exec_proc(char *cmd)
-{
-    pid_t pid = fork();
-    if (pid == 0)
-        _exit(system(cmd));
-    wait(NULL);
-    return pid;
+    return procs;
 }

@@ -197,6 +197,7 @@ int elm_io_is_mode_log(ElmPrint mode)
 char * elm_io_mode_to_string(ElmPrint mode)
 {
     static char str[10];
+    memset(str, 0, sizeof(str));
 
     if (elm_io_is_mode_log(mode)) {
         strncpy(str, "LOG", 3);

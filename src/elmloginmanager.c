@@ -34,13 +34,13 @@ static void * elm_login_manager_login_session(void *data);
 static int    elm_login_manager_preview_login(void);
 static int    elm_login_manager_build_window(void);
 static int    elm_login_manager_build_apps(void);
-static int    elm_login_manager_show_apps(void);
-static int    elm_login_manager_hide_apps(void);
 static int    elm_login_manager_setup_dir(void);
-static int    elm_login_manager_setup_x(void);
+static int    elm_login_manager_setup_xserver(void);
 static int    elm_login_manager_setup_signal_catcher(void);
 static void   elm_login_manager_signal_catcher(int sig, siginfo_t *info,
                                                void *context);
+static int    elm_login_manager_show_apps(void);
+static int    elm_login_manager_hide_apps(void);
 static void   elm_login_manager_set_preview_mode(int flag);
 static void   elm_login_manager_thread(GtkWidget *widget, gpointer data);
 static int    elm_login_manager_alloc(void);
@@ -72,16 +72,16 @@ ElmLoginManager * elm_login_manager_new(void)
 
     /* Define methods */
     Manager->run                  = &elm_login_manager_run;
-    Manager->login_session        = &elm_login_manager_login_session;
     Manager->login_prompt         = &elm_login_manager_login_prompt;
-    Manager->setup_dir            = &elm_login_manager_setup_dir;
-    Manager->setup_x              = &elm_login_manager_setup_x;
-    Manager->setup_signal_catcher = &elm_login_manager_setup_signal_catcher;
-    Manager->set_preview_mode     = &elm_login_manager_set_preview_mode;
+    Manager->login_session        = &elm_login_manager_login_session;
     Manager->build_window         = &elm_login_manager_build_window;
     Manager->build_apps           = &elm_login_manager_build_apps;
+    Manager->setup_dir            = &elm_login_manager_setup_dir;
+    Manager->setup_xserver        = &elm_login_manager_setup_xserver;
+    Manager->setup_signal_catcher = &elm_login_manager_setup_signal_catcher;
     Manager->show_apps            = &elm_login_manager_show_apps;
     Manager->hide_apps            = &elm_login_manager_hide_apps;
+    Manager->set_preview_mode     = &elm_login_manager_set_preview_mode;
 
     return Manager;
 }
@@ -105,7 +105,7 @@ int elm_login_manager_run(void)
         return ELM_EXIT_MNGR_SIG_SETUP;
     }
 
-    if (Manager->setup_x() < 0) {
+    if (Manager->setup_xserver() < 0) {
         return ELM_EXIT_MNGR_X;
     }
 
@@ -284,54 +284,16 @@ int elm_login_manager_build_apps(void)
 }
 
 /* ************************************************************************** */
-/* Show widgets */
-int elm_login_manager_show_apps(void)
-{
-    elmprintf(LOGINFO, "Showing login manager.");
-
-    size_t i;
-    for (i=0; Widgets[i]; i++) {
-        elmprintf(LOGINFO, "Showing widget %d: %p.", i, Widgets[i]);
-        gtk_widget_show(Widgets[i]);
-    }
-    elmprintf(LOGINFO, "Showing Container: %p.", Container);
-    gtk_widget_show(Container);
-    elmprintf(LOGINFO, "Showing Window: %p.", Window);
-    gtk_widget_show(Window);
-
-    return 0;
-}
-
-/* ************************************************************************** */
-/* Hide widgets */
-int elm_login_manager_hide_apps(void)
-{
-    elmprintf(LOGINFO, "Hiding login manager.");
-
-    size_t i;
-    for (i=0; Widgets[i]; i++) {
-        elmprintf(LOGINFO, "Hiding widget %d: %p.", i, Widgets[i]);
-        gtk_widget_hide(Widgets[i]);
-    }
-    elmprintf(LOGINFO, "Hiding Container: %p.", Container);
-    gtk_widget_hide(Container);
-    elmprintf(LOGINFO, "Hiding Window: %p.", Window);
-    gtk_widget_hide(Window);
-
-    return 0;
-}
-
-/* ************************************************************************** */
 /* Setup run directory */
 int elm_login_manager_setup_dir(void)
 {
-    if (access(ELM_VAR_RUN_DIR, F_OK)) {
+    if (access(ELM_RUN_DIR, F_OK)) {
         elmprintf(LOGERRNO, "%s '%s'",
-                  "Unable to find directory", ELM_VAR_RUN_DIR);
+                  "Unable to find directory", ELM_RUN_DIR);
 
-        if (mkdir(ELM_VAR_RUN_DIR, (S_IRWXU | S_IRWXG | S_IRWXO)) < 0) {
+        if (mkdir(ELM_RUN_DIR, (S_IRWXU | S_IRWXG | S_IRWXO)) < 0) {
             elmprintf(LOGERRNO, "%s '%s'",
-                      "Unable to create directory", ELM_VAR_RUN_DIR);
+                      "Unable to create directory", ELM_RUN_DIR);
             return -1;
         }
     }
@@ -341,7 +303,7 @@ int elm_login_manager_setup_dir(void)
 
 /* ************************************************************************** */
 /* Setup X server */
-int elm_login_manager_setup_x(void)
+int elm_login_manager_setup_xserver(void)
 {
     elmprintf(LOGINFO, "Setting up X server.");
 
@@ -349,7 +311,7 @@ int elm_login_manager_setup_x(void)
         return 1;
     }
 
-    if (elm_x_run() < 0) {
+    if (elm_x_start() < 0) {
         return -1;
     }
 
@@ -419,6 +381,45 @@ void elm_login_manager_signal_catcher(int sig, siginfo_t *info, void *context)
     }
 
 	exit(ELM_EXIT_MNGR_SIG);
+}
+
+
+/* ************************************************************************** */
+/* Show widgets */
+int elm_login_manager_show_apps(void)
+{
+    elmprintf(LOGINFO, "Showing login manager.");
+
+    size_t i;
+    for (i=0; Widgets[i]; i++) {
+        elmprintf(LOGINFO, "Showing widget %d: %p.", i, Widgets[i]);
+        gtk_widget_show(Widgets[i]);
+    }
+    elmprintf(LOGINFO, "Showing Container: %p.", Container);
+    gtk_widget_show(Container);
+    elmprintf(LOGINFO, "Showing Window: %p.", Window);
+    gtk_widget_show(Window);
+
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Hide widgets */
+int elm_login_manager_hide_apps(void)
+{
+    elmprintf(LOGINFO, "Hiding login manager.");
+
+    size_t i;
+    for (i=0; Widgets[i]; i++) {
+        elmprintf(LOGINFO, "Hiding widget %d: %p.", i, Widgets[i]);
+        gtk_widget_hide(Widgets[i]);
+    }
+    elmprintf(LOGINFO, "Hiding Container: %p.", Container);
+    gtk_widget_hide(Container);
+    elmprintf(LOGINFO, "Hiding Window: %p.", Window);
+    gtk_widget_hide(Window);
+
+    return 0;
 }
 
 /* ************************************************************************** */

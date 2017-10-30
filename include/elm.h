@@ -25,6 +25,7 @@
 #include "elminterface.h"
 #include "elmio.h"
 #include "elmx.h"
+#include "utility.h"
 #include <cairo.h>
 #include <dirent.h>
 #include <getopt.h>

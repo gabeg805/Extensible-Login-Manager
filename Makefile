@@ -35,10 +35,13 @@ CFLAGS += -I$(INCDIR) -I$(APPINCDIR)
 # Targets
 all: $(PROJECT)
 
-$(PROJECT): $(OBJ)
+$(PROJECT): $(OBJDIR) $(OBJ)
 	$(CC) $(CFLAGS) \
 		-o $(PROJECT) $(OBJ) \
 		$(LIBS)
+
+$(OBJDIR):
+	@mkdir -pv $(OBJDIR)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c 
 	$(CC) $(CFLAGS) \
