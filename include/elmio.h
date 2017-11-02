@@ -25,7 +25,7 @@ typedef enum
 {
     NONE,
     INFO,
-    WARNING,
+    WARN,
     ERROR,
     ERRNO,
     LOG,

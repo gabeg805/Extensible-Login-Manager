@@ -16,19 +16,18 @@
 #include "elmx.h"
 #include "elmdef.h"
 #include "elmio.h"
-#include "utility.h"
-#include <ctype.h>
-#include <errno.h>
+#include "elmsys.h"
+#include <dirent.h>
 #include <fcntl.h>
 #include <limits.h>
 #include <pty.h>
 #include <signal.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h>
+
+/* #include <dbus/dbus.h> */
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -38,7 +37,8 @@
 #include <X11/cursorfont.h>
 #include <X11/extensions/Xrandr.h>
 
-/* #include <dbus/dbus.h> */
+/* Do i need this */
+#include <ctype.h>
 
 /* Private functions */
 static int    elm_x_wait(void);
@@ -57,6 +57,10 @@ static char * elm_x_get_xauth_file(void);
 static char * elm_x_get_localhost(void);
 static char * elm_x_get_vt(void);
 static char * elm_x_get_random_bytes(size_t size);
+static char * elm_x_get_tty(void);
+static char * elm_x_get_tty_from_pts(void);
+static char * elm_x_get_tty_from_proc(void);
+static char * elm_x_get_tty_from_sys(void);
 static int    elm_x_is_running(void);
 
 /* Private variables */
@@ -90,7 +94,6 @@ int elm_x_start(void)
     if (elm_x_init() < 0) {
         exit(ELM_EXIT_X_INIT);
     }
-
 
     /* DBusError derr; */
     /* dbus_err_init(&derr); */
@@ -462,31 +465,16 @@ int elm_x_set_display_env(void)
 /* Set currently used tty */
 int elm_x_set_tty_env(void)
 {
-    /* Open tty file descriptor */
-    char  name[ELM_MAX_CMD_SIZE] = {0};
-    char *tty;
-    int   master;
-    int   slave;
-
-    if (openpty(&master, &slave, name, NULL, NULL) < 0) {
-        elmprintf(LOGERRNO, "Error finding open tty.");
-        return -1;
-    }
-
-    /* /\* Get tty path from file descriptor *\/ */
-    /* if (!(tty=ttyname(slave))) { */
-    /*     elmprintf(LOGERR, "%s", "Error finding terminal device path name"); */
-    /*     return -2; */
-    /* } */
-
-    /* Set tty environment variable */
-    tty = (strstr(name, "/dev/")) ? &name[5] : name;
+    char *tty    = elm_x_get_tty();
+    int   status = 0;
 
     if (elm_setenv("TTY", tty) < 0) {
-        return -3;
+        status = -1;
     }
 
-    return 0;
+    free(tty);
+
+    return status;
 }
 
 /* ************************************************************************** */
@@ -799,6 +787,162 @@ char * elm_x_get_random_bytes(size_t size)
     close (fd);
 
     return bytes;
+}
+
+/* ************************************************************************** */
+/* Return open tty */
+/* Note: stackoverflow.com/questions/12181820/get-foreground-console-find-active-x-server */
+char * elm_x_get_tty(void)
+{
+    char *tty;
+
+    if ((tty=elm_x_get_tty_from_proc())) {
+        return tty;
+    }
+
+    if ((tty=elm_x_get_tty_from_pts())) {
+        return tty;
+    }
+
+    if ((tty=elm_x_get_tty_from_sys())) {
+        return tty;
+    }
+
+    return NULL;
+}
+
+/* ************************************************************************** */
+/* Return open pts acting as a tty */
+char * elm_x_get_tty_from_pts(void)
+{
+    char   name[ELM_MAX_CMD_SIZE] = {0};
+    char  *tty;
+    char  *ptr;
+    int    master;
+    int    slave;
+    size_t length;
+
+    /* Find open pseudoterminal */
+    if (openpty(&master, &slave, name, NULL, NULL) < 0) {
+        elmprintf(LOGERRNO, "Error finding open pseudoterminal");
+        return NULL;
+    }
+
+    /* Return pseudoterminal */
+    ptr    = (strstr(name, "/dev/")) ? &name[5] : name;
+    length = strlen(ptr)+1;
+    tty    = calloc(length, sizeof(*tty));
+
+    strncpy(tty, ptr, length);
+
+    return tty;
+}
+
+/* ************************************************************************** */
+/* Return open tty by searching /proc directory */
+char * elm_x_get_tty_from_proc(void)
+{
+    int            ttyignore[7] = {0};
+    char          *proc;
+    char           dirpath[ELM_MAX_PATH_SIZE];
+    char           cmdpath[ELM_MAX_PATH_SIZE];
+    char           symlinkpath[ELM_MAX_PATH_SIZE];
+    char           fullpath[ELM_MAX_PATH_SIZE];
+    DIR           *dstream;
+    struct dirent *entry;
+
+    /* Iterate over current process ids */
+    while ((proc=elm_sys_get_proc()))
+    {
+        snprintf(dirpath, sizeof(dirpath), "/proc/%s/fd/", proc);
+
+        /* Unable to open directory */
+        if (!(dstream=opendir(dirpath))) {
+            elmprintf(LOGERRNO, "%s '%s'",
+                      "Unable to open directory", dirpath);
+            continue;
+        }
+
+        /* Iterate over directory contents */
+        while ((entry=readdir(dstream))) {
+            if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, "..")) {
+                continue;
+            }
+
+            /* Path too long */
+            size_t dlen = strlen(dirpath);
+            size_t nlen = strlen(entry->d_name);
+
+            symlinkpath[0] = 0;
+
+            if ((dlen+nlen+1) >= sizeof(symlinkpath)) {
+                continue;
+            }
+
+            /* Determine full path */
+            strncat(symlinkpath, dirpath, dlen);
+            strncat(symlinkpath, entry->d_name, nlen);
+            memset(fullpath, 0, sizeof(fullpath));
+            readlink(symlinkpath, fullpath, sizeof(fullpath));
+
+            /* printf("\t\t'%s'\n", symlinkpath); */
+
+            /* /\* Check if should ignore this process *\/ */
+            /* if (strstr(fullpath, "/sys/devices/virtual/tty")) { */
+            /*     break; */
+            /* } */
+
+            /* Check if tty is in name */
+            if (strstr(fullpath, "/dev/tty")) {
+                snprintf(cmdpath, sizeof(cmdpath), "/proc/%s/cmdline", proc);
+
+                char *tty = elm_sys_read_line(cmdpath);
+                int   num = fullpath[8]-'0';
+
+                if (!tty || ttyignore[num-1]) {
+                    free(tty);
+                    continue;
+                }
+
+                if (strstr(tty, "Xorg")) {
+                    ttyignore[num-1] = 1;
+                }
+
+                free(tty);
+            }
+        }
+
+        closedir(dstream);
+    }
+
+    /* Return open tty */
+    char   *opentty = NULL;
+    size_t  length  = 5;
+    int     i;
+
+    for (i=0; i < sizeof(ttyignore); i++) {
+        if (!ttyignore[i]) {
+            opentty = calloc(length, sizeof(*opentty));
+            snprintf(opentty, length, "tty%d", i+1);
+            break;
+        }
+    }
+
+    if (!opentty) {
+        elmprintf(LOGERR, "%s",
+                  "Unable to find open tty by searching '/proc' directory.");
+    }
+
+    return opentty;
+}
+
+/* ************************************************************************** */
+/* Return active tty from /sys/ directory */
+char * elm_x_get_tty_from_sys(void)
+{
+    char *activefile              = "/sys/devices/virtual/tty/tty0/active";
+
+    return elm_sys_read_line(activefile);
 }
 
 /* ************************************************************************** */

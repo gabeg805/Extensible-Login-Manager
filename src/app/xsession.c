@@ -21,14 +21,16 @@ static char ** get_available_xsessions(void);
 static int     set_xsession_menu(GtkWidget **menu);
 
 /* Private variables */
+static const char      *Style   = "/etc/X11/elm/style/css/xsession.css";
 static       GtkWidget *Xbutton = NULL;
 static       GtkWidget *Xmenu   = NULL;
-static const char      *Style   = "/etc/X11/elm/style/css/xsession.css";
 
 /* ************************************************************************** */
 /* Create xsession menu button */
 GtkWidget * new_xsession_widget(void)
 {
+    elmprintf(LOGINFO, "Displaying Xsession menu.");
+
     Xbutton = gtk_menu_button_new();
     Xmenu   = gtk_menu_new();
 

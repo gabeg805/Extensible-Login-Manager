@@ -21,7 +21,7 @@
 #include "elmdef.h"
 #include <stdlib.h>
 
-/* Typedefs */
+/* Login information */
 typedef struct
 {
     char  username[ELM_MAX_CRED_SIZE];
@@ -29,6 +29,7 @@ typedef struct
     char  xsession[ELM_MAX_CRED_SIZE];
 } ElmLogin;
 
+/* Session object */
 typedef struct
 {
     int      (*auth)(void);

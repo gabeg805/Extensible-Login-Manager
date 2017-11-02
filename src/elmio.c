@@ -170,14 +170,16 @@ int elm_io_is_mode_info(ElmPrint mode)
 /* Check if WARNING mode */
 int elm_io_is_mode_warn(ElmPrint mode)
 {
-    return ((mode == WARNING) || (mode == LOGWARN)) ? 1 : 0;
+    return ((mode == WARN) || (mode == LOGWARN)) ? 1 : 0;
 }
 
 /* ************************************************************************** */
 /* Check if ERROR mode */
 int elm_io_is_mode_err(ElmPrint mode)
 {
-    return ((mode == ERROR) || (mode == ERRNO) || (mode == LOGERR)) ? 1 : 0;
+    return ((mode == ERROR) || (mode == ERRNO) \
+            || (mode == LOGERR) || (mode == LOGERRNO)) \
+        ? 1 : 0;
 }
 
 /* ************************************************************************** */
@@ -200,17 +202,17 @@ char * elm_io_mode_to_string(ElmPrint mode)
     memset(str, 0, sizeof(str));
 
     if (elm_io_is_mode_log(mode)) {
-        strncpy(str, "LOG", 3);
+        strncpy(str, "LOG  ", 6);
     }
 
     if (elm_io_is_mode_info(mode)) {
-        strncpy(str, "INFO", 4);
+        strncpy(str, "INFO ", 6);
     }
     else if (elm_io_is_mode_warn(mode)) {
-        strncpy(str, "WARNING", 7);
+        strncpy(str, "WARN ", 6);
     }
     else if (elm_io_is_mode_err(mode)) {
-        strncpy(str, "ERROR", 5);
+        strncpy(str, "ERROR", 6);
     }
     else {
         return "";

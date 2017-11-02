@@ -23,13 +23,13 @@ static void system_reboot(GtkButton   *button, gpointer data);
 static void system_cancel(GtkButton   *button, gpointer data);
 
 /* Private variables */
-static const char *Style    = "/etc/X11/elm/style/css/powerbuttons.css";
+static const char *Style = "/etc/X11/elm/style/css/powerbuttons.css";
 
 /* ************************************************************************** */
 /* Display system action options */
 GtkWidget * display_power_buttons(ElmCallback callback)
 {
-    elmprintf(LOG, "Displaying power buttons.");
+    elmprintf(LOGINFO, "Displaying system power button.");
 
     static GtkWidget *button;
     button = gtk_button_new_from_icon_name("system-run", GTK_ICON_SIZE_LARGE_TOOLBAR);
@@ -89,7 +89,7 @@ void system_prompt(GtkButton *button, gpointer data)
 /* Send shutdown response */
 void system_shutdown(GtkButton *button, gpointer data)
 {
-    elmprintf(LOG, "Shutting down.");
+    elmprintf(LOGINFO, "Shutting down.");
     execl(ELM_CMD_SHUTDOWN, ELM_CMD_SHUTDOWN, NULL);
 }
 
@@ -97,7 +97,7 @@ void system_shutdown(GtkButton *button, gpointer data)
 /* Send reboot response */
 void system_reboot(GtkButton *button, gpointer data)
 {
-    elmprintf(LOG, "Rebooting.");
+    elmprintf(LOGINFO, "Rebooting.");
     execl(ELM_CMD_REBOOT, ELM_CMD_REBOOT, NULL);
 }
 
@@ -105,7 +105,7 @@ void system_reboot(GtkButton *button, gpointer data)
 /* Send cancel response */
 void system_cancel(GtkButton *button, gpointer data)
 {
-    elmprintf(LOG, "Cancel.");
+    elmprintf(LOGINFO, "Cancel.");
     GtkWidget **dialog = data;
     gtk_dialog_response(GTK_DIALOG(*dialog), 0);
 }

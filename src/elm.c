@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 
     /* Run login manager */
     if (options.run) {
-        elmprintf(LOGINFO, "Starting the Extensible Login Manager (ELM)!");
+        elmprintf(LOGINFO, "Starting the Extensible Login Manager!");
 
         ElmLoginManager *manager = elm_login_manager_new();
         manager->set_preview_mode(options.preview);
@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 /* Print program usage */
 void usage(void)
 {
-    printf("Usage: %s [options] <args>\n", PROGRAM);
+    printf("Usage: %s [options]\n", PROGRAM);
     printf("\n");
     printf("Options:\n");
     printf("    -h, --help\n");
@@ -116,4 +116,10 @@ void usage(void)
     printf("\n");
     printf("    -p, --preview\n");
     printf("        Run login manager in Preview Mode (ignores X window setup).\n");
+    printf("\n");
+    printf("    -r, --run\n");
+    printf("        Run login manager normally.\n");
+    printf("\n");
+    printf("    --logout\n");
+    printf("        Logout of user session.\n");
 }

@@ -16,12 +16,7 @@
 #ifndef ELM_LOGIN_MANAGER_H
 #define ELM_LOGIN_MANAGER_H
 
-/* Includes */
-#include <stdlib.h>
-#include <gtk/gtk.h>
-#include <gdk/gdk.h>
-
-/* Typedefs */
+/* Login manager object */
 typedef struct
 {
     int    (*run)(void);

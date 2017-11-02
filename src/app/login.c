@@ -28,14 +28,14 @@ static void        set_default_widget(GtkWidget *widget, gpointer data);
 static void        set_focus_on_widget(GtkWidget *widget, gpointer data);
 
 /* Private variables */
-static       ElmLogin   Info;
 static const char      *Style = "/etc/X11/elm/style/css/login.css";
+static       ElmLogin   Info;
 
 /* ************************************************************************** */
 /* Create login fields application */
 GtkWidget * display_login(ElmCallback callback)
 {
-    elmprintf(LOG, "Displaying password entry box application.");
+    elmprintf(LOGINFO, "Displaying password entry box application.");
 
     static GtkWidget *frame;
     static GtkWidget *container;

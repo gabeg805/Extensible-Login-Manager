@@ -15,14 +15,17 @@
 /* Includes */
 #include "elmloginmanager.h"
 #include "elmdef.h"
+#include "elmgtk.h"
 #include "elminterface.h"
 #include "elmio.h"
 #include "elmsession.h"
 #include "elmx.h"
-#include "utility.h"
 #include <pthread.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <gtk/gtk.h>
+
+/* Not sure I need these */
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -48,13 +51,13 @@ static int    elm_login_manager_alloc_apps(size_t s);
 static int    elm_login_manager_exists(char *message);
 
 /* Private globals */
-static ElmLoginManager  *Manager    = NULL;
-static GtkWidget        *Window     = NULL;
-static GtkWidget        *Container  = NULL;
-static GtkWidget       **Widgets    = NULL;
-static pthread_t         Thread;
-static int               Preview    = 0;
-static const char      * Style      = "/etc/X11/elm/style/css/loginmanager.css";
+static const char             *Style     = "/etc/X11/elm/style/css/loginmanager.css";
+static       int               Preview   = 0;
+static       ElmLoginManager  *Manager   = NULL;
+static       GtkWidget        *Window    = NULL;
+static       GtkWidget        *Container = NULL;
+static       GtkWidget       **Widgets   = NULL;
+static       pthread_t         Thread;
 
 /* ************************************************************************** */
 /* Create Extensible Login Manager base structure */
@@ -288,8 +291,8 @@ int elm_login_manager_build_apps(void)
 int elm_login_manager_setup_dir(void)
 {
     if (access(ELM_RUN_DIR, F_OK)) {
-        elmprintf(LOGERRNO, "%s '%s'",
-                  "Unable to find directory", ELM_RUN_DIR);
+        elmprintf(LOGERRNO, "%s '%s'", "Unable to find directory", ELM_RUN_DIR);
+        elmprintf(LOGINFO, "%s '%s'.", "Creating directory", ELM_RUN_DIR);
 
         if (mkdir(ELM_RUN_DIR, (S_IRWXU | S_IRWXG | S_IRWXO)) < 0) {
             elmprintf(LOGERRNO, "%s '%s'",
@@ -320,6 +323,7 @@ int elm_login_manager_setup_xserver(void)
     }
 
     if (elm_x_set_cursor() < 0) {
+        return -3;
     }
 
     return 0;
@@ -351,6 +355,7 @@ int elm_login_manager_setup_signal_catcher(void)
 
 /* ************************************************************************** */
 /* Catch signals */
+/* To-do: Clean this up. */
 void elm_login_manager_signal_catcher(int sig, siginfo_t *info, void *context)
 {
     if (!elm_login_manager_exists("catch signals")) {
@@ -386,6 +391,7 @@ void elm_login_manager_signal_catcher(int sig, siginfo_t *info, void *context)
 
 /* ************************************************************************** */
 /* Show widgets */
+/* To-do: Allocate memory for apps */
 int elm_login_manager_show_apps(void)
 {
     elmprintf(LOGINFO, "Showing login manager.");
@@ -431,6 +437,7 @@ void elm_login_manager_set_preview_mode(int flag)
 
 /* ************************************************************************** */
 /* Thread login manger between GTK and user session */
+/* To-do: Allocate memory for thread? */
 void elm_login_manager_thread(GtkWidget *widget, gpointer data)
 {
     elmprintf(LOGINFO, "Creating login thread.");

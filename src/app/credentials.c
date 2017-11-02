@@ -20,16 +20,16 @@ static const gchar * get_entry_buffer_text(GtkWidget *widget, char **field);
 static       int     set_entry_buffer(GtkWidget *widget, char *placeholder);
 
 /* Private variables */
+static const char       *Style       = "/etc/X11/elm/style/css/credentials.css";
 static       GtkWidget  *Username    = NULL;
 static       GtkWidget  *Password    = NULL;
-static const char       *Style       = "/etc/X11/elm/style/css/credentials.css";
 static       int         EntryLength = 32;
 
 /* ************************************************************************** */
 /* Create username entry */
 GtkWidget * new_username_widget(void)
 {
-    elmprintf(LOG, "Displaying username entry.");
+    elmprintf(LOGINFO, "Displaying username entry.");
 
     Username = gtk_entry_new();
 
@@ -47,7 +47,7 @@ GtkWidget * new_username_widget(void)
 /* Create password entry */
 GtkWidget * new_password_widget(void)
 {
-    elmprintf(LOG, "Displaying password entry.");
+    elmprintf(LOGINFO, "Displaying password entry.");
 
     Password = gtk_entry_new();
 

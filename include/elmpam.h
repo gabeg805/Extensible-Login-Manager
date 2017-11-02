@@ -19,7 +19,6 @@
 
 /* Includes */
 #include "elmsession.h"
-#include <unistd.h>
 
 /* Public functions */
 int elm_pam_init(ElmLogin *info);

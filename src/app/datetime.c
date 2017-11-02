@@ -29,7 +29,7 @@ static const char *TimeFormat = "%-I:%M %p";
 /* Create date and time application */
 GtkWidget * display_datetime(ElmCallback callback)
 {
-    elmprintf(LOG, "Displaying date and time.");
+    elmprintf(LOGINFO, "Displaying date and time.");
 
     static GtkWidget *box;
     static GtkWidget *date;

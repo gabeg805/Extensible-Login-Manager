@@ -23,7 +23,7 @@ static gboolean draw_frame(gpointer data);
 /* Create login frame application */
 GtkWidget * new_frame_widget(void)
 {
-    elmprintf(LOG, "Displaying login frame.");
+    elmprintf(LOGINFO, "Displaying login frame.");
 
     static GtkWidget *container;
     static GtkWidget *drawing;
@@ -50,8 +50,8 @@ gboolean draw_frame(gpointer data)
     double     curve   = 10;
     double     deg     = M_PI / 180.0;
 
-    if (window == NULL) {
-        elmprintf(LOG, "Unable to draw frame: Window returned NULL.");
+    if (!window) {
+        elmprintf(LOGERR, "Unable to draw frame: Window returned NULL.");
         return TRUE;
     }
 
