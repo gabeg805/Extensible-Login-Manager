@@ -37,7 +37,8 @@ GtkWidget * new_xsession_widget(void)
     set_xsession_menu(&Xmenu);
     gtk_button_set_relief(GTK_BUTTON(Xbutton), GTK_RELIEF_HALF);
     gtk_menu_button_set_popup(GTK_MENU_BUTTON(Xbutton), Xmenu);
-    elm_set_widget_style(&Xbutton, "XSession", Style);
+    elm_set_widget_style(&Xbutton, "XSession",     Style);
+    elm_set_widget_size(&Xbutton, 30, 30);
     gtk_widget_show_all(Xmenu);
     gtk_widget_show_all(Xbutton);
 

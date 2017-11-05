@@ -1,13 +1,15 @@
-.XSession {
-    color:            #ffa500;
-    background-color: #e5e5e5;
-    background-image: none;
-    border-color:     transparent;
-    border-radius:    10px;
-    border-width:     0;
+.XSession
+{
+    color            : #ffa500;
+    background-color : #e5e5e5;
+    background-image : none;
+    border-color     : transparent;
+    border-radius    : 10px;
+    border-width     : 0;
 }
-.XSession:hover {
-    background-image: -gtk-gradient (linear,
-                                     0 0, 0 1,
+
+.XSession:hover
+{
+    background-image : -gtk-gradient(linear, 0 0, 0 1,
                                      from(#ffffff), to(#e5e5e5));
 }

@@ -32,10 +32,12 @@ GtkWidget * display_power_buttons(ElmCallback callback)
     elmprintf(LOGINFO, "Displaying system power button.");
 
     static GtkWidget *button;
-    button = gtk_button_new_from_icon_name("system-run", GTK_ICON_SIZE_LARGE_TOOLBAR);
+
+    button = gtk_button_new();
 
     gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-    elm_set_widget_style(&button, "System", Style);
+    elm_set_widget_style(&button, "PowerButton", Style);
+    elm_set_widget_size(&button, 31, 31);
     g_signal_connect(button, "clicked", G_CALLBACK(system_prompt), NULL);
     gtk_widget_show(button);
 
@@ -70,7 +72,7 @@ void system_prompt(GtkButton *button, gpointer data)
     gtk_widget_set_margin_start(container,  margin/2);
     gtk_widget_set_margin_end(container,    margin/2);
     gtk_widget_set_margin_bottom(label,     margin);
-    elm_set_widget_style(&shutdown, "Shutdown", Style);
+    elm_set_widget_style(&shutdown, "ShutdownButton", Style);
     g_signal_connect(shutdown, "clicked", G_CALLBACK(system_shutdown), &dialog);
     g_signal_connect(reboot,   "clicked", G_CALLBACK(system_reboot),   &dialog);
     g_signal_connect(cancel,   "clicked", G_CALLBACK(system_cancel),   &dialog);

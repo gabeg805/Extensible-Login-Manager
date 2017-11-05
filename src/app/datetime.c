@@ -34,6 +34,7 @@ GtkWidget * display_datetime(ElmCallback callback)
     static GtkWidget *box;
     static GtkWidget *date;
     static GtkWidget *time;
+
     box  = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     date = gtk_label_new("");
     time = gtk_label_new("");
@@ -60,8 +61,8 @@ GtkWidget * display_datetime(ElmCallback callback)
 gboolean set_date(gpointer data)
 {
     GtkWidget **label = (GtkWidget**) data;
-    time_t      now  = time(NULL);
-    struct tm  *tm   = localtime(&now);
+    time_t      now   = time(NULL);
+    struct tm  *tm    = localtime(&now);
     char        string[64];
 
     strftime(string, sizeof(string), DateFormat, tm);
@@ -75,8 +76,8 @@ gboolean set_date(gpointer data)
 gboolean set_time(gpointer data)
 {
     GtkWidget **label = (GtkWidget**) data;
-    time_t      now  = time(NULL);
-    struct tm  *tm   = localtime(&now);
+    time_t      now   = time(NULL);
+    struct tm  *tm    = localtime(&now);
     char        string[64];
 
     strftime(string, sizeof(string), TimeFormat, tm);

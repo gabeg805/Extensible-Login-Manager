@@ -27,6 +27,7 @@ GtkWidget * new_frame_widget(void)
 
     static GtkWidget *container;
     static GtkWidget *drawing;
+
     container = gtk_fixed_new();
     drawing   = gtk_drawing_area_new();
 
@@ -63,8 +64,11 @@ gboolean draw_frame(gpointer data)
     cairo_arc(cr, 1.0*width-curve, 1.0*height-curve, curve,   0*deg,  90*deg);
     cairo_arc(cr, curve,           1.0*height-curve, curve,  90*deg, 180*deg);
     cairo_arc(cr, curve,           curve,            curve, 180*deg, 270*deg);
+
+    /* Color frame */
     cairo_set_source_rgba(cr, 1, 1, 1, 0.75);
     cairo_fill(cr);
+
     gdk_window_end_draw_frame(window, context);
     cairo_region_destroy(region);
 

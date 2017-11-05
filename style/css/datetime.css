@@ -1,13 +1,15 @@
-.Date {
-    font-family:      'Droid Sans';
-    font-size:        27px;
-    color:            white;
-    background-color: transparent;
+.Date
+{
+    font-family      : 'Droid Sans';
+    font-size        : 27px;
+    color            : white;
+    background-color : transparent;
 }
 
-.Time {
-    font-family:      'Droid Sans';
-    font-size:        47px;
-    color:            white;
-    background-color: transparent;
+.Time
+{
+    font-family      : 'Droid Sans';
+    font-size        : 47px;
+    color            : white;
+    background-color : transparent;
 }

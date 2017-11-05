@@ -21,9 +21,9 @@ static       int     set_entry_buffer(GtkWidget *widget, char *placeholder);
 
 /* Private variables */
 static const char       *Style       = "/etc/X11/elm/style/css/credentials.css";
+static const int         EntryLength = 32;
 static       GtkWidget  *Username    = NULL;
 static       GtkWidget  *Password    = NULL;
-static       int         EntryLength = 32;
 
 /* ************************************************************************** */
 /* Create username entry */

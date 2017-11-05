@@ -41,15 +41,15 @@ GtkWidget * display_login(ElmCallback callback)
     static GtkWidget *container;
     static GtkWidget *entrybox;
     static GtkWidget *buttonbox;
-    frame     = new_frame_widget();
-    container = gtk_box_new(GTK_ORIENTATION_VERTICAL,   15);
-    entrybox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,    5);
-    buttonbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
-
     static GtkWidget *username;
     static GtkWidget *password;
     static GtkWidget *xsession;
     static GtkWidget *button;
+
+    frame     = new_frame_widget();
+    container = gtk_box_new(GTK_ORIENTATION_VERTICAL,   15);
+    entrybox  = gtk_box_new(GTK_ORIENTATION_VERTICAL,    5);
+    buttonbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     username  = new_username_widget();
     password  = new_password_widget();
     xsession  = new_xsession_widget();
@@ -86,9 +86,10 @@ GtkWidget * display_login(ElmCallback callback)
 GtkWidget * new_login_button(const char *text)
 {
     static GtkWidget *button;
+
     button = gtk_button_new_with_label(text);
 
-    elm_set_widget_size(&button, 185, 0);
+    elm_set_widget_size(&button, 185, 30);
     elm_set_widget_style(&button, "LoginButton", Style);
 
     g_signal_connect(button, "clicked", G_CALLBACK(set_callback_data), NULL);
@@ -124,6 +125,7 @@ void set_default_widget(GtkWidget *widget, gpointer data)
 {
     GtkWidget  *window = elm_get_window(&widget);
     GtkWidget **button = data;
+
     elm_set_default_widget(&window, button);
 }
 
@@ -132,5 +134,6 @@ void set_default_widget(GtkWidget *widget, gpointer data)
 void set_focus_on_widget(GtkWidget *widget, gpointer data)
 {
     GtkWidget **username = data;
+
     gtk_widget_grab_focus(*username);
 }

@@ -1,19 +1,22 @@
-.LoginButton {
-    font-family:      'Arial';
-    font-size:        14px;
-    color:            white;
-    border-radius:    10px;
-    border-width:     0;
-    border-image:     none;
-    background-image: -gtk-gradient (linear,
+.LoginButton
+{
+    font-family      : 'Arial';
+    font-size        : 14px;
+    color            : white;
+    border-radius    : 10px;
+    border-width     : 0;
+    border-image     : none;
+    background-image : -gtk-gradient (linear,
                                      0 0, 0 1,
                                      from(#ffa500), to(#e59400));
 }
-.LoginButton:hover {
-    font-family:      'Arial';
-    font-size:        14px;
-    color:            white;
-    background-image: -gtk-gradient (linear,
+
+.LoginButton:hover
+{
+    font-family      : 'Arial';
+    font-size        : 14px;
+    color            : white;
+    background-image : -gtk-gradient (linear,
                                      0 0, 0 1,
                                      from(#ffb732), to(#ffa500));
 }
