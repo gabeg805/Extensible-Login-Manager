@@ -2,14 +2,20 @@
 {
     color            : #ffa500;
     background-color : #e5e5e5;
-    background-image : none;
+    /* background-image : none; */
     border-color     : transparent;
     border-radius    : 10px;
-    border-width     : 0;
+    border-width     : 1px;
+    box-shadow       : none;
+}
+
+.XSession:focus
+{
+    outline-style : none;
+    border-color  : #4a90d9;
 }
 
 .XSession:hover
 {
-    background-image : -gtk-gradient(linear, 0 0, 0 1,
-                                     from(#ffffff), to(#e5e5e5));
+    background-image : linear-gradient(to top, #ffffff, #e5e5e5);
 }

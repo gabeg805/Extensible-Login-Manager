@@ -97,7 +97,6 @@ int elm_pam_auth(void)
     /* Set pam items */
     elmprintf(LOGINFO, "Setting PAM items.");
 
-    /* Have a pam_fail_delay */
     /* PAM_XAUTH_DATA? */
 
     /* Set DISPLAY */

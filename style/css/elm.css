@@ -1,0 +1,23 @@
+@define-color  elm_color         ;
+@define-color  elm_neutral_color ;
+@define-number  elm_radius        10px;
+/* @define-string elm_font_family   Arial; */
+
+/* @define-length   elm_font_size-xl  18px; */
+/* @define-length   elm_font_size-l   16px; */
+/* @define-length   elm_font_size-n   14px; */
+/* @define-length   elm_font_size-s   12px; */
+/* @define-length   elm_font_size-xs  10px; */
+
+/* :root */
+/* { */
+/*     --theme-color         : #ffa500; */
+/*     --theme-neutral-color : #e5e5e5; */
+/*     --theme-radius        : 10px; */
+/*     --theme-font-family   : Arial; */
+/*     --theme-font-size-xl  : 18px; */
+/*     --theme-font-size-l   : 16px; */
+/*     --theme-font-size-n   : 14px; */
+/*     --theme-font-size-s   : 12px; */
+/*     --theme-font-size-xs  : 10px; */
+/* } */

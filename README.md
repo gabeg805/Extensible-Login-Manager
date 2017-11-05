@@ -42,6 +42,7 @@ be the only remnants of this package.
 # Things to Implement
 
 - [ ] Logout command line option.
+- [ ] Add images to username/password entries.
 - [ ] Setup and connect to the org.freedesktop.DisplayManager bus.
 - [ ] Research policykit bus.
       ==== AUTHENTICATING FOR org.freedesktop.policykit.exec ====

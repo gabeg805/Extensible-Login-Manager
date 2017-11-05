@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 
         case 'p':
             options.preview = 1;
-            sleep(3);
+            sleep(1);
             break;
 
         case 'r':

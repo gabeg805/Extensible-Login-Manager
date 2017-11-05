@@ -1,24 +1,33 @@
 .PowerButton
 {
     background-image : url("/etc/X11/elm/style/icons/shutdown.png");
-    border-radius    : 4px;
-    padding          : 4px;
+    border-color     : transparent;
+    border-radius    : 15px;
+    border-width     : 1px;
+    padding          : 3px 0px 3px 0px;
 }
+
+.PowerButton:focus
+{
+    outline-style : none;
+    border-color  : #4a90d9;
+}
+
 .PowerButton:hover
 {
-    background-color : rgba(255,255,255,0.6);
+    background-color : rgba(255, 255, 255, 0.6);
     transition       : 225ms ease-in-out
 }
 
 .ShutdownButton
 {
-    background-image : -gtk-gradient(linear, 0 0, 0 1,
-                                     from(#ffa500), to(#e59400));
+    background-image : linear-gradient(to top, #ffa500, #e59400);
     border-color     : transparent;
-    border-width     : 0;
+    border-width     : 0px;
+    box-shadow       : rgba(0, 0, 0, 0.2) 0px 2px;
 }
+
 .ShutdownButton:hover
 {
-    background-image : -gtk-gradient(linear, 0 0, 0 1,
-                                     from(#ffb732), to(#ffa500));
+    background-image : linear-gradient(to top, #ffb732, #ffa500);
 }

@@ -17,12 +17,11 @@
 #ifndef ELM_APP_H
 #define ELM_APP_H
 
-/* Includes */
+/* Includes (added more for users building their own apps) */
 #include "elmdef.h"
 #include "elmio.h"
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -47,8 +46,8 @@ typedef struct ElmApp
 {
     GtkWidget *     (*display)(ElmCallback);
     enum ElmGravity   gravity;
-    int16_t           x;
-    int16_t           y;
+    unsigned int      x;
+    unsigned int      y;
 } ElmApp;
 
 #endif /* ELM_APP_H */

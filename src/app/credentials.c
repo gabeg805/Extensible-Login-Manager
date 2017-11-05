@@ -20,10 +20,12 @@ static const gchar * get_entry_buffer_text(GtkWidget *widget, char **field);
 static       int     set_entry_buffer(GtkWidget *widget, char *placeholder);
 
 /* Private variables */
-static const char       *Style       = "/etc/X11/elm/style/css/credentials.css";
-static const int         EntryLength = 32;
-static       GtkWidget  *Username    = NULL;
-static       GtkWidget  *Password    = NULL;
+static const char       *Style        = "/etc/X11/elm/style/css/credentials.css";
+static const char       *UserIcon     = "/etc/X11/elm/style/icons/user.png";
+static const char       *PasswordIcon = "/etc/X11/elm/style/icons/password.png";
+static const int         EntryLength  = 32;
+static       GtkWidget  *Username     = NULL;
+static       GtkWidget  *Password     = NULL;
 
 /* ************************************************************************** */
 /* Create username entry */
@@ -31,13 +33,18 @@ GtkWidget * new_username_widget(void)
 {
     elmprintf(LOGINFO, "Displaying username entry.");
 
-    Username = gtk_entry_new();
+    GdkPixbuf *pixbuf;
 
+    Username = gtk_entry_new();
+    pixbuf   = gdk_pixbuf_new_from_file(UserIcon, NULL);
+
+    gtk_entry_set_icon_from_pixbuf(GTK_ENTRY(Username), GTK_ENTRY_ICON_PRIMARY,
+                                   pixbuf);
     set_entry_buffer(Username, "Username");
     gtk_widget_set_can_focus(Username, TRUE);
     gtk_entry_set_activates_default(GTK_ENTRY(Username), TRUE);
-    elm_set_widget_size(&Username, 230, 0);
-    elm_set_widget_style(&Username, "Username", Style);
+    elm_gtk_set_widget_size(&Username, 230, 0);
+    elm_gtk_set_widget_style(&Username, "Username", Style);
     gtk_widget_show(Username);
 
     return Username;
@@ -49,14 +56,19 @@ GtkWidget * new_password_widget(void)
 {
     elmprintf(LOGINFO, "Displaying password entry.");
 
-    Password = gtk_entry_new();
+    GdkPixbuf *pixbuf;
 
+    Password = gtk_entry_new();
+    pixbuf   = gdk_pixbuf_new_from_file(PasswordIcon, NULL);
+
+    gtk_entry_set_icon_from_pixbuf(GTK_ENTRY(Password), GTK_ENTRY_ICON_PRIMARY,
+                                   pixbuf);
     set_entry_buffer(Password, "Password");
     gtk_entry_set_visibility(GTK_ENTRY(Password), FALSE);
     gtk_entry_set_invisible_char(GTK_ENTRY(Password), '*');
     gtk_entry_set_activates_default(GTK_ENTRY(Password), TRUE);
-    elm_set_widget_size(&Password, 230, 0);
-    elm_set_widget_style(&Password, "Password", Style);
+    elm_gtk_set_widget_size(&Password, 230, 0);
+    elm_gtk_set_widget_style(&Password, "Password", Style);
     gtk_widget_show(Password);
 
     return Password;

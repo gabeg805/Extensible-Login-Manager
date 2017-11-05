@@ -36,8 +36,8 @@ GtkWidget * display_power_buttons(ElmCallback callback)
     button = gtk_button_new();
 
     gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-    elm_set_widget_style(&button, "PowerButton", Style);
-    elm_set_widget_size(&button, 31, 31);
+    elm_gtk_set_widget_style(&button, "PowerButton", Style);
+    elm_gtk_set_widget_size(&button, 31, 31);
     g_signal_connect(button, "clicked", G_CALLBACK(system_prompt), NULL);
     gtk_widget_show(button);
 
@@ -58,7 +58,7 @@ void system_prompt(GtkButton *button, gpointer data)
     GtkWidget *buttonbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, margin*2);
     GtkWidget *systembox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, margin/2);
     GtkWidget *widget    = GTK_WIDGET(button);
-    GtkWindow *window    = GTK_WINDOW(elm_get_window(&widget));
+    GtkWindow *window    = GTK_WINDOW(elm_gtk_get_window(&widget));
 
     gtk_box_pack_start(GTK_BOX(container), label,     TRUE,  TRUE,  0);
     gtk_box_pack_start(GTK_BOX(container), buttonbox, FALSE, FALSE, 0);
@@ -72,7 +72,7 @@ void system_prompt(GtkButton *button, gpointer data)
     gtk_widget_set_margin_start(container,  margin/2);
     gtk_widget_set_margin_end(container,    margin/2);
     gtk_widget_set_margin_bottom(label,     margin);
-    elm_set_widget_style(&shutdown, "ShutdownButton", Style);
+    elm_gtk_set_widget_style(&shutdown, "ShutdownButton", Style);
     g_signal_connect(shutdown, "clicked", G_CALLBACK(system_shutdown), &dialog);
     g_signal_connect(reboot,   "clicked", G_CALLBACK(system_reboot),   &dialog);
     g_signal_connect(cancel,   "clicked", G_CALLBACK(system_cancel),   &dialog);

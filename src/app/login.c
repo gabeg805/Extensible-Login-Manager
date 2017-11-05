@@ -89,8 +89,8 @@ GtkWidget * new_login_button(const char *text)
 
     button = gtk_button_new_with_label(text);
 
-    elm_set_widget_size(&button, 185, 30);
-    elm_set_widget_style(&button, "LoginButton", Style);
+    elm_gtk_set_widget_size(&button, 185, 30);
+    elm_gtk_set_widget_style(&button, "LoginButton", Style);
 
     g_signal_connect(button, "clicked", G_CALLBACK(set_callback_data), NULL);
 
@@ -123,10 +123,10 @@ void set_callback_data(GtkWidget *widget, gpointer data)
 /* Set button as the default widget when widget is shown */
 void set_default_widget(GtkWidget *widget, gpointer data)
 {
-    GtkWidget  *window = elm_get_window(&widget);
+    GtkWidget  *window = elm_gtk_get_window(&widget);
     GtkWidget **button = data;
 
-    elm_set_default_widget(&window, button);
+    elm_gtk_set_default_widget(&window, button);
 }
 
 /* ************************************************************************** */

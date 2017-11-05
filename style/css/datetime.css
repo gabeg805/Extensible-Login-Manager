@@ -1,15 +1,16 @@
-.Date
+label
 {
-    font-family      : 'Droid Sans';
-    font-size        : 27px;
+    font-family      : Droid Sans;
     color            : white;
     background-color : transparent;
+}
+    
+.Date
+{
+    font-size : 27px;
 }
 
 .Time
 {
-    font-family      : 'Droid Sans';
-    font-size        : 47px;
-    color            : white;
-    background-color : transparent;
+    font-size : 47px;
 }

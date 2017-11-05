@@ -64,10 +64,8 @@ static char * elm_x_get_tty_from_sys(void);
 static int    elm_x_is_running(void);
 
 /* Private variables */
-static Display *XDisplay     = NULL;
-static pid_t    XPid         = -1;
-static int      XScreenWidth  = -1;
-static int      XScreenHeight = -1;
+static Display *XDisplay      = NULL;
+static pid_t    XPid          = -1;
 
 /* ************************************************************************** */
 /* Start the X server */
@@ -642,12 +640,13 @@ cleanup:
 /* Set screen width and height. These are the dimensions of the active
  * monitor.
  */
-int elm_x_set_screen_dimensions(void)
+int elm_x_screen_dimensions(int *width, int *height)
 {
     Window              window = DefaultRootWindow(XDisplay);
     XRRScreenResources *screen = XRRGetScreenResources(XDisplay, window);
-    XScreenWidth  = -1;
-    XScreenHeight = -1;
+
+    *width  = 0;
+    *height = 0;
 
     /* Unable to determine screen info */
     if (!screen) {
@@ -655,8 +654,6 @@ int elm_x_set_screen_dimensions(void)
         return 1;
     }
 
-    XScreenWidth  = 0;
-    XScreenHeight = 0;
     int          num = screen->ncrtc;
     int          i;
     XRRCrtcInfo *info;
@@ -666,10 +663,8 @@ int elm_x_set_screen_dimensions(void)
         info = XRRGetCrtcInfo(XDisplay, screen, screen->crtcs[i]);
 
         if (info->x == 0) {
-            XScreenWidth  = info->width;
-            XScreenHeight = info->height;
-            elmprintf(LOGINFO, "%s: '%d x %d'.",
-                      "Set screen width x height", XScreenWidth, XScreenHeight);
+            *width  = info->width;
+            *height = info->height;
             XRRFreeCrtcInfo(info);
             break;
         }
@@ -680,20 +675,6 @@ int elm_x_set_screen_dimensions(void)
     XRRFreeScreenResources(screen);
 
     return 0;
-}
-
-/* ************************************************************************** */
-/* Return screen width */
-int elm_x_get_screen_width(void)
-{
-    return XScreenWidth;
-}
-
-/* ************************************************************************** */
-/* Return screen height */
-int elm_x_get_screen_height(void)
-{
-    return XScreenHeight;
 }
 
 /* ************************************************************************** */

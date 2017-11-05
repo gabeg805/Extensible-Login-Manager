@@ -43,8 +43,8 @@ GtkWidget * display_datetime(ElmCallback callback)
     gtk_box_pack_start(GTK_BOX(box), date, TRUE, TRUE, 0);
     gtk_widget_set_halign(date, GTK_ALIGN_CENTER);
     gtk_widget_set_halign(time, GTK_ALIGN_CENTER);
-    elm_set_widget_style(&date, "Date", Style);
-    elm_set_widget_style(&time, "Time", Style);
+    elm_gtk_set_widget_style(&date, "Date", Style);
+    elm_gtk_set_widget_style(&time, "Time", Style);
     set_date(&date);
     set_time(&time);
     g_timeout_add_seconds(5, set_date, &date);

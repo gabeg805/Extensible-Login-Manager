@@ -211,18 +211,18 @@ int elm_login_manager_build_window(void)
 {
     elmprintf(LOGINFO, "Building login manager window.");
 
-    elm_x_set_screen_dimensions();
-    int width  = elm_x_get_screen_width();
-    int height = elm_x_get_screen_height();
-
     Window    = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     Container = gtk_fixed_new();
 
-    elm_set_widget_style(&Window, "LoginManager", Style);
-    gtk_window_set_default_size(GTK_WINDOW(Window), width, height);
-    gtk_container_add(GTK_CONTAINER(Window), Container);
-    gtk_widget_show(Container);
-    gtk_widget_show_all(Window);
+    int width;
+    int height;
+
+    elm_x_screen_dimensions(&width, &height);
+    elm_gtk_set_widget_style(&Window, "LoginManager", Style);
+    elm_gtk_set_window_size(&Window, width, height);
+    elm_gtk_add(&Window, Container);
+    elm_gtk_show(&Container);
+    elm_gtk_show_all(&Window);
 
     return 0;
 }
@@ -233,15 +233,17 @@ int elm_login_manager_build_apps(void)
 {
     elmprintf(LOGINFO, "Building login manager apps.");
 
-    elm_x_set_screen_dimensions();
-    int         width  = elm_x_get_screen_width();
-    int         height = elm_x_get_screen_height();
-    ElmApp     *apps;
-    ElmGravity  gravity;
-    uint16_t    x;
-    uint16_t    y;
-    size_t      i;
+    ElmApp       *apps;
+    ElmGravity    gravity;
+    int           width;
+    int           height;
+    int           x;
+    int           y;
+    size_t        i;
 
+    elm_x_screen_dimensions(&width, &height);
+
+    /* Iterate over each app, display it, and add it to login manager window */
     for (apps=login_interface(), i=0; apps[i].display; i++)
     {
         elmprintf(LOGINFO, "Adding app '%d' to login manager.", i);
