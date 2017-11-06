@@ -7,6 +7,9 @@ are able to create their own widgets that could be easily added to the login
 manager.
 
 ![elm](style/screenshots/elm.gif)
+![elm login](style/screenshots/login.jpg)
+![elm xsession](style/screenshots/xsession.jpg)
+![elm shutdown](style/screenshots/shutdown.jpg)
 
 ## Requirements
 
