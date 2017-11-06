@@ -188,6 +188,7 @@ char * elm_sys_get_proc(void)
         if (!procs) {
             size  = 1;
             procs = calloc(size, sizeof(*procs));
+            /* To-do: Add check for null */
         }
 
         /* Copy string to process list */

@@ -23,13 +23,13 @@
 
 /* Private functions */
 static GtkWidget * new_login_button(const char *text);
-static void        set_callback_data(GtkWidget *widget, gpointer data);
+/* static void        set_callback_data(GtkWidget *widget, gpointer data); */
 static void        set_default_widget(GtkWidget *widget, gpointer data);
 static void        set_focus_on_widget(GtkWidget *widget, gpointer data);
 
 /* Private variables */
-static const char      *Style = "/etc/X11/elm/style/css/login.css";
-static       ElmLogin   Info;
+static const char *Style = "/etc/X11/elm/style/css/login.css";
+/* static       ElmSessionInfo  Info; */
 
 /* ************************************************************************** */
 /* Create login fields application */
@@ -55,6 +55,11 @@ GtkWidget * display_login(ElmCallback callback)
     xsession  = new_xsession_widget();
     button    = new_login_button("Login");
 
+    ElmSessionInfo       *info    = elm_session_info_new();
+    ElmSessionInfoHelper *uhelper = elm_session_info_helper_new(username, info->username);
+    ElmSessionInfoHelper *phelper = elm_session_info_helper_new(password, info->password);
+    ElmSessionInfoHelper *xhelper = elm_session_info_helper_new(xsession, info->xsession);
+
     gtk_fixed_put(GTK_FIXED(frame), container, 0, 0);
     gtk_box_pack_start(GTK_BOX(container), entrybox,  TRUE,  TRUE,  0);
     gtk_box_pack_start(GTK_BOX(container), buttonbox, TRUE,  TRUE,  0);
@@ -64,11 +69,16 @@ GtkWidget * display_login(ElmCallback callback)
     gtk_box_pack_start(GTK_BOX(buttonbox), xsession,  FALSE, FALSE, 0);
     gtk_widget_set_margin_top(container,   20);
     gtk_widget_set_margin_start(container, 20);
-    g_signal_connect(button, "clicked", G_CALLBACK(callback),            &Info);
+
+    g_signal_connect(button, "clicked", G_CALLBACK(set_credential_info),  uhelper);
+    g_signal_connect(button, "clicked", G_CALLBACK(set_credential_info),  phelper);
+    g_signal_connect(button, "clicked", G_CALLBACK(set_xsession_info),    xhelper);
+    g_signal_connect(button, "clicked", G_CALLBACK(callback),             info);
     g_signal_connect(frame,  "show",    G_CALLBACK(set_default_widget),  &button);
     g_signal_connect(frame,  "show",    G_CALLBACK(set_focus_on_widget), &username);
     g_signal_connect(frame,  "map",     G_CALLBACK(set_default_widget),  &button);
     g_signal_connect(frame,  "map",     G_CALLBACK(set_focus_on_widget), &username);
+
     gtk_widget_show(username);
     gtk_widget_show(password);
     gtk_widget_show(xsession);
@@ -92,32 +102,30 @@ GtkWidget * new_login_button(const char *text)
     elm_gtk_set_widget_size(&button, 185, 30);
     elm_gtk_set_widget_style(&button, "LoginButton", Style);
 
-    g_signal_connect(button, "clicked", G_CALLBACK(set_callback_data), NULL);
-
     return button;
 }
 
-/* ************************************************************************** */
-/* Set data to be handed off to callback 
- * 
- * To-do: If size of username/password is greater than set array size, logging
- * in will always fail. Similarly, for xsession, starting the X session will
- * always fail. 
- */
-void set_callback_data(GtkWidget *widget, gpointer data)
-{
-    const char *username = get_username();
-    const char *password = get_password();
-    const char *xsession = get_xsession();
+/* /\* ************************************************************************** *\/ */
+/* /\* Set data to be handed off to callback  */
+/*  *  */
+/*  * To-do: If size of username/password is greater than set array size, logging */
+/*  * in will always fail. Similarly, for xsession, starting the X session will */
+/*  * always fail.  */
+/*  *\/ */
+/* void set_callback_data(GtkWidget *widget, gpointer data) */
+/* { */
+/*     const char *username = get_username(); */
+/*     const char *password = get_password(); */
+/*     const char *xsession = get_xsession(); */
 
-    memset(Info.username, 0, sizeof(Info.username));
-    memset(Info.password, 0, sizeof(Info.password));
-    memset(Info.xsession, 0, sizeof(Info.xsession));
+/*     memset(Info.username, 0, sizeof(Info.username)); */
+/*     memset(Info.password, 0, sizeof(Info.password)); */
+/*     memset(Info.xsession, 0, sizeof(Info.xsession)); */
 
-    strncpy(Info.username, username, sizeof(Info.username)-1);
-    strncpy(Info.password, password, sizeof(Info.password)-1);
-    strncpy(Info.xsession, xsession, sizeof(Info.xsession)-1);
-}
+/*     strncpy(Info.username, username, sizeof(Info.username)-1); */
+/*     strncpy(Info.password, password, sizeof(Info.password)-1); */
+/*     strncpy(Info.xsession, xsession, sizeof(Info.xsession)-1); */
+/* } */
 
 /* ************************************************************************** */
 /* Set button as the default widget when widget is shown */

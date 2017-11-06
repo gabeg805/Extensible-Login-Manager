@@ -158,8 +158,8 @@ void * elm_login_manager_login_session(void *data)
         return NULL;
     }
 
-    ElmLogin   *info    = data;
-    ElmSession *session = elm_session_new(info);
+    ElmSessionInfo *info    = data;
+    ElmSession     *session = elm_session_new(info);
 
     if (!session) {
         exit(ELM_EXIT_SESS_NEW);

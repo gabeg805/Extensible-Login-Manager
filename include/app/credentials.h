@@ -19,13 +19,11 @@
 /* Includes */
 #include "elmapp.h"
 #include "elmgtk.h"
+#include "elmsession.h"
 
 /* Public functions */
-GtkWidget *  new_username_widget(void);
-GtkWidget *  new_password_widget(void);
-GtkWidget *  get_username_widget(void);
-GtkWidget *  get_password_widget(void);
-const char * get_username(void);
-const char * get_password(void);
+GtkWidget * new_username_widget(void);
+GtkWidget * new_password_widget(void);
+void        set_credential_info(GtkWidget *widget, gpointer data);
 
 #endif /* ELM_CREDENTIALS_H */

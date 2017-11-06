@@ -31,8 +31,8 @@ static int elm_session_exists(char *message);
 static ElmSession *Session = NULL;
 
 /* ************************************************************************** */
-/* Create Extensible Login Manager base structure */
-ElmSession * elm_session_new(ElmLogin *info)
+/* Create session object for user login */
+ElmSession * elm_session_new(ElmSessionInfo *info)
 {
     elmprintf(LOGINFO, "Preparing new Session object.");
 
@@ -46,6 +46,44 @@ ElmSession * elm_session_new(ElmLogin *info)
     Session->info   = info;
 
     return Session;
+}
+
+/* ************************************************************************** */
+/* Create new session info struct */
+ElmSessionInfo * elm_session_info_new(void)
+{
+    elmprintf(LOGINFO, "Preparing new Session Information object.");
+
+    ElmSessionInfo *info = calloc(1, sizeof(*info));
+
+    if (!info) {
+        elmprintf(LOGERRNO, "%s",
+                  "Unable to allocate memory for session information object");
+        exit(ELM_EXIT_SESS_INFO_NEW);
+    }
+
+    return info;
+}
+
+/* ************************************************************************** */
+/* Create new session info helper struct */
+ElmSessionInfoHelper * elm_session_info_helper_new(GtkWidget *widget,
+                                                   char *data)
+{
+    elmprintf(LOGINFO, "Preparing new Session Information Helper object.");
+
+    ElmSessionInfoHelper *helper = calloc(1, sizeof(*helper));
+
+    if (!helper) {
+        elmprintf(LOGERRNO, "%s",
+                  "Unable to allocate memory for session information helper object");
+        exit(ELM_EXIT_SESS_INFO_HELPER_NEW);
+    }
+
+    helper->widget = widget;
+    helper->data   = data;
+
+    return helper;
 }
 
 /* ************************************************************************** */

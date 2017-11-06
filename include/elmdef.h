@@ -48,7 +48,9 @@
 #define ELM_EXIT_X_STOP         30
 #define ELM_EXIT_X_XCOMPMGR     31
 #define ELM_EXIT_SESS_NEW       32
-#define ELM_EXIT_PAM_LOGIN      33
+#define ELM_EXIT_SESS_INFO_NEW  33
+#define ELM_EXIT_SESS_INFO_HELPER_NEW  34
+#define ELM_EXIT_PAM_LOGIN      35
 
 /* Commands */
 #define ELM_CMD_SHUTDOWN "/usr/bin/poweroff"

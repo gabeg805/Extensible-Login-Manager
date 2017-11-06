@@ -21,7 +21,7 @@
 #include "elmsession.h"
 
 /* Public functions */
-int elm_pam_init(ElmLogin *info);
+int elm_pam_init(ElmSessionInfo *info);
 int elm_pam_auth(void);
 int elm_pam_login(void);
 int elm_pam_logout(void);

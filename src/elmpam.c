@@ -61,14 +61,14 @@ static struct passwd * elm_pam_get_passwd_entry(void);
 static        int      elm_pam_success(char *message);
 
 /* Private variables */
-static        pam_handle_t *PamHandle = NULL;
-static        ElmLogin     *PamInfo   = NULL;
-static        int           PamResult = -1;
-static struct utmp          PamUtmp;
+static        pam_handle_t   *PamHandle = NULL;
+static        ElmSessionInfo *PamInfo   = NULL;
+static        int             PamResult = -1;
+static struct utmp            PamUtmp;
 
 /* ************************************************************************** */
 /* Start PAM transaction */
-int elm_pam_init(ElmLogin *info)
+int elm_pam_init(ElmSessionInfo *info)
 {
     PamInfo = info;
     return 0;

@@ -16,8 +16,7 @@
 #include "app/credentials.h"
 
 /* Private functions */
-static const gchar * get_entry_buffer_text(GtkWidget *widget, char **field);
-static       int     set_entry_buffer(GtkWidget *widget, char *placeholder);
+static int set_entry_buffer(GtkWidget *widget, char *placeholder);
 
 /* Private variables */
 static const char       *Style        = "/etc/X11/elm/style/css/credentials.css";
@@ -75,59 +74,34 @@ GtkWidget * new_password_widget(void)
 }
 
 /* ************************************************************************** */
-/* Return username widget */
-GtkWidget * get_username_widget(void)
+/* Set username/password credential information */
+void set_credential_info(GtkWidget *widget, gpointer data)
 {
-    return Username;
-}
+    ElmSessionInfoHelper *helper = data;
+    GtkEntry             *entry  = GTK_ENTRY(helper->widget);
+    GtkEntryBuffer       *buffer = gtk_entry_get_buffer(entry);
+    const gchar          *text   = gtk_entry_buffer_get_text(buffer);
+    size_t                length = strlen(text)+1;
 
-/* ************************************************************************** */
-/* Return password widget */
-GtkWidget * get_password_widget(void)
-{
-    return Password;
-}
+    printf("Info : %s~\n", text);
 
-/* ************************************************************************** */
-/* Return username */
-const char * get_username(void)
-{
-    const gchar *text = get_entry_buffer_text(Username, NULL);
-    printf("Username: %s~\n", text);
-    return text;
-}
-
-/* ************************************************************************** */
-/* Return password */
-const char * get_password(void)
-{
-    const gchar *text = get_entry_buffer_text(Password, NULL);
-    printf("Password: %s~\n", text);
-    return text;
-}
-
-/* ************************************************************************** */
-/* Get entry box text */
-const gchar * get_entry_buffer_text(GtkWidget *widget, char **field)
-{
-    GtkEntryBuffer *buffer = gtk_entry_get_buffer(GTK_ENTRY(widget));
-    const gchar    *text   = gtk_entry_buffer_get_text(buffer);
-
-    set_entry_buffer(widget, NULL);
-
-    return text;
+    set_entry_buffer(helper->widget, NULL);
+    memset(helper->data, 0, length);
+    strncpy(helper->data, text, length);
 }
 
 /* ************************************************************************** */
 /* Set entry box text buffer */
 int set_entry_buffer(GtkWidget *widget, char *placeholder)
 {
-    GtkEntryBuffer *buffer = gtk_entry_buffer_new(0, -1);
+    GtkEntryBuffer *buffer = gtk_entry_buffer_new(NULL, -1);
 
     gtk_entry_buffer_set_max_length(buffer, EntryLength);
     gtk_entry_set_buffer(GTK_ENTRY(widget), buffer);
-    if (placeholder != NULL)
+
+    if (placeholder) {
         gtk_entry_set_placeholder_text(GTK_ENTRY(widget), placeholder);
+    }
 
     return 0;
 }

@@ -19,11 +19,12 @@
 /* Includes */
 #include "elmapp.h"
 #include "elmgtk.h"
+#include "elmsession.h"
 
 /* Public functions */
-GtkWidget *  new_xsession_widget(void);
-GtkWidget *  get_xsession_button_widget(void);
-GtkWidget *  get_xsession_menu_widget(void);
-const char * get_xsession(void);
+GtkWidget * new_xsession_widget(void);
+GtkWidget * get_xsession_button_widget(void);
+GtkWidget * get_xsession_menu_widget(void);
+void        set_xsession_info(GtkWidget *widget, gpointer data);
 
 #endif /* ELM_XSESSION_H */
