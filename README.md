@@ -52,3 +52,4 @@ be the only remnants of this package.
 - [ ] To keep persistence of widgets, malloc and memcpy the memory.
 - [x] Print to stdout/stderr, in addition to logging everything.
 - [x] Add images to username/password entries.
+- [x] Add Name= and Exec= info to xsessions.c
