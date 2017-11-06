@@ -43,7 +43,6 @@ be the only remnants of this package.
 # Things to Implement
 
 - [ ] Logout command line option.
-- [ ] Add images to username/password entries.
 - [ ] Setup and connect to the org.freedesktop.DisplayManager bus.
 - [ ] Research policykit bus.
       ==== AUTHENTICATING FOR org.freedesktop.policykit.exec ====
@@ -52,3 +51,4 @@ be the only remnants of this package.
 - [ ] Reduce reliance on static globals and pass in variables instead.
 - [ ] To keep persistence of widgets, malloc and memcpy the memory.
 - [x] Print to stdout/stderr, in addition to logging everything.
+- [x] Add images to username/password entries.
