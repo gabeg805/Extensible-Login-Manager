@@ -19,9 +19,9 @@
 static int set_entry_buffer(GtkWidget *widget, char *placeholder);
 
 /* Private variables */
-static const char       *Style        = "/etc/X11/elm/style/css/credentials.css";
-static const char       *UserIcon     = "/etc/X11/elm/style/icons/user.png";
-static const char       *PasswordIcon = "/etc/X11/elm/style/icons/password.png";
+static const char       *Style        = "/etc/X11/elm/share/css/credentials.css";
+static const char       *UserIcon     = "/etc/X11/elm/share/icons/user.png";
+static const char       *PasswordIcon = "/etc/X11/elm/share/icons/password.png";
 static const int         EntryLength  = 32;
 static       GtkWidget  *Username     = NULL;
 static       GtkWidget  *Password     = NULL;

@@ -1,6 +1,6 @@
 .PowerButton
 {
-    background-image : url("/etc/X11/elm/style/icons/shutdown.png");
+    background-image : url("/etc/X11/elm/share/icons/shutdown.png");
     border-color     : transparent;
     border-radius    : 15px;
     border-width     : 1px;

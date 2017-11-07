@@ -51,7 +51,7 @@ static int    elm_login_manager_alloc_apps(size_t s);
 static int    elm_login_manager_exists(char *message);
 
 /* Private globals */
-static const char             *Style     = "/etc/X11/elm/style/css/loginmanager.css";
+static const char             *Style     = "/etc/X11/elm/share/css/loginmanager.css";
 static       int               Preview   = 0;
 static       ElmLoginManager  *Manager   = NULL;
 static       GtkWidget        *Window    = NULL;

@@ -21,7 +21,7 @@ static int     set_xsession_menu(GtkWidget **menu);
 static char ** get_available_xsessions(void);
 
 /* Private variables */
-static const char      *Style   = "/etc/X11/elm/style/css/xsession.css";
+static const char      *Style   = "/etc/X11/elm/share/css/xsession.css";
 static       GtkWidget *Xbutton = NULL;
 static       GtkWidget *Xmenu   = NULL;
 

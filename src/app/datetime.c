@@ -21,7 +21,7 @@ static gboolean set_date(gpointer data);
 static gboolean set_time(gpointer data);
 
 /* Private variables */
-static const char *Style      = "/etc/X11/elm/style/css/datetime.css";
+static const char *Style      = "/etc/X11/elm/share/css/datetime.css";
 static const char *DateFormat = "%A, %B %-d";
 static const char *TimeFormat = "%-I:%M %p";
 

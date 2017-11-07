@@ -19,6 +19,9 @@
 /* Private functions */
 static gboolean draw_frame(GtkWidget *drawing, cairo_t *cr, gpointer data);
 
+/* Private variables */
+static const char *Style = "/etc/X11/elm/share/css/frame.css";
+
 /* ************************************************************************** */
 /* Create login frame application */
 GtkWidget * new_frame_widget(void)
@@ -56,7 +59,7 @@ gboolean draw_frame(GtkWidget *drawing, cairo_t *cr, gpointer data)
     /* Render background */
     GtkStyleContext *context = gtk_widget_get_style_context(drawing);
 
-    elm_gtk_set_widget_style(&drawing, "Frame", "/etc/X11/elm/style/css/frame.css");
+    elm_gtk_set_widget_style(&drawing, "Frame", Style);
     gtk_render_background(context, cr, 0, 0, width, height);
 
     /* Curved edges */

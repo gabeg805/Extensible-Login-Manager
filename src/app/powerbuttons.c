@@ -23,7 +23,7 @@ static void system_reboot(GtkButton   *button, gpointer data);
 static void system_cancel(GtkButton   *button, gpointer data);
 
 /* Private variables */
-static const char *Style = "/etc/X11/elm/style/css/powerbuttons.css";
+static const char *Style = "/etc/X11/elm/share/css/powerbuttons.css";
 
 /* ************************************************************************** */
 /* Display system action options */

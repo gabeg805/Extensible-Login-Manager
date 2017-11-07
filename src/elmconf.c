@@ -29,7 +29,7 @@ int     elm_conf_is_valid_request(GKeyFile *keyfile, char *group, char *key);
 int     elm_conf_is_key_err(GError *err);
 
 /* Private variables */
-const char *ConfigFile = "/etc/X11/elm/conf/elm.conf";
+const char *ConfigFile = "/etc/X11/elm/etc/elm.conf";
 
 /* ************************************************************************** */
 /* Read the configuration file and return the key value as a string */

@@ -28,7 +28,7 @@ static void        set_default_widget(GtkWidget *widget, gpointer data);
 static void        set_focus_on_widget(GtkWidget *widget, gpointer data);
 
 /* Private variables */
-static const char *Style = "/etc/X11/elm/style/css/login.css";
+static const char *Style = "/etc/X11/elm/share/css/login.css";
 /* static       ElmSessionInfo  Info; */
 
 /* ************************************************************************** */
