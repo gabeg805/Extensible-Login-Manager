@@ -6,10 +6,10 @@ The Extensible Login Manager (ELM) is a highly configurable login manager. Users
 are able to create their own widgets that could be easily added to the login
 manager.
 
-![elm](style/screenshots/elm.gif)
-![elm login](style/screenshots/login.jpg)
-![elm xsession](style/screenshots/xsession.jpg)
-![elm shutdown](style/screenshots/shutdown.jpg)
+![elm](share/screenshots/elm.gif)
+![elm login](share/screenshots/login.jpg)
+![elm xsession](share/screenshots/xsession.jpg)
+![elm shutdown](share/screenshots/shutdown.jpg)
 
 ## Requirements
 
