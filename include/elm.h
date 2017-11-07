@@ -19,6 +19,7 @@
 /* Includes */
 #include "elmapp.h"
 #include "elmpam.h"
+#include "elmconf.h"
 #include "elmdef.h"
 #include "elmloginmanager.h"
 #include "elmsession.h"
