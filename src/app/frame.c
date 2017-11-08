@@ -33,10 +33,6 @@ GtkWidget * new_frame_widget(void)
 
     container = gtk_fixed_new();
     drawing   = gtk_drawing_area_new();
-    /* container = elm_gtk_alloc(gtk_fixed_new(),        sizeof(GtkFixed)); */
-    /* drawing   = elm_gtk_alloc(gtk_drawing_area_new(), sizeof(GtkDrawingArea)); */
-
-    /* printf("%p\n", drawing); */
 
     elm_gtk_set_widget_size(&drawing, 270, 150);
     gtk_fixed_put(GTK_FIXED(container), drawing, 0, 0);
@@ -77,8 +73,6 @@ gboolean draw_frame(GtkWidget *drawing, cairo_t *cr, gpointer data)
 
     /* Draw frame */
     cairo_fill(cr);
-
-    /* printf("%p %p %p (%lf %lf %lf %lf)\n", drawing, cr, context, color.red, color.green, color.blue, color.alpha); */
 
     return FALSE;
 }

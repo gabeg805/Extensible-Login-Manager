@@ -15,6 +15,7 @@
 
 /* Includes */
 #include "elmgtk.h"
+#include "elmconf.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <gdk/gdk.h>
@@ -171,4 +172,21 @@ GtkWidget * elm_gtk_get_window(GtkWidget **widget)
 GdkWindow * elm_gtk_get_gdkwindow(GtkWidget **widget)
 {
     return gtk_widget_get_window(*widget);
+}
+
+/* ************************************************************************** */
+/* Set size of widget from config file */
+int elm_gtk_conf_set_widget_size(GtkWidget **widget, const char *group,
+                                 const char *xkey, const char *ykey)
+{
+    int width  = elm_conf_read_int(group, xkey);
+    int height = elm_conf_read_int(group, ykey);
+
+    if ((width < 0) || (height < 0)) {
+        return -1;
+    }
+
+    gtk_widget_set_size_request(*widget, width, height);
+
+    return 0;
 }

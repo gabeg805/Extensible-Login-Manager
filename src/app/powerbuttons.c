@@ -31,14 +31,17 @@ GtkWidget * display_power_buttons(ElmCallback callback)
 {
     elmprintf(LOGINFO, "Displaying system power button.");
 
-    static GtkWidget *button;
+    /* Create widget */
+    static GtkWidget *button = NULL;
 
     button = gtk_button_new();
 
+    /* Setup widget */
     gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
     elm_gtk_set_widget_style(&button, "PowerButton", Style);
-    elm_gtk_set_widget_size(&button, 31, 31);
+    elm_gtk_conf_set_widget_size(&button, "Powerbuttons", "Width", "Height");
     g_signal_connect(button, "clicked", G_CALLBACK(system_prompt), NULL);
+
     gtk_widget_show(button);
 
     return button;
@@ -48,6 +51,7 @@ GtkWidget * display_power_buttons(ElmCallback callback)
 /* Display system prompt popup window */
 void system_prompt(GtkButton *button, gpointer data)
 {
+    /* Create dialog prompt */
     size_t     margin    = 20;
     GtkWidget *dialog    = gtk_dialog_new();
     GtkWidget *shutdown  = gtk_button_new_with_label("Shutdown");
@@ -60,6 +64,7 @@ void system_prompt(GtkButton *button, gpointer data)
     GtkWidget *widget    = GTK_WIDGET(button);
     GtkWindow *window    = GTK_WINDOW(elm_gtk_get_window(&widget));
 
+    /* Setup dialog prompt */
     gtk_box_pack_start(GTK_BOX(container), label,     TRUE,  TRUE,  0);
     gtk_box_pack_start(GTK_BOX(container), buttonbox, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(buttonbox), systembox, FALSE, FALSE, 0);
@@ -73,14 +78,15 @@ void system_prompt(GtkButton *button, gpointer data)
     gtk_widget_set_margin_end(container,    margin/2);
     gtk_widget_set_margin_bottom(label,     margin);
     elm_gtk_set_widget_style(&shutdown, "ShutdownButton", Style);
-    g_signal_connect(shutdown, "clicked", G_CALLBACK(system_shutdown), &dialog);
-    g_signal_connect(reboot,   "clicked", G_CALLBACK(system_reboot),   &dialog);
-    g_signal_connect(cancel,   "clicked", G_CALLBACK(system_cancel),   &dialog);
-
     gtk_dialog_set_default_response(GTK_DIALOG(dialog), 0);
     gtk_window_set_transient_for(GTK_WINDOW(dialog), window);
     gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
 
+    g_signal_connect(shutdown, "clicked", G_CALLBACK(system_shutdown), &dialog);
+    g_signal_connect(reboot,   "clicked", G_CALLBACK(system_reboot),   &dialog);
+    g_signal_connect(cancel,   "clicked", G_CALLBACK(system_cancel),   &dialog);
+
+    /* Display dialog prompt */
     gtk_widget_grab_focus(cancel);
     gtk_widget_show_all(dialog);
     gtk_dialog_run(GTK_DIALOG(dialog));

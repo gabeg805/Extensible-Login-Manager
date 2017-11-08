@@ -22,10 +22,12 @@
 #include <stdio.h>
 
 /* Private functions */
+/* To-do: static char -> malloc */
 int     elm_conf_key_file(GKeyFile **keyfile, const char *configfile);
 char ** elm_conf_get_groups(void);
-char ** elm_conf_get_keys(char *group);
-int     elm_conf_is_valid_request(GKeyFile *keyfile, char *group, char *key);
+char ** elm_conf_get_keys(const char *group);
+int     elm_conf_is_valid_request(GKeyFile *keyfile, const char *group,
+                                  const char *key);
 int     elm_conf_is_key_err(GError *err);
 
 /* Private variables */
@@ -33,7 +35,7 @@ const char *ConfigFile = "/etc/X11/elm/etc/elm.conf";
 
 /* ************************************************************************** */
 /* Read the configuration file and return the key value as a string */
-char * elm_conf_read(char *group, char *key)
+char * elm_conf_read(const char *group, const char *key)
 {
     GError      *err = NULL;
     GKeyFile    *keyfile;
@@ -58,7 +60,7 @@ char * elm_conf_read(char *group, char *key)
 /* ************************************************************************** */
 /* Read the configuration file and return the key value as an unescaped UTF-8
  * string */
-char * elm_conf_read_str(char *group, char *key)
+char * elm_conf_read_str(const char *group, const char *key)
 {
     GError      *err = NULL;
     GKeyFile    *keyfile;
@@ -82,7 +84,7 @@ char * elm_conf_read_str(char *group, char *key)
 
 /* ************************************************************************** */
 /* Read the configuration file and return the key value as an int */
-int elm_conf_read_int(char *group, char *key)
+int elm_conf_read_int(const char *group, const char *key)
 {
     GError   *err = NULL;
     GKeyFile *keyfile;
@@ -103,7 +105,7 @@ int elm_conf_read_int(char *group, char *key)
 
 /* ************************************************************************** */
 /* Read the configuration file and return the key value as a bool */
-bool elm_conf_read_bool(char *group, char *key)
+bool elm_conf_read_bool(const char *group, const char *key)
 {
     GError   *err = NULL;
     GKeyFile *keyfile;
@@ -159,7 +161,7 @@ char ** elm_conf_get_groups(void)
 
 /* ************************************************************************** */
 /* Return all keys for a given group in the config file */
-char ** elm_conf_get_keys(char *group)
+char ** elm_conf_get_keys(const char *group)
 {
     GError    *err = NULL;
     GKeyFile  *keyfile;
@@ -180,7 +182,8 @@ char ** elm_conf_get_keys(char *group)
 
 /* ************************************************************************** */
 /* Check key file for requested group and key */
-int elm_conf_is_valid_request(GKeyFile *keyfile, char *group, char *key)
+int elm_conf_is_valid_request(GKeyFile *keyfile, const char *group,
+                              const char *key)
 {
     GError *err = NULL;
 

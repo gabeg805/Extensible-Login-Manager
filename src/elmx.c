@@ -14,6 +14,7 @@
 
 /* Includes */
 #include "elmx.h"
+#include "elmconf.h"
 #include "elmdef.h"
 #include "elmio.h"
 #include "elmsys.h"
@@ -64,8 +65,8 @@ static char * elm_x_get_tty_from_sys(void);
 static int    elm_x_is_running(void);
 
 /* Private variables */
-static Display *XDisplay      = NULL;
-static pid_t    XPid          = -1;
+static Display *XDisplay = NULL;
+static pid_t    XPid     = -1;
 
 /* ************************************************************************** */
 /* Start the X server */
@@ -107,9 +108,16 @@ int elm_x_wait(void)
 {
     elmprintf(LOGINFO, "Setting up wait for 'SIGUSR1' signal.");
 
-    struct timespec timeout = {30, 0};
+    struct timespec timeout = {0};
     sigset_t        set;
     siginfo_t       info;
+    int             sec;
+
+    if ((sec=elm_conf_read_int("Main", "XTimeout")) < 0) {
+        sec = 30;
+    }
+
+    timeout.tv_sec = sec;
 
     if (sigemptyset(&set) < 0) {
         elmprintf(LOGERRNO, "Unable to empty signal set");
@@ -163,33 +171,33 @@ int elm_x_init(void)
 /* Stop X server */
 int elm_x_stop(Display *display)
 {
-	elmprintf(LOGWARN, "Connection to X server lost.");
+    elmprintf(LOGWARN, "Connection to X server lost.");
 
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGINT,  SIG_IGN);
-	signal(SIGHUP,  SIG_IGN);
-	signal(SIGPIPE, SIG_IGN);
-	signal(SIGTERM, SIG_DFL);
-	signal(SIGKILL, SIG_DFL);
+    signal(SIGQUIT, SIG_IGN);
+    signal(SIGINT,  SIG_IGN);
+    signal(SIGHUP,  SIG_IGN);
+    signal(SIGPIPE, SIG_IGN);
+    signal(SIGTERM, SIG_DFL);
+    signal(SIGKILL, SIG_DFL);
 
-	/* Close display */
-	if(XDisplay) {
-		XCloseDisplay(XDisplay);
+    /* Close display */
+    if(XDisplay) {
+        XCloseDisplay(XDisplay);
     }
 
-	/* Send HUP to process group */
+    /* Send HUP to process group */
     elmprintf(LOGWARN, "Sending HUP to X server process group.");
 
-	errno = 0;
-	if((killpg(getpid(), SIGHUP) != 0) && (errno != ESRCH)) {
-		elmprintf(LOGERRNO, "%s '%d'"
+    errno = 0;
+    if((killpg(getpid(), SIGHUP) != 0) && (errno != ESRCH)) {
+        elmprintf(LOGERRNO, "%s '%d'"
                   "Unable to send HUP to process group", getpid());
     }
 
-	/* Send TERM to server */
+    /* Send TERM to server */
     elmprintf(LOGWARN, "Sending TERM to X server process group.");
 
-	if(XPid < 0) {
+    if(XPid < 0) {
         elmprintf(LOGERR, "X server has invalid pid '%lu'. Exiting.", XPid);
     }
     else {
@@ -200,7 +208,7 @@ int elm_x_stop(Display *display)
         }
     }
 
-	/* Wait 10 sec for server to shut down */
+    /* Wait 10 sec for server to shut down */
     elmprintf(LOGWARN, "Waiting for X server to shut down.");
 
     int i;
@@ -214,14 +222,14 @@ int elm_x_stop(Display *display)
         sleep(1);
     }
 
-	/* Send KILL to server */
+    /* Send KILL to server */
     elmprintf(LOGWARN, "%s. %s", "X server is slow to shut down.",
               "Sending KILL to X server process group.");
 
-	errno = 0;
-	if(killpg(XPid, SIGKILL) < 0) {
+    errno = 0;
+    if(killpg(XPid, SIGKILL) < 0) {
         elmprintf(LOGERRNO, "Unable to KILL X server process group");
-	}
+    }
 
     /* Collect all dead children */
     elmprintf(LOGWARN, "Collecting all dead children.");
@@ -426,9 +434,6 @@ int elm_x_set_display_env(void)
                   getenv("DISPLAY"));
         return 1;
     }
-
-
-    system("ls -la /tmp/.X* &> /home/gabeg/tmpx.txt");
 
     /* Find an open display */
     char file[15];
@@ -645,20 +650,34 @@ int elm_x_screen_dimensions(int *width, int *height)
     Window              window = DefaultRootWindow(XDisplay);
     XRRScreenResources *screen = XRRGetScreenResources(XDisplay, window);
 
-    *width  = 0;
-    *height = 0;
-
     /* Unable to determine screen info */
     if (!screen) {
         elmprintf(LOGERR, "Unable to set screen dimensions.");
         return 1;
     }
 
+    /* Check if width and height already set in config file */
+    *width  = elm_conf_read_int("Main", "ScreenWidth");
+    *height = elm_conf_read_int("Main", "ScreenHeight");
+
+    if ((*width > 0) && (*height > 0)) {
+        return 0;
+    }
+
+    /* Width and height were not set. Set to initial values */
+    if (*width < 0) {
+        *width = 0;
+    }
+
+    if (*height < 0) {
+        *height = 0;
+    }
+
+    /* Set screen dimensions for the monitor at x=0 */
     int          num = screen->ncrtc;
     int          i;
     XRRCrtcInfo *info;
 
-    /* Set screen dimensions for monitor at x=0 */
     for (i=0; i < num; i++) {
         info = XRRGetCrtcInfo(XDisplay, screen, screen->crtcs[i]);
 

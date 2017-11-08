@@ -18,6 +18,7 @@
 
 /* Includes */
 #include "elmapp.h"
+#include "elmconf.h"
 #include "elmgtk.h"
 
 /* Public functions */

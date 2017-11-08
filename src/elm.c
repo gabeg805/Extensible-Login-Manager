@@ -32,10 +32,6 @@ typedef struct
 /* Display the Extensible Login Manager  */
 int main(int argc, char **argv)
 {
-    /* elmprintf(INFO, elm_conf_read("First Group", "Yo")); */
-    /* elmprintf(INFO, elm_conf_read_str("First Group", "YO")); */
-    /* exit(0); */
-
     /* Check if no arguments given */
     if (argc == 0) {
         usage();

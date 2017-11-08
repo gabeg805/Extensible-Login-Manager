@@ -19,6 +19,7 @@
 /* Private functions */
 static int     set_xsession_menu(GtkWidget **menu);
 static char ** get_available_xsessions(void);
+static void *  elm_calloc(void *ptr, size_t nmemb, size_t size);
 
 /* Private variables */
 static const char      *Style   = "/etc/X11/elm/share/css/xsession.css";
@@ -194,7 +195,18 @@ char ** get_available_xsessions(void)
                 continue;
             }
 
+
             /* Allocate memory if not already allocated */
+            /* if (!(xsessions=elm_calloc(&xsessions, 2, sizeof(*xsessions)))) { */
+            /*     printf("Unable to allocate main xsessions pointer"); */
+            /*     return NULL; */
+            /* } */
+
+            /* if (!(xsessions[row]=elm_calloc(&xsessions[row], 1, sizeof(*xsessions[0])))) { */
+            /*     printf("Unable to allocate xsessions row '%lu'", row); */
+            /*     return NULL; */
+            /* } */
+
             if (!xsessions) {
                 xsessions = calloc(2, sizeof(*xsessions));
 
@@ -237,8 +249,41 @@ char ** get_available_xsessions(void)
 
     closedir(dhandle);
 
+    printf("Namesize: %lu\n", namesize);
+    printf("Execsize: %lu\n", execsize);
+
+    if (xsessions[0]) {
+        xsessions[0][namesize-1] = NULL;
+    }
+    if (xsessions[1]) {
+        xsessions[1][execsize-1] = NULL;
+    }
+
     pair[0] = xsessions[0][0];
     pair[1] = xsessions[1][0];
 
     return pair;
+}
+
+/* ************************************************************************** */
+/* Wrapper for calloc that does pre and post checking for you. This will not
+ * allocate memory for a pointer that is not null. ptr should be reference to
+ * another pointer. */
+void * elm_calloc(void *ptr, size_t nmemb, size_t size)
+{
+    char **copy = ptr;
+    void  *cast;
+
+    /* Do not allocate memory for a non-null pointer */
+    if (*copy) {
+        return *copy;
+    }
+
+    if (!(cast=calloc(nmemb, size))) {
+        return NULL;
+    }
+
+    *copy = cast;
+
+    return cast;
 }
