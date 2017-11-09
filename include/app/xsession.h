@@ -20,6 +20,7 @@
 #include "elmapp.h"
 #include "elmgtk.h"
 #include "elmsession.h"
+#include "elmsys.h"
 
 /* Public functions */
 GtkWidget * new_xsession_widget(void);

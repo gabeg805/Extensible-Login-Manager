@@ -18,6 +18,7 @@
 #include "elmio.h"
 #include <dirent.h>
 #include <fcntl.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,6 +57,80 @@ int elm_setenv(char *name, char *value)
 }
 
 /* ************************************************************************** */
+/* Allocate memory then copy a string to allocated memory */
+char * elm_string_copy(char **ptr, char *string)
+{
+    size_t length = strlen(string)+1;
+
+    if (!elm_calloc(ptr, length, sizeof *string)) {
+        elmprintf(LOGERRNO, "%s '%s'",
+                  "Unable to allocate memory for string", string);
+        return NULL;
+    }
+
+    strncpy(*ptr, string, length);
+
+    return *ptr;
+}
+
+/* ************************************************************************** */
+/* Wrapper for calloc() that does pre and post checking for you. This will not
+ * allocate memory for a pointer that is not null. If ptr is non-nll, should be
+ * reference to another pointer. */
+void * elm_calloc(void *ptr, size_t nmemb, size_t size)
+{
+    /* Call calloc directly when pointer is null */
+    if (!ptr) {
+        return calloc(nmemb, size);
+    }
+
+    char **cast = ptr;
+    void  *new;
+
+    /* Do not allocate memory for a non-null pointer */
+    if (*cast) {
+        return *cast;
+    }
+
+    /* Allocate memory */
+    if (!(new=calloc(nmemb, size))) {
+        return NULL;
+    }
+
+    return (*cast=new);
+}
+
+/* ************************************************************************** */
+/* Wrapper for calloc() that does post checking for you. If ptr is non-null,
+ * should be reference to another pointer. */
+void * elm_realloc(void *ptr, size_t nmemb, size_t size)
+{
+    /* Call calloc directly when pointer is null */
+    if (!ptr) {
+        return elm_calloc(NULL, nmemb, size);
+    }
+
+    /* Reallocate memory */
+    char **cast = ptr;
+    void  *new;
+
+    if (!(new=realloc(*cast, nmemb*size))) {
+        free(new);
+        return NULL;
+    }
+
+    return (*cast=new);
+}
+
+/* ************************************************************************** */
+/* Wrapper for free(), for completeness since other *alloc functions were
+ * wrapped. */
+void elm_free(void *ptr)
+{
+    free(ptr);
+}
+
+/* ************************************************************************** */
 /* Search for a process that matches the input name and return its PID */
 pid_t elm_sys_pgrep(const char *program)
 {
@@ -64,7 +139,7 @@ pid_t elm_sys_pgrep(const char *program)
     char         *proc;
     char         *ptr;
     char         *end;
-    char          fpath[ELM_MAX_PATH_SIZE];
+    char         *fpath;
     char          buffer[ELM_MAX_MSG_SIZE];
     struct stat   info;
     int           nbytes;
@@ -79,9 +154,9 @@ pid_t elm_sys_pgrep(const char *program)
         }
 
         /* Make sure user spawned process */
-        snprintf(fpath, sizeof(fpath), "/proc/%s/cmdline", proc);
+        fpath = elm_sys_path("/proc/%s/cmdline", proc);
 
-        if (   (stat(fpath, &info) < 0) \
+        if ((stat(fpath, &info) < 0) \
             || ((info.st_uid != uid) && (uid > 0)) \
             || (access(fpath, R_OK) < 0))
         {
@@ -89,7 +164,7 @@ pid_t elm_sys_pgrep(const char *program)
         }
 
         /* Read cmdline file for pid */
-        if (   ((fd=open(fpath, O_RDONLY)) < 0) \
+        if (((fd=open(fpath, O_RDONLY)) < 0) \
             || ((nbytes=read(fd, buffer, sizeof(buffer))) <= 0))
         {
             continue;
@@ -147,7 +222,6 @@ char * elm_sys_get_proc(void)
 
     /* Return next process in list */
     if (procs) {
-        /* Clear previous memory */
         free(procs[index++]);
         procs[index-1] = NULL;
 
@@ -155,59 +229,87 @@ char * elm_sys_get_proc(void)
             return procs[index];
         }
         else {
-            /* Clear all allocated memory */
-            free(procs[index]);
-            free(procs);
-            procs = NULL;
-            index = 0;
-
-            return NULL;
+            goto maincleanup;
         }
+    }
+    else {
+        index = 1;
     }
 
     /* Populate process list with current processes */
-    DIR            *dstream = opendir("/proc");
-    size_t          size    = 0;
-    size_t          length  = 0;
+    DIR            *dhandle = opendir("/proc");
     struct dirent  *entry;
     char           *endptr;
 
-    while ((entry=readdir(dstream)))
+    if (!dhandle) {
+        index = 0;
+        return NULL;
+    }
+
+    while ((entry=readdir(dhandle)))
     {
-        /* Must be a directory */
+        /* Check process conditions */
         if (entry->d_type != DT_DIR) {
             continue;
         }
 
-        /* Must have a name that can be converted to a number */
         if (!strtol(entry->d_name, &endptr, 10) || (*endptr != '\0')) {
             continue;
         }
 
-        /* Allocate memory for process list if not already allocated */
-        if (!procs) {
-            size  = 1;
-            procs = calloc(size, sizeof(*procs));
-            /* To-do: Add check for null */
+        /* Allocate memory for process list */
+        if (!elm_calloc(&procs, 1, sizeof *procs)) {
+            elmprintf(LOGERRNO, "Unable to allocate process array");
+            goto cleanup;
         }
 
         /* Copy string to process list */
-        length        = strlen(entry->d_name)+1;
-        procs[size-1] = calloc(length, sizeof(*procs[0]));
+        if (!elm_string_copy(&procs[index-1], entry->d_name)) {
+            goto cleanup; /* Should be maincleanup, make label more robust */
+        }
 
-        strncpy(procs[size-1], entry->d_name, length);
+        /* Increase size of allocated memory region */
+        if (!elm_realloc(&procs, index+1, sizeof *procs)) {
+            elmprintf(LOGERRNO, "Unable to reallocate process array");
+            goto cleanup; /* Should be maincleanup, make label more robust */
+        }
 
-        procs = realloc(procs, (++size)*sizeof(*procs));
+        procs[index++] = NULL;
     }
 
-    /* Cleanup */
-    closedir(dstream);
+    closedir(dhandle);
 
-    if (size > 0) {
-        procs[size-1] = NULL;
-    }
+    index = 0;
 
     return *procs;
+
+/* Clear all allocated memory */
+maincleanup:
+    free(procs[index]);
+
+    procs[index] = NULL;
+
+cleanup:
+    free(procs);
+
+    procs = NULL;
+    index = 0;
+
+    return NULL;
+}
+
+/* ************************************************************************** */
+/* Return path given path components */
+char * elm_sys_path(const char *format, ...)
+{
+    static char path[ELM_MAX_PATH_SIZE];
+    va_list     ap;
+
+    va_start(ap, format);
+    vsnprintf(path, sizeof(path), format, ap);
+    va_end(ap);
+
+    return path;
 }
 
 /* ************************************************************************** */

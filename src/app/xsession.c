@@ -19,7 +19,6 @@
 /* Private functions */
 static int     set_xsession_menu(GtkWidget **menu);
 static char ** get_available_xsessions(void);
-static void *  elm_calloc(void *ptr, size_t nmemb, size_t size);
 
 /* Private variables */
 static const char      *Style   = "/etc/X11/elm/share/css/xsession.css";
@@ -100,7 +99,6 @@ char ** get_available_xsessions(void)
 
     /* Return next session pair in list */
     if (xsessions) {
-        /* Clear previous memory */
         free(xsessions[0][index]);
         free(xsessions[1][index++]);
 
@@ -111,58 +109,39 @@ char ** get_available_xsessions(void)
             return pair;
         }
         else {
-            /* Clear all allocated memory */
-            free(xsessions[0]);
-            free(xsessions[1]);
-
-            xsessions[0] = NULL;
-            xsessions[1] = NULL;
-
-            free(xsessions);
-
-            xsessions    = NULL;
-            pair[0]      = NULL;
-            pair[1]      = NULL;
-            index        = 0;
-
-            return NULL;
+            goto maincleanup;
         }
     }
 
     /* Open directory for reading */
-    const char *dir     = "/usr/share/xsessions";
-    DIR        *dhandle = opendir(dir);
+    const char    *dir     = "/usr/share/xsessions";
+    DIR           *dhandle = opendir(dir);
+    FILE          *fhandle;
+    struct dirent *entry;
 
     if (!dhandle) {
         return NULL;
     }
 
     /* Prepare variables */
-    size_t         namesize = 1;
-    size_t         execsize = 1;
-    size_t         row;
-    size_t         col;
-    size_t         length;
-    FILE          *fhandle;
-    char          *filename;
-    char          *pos;
-    char          *substring;
-    char           line[128];
-    char           path[128];
-    struct dirent *entry;
+    size_t  namesize = 1;
+    size_t  execsize = 1;
+    size_t  row;
+    size_t  col;
+    char   *pos;
+    char   *path;
+    char    line[ELM_MAX_LINE_SIZE];
 
     /* Iterate over files in directory */
     while ((entry=readdir(dhandle)))
     {
         /* Check extension of file is correct */
-        filename = entry->d_name;
-
         if ((entry->d_type != DT_REG) || (!strstr(entry->d_name, ".desktop"))) {
             continue;
         }
 
         /* Prepare to read file */
-        snprintf(path, sizeof(path), "%s/%s", dir, filename);
+        path = elm_sys_path("%s/%s", dir, entry->d_name);
 
         if (!(fhandle=fopen(path, "r"))) {
             continue;
@@ -183,65 +162,42 @@ char ** get_available_xsessions(void)
             /* Find name and exec command */
             if (strstr(line, "Name=")) {
                 row = 0;
-                col = namesize-1;
+                col = namesize;
                 namesize++;
             }
             else if (strstr(line, "Exec=")) {
                 row = 1;
-                col = execsize-1;
+                col = execsize;
                 execsize++;
             }
             else {
                 continue;
             }
 
-
             /* Allocate memory if not already allocated */
-            /* if (!(xsessions=elm_calloc(&xsessions, 2, sizeof(*xsessions)))) { */
-            /*     printf("Unable to allocate main xsessions pointer"); */
-            /*     return NULL; */
-            /* } */
-
-            /* if (!(xsessions[row]=elm_calloc(&xsessions[row], 1, sizeof(*xsessions[0])))) { */
-            /*     printf("Unable to allocate xsessions row '%lu'", row); */
-            /*     return NULL; */
-            /* } */
-
-            if (!xsessions) {
-                xsessions = calloc(2, sizeof(*xsessions));
-
-                if (!xsessions) {
-                    printf("Unable to allocate main xsessions pointer");
-                    return NULL;
-                }
+            if (!elm_calloc(&xsessions, 2, sizeof *xsessions)) {
+                elmprintf(LOGERRNO, "Unable to allocate xsessions array");
+                goto cleanup;
             }
 
-            if (!xsessions[row]) {
-                xsessions[row] = calloc(1, sizeof(*xsessions[0]));
-
-                if (!xsessions[row]) {
-                    printf("Unable to allocate xsessions row '%lu'", row);
-                    return NULL;
-                }
+            if (!elm_calloc(&xsessions[row], 1, sizeof *xsessions[0])) {
+                elmprintf(LOGERRNO, "%s '%lu'",
+                          "Unable to allocate xsessions array", row);
+                goto cleanup;
             }
 
             /* Save string to return */
-            substring           = &line[5];
-            length              = strlen(substring)+1;
-            xsessions[row][col] = calloc(length, sizeof(*substring));
-
-            if (!xsessions[row][col]) {
-                printf("Unable to allocate xsessions row/col (%lu,%lu)", row, col);
-                return NULL;
+            if (!elm_string_copy(&xsessions[row][col-1], &line[5])) {
+                goto cleanup;
             }
 
-            strncpy(xsessions[row][col], substring, length);
-            xsessions[row] = realloc(xsessions[row], (col+2)*sizeof(*xsessions[0]));
-
-            if (!xsessions[row]) {
-                printf("Unable to reallocate xsessions");
-                return NULL;
+            /* Resize allocated memory for next xsession */
+            if (!elm_realloc(&xsessions[row], col+1, sizeof *xsessions[0])) {
+                elmprintf(LOGERRNO, "Unable to reallocate xsessions array");
+                goto cleanup;
             }
+
+            xsessions[row][col] = NULL;
         }
 
         fclose(fhandle);
@@ -249,41 +205,25 @@ char ** get_available_xsessions(void)
 
     closedir(dhandle);
 
-    printf("Namesize: %lu\n", namesize);
-    printf("Execsize: %lu\n", execsize);
-
-    if (xsessions[0]) {
-        xsessions[0][namesize-1] = NULL;
-    }
-    if (xsessions[1]) {
-        xsessions[1][execsize-1] = NULL;
-    }
-
     pair[0] = xsessions[0][0];
     pair[1] = xsessions[1][0];
 
     return pair;
-}
 
-/* ************************************************************************** */
-/* Wrapper for calloc that does pre and post checking for you. This will not
- * allocate memory for a pointer that is not null. ptr should be reference to
- * another pointer. */
-void * elm_calloc(void *ptr, size_t nmemb, size_t size)
-{
-    char **copy = ptr;
-    void  *cast;
+maincleanup:
+    free(xsessions[0]);
+    free(xsessions[1]);
 
-    /* Do not allocate memory for a non-null pointer */
-    if (*copy) {
-        return *copy;
-    }
+    xsessions[0] = NULL;
+    xsessions[1] = NULL;
 
-    if (!(cast=calloc(nmemb, size))) {
-        return NULL;
-    }
+cleanup:
+    free(xsessions);
 
-    *copy = cast;
+    xsessions    = NULL;
+    pair[0]      = NULL;
+    pair[1]      = NULL;
+    index        = 0;
 
-    return cast;
+    return NULL;
 }

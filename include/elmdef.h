@@ -68,9 +68,10 @@
 
 /* Sizes */
 #define ELM_MAX_CRED_SIZE 64
+#define ELM_MAX_CMD_SIZE  128
 #define ELM_MAX_CONF_SIZE 128
 #define ELM_MAX_PATH_SIZE 128
-#define ELM_MAX_CMD_SIZE  128
+#define ELM_MAX_LINE_SIZE 256
 #define ELM_MAX_MSG_SIZE  256
 
 #endif /* ELM_DEF_H */
