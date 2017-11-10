@@ -14,6 +14,7 @@
 
 /* Includes */
 #include "elmsys.h"
+#include "elmalloc.h"
 #include "elmdef.h"
 #include "elmio.h"
 #include <dirent.h>
@@ -58,7 +59,7 @@ int elm_setenv(char *name, char *value)
 
 /* ************************************************************************** */
 /* Allocate memory then copy a string to allocated memory */
-char * elm_string_copy(char **ptr, char *string)
+char * elm_sys_strcpy(char **ptr, char *string)
 {
     size_t length = strlen(string)+1;
 
@@ -74,69 +75,11 @@ char * elm_string_copy(char **ptr, char *string)
 }
 
 /* ************************************************************************** */
-/* Wrapper for calloc() that does pre and post checking for you. This will not
- * allocate memory for a pointer that is not null. If ptr is non-nll, should be
- * reference to another pointer. */
-void * elm_calloc(void *ptr, size_t nmemb, size_t size)
-{
-    /* Call calloc directly when pointer is null */
-    if (!ptr) {
-        return calloc(nmemb, size);
-    }
-
-    char **cast = ptr;
-    void  *new;
-
-    /* Do not allocate memory for a non-null pointer */
-    if (*cast) {
-        return *cast;
-    }
-
-    /* Allocate memory */
-    if (!(new=calloc(nmemb, size))) {
-        return NULL;
-    }
-
-    return (*cast=new);
-}
-
-/* ************************************************************************** */
-/* Wrapper for calloc() that does post checking for you. If ptr is non-null,
- * should be reference to another pointer. */
-void * elm_realloc(void *ptr, size_t nmemb, size_t size)
-{
-    /* Call calloc directly when pointer is null */
-    if (!ptr) {
-        return elm_calloc(NULL, nmemb, size);
-    }
-
-    /* Reallocate memory */
-    char **cast = ptr;
-    void  *new;
-
-    if (!(new=realloc(*cast, nmemb*size))) {
-        free(new);
-        return NULL;
-    }
-
-    return (*cast=new);
-}
-
-/* ************************************************************************** */
-/* Wrapper for free(), for completeness since other *alloc functions were
- * wrapped. */
-void elm_free(void *ptr)
-{
-    free(ptr);
-}
-
-/* ************************************************************************** */
 /* Search for a process that matches the input name and return its PID */
 pid_t elm_sys_pgrep(const char *program)
 {
     uid_t         uid   = getuid();
     pid_t         pid   = 0;
-    char         *proc;
     char         *ptr;
     char         *end;
     char         *fpath;
@@ -146,7 +89,10 @@ pid_t elm_sys_pgrep(const char *program)
     int           fd;
 
     /* Search for a process that matches the input name */
-    while ((proc=elm_sys_get_proc()))
+    char **proc = elm_sys_get_proc();
+    size_t i;
+
+    for (i=0; proc[i]; i++)
     {
         /* Focus on freeing memory once pid is set */
         if (pid > 0) {
@@ -154,12 +100,14 @@ pid_t elm_sys_pgrep(const char *program)
         }
 
         /* Make sure user spawned process */
-        fpath = elm_sys_path("/proc/%s/cmdline", proc);
+        fpath = elm_sys_path("/proc/%s/cmdline", proc[i]);
 
         if ((stat(fpath, &info) < 0) \
             || ((info.st_uid != uid) && (uid > 0)) \
             || (access(fpath, R_OK) < 0))
         {
+            elm_free(&fpath);
+            elm_free(&proc[i]);
             continue;
         }
 
@@ -167,6 +115,8 @@ pid_t elm_sys_pgrep(const char *program)
         if (((fd=open(fpath, O_RDONLY)) < 0) \
             || ((nbytes=read(fd, buffer, sizeof(buffer))) <= 0))
         {
+            elm_free(&fpath);
+            elm_free(&proc[i]);
             continue;
         }
 
@@ -174,7 +124,7 @@ pid_t elm_sys_pgrep(const char *program)
         end = buffer + nbytes;
         for (ptr=buffer; ptr < end; ) {
             if (strstr(ptr, program)) {
-                pid = strtol(proc, 0, 10);
+                pid = strtol(proc[i], 0, 10);
                 break;
             }
 
@@ -182,6 +132,8 @@ pid_t elm_sys_pgrep(const char *program)
         }
 
         close(fd);
+        elm_free(&fpath);
+        elm_free(&proc[i]);
     }
 
     return pid;
@@ -215,36 +167,20 @@ char * elm_sys_basename(const char *string)
 /* ************************************************************************** */
 /* Look to see if name corresponds to a running process. Return PID if it
  * does. */
-char * elm_sys_get_proc(void)
+char ** elm_sys_get_proc(void)
 {
-    static char   **procs = NULL;
-    static size_t   index = 0;
+    DIR           *dhandle = opendir("/proc");
+    struct dirent *entry;
+    char          *endptr;
 
-    /* Return next process in list */
-    if (procs) {
-        free(procs[index++]);
-        procs[index-1] = NULL;
-
-        if (procs[index]) {
-            return procs[index];
-        }
-        else {
-            goto maincleanup;
-        }
-    }
-    else {
-        index = 1;
+    if (!dhandle) {
+        return NULL;
     }
 
     /* Populate process list with current processes */
-    DIR            *dhandle = opendir("/proc");
-    struct dirent  *entry;
-    char           *endptr;
-
-    if (!dhandle) {
-        index = 0;
-        return NULL;
-    }
+    char   **procs = NULL;
+    size_t   index = 1;
+    size_t   i;
 
     while ((entry=readdir(dhandle)))
     {
@@ -258,20 +194,22 @@ char * elm_sys_get_proc(void)
         }
 
         /* Allocate memory for process list */
-        if (!elm_calloc(&procs, 1, sizeof *procs)) {
-            elmprintf(LOGERRNO, "Unable to allocate process array");
-            goto cleanup;
+        if (!procs) {
+            if (!elm_calloc(&procs, 1, sizeof *procs)) {
+                elmprintf(LOGERRNO, "Unable to allocate process array");
+                goto cleanup;
+            }
         }
 
         /* Copy string to process list */
-        if (!elm_string_copy(&procs[index-1], entry->d_name)) {
-            goto cleanup; /* Should be maincleanup, make label more robust */
+        if (!elm_sys_strcpy(&procs[index-1], entry->d_name)) {
+            goto cleanup;
         }
 
         /* Increase size of allocated memory region */
         if (!elm_realloc(&procs, index+1, sizeof *procs)) {
             elmprintf(LOGERRNO, "Unable to reallocate process array");
-            goto cleanup; /* Should be maincleanup, make label more robust */
+            goto cleanup;
         }
 
         procs[index++] = NULL;
@@ -279,21 +217,14 @@ char * elm_sys_get_proc(void)
 
     closedir(dhandle);
 
-    index = 0;
-
-    return *procs;
-
-/* Clear all allocated memory */
-maincleanup:
-    free(procs[index]);
-
-    procs[index] = NULL;
+    return procs;
 
 cleanup:
-    free(procs);
+    for (i=0; i < index; i++) {
+        elm_free(&procs[i]);
+    }
 
-    procs = NULL;
-    index = 0;
+    elm_free(&procs);
 
     return NULL;
 }
@@ -302,51 +233,93 @@ cleanup:
 /* Return path given path components */
 char * elm_sys_path(const char *format, ...)
 {
-    static char path[ELM_MAX_PATH_SIZE];
-    va_list     ap;
+    char    *path = NULL;
+    char     buffer[ELM_MAX_PATH_SIZE];
+    va_list  ap;
 
     va_start(ap, format);
-    vsnprintf(path, sizeof(path), format, ap);
+    vsnprintf(buffer, sizeof(buffer), format, ap);
     va_end(ap);
 
-    return path;
+    return elm_sys_strcpy(&path, buffer);
 }
 
 /* ************************************************************************** */
 /* Return first line from file */
 char * elm_sys_read_line(char *file)
 {
+    FILE *fhandle = NULL;
+    char *read    = NULL;
+
+    /* Make sure file can be read */
     if (access(file, R_OK)) {
         return NULL;
     }
 
-    FILE   *fstream                 = fopen(file, "r");
-    char    line[ELM_MAX_PATH_SIZE] = {0};
-    char   *pos;
-    size_t  length;
+    if (!(fhandle=fopen(file, "r"))) {
+        return NULL;
+    }
 
     /* Read file */
-    while (fgets(line, sizeof(line), fstream)) {
+    char  line[ELM_MAX_PATH_SIZE] = {0};
+    char *pos;
+
+    while (fgets(line, sizeof(line), fhandle)) {
         if ((pos=strchr(line, '\n'))) {
             *pos = 0;
         }
 
-        if ((length=strlen(line)+1) <= 1) {
-            continue;
-        }
+        /* Suitable line found */
+        if (strlen(line) > 1) {
+            if (!elm_sys_strcpy(&read, line)) {
+                elmprintf(LOGERR, "Unable to read line '%s'", line);
+            }
 
-        break;
+            break;
+        }
     }
 
-    /* Line was empty */
-    if (length <= 1) {
+    fclose(fhandle);
+
+    return read;
+}
+
+/* ************************************************************************** */
+/* Return the first line that matches the specified substring */
+char * elm_sys_find_line(char *file, char *substring)
+{
+    FILE *fhandle = NULL;
+    char *read    = NULL;
+
+    /* Make sure file can be read */
+    if (access(file, R_OK)) {
         return NULL;
     }
 
-    /* Return line */
-    char *read = calloc(length, sizeof(*read));
+    if (!(fhandle=fopen(file, "r"))) {
+        return NULL;
+    }
 
-    strncpy(read, line, length);
+    /* Read file */
+    char  line[ELM_MAX_PATH_SIZE] = {0};
+    char *pos;
+
+    while (fgets(line, sizeof(line), fhandle)) {
+        if ((pos=strchr(line, '\n'))) {
+            *pos = 0;
+        }
+
+        /* Match found */
+        if (strstr(line, substring)) {
+            if (!elm_sys_strcpy(&read, line)) {
+                elmprintf(LOGERR, "Unable to read line '%s'", line);
+            }
+
+            break;
+        }
+    }
+
+    fclose(fhandle);
 
     return read;
 }

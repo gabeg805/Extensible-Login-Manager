@@ -14,6 +14,7 @@
 
 /* Includes */
 #include "elmx.h"
+#include "elmalloc.h"
 #include "elmconf.h"
 #include "elmdef.h"
 #include "elmio.h"
@@ -842,99 +843,153 @@ char * elm_x_get_tty_from_pts(void)
 /* Return open tty by searching /proc directory */
 char * elm_x_get_tty_from_proc(void)
 {
-    int            ttyignore[7] = {0};
-    char          *proc;
-    char           dirpath[ELM_MAX_PATH_SIZE];
-    char           cmdpath[ELM_MAX_PATH_SIZE];
-    char           symlinkpath[ELM_MAX_PATH_SIZE];
-    char           fullpath[ELM_MAX_PATH_SIZE];
-    DIR           *dstream;
+    DIR           *dhandle;
     struct dirent *entry;
+    char fullpath[ELM_MAX_PATH_SIZE];
+    char          *dirpath;
+    char          *cmdpath;
+    char          *symlinkpath;
+    char          *tty;
 
     /* Iterate over current process ids */
-    while ((proc=elm_sys_get_proc()))
-    {
-        snprintf(dirpath, sizeof(dirpath), "/proc/%s/fd/", proc);
+    char **proc      = elm_sys_get_proc();
+    int    ignore[7] = {0};
+    int    index;
+    int    i;
 
+    for (i=0; proc[i]; i++)
+    {
         /* Unable to open directory */
-        if (!(dstream=opendir(dirpath))) {
+        dirpath = elm_sys_path("/proc/%s/fd/", proc);
+
+        if (!(dhandle=opendir(dirpath))) {
             elmprintf(LOGERRNO, "%s '%s'",
                       "Unable to open directory", dirpath);
+            elm_free(&dirpath);
+            elm_free(&proc[i]);
             continue;
         }
 
         /* Iterate over directory contents */
-        while ((entry=readdir(dstream))) {
+        while ((entry=readdir(dhandle)))
+        {
             if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, "..")) {
                 continue;
             }
 
-            /* Path too long */
-            size_t dlen = strlen(dirpath);
-            size_t nlen = strlen(entry->d_name);
+            /* Determine full path */
+            symlinkpath = elm_sys_path("%s%s", dirpath, entry->d_name);
 
-            symlinkpath[0] = 0;
+            memset(fullpath, 0, sizeof(fullpath));
+            readlink(symlinkpath, fullpath, sizeof(fullpath)-1);
 
-            if ((dlen+nlen+1) >= sizeof(symlinkpath)) {
+            /* Ignore tty if running Xorg */
+            if (strstr(fullpath, "/dev/tty")) {
+                cmdpath = elm_sys_path("/proc/%s/cmdline", proc[i]);
+                tty     = elm_sys_read_line(cmdpath);
+                index   = (fullpath[8]-'0')-1;
+
+                if (tty && !ignore[index] && strstr(tty, "Xorg")) {
+                    ignore[index] = 1;
+                }
+
+                /* Clear memory */
+                elm_free(&cmdpath);
+                elm_free(&tty);
+            }
+
+            elm_free(&symlinkpath);
+        }
+
+        /* Cleanup */
+        closedir(dhandle);
+        elm_free(&dirpath);
+        elm_free(&proc[i]);
+    }
+
+    elm_free(&proc);
+
+    /* Return open tty */
+    char   *open   = NULL;
+    size_t  length = 5;
+
+    for (i=0; i < sizeof(ignore); i++) {
+        if (!ignore[i]) {
+            if (!elm_calloc(&open, length, sizeof *open)) {
                 continue;
             }
 
-            /* Determine full path */
-            strncat(symlinkpath, dirpath, dlen);
-            strncat(symlinkpath, entry->d_name, nlen);
-            memset(fullpath, 0, sizeof(fullpath));
-            readlink(symlinkpath, fullpath, sizeof(fullpath));
-
-            /* printf("\t\t'%s'\n", symlinkpath); */
-
-            /* /\* Check if should ignore this process *\/ */
-            /* if (strstr(fullpath, "/sys/devices/virtual/tty")) { */
-            /*     break; */
-            /* } */
-
-            /* Check if tty is in name */
-            if (strstr(fullpath, "/dev/tty")) {
-                snprintf(cmdpath, sizeof(cmdpath), "/proc/%s/cmdline", proc);
-
-                char *tty = elm_sys_read_line(cmdpath);
-                int   num = fullpath[8]-'0';
-
-                if (!tty || ttyignore[num-1]) {
-                    free(tty);
-                    continue;
-                }
-
-                if (strstr(tty, "Xorg")) {
-                    ttyignore[num-1] = 1;
-                }
-
-                free(tty);
-            }
-        }
-
-        closedir(dstream);
-    }
-
-    /* Return open tty */
-    char   *opentty = NULL;
-    size_t  length  = 5;
-    int     i;
-
-    for (i=0; i < sizeof(ttyignore); i++) {
-        if (!ttyignore[i]) {
-            opentty = calloc(length, sizeof(*opentty));
-            snprintf(opentty, length, "tty%d", i+1);
+            snprintf(open, length, "tty%d", i+1);
             break;
         }
     }
 
-    if (!opentty) {
+    if (!open) {
         elmprintf(LOGERR, "%s",
                   "Unable to find open tty by searching '/proc' directory.");
     }
 
-    return opentty;
+    return open;
 }
+
+/* int elm_x_get_tty_index_from_proc(char *path); */
+/* char * elm_x_get_open_tty_from_proc(int *ignore, size_t size); */
+
+/* /\* ************************************************************************** *\/ */
+/* /\* Return tty in index form if it should be ignored because it is in use *\/ */
+/* int elm_x_get_tty_index_from_proc(char *path) */
+/* { */
+/*     static char fullpath[ELM_MAX_PATH_SIZE]; */
+/*     int         status = -1; */
+
+/*     memset(fullpath, 0, sizeof(fullpath)); */
+/*     readlink(path, fullpath, sizeof(fullpath)-1); */
+
+/*     /\* Ignore tty if running Xorg *\/ */
+/*     if (strstr(fullpath, "/dev/tty")) { */
+/*         char *cmdpath = elm_sys_path("/proc/%s/cmdline", proc[i]); */
+/*         char *tty     = elm_sys_read_line(cmdpath); */
+/*         int   index   = (fullpath[8]-'0')-1; */
+
+/*         if (tty && !ignore[index] && strstr(tty, "Xorg")) { */
+/*             status = index; */
+/*         } */
+
+/*         /\* Clear memory *\/ */
+/*         elm_free(&cmdpath); */
+/*         elm_free(&tty); */
+/*     } */
+
+/*     return status; */
+/* } */
+
+/* /\* ************************************************************************** *\/ */
+/* /\* Return open tty *\/ */
+/* char * elm_x_get_open_tty_from_proc(int *ignore, size_t size) */
+/* { */
+/*     char   *open   = NULL; */
+/*     size_t  length = 5; */
+/*     size_t  i; */
+
+/*     /\* Iterate over tty ignore list *\/ */
+/*     for (i=0; i < size; i++) { */
+/*         if (!ignore[i]) { */
+/*             if (!elmcalloc(&open, length, sizeof *open)) { */
+/*                 continue; */
+/*             } */
+
+/*             snprintf(open, length, "tty%d", i+1); */
+/*             break; */
+/*         } */
+/*     } */
+
+/*     if (!open) { */
+/*         elmprintf(LOGERR, "%s", */
+/*                   "Unable to find open tty by searching '/proc' directory."); */
+/*     } */
+
+/*     return open; */
+/* } */
 
 /* ************************************************************************** */
 /* Return active tty from /sys/ directory */

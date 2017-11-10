@@ -17,8 +17,8 @@
 #include "app/xsession.h"
 
 /* Private functions */
-static int     set_xsession_menu(GtkWidget **menu);
-static char ** get_available_xsessions(void);
+static int      set_xsession_menu(GtkWidget **menu);
+static char *** get_available_xsessions(void);
 
 /* Private variables */
 static const char      *Style   = "/etc/X11/elm/share/css/xsession.css";
@@ -66,164 +66,164 @@ void set_xsession_info(GtkWidget *widget, gpointer data)
 /* Populate menu with xsession(s) on system */
 int set_xsession_menu(GtkWidget **menu)
 {
-    char      **xsessions = NULL;
-    GSList     *group     = NULL;
-    GtkWidget  *menuitem  = NULL;
-    size_t      index     = 0;
+    char      ***xsessions = get_available_xsessions();
+    GSList      *group     = NULL;
+    GtkWidget   *menuitem  = NULL;
+    size_t       index;
 
-    /* Create the radio buttons for the window managers */
-    for (index=0; (xsessions=get_available_xsessions()); index++)
-    {
-        menuitem = gtk_radio_menu_item_new_with_label(group, xsessions[0]);
-        group    = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
-
-        gtk_widget_set_tooltip_text(menuitem, xsessions[1]);
-        gtk_menu_attach(GTK_MENU(*menu), menuitem, 0, 1, index, index+1);
-        gtk_widget_show(menuitem);
-    }
-
-    if (index == 0) {
+    if (!xsessions) {
         return -1;
     }
+
+    /* Create the radio buttons for the window managers */
+    for (index=0; xsessions[0][index] && xsessions[1][index]; index++)
+    {
+        menuitem = gtk_radio_menu_item_new_with_label(group, xsessions[0][index]);
+        group    = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
+
+        gtk_widget_set_tooltip_text(menuitem, xsessions[1][index]);
+        gtk_menu_attach(GTK_MENU(*menu), menuitem, 0, 1, index, index+1);
+        gtk_widget_show(menuitem);
+
+        elm_free(&xsessions[0][index]);
+        elm_free(&xsessions[1][index]);
+    }
+
+    /* Clear memory */
+    elm_free(&xsessions[0]);
+    elm_free(&xsessions[1]);
+    elm_free(&xsessions);
 
     return 0;
 }
 
 /* ************************************************************************** */
 /* Return all avaiable xsessions on the system */
-char ** get_available_xsessions(void)
+char *** get_available_xsessions(void)
 {
-    static char   ***xsessions = NULL;
-    static char     *pair[2]   = {0};
-    static size_t    index     = 0;
-
-    /* Return next session pair in list */
-    if (xsessions) {
-        free(xsessions[0][index]);
-        free(xsessions[1][index++]);
-
-        pair[0] = xsessions[0][index];
-        pair[1] = xsessions[1][index];
-
-        if (pair[0] && pair[1]) {
-            return pair;
-        }
-        else {
-            goto maincleanup;
-        }
-    }
-
     /* Open directory for reading */
     const char    *dir     = "/usr/share/xsessions";
     DIR           *dhandle = opendir(dir);
-    FILE          *fhandle;
     struct dirent *entry;
 
     if (!dhandle) {
         return NULL;
     }
 
-    /* Prepare variables */
-    size_t  namesize = 1;
-    size_t  execsize = 1;
-    size_t  row;
-    size_t  col;
-    char   *pos;
-    char   *path;
-    char    line[ELM_MAX_LINE_SIZE];
+    /* Allocate initial memory spaces for main pointer and its two columns */
+    char   ***xsessions = NULL;
+    char     *path      = NULL;
+    char     *nameline  = NULL;
+    char     *execline  = NULL;
+    size_t    index     = 1;
+    size_t    i;
+
+    if (!elm_calloc(&xsessions, 2, sizeof *xsessions)) {
+        elmprintf(LOGERRNO, "Unable to allocate xsessions array");
+        return NULL;
+    }
+    else {
+        xsessions[0] = NULL;
+        xsessions[1] = NULL;
+    }
+
+    if (!elm_calloc(&xsessions[0], 1, sizeof *xsessions[0])) {
+        elmprintf(LOGERRNO, "%s '%lu'",
+                  "Unable to allocate xsessions array", 0);
+        goto cleanup;
+    }
+
+    if (!elm_calloc(&xsessions[1], 1, sizeof *xsessions[0])) {
+        elmprintf(LOGERRNO, "%s '%lu'",
+                  "Unable to allocate xsessions array", 1);
+        goto cleanup;
+    }
 
     /* Iterate over files in directory */
     while ((entry=readdir(dhandle)))
     {
+        /* Clear previously allocated memory */
+        if (path) {
+            elm_free(&path);
+        }
+
+        if (nameline) {
+            elm_free(&nameline);
+        }
+
+        if (execline) {
+            elm_free(&execline);
+        }
+
         /* Check extension of file is correct */
         if ((entry->d_type != DT_REG) || (!strstr(entry->d_name, ".desktop"))) {
             continue;
         }
 
-        /* Prepare to read file */
-        path = elm_sys_path("%s/%s", dir, entry->d_name);
+        /* Read file */
+        path     = elm_sys_path("%s/%s", dir, entry->d_name);
+        nameline = elm_sys_find_line(path, "Name=");
+        execline = elm_sys_find_line(path, "Exec=");
 
-        if (!(fhandle=fopen(path, "r"))) {
+        if (!nameline || !execline) {
             continue;
         }
 
-        /* Read file */
-        while (fgets(line, sizeof(line), fhandle))
-        {
-            if (line[4] != '=') {
-                continue;
-            }
-
-            /* Remove newline */
-            if ((pos=strchr(line, '\n'))) {
-                *pos = 0;
-            }
-
-            /* Find name and exec command */
-            if (strstr(line, "Name=")) {
-                row = 0;
-                col = namesize;
-                namesize++;
-            }
-            else if (strstr(line, "Exec=")) {
-                row = 1;
-                col = execsize;
-                execsize++;
-            }
-            else {
-                continue;
-            }
-
-            /* Allocate memory if not already allocated */
-            if (!elm_calloc(&xsessions, 2, sizeof *xsessions)) {
-                elmprintf(LOGERRNO, "Unable to allocate xsessions array");
-                goto cleanup;
-            }
-
-            if (!elm_calloc(&xsessions[row], 1, sizeof *xsessions[0])) {
-                elmprintf(LOGERRNO, "%s '%lu'",
-                          "Unable to allocate xsessions array", row);
-                goto cleanup;
-            }
-
-            /* Save string to return */
-            if (!elm_string_copy(&xsessions[row][col-1], &line[5])) {
-                goto cleanup;
-            }
-
-            /* Resize allocated memory for next xsession */
-            if (!elm_realloc(&xsessions[row], col+1, sizeof *xsessions[0])) {
-                elmprintf(LOGERRNO, "Unable to reallocate xsessions array");
-                goto cleanup;
-            }
-
-            xsessions[row][col] = NULL;
+        /* Copy string to array */
+        if (!elm_sys_strcpy(&xsessions[0][index-1], &nameline[5])) {
+            goto cleanup;
         }
 
-        fclose(fhandle);
+        if (!elm_sys_strcpy(&xsessions[1][index-1], &execline[5])) {
+            goto cleanup;
+        }
+
+        /* Resize allocated memory for next xsession */
+        if (!elm_realloc(&xsessions[0], index+1, sizeof *xsessions[0])) {
+            elmprintf(LOGERRNO, "Unable to reallocate xsessions array");
+            goto cleanup;
+        }
+
+        if (!elm_realloc(&xsessions[1], index+1, sizeof *xsessions[0])) {
+            elmprintf(LOGERRNO, "Unable to reallocate xsessions array");
+            goto cleanup;
+        }
+
+        xsessions[0][index] = NULL;
+        xsessions[1][index] = NULL;
+        index++;
     }
 
     closedir(dhandle);
 
-    pair[0] = xsessions[0][0];
-    pair[1] = xsessions[1][0];
-
-    return pair;
-
-maincleanup:
-    free(xsessions[0]);
-    free(xsessions[1]);
-
-    xsessions[0] = NULL;
-    xsessions[1] = NULL;
+    return xsessions;
 
 cleanup:
-    free(xsessions);
+    if (path) {
+        elm_free(&path);
+    }
 
-    xsessions    = NULL;
-    pair[0]      = NULL;
-    pair[1]      = NULL;
-    index        = 0;
+    if (nameline) {
+        elm_free(&nameline);
+    }
+
+    if (execline) {
+        elm_free(&execline);
+    }
+
+    for (i=0; i < (index-1); i++) {
+        elm_free(&xsessions[0][i]);
+        elm_free(&xsessions[1][i]);
+    }
+
+    if (xsessions[0]) {
+        elm_free(&xsessions[0]);
+    }
+    if (xsessions[1]) {
+        elm_free(&xsessions[1]);
+    }
+
+    elm_free(&xsessions);
 
     return NULL;
 }

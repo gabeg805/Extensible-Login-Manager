@@ -18,6 +18,7 @@
 
 /* Includes */
 #include "elmapp.h"
+#include "elmalloc.h"
 #include "elmgtk.h"
 #include "elmsession.h"
 #include "elmsys.h"

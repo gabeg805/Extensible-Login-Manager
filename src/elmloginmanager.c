@@ -372,20 +372,20 @@ void elm_login_manager_signal_catcher(int sig, siginfo_t *info, void *context)
     elmprintf(LOG, "uid:    %ld.", info->si_uid);
     elmprintf(LOG, "status: %d.", info->si_status);
 
-    /* Might not need this */
-    int   signo = info->si_signo;
-    pid_t pid   = info->si_pid;
+    /* /\* Might not need this *\/ */
+    /* int   signo = info->si_signo; */
+    /* pid_t pid   = info->si_pid; */
 
-    if ((signo == SIGTERM) && (pid == 1)) {
-        elmprintf(LOGWARN, "Ignoring signal '%d' from PID '%lu'.", signo, pid);
+    /* if ((signo == SIGTERM) && (pid == 1)) { */
+    /*     elmprintf(LOGWARN, "Ignoring signal '%d' from PID '%lu'.", signo, pid); */
 
-        struct sigaction act;
-        act.sa_flags     = SA_SIGINFO;
-        act.sa_sigaction = &elm_login_manager_signal_catcher;
-        sigaction(signo, &act, NULL);
+    /*     struct sigaction act; */
+    /*     act.sa_flags     = SA_SIGINFO; */
+    /*     act.sa_sigaction = &elm_login_manager_signal_catcher; */
+    /*     sigaction(signo, &act, NULL); */
 
-        return;
-    }
+    /*     return; */
+    /* } */
 
 	exit(ELM_EXIT_MNGR_SIG);
 }
@@ -444,11 +444,11 @@ void elm_login_manager_thread(GtkWidget *widget, gpointer data)
 {
     elmprintf(LOGINFO, "Creating login thread.");
 
+    int status;
+
     if (!elm_login_manager_exists("create login thread")) {
         exit(ELM_EXIT_MNGR_PTHREAD);
     }
-
-    int status;
 
     if ((status=pthread_create(&Thread, 0, Manager->login_session, data))) {
         elmprintf(LOGERR, "Error creating thread.");
