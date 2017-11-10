@@ -20,7 +20,6 @@
 /* Includes */
 #include "elmio.h"
 #include <stddef.h>
-#include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
 /* Public functions */
@@ -36,7 +35,6 @@ int         elm_gtk_set_widget_size(GtkWidget **widget, int width, int height);
 int         elm_gtk_set_widget_style(GtkWidget **widget, const char *name,
                                      const char *file);
 GtkWidget * elm_gtk_get_window(GtkWidget **widget);
-GdkWindow * elm_gtk_get_gdkwindow(GtkWidget **widget);
 int elm_gtk_conf_set_widget_size(GtkWidget **widget, const char *group,
                                  const char *xkey, const char *ykey);
 

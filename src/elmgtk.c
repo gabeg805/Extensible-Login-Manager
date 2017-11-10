@@ -168,13 +168,6 @@ GtkWidget * elm_gtk_get_window(GtkWidget **widget)
 }
 
 /* ************************************************************************** */
-/* Return Gdk window */
-GdkWindow * elm_gtk_get_gdkwindow(GtkWidget **widget)
-{
-    return gtk_widget_get_window(*widget);
-}
-
-/* ************************************************************************** */
 /* Set size of widget from config file */
 int elm_gtk_conf_set_widget_size(GtkWidget **widget, const char *group,
                                  const char *xkey, const char *ykey)
