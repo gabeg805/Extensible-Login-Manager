@@ -17,10 +17,10 @@
 #include "app/powerbuttons.h"
 
 /* Private functions */
-static void system_prompt(GtkButton   *button, gpointer data);
-static void system_shutdown(GtkButton *button, gpointer data);
-static void system_reboot(GtkButton   *button, gpointer data);
-static void system_cancel(GtkButton   *button, gpointer data);
+static void elm_app_system_prompt(GtkButton   *button, gpointer data);
+static void elm_app_system_shutdown(GtkButton *button, gpointer data);
+static void elm_app_system_reboot(GtkButton   *button, gpointer data);
+static void elm_app_system_cancel(GtkButton   *button, gpointer data);
 
 /* Private variables */
 static const char *Style = "/etc/X11/elm/share/css/powerbuttons.css";
@@ -38,10 +38,11 @@ GtkWidget * display_power_buttons(ElmCallback callback)
 
     /* Setup widget */
     gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-    elm_gtk_set_widget_style(&button, "PowerButton", Style);
-    elm_gtk_conf_set_widget_size(&button, "Powerbuttons", "Width", "Height");
-    g_signal_connect(button, "clicked", G_CALLBACK(system_prompt), NULL);
+    elm_gtk_add_css_from_file(&button, "PowerButton", Style);
+    elm_gtk_add_css_from_conf(&button, "Images", "Power");
+    elm_gtk_set_widget_size_from_conf(&button, "Powerbuttons", "Width", "Height");
 
+    g_signal_connect(button, "clicked", G_CALLBACK(elm_app_system_prompt), NULL);
     gtk_widget_show(button);
 
     return button;
@@ -49,7 +50,7 @@ GtkWidget * display_power_buttons(ElmCallback callback)
 
 /* ************************************************************************** */
 /* Display system prompt popup window */
-void system_prompt(GtkButton *button, gpointer data)
+void elm_app_system_prompt(GtkButton *button, gpointer data)
 {
     /* Create dialog prompt */
     size_t     margin    = 20;
@@ -77,17 +78,18 @@ void system_prompt(GtkButton *button, gpointer data)
     gtk_widget_set_margin_start(container,  margin/2);
     gtk_widget_set_margin_end(container,    margin/2);
     gtk_widget_set_margin_bottom(label,     margin);
-    elm_gtk_set_widget_style(&shutdown, "ShutdownButton", Style);
+
+    elm_gtk_add_css_from_file(&shutdown, "ShutdownButton", Style);
     gtk_dialog_set_default_response(GTK_DIALOG(dialog), 0);
     gtk_window_set_transient_for(GTK_WINDOW(dialog), window);
     gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
 
-    g_signal_connect(shutdown, "clicked", G_CALLBACK(system_shutdown), &dialog);
-    g_signal_connect(reboot,   "clicked", G_CALLBACK(system_reboot),   &dialog);
-    g_signal_connect(cancel,   "clicked", G_CALLBACK(system_cancel),   &dialog);
+    g_signal_connect(shutdown, "clicked", G_CALLBACK(elm_app_system_shutdown), &dialog);
+    g_signal_connect(reboot,   "clicked", G_CALLBACK(elm_app_system_reboot),   &dialog);
+    g_signal_connect(cancel,   "clicked", G_CALLBACK(elm_app_system_cancel),   &dialog);
 
     /* Display dialog prompt */
-    gtk_widget_grab_focus(cancel);
+    elm_gtk_focus(&cancel);
     gtk_widget_show_all(dialog);
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
@@ -95,7 +97,7 @@ void system_prompt(GtkButton *button, gpointer data)
 
 /* ************************************************************************** */
 /* Send shutdown response */
-void system_shutdown(GtkButton *button, gpointer data)
+void elm_app_system_shutdown(GtkButton *button, gpointer data)
 {
     elmprintf(LOGINFO, "Shutting down.");
     execl(ELM_CMD_SHUTDOWN, ELM_CMD_SHUTDOWN, NULL);
@@ -103,7 +105,7 @@ void system_shutdown(GtkButton *button, gpointer data)
 
 /* ************************************************************************** */
 /* Send reboot response */
-void system_reboot(GtkButton *button, gpointer data)
+void elm_app_system_reboot(GtkButton *button, gpointer data)
 {
     elmprintf(LOGINFO, "Rebooting.");
     execl(ELM_CMD_REBOOT, ELM_CMD_REBOOT, NULL);
@@ -111,7 +113,7 @@ void system_reboot(GtkButton *button, gpointer data)
 
 /* ************************************************************************** */
 /* Send cancel response */
-void system_cancel(GtkButton *button, gpointer data)
+void elm_app_system_cancel(GtkButton *button, gpointer data)
 {
     elmprintf(LOGINFO, "Cancel.");
     GtkWidget **dialog = data;

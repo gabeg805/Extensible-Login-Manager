@@ -17,8 +17,8 @@
 #include <time.h>
 
 /* Private functions */
-static gboolean set_label_date(gpointer data);
-static gboolean set_label_time(gpointer data);
+static gboolean elm_app_set_label_date(gpointer data);
+static gboolean elm_app_set_label_time(gpointer data);
 
 /* Private variables */
 static const char *Style = "/etc/X11/elm/share/css/datetime.css";
@@ -39,9 +39,9 @@ GtkWidget * display_datetime(ElmCallback callback)
     time = gtk_label_new("");
 
     /* Set refresh rate of time */
-    int sec;
+    int sec = elm_conf_read_int("Datetime", "RefreshTime");
 
-    if ((sec=elm_conf_read_int("Datetime", "RefreshTime")) < 0) {
+    if (sec < 0) {
         sec = 5;
     }
 
@@ -51,14 +51,13 @@ GtkWidget * display_datetime(ElmCallback callback)
 
     gtk_widget_set_halign(date, GTK_ALIGN_CENTER);
     gtk_widget_set_halign(time, GTK_ALIGN_CENTER);
-    elm_gtk_set_widget_style(&date, "Date", Style);
-    elm_gtk_set_widget_style(&time, "Time", Style);
-    set_label_date(&date);
-    set_label_time(&time);
+    elm_gtk_add_css_from_file(&date, "Date", Style);
+    elm_gtk_add_css_from_file(&time, "Time", Style);
+    elm_app_set_label_date(&date);
+    elm_app_set_label_time(&time);
 
-    g_timeout_add_seconds(sec, set_label_date, &date);
-    g_timeout_add_seconds(sec, set_label_time, &time);
-
+    g_timeout_add_seconds(sec, elm_app_set_label_date, &date);
+    g_timeout_add_seconds(sec, elm_app_set_label_time, &time);
     gtk_widget_show(date);
     gtk_widget_show(time);
     gtk_widget_show(box);
@@ -68,15 +67,15 @@ GtkWidget * display_datetime(ElmCallback callback)
 
 /* ************************************************************************** */
 /* Set date */
-gboolean set_label_date(gpointer data)
+gboolean elm_app_set_label_date(gpointer data)
 {
     GtkWidget **label  = (GtkWidget**) data;
     time_t      now    = time(NULL);
     struct tm  *tm     = localtime(&now);
-    char       *format;
+    char       *format = elm_conf_read("Datetime", "DateFormat");
     char        string[64];
 
-    if (!(format=elm_conf_read("Datetime", "DateFormat"))) {
+    if (!format) {
         format = "%A, %B %-d";
     }
 
@@ -88,15 +87,15 @@ gboolean set_label_date(gpointer data)
 
 /* ************************************************************************** */
 /* Set time */
-gboolean set_label_time(gpointer data)
+gboolean elm_app_set_label_time(gpointer data)
 {
-    GtkWidget **label = (GtkWidget**) data;
-    time_t      now   = time(NULL);
-    struct tm  *tm    = localtime(&now);
-    char       *format;
+    GtkWidget **label  = (GtkWidget**) data;
+    time_t      now    = time(NULL);
+    struct tm  *tm     = localtime(&now);
+    char       *format = elm_conf_read("Datetime", "TimeFormat");
     char        string[64];
 
-    if (!(format=elm_conf_read("Datetime", "TimeFormat"))) {
+    if (!format) {
         format = "%-I:%M %p";
     }
 

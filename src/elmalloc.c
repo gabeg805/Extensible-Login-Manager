@@ -15,7 +15,6 @@
 /* Includes */
 #include "elmalloc.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 /* ************************************************************************** */
 /* Wrapper for calloc() that does pre and post checking for you. This will not
@@ -30,12 +29,6 @@ void * elm_calloc(void *ptr, size_t nmemb, size_t size)
 
     char **cast = ptr;
     void  *new;
-
-    /* /\* Do not allocate memory for a non-null pointer *\/ */
-    /* if (*cast) { */
-    /*     printf("Non null\n"); */
-    /*     return *cast; */
-    /* } */
 
     /* Allocate memory */
     if (!(new=calloc(nmemb, size))) {

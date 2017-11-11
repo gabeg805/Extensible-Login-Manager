@@ -23,8 +23,8 @@
 
 /* Private functions */
 static GtkWidget * new_login_button(const char *text);
-static void        set_default_widget(GtkWidget *widget, gpointer data);
-static void        set_focus_on_widget(GtkWidget *widget, gpointer data);
+static void        elm_app_set_default_widget(GtkWidget *widget, gpointer data);
+static void        elm_app_set_focus_on_widget(GtkWidget *widget, gpointer data);
 
 /* Private variables */
 static const char *Style = "/etc/X11/elm/share/css/login.css";
@@ -75,10 +75,10 @@ GtkWidget * display_login(ElmCallback callback)
     g_signal_connect(button, "clicked", G_CALLBACK(set_credential_info),  phelper);
     g_signal_connect(button, "clicked", G_CALLBACK(set_xsession_info),    xhelper);
     g_signal_connect(button, "clicked", G_CALLBACK(callback),             info);
-    g_signal_connect(frame,  "show",    G_CALLBACK(set_default_widget),  &button);
-    g_signal_connect(frame,  "show",    G_CALLBACK(set_focus_on_widget), &username);
-    g_signal_connect(frame,  "map",     G_CALLBACK(set_default_widget),  &button);
-    g_signal_connect(frame,  "map",     G_CALLBACK(set_focus_on_widget), &username);
+    g_signal_connect(frame,  "show",    G_CALLBACK(elm_app_set_default_widget),  &button);
+    g_signal_connect(frame,  "show",    G_CALLBACK(elm_app_set_focus_on_widget), &username);
+    g_signal_connect(frame,  "map",     G_CALLBACK(elm_app_set_default_widget),  &button);
+    g_signal_connect(frame,  "map",     G_CALLBACK(elm_app_set_focus_on_widget), &username);
 
     gtk_widget_show(username);
     gtk_widget_show(password);
@@ -100,27 +100,27 @@ GtkWidget * new_login_button(const char *text)
 
     button = gtk_button_new_with_label(text);
 
-    elm_gtk_conf_set_widget_size(&button, "Login", "Width", "Height");
-    elm_gtk_set_widget_style(&button, "LoginButton", Style);
+    elm_gtk_set_widget_size_from_conf(&button, "Login", "Width", "Height");
+    elm_gtk_add_css_from_file(&button, "LoginButton", Style);
 
     return button;
 }
 
 /* ************************************************************************** */
 /* Set button as the default widget when widget is shown */
-void set_default_widget(GtkWidget *widget, gpointer data)
+void elm_app_set_default_widget(GtkWidget *widget, gpointer data)
 {
     GtkWidget  *window = elm_gtk_get_window(&widget);
     GtkWidget **button = data;
 
-    elm_gtk_set_default_widget(&window, button);
+    elm_gtk_default_widget(&window, button);
 }
 
 /* ************************************************************************** */
 /* Set focus on widget */
-void set_focus_on_widget(GtkWidget *widget, gpointer data)
+void elm_app_set_focus_on_widget(GtkWidget *widget, gpointer data)
 {
     GtkWidget **username = data;
 
-    gtk_widget_grab_focus(*username);
+    elm_gtk_focus(username);
 }

@@ -16,6 +16,7 @@
 #include "elmconf.h"
 #include "elmdef.h"
 #include "elmio.h"
+#include "elmsys.h"
 #include <glib.h>
 #include <stdbool.h>
 
@@ -23,12 +24,7 @@
 
 /* Private functions */
 /* To-do: static char -> malloc */
-int     elm_conf_key_file(GKeyFile **keyfile, const char *configfile);
-char ** elm_conf_get_groups(void);
-char ** elm_conf_get_keys(const char *group);
-int     elm_conf_is_valid_request(GKeyFile *keyfile, const char *group,
-                                  const char *key);
-int     elm_conf_is_key_err(GError *err);
+int elm_conf_key_file(GKeyFile **keyfile, const char *configfile);
 
 /* Private variables */
 const char *ConfigFile = "/etc/X11/elm/etc/elm.conf";
@@ -40,7 +36,6 @@ char * elm_conf_read(const char *group, const char *key)
     GError      *err = NULL;
     GKeyFile    *keyfile;
     char        *value;
-    static char  read[ELM_MAX_CONF_SIZE];
 
     if (elm_conf_key_file(&keyfile, ConfigFile) < 0) {
         return NULL;
@@ -48,13 +43,11 @@ char * elm_conf_read(const char *group, const char *key)
 
     value = g_key_file_get_value(keyfile, group, key, &err);
 
-    if (elm_conf_is_key_err(err)) {
+    if (elm_is_key_err(&err)) {
         return NULL;
     }
 
-    strncpy(read, value, sizeof(read)-1);
-
-    return read;
+    return elm_sys_strcpy(NULL, value);
 }
 
 /* ************************************************************************** */
@@ -73,7 +66,7 @@ char * elm_conf_read_str(const char *group, const char *key)
 
     value = g_key_file_get_string(keyfile, group, key, &err);
 
-    if (elm_conf_is_key_err(err)) {
+    if (elm_is_key_err(&err)) {
         return NULL;
     }
 
@@ -96,7 +89,7 @@ int elm_conf_read_int(const char *group, const char *key)
 
     read = g_key_file_get_integer(keyfile, group, key, &err);
 
-    if (elm_conf_is_key_err(err)) {
+    if (elm_is_key_err(&err)) {
         return -2;
     }
 
@@ -117,7 +110,7 @@ bool elm_conf_read_bool(const char *group, const char *key)
 
     read = g_key_file_get_boolean(keyfile, group, key, &err);
 
-    if (elm_conf_is_key_err(err)) {
+    if (elm_is_key_err(&err)) {
         return -2;
     }
 
@@ -134,8 +127,7 @@ int elm_conf_key_file(GKeyFile **keyfile, const char *configfile)
     *keyfile = g_key_file_new();
 
     if (!g_key_file_load_from_file(*keyfile, configfile, flags, &err)) {
-        printf("Unable to do stuff: %s (Ret:%d | Domain:%d).\n", err->message,
-               err->code, err->domain);
+        elm_is_key_err(&err);
         *keyfile = NULL;
         return -1;
     }
@@ -173,7 +165,7 @@ char ** elm_conf_get_keys(const char *group)
 
     keys = g_key_file_get_keys(keyfile, group, NULL, &err);
 
-    if (elm_conf_is_key_err(err)) {
+    if (elm_is_key_err(&err)) {
         return NULL;
     }
 
@@ -181,34 +173,12 @@ char ** elm_conf_get_keys(const char *group)
 }
 
 /* ************************************************************************** */
-/* Check key file for requested group and key */
-int elm_conf_is_valid_request(GKeyFile *keyfile, const char *group,
-                              const char *key)
-{
-    GError *err = NULL;
-
-    if (!g_key_file_has_group(keyfile, group)) {
-        return 0;
-    }
-
-    if (!g_key_file_has_key(keyfile, group, key, &err)) {
-        return 0;
-    }
-
-    if (err) {
-        return 0;
-    }
-
-    return 1;
-}
-
-/* ************************************************************************** */
 /* Check if an error occurred */
-int elm_conf_is_key_err(GError *err)
+int elm_is_key_err(GError **err)
 {
-    if (err) {
-        printf("Unable to do stuffers: %s (Ret:%d | Domain:%d).\n", err->message,
-               err->code, err->domain);
+    if (*err) {
+        elmprintf(LOGERR, (*err)->message);
+        g_error_free(*err);
         return 1;
     }
 

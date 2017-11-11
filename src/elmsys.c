@@ -24,12 +24,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
 #include <sys/stat.h>
 #include <sys/types.h>
-
-/* Is this needed */
-#include <ctype.h>
 
 /* ************************************************************************** */
 /* Execute a command/file */
@@ -61,17 +57,26 @@ int elm_setenv(char *name, char *value)
 /* Allocate memory then copy a string to allocated memory */
 char * elm_sys_strcpy(char **ptr, char *string)
 {
-    size_t length = strlen(string)+1;
+    size_t   length = strlen(string)+1;
+    char    *copy   = NULL;
+    char   **ref;
 
-    if (!elm_calloc(ptr, length, sizeof *string)) {
+    if (!ptr) {
+        ref = &copy;
+    }
+    else {
+        ref = ptr;
+    }
+
+    if (!elm_calloc(ref, length, sizeof *string)) {
         elmprintf(LOGERRNO, "%s '%s'",
                   "Unable to allocate memory for string", string);
         return NULL;
     }
 
-    strncpy(*ptr, string, length);
+    strncpy(*ref, string, length);
 
-    return *ptr;
+    return *ref;
 }
 
 /* ************************************************************************** */
@@ -148,6 +153,7 @@ char * elm_sys_basename(const char *string)
 
     size = (sizeof(buf) < size) ? sizeof(buf)-1 : size;
 
+    memset(buf,0, size);
     memcpy(buf, string, size);
 
     /* Find path basename */

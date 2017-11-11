@@ -17,7 +17,7 @@
 #include <math.h>
 
 /* Private functions */
-static gboolean draw_frame(GtkWidget *drawing, cairo_t *cr, gpointer data);
+static gboolean elm_app_draw_frame(GtkWidget *drawing, cairo_t *cr, gpointer data);
 
 /* Private variables */
 static const char *Style = "/etc/X11/elm/share/css/frame.css";
@@ -28,15 +28,18 @@ GtkWidget * new_frame_widget(void)
 {
     elmprintf(LOGINFO, "Displaying login frame.");
 
-    GtkWidget *container;
-    GtkWidget *drawing;
+    /* Create widgets */
+    static GtkWidget *container = NULL;
+    static GtkWidget *drawing   = NULL;
 
     container = gtk_fixed_new();
     drawing   = gtk_drawing_area_new();
 
-    elm_gtk_set_widget_size(&drawing, 270, 150);
+    /* Setup widgets */
     gtk_fixed_put(GTK_FIXED(container), drawing, 0, 0);
-    g_signal_connect(drawing, "draw", G_CALLBACK(draw_frame), NULL);
+    elm_gtk_set_widget_size_from_conf(&drawing, "Frame", "Width", "Height");
+
+    g_signal_connect(drawing, "draw", G_CALLBACK(elm_app_draw_frame), NULL);
     gtk_widget_show(drawing);
     gtk_widget_show(container);
 
@@ -45,7 +48,7 @@ GtkWidget * new_frame_widget(void)
 
 /* ************************************************************************** */
 /* Draw login frame */
-gboolean draw_frame(GtkWidget *drawing, cairo_t *cr, gpointer data)
+gboolean elm_app_draw_frame(GtkWidget *drawing, cairo_t *cr, gpointer data)
 {
     int    width   = gtk_widget_get_allocated_width(drawing);
     int    height  = gtk_widget_get_allocated_height(drawing);
@@ -55,7 +58,7 @@ gboolean draw_frame(GtkWidget *drawing, cairo_t *cr, gpointer data)
     /* Render background */
     GtkStyleContext *context = gtk_widget_get_style_context(drawing);
 
-    elm_gtk_set_widget_style(&drawing, "Frame", Style);
+    elm_gtk_add_css_from_file(&drawing, "Frame", Style);
     gtk_render_background(context, cr, 0, 0, width, height);
 
     /* Curved edges */

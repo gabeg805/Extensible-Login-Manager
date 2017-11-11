@@ -17,13 +17,11 @@
 #include "app/xsession.h"
 
 /* Private functions */
-static int      set_xsession_menu(GtkWidget **menu);
-static char *** get_available_xsessions(void);
+static int      elm_app_set_xsession_menu(GtkWidget **menu);
+static char *** elm_app_get_available_xsessions(void);
 
 /* Private variables */
-static const char      *Style   = "/etc/X11/elm/share/css/xsession.css";
-static       GtkWidget *Xbutton = NULL;
-static       GtkWidget *Xmenu   = NULL;
+static const char *Style = "/etc/X11/elm/share/css/xsession.css";
 
 /* ************************************************************************** */
 /* Create xsession menu button */
@@ -31,14 +29,19 @@ GtkWidget * new_xsession_widget(void)
 {
     elmprintf(LOGINFO, "Displaying Xsession menu.");
 
+    /* Create widgets */
+    static GtkWidget *Xbutton = NULL;
+    static GtkWidget *Xmenu   = NULL;
+
     Xbutton = gtk_menu_button_new();
     Xmenu   = gtk_menu_new();
 
-    set_xsession_menu(&Xmenu);
-    gtk_button_set_relief(GTK_BUTTON(Xbutton), GTK_RELIEF_HALF);
+    /* Setup widgets */
+    elm_app_set_xsession_menu(&Xmenu);
+    elm_gtk_set_widget_size_from_conf(&Xbutton, "XSession", "Width", "Height");
+    elm_gtk_add_css_from_file(&Xbutton, "XSession", Style);
     gtk_menu_button_set_popup(GTK_MENU_BUTTON(Xbutton), Xmenu);
-    elm_gtk_set_widget_size(&Xbutton, 30, 30);
-    elm_gtk_set_widget_style(&Xbutton, "XSession", Style);
+
     gtk_widget_show_all(Xmenu);
     gtk_widget_show_all(Xbutton);
 
@@ -64,9 +67,9 @@ void set_xsession_info(GtkWidget *widget, gpointer data)
 
 /* ************************************************************************** */
 /* Populate menu with xsession(s) on system */
-int set_xsession_menu(GtkWidget **menu)
+int elm_app_set_xsession_menu(GtkWidget **menu)
 {
-    char      ***xsessions = get_available_xsessions();
+    char      ***xsessions = elm_app_get_available_xsessions();
     GSList      *group     = NULL;
     GtkWidget   *menuitem  = NULL;
     size_t       index;
@@ -99,7 +102,7 @@ int set_xsession_menu(GtkWidget **menu)
 
 /* ************************************************************************** */
 /* Return all avaiable xsessions on the system */
-char *** get_available_xsessions(void)
+char *** elm_app_get_available_xsessions(void)
 {
     /* Open directory for reading */
     const char    *dir     = "/usr/share/xsessions";

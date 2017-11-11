@@ -51,13 +51,12 @@ static int    elm_login_manager_alloc_apps(size_t s);
 static int    elm_login_manager_exists(char *message);
 
 /* Private globals */
-static const char             *Style     = "/etc/X11/elm/share/css/loginmanager.css";
-static       int               Preview   = 0;
-static       ElmLoginManager  *Manager   = NULL;
-static       GtkWidget        *Window    = NULL;
-static       GtkWidget        *Container = NULL;
-static       GtkWidget       **Widgets   = NULL;
-static       pthread_t         Thread;
+static int               Preview   = 0;
+static ElmLoginManager  *Manager   = NULL;
+static GtkWidget        *Window    = NULL;
+static GtkWidget        *Container = NULL;
+static GtkWidget       **Widgets   = NULL;
+static pthread_t         Thread;
 
 /* ************************************************************************** */
 /* Create Extensible Login Manager base structure */
@@ -211,18 +210,19 @@ int elm_login_manager_build_window(void)
 {
     elmprintf(LOGINFO, "Building login manager window.");
 
-    Window    = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    Container = gtk_fixed_new();
-
     int width;
     int height;
 
+    Window    = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    Container = gtk_fixed_new();
+
     elm_x_screen_dimensions(&width, &height);
-    elm_gtk_set_widget_style(&Window, "LoginManager", Style);
     elm_gtk_set_window_size(&Window, width, height);
-    elm_gtk_add(&Window, Container);
-    elm_gtk_show(&Container);
-    elm_gtk_show_all(&Window);
+    elm_gtk_add_css_from_conf(&Window, "Images", "Background");
+    elm_gtk_add_widget(&Window, Container);
+
+    gtk_widget_show(Container);
+    gtk_widget_show_all(Window);
 
     return 0;
 }

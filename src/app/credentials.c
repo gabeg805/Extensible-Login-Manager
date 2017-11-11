@@ -16,9 +16,9 @@
 #include "app/credentials.h"
 
 /* Private functions */
-static int set_entry_buffer(GtkWidget *widget, char *placeholder);
-static int set_default_user(GtkWidget *widget);
-static int set_entry_icon(GtkWidget *widget, char *name);
+static int elm_app_set_entry_buffer(GtkWidget *widget, char *placeholder);
+static int elm_app_set_entry_icon(GtkWidget *widget, char *name);
+static int elm_app_set_default_user(GtkWidget *widget);
 
 /* Private variables */
 static const char *Style = "/etc/X11/elm/share/css/credentials.css";
@@ -35,13 +35,12 @@ GtkWidget * new_username_widget(void)
     Username = gtk_entry_new();
 
     /* Setup widget */
-    set_entry_buffer(Username, "Username");
-    set_default_user(Username);
-    set_entry_icon(Username, "Username");
-    gtk_widget_set_can_focus(Username, TRUE);
+    elm_app_set_entry_buffer(Username, "Username");
+    elm_app_set_entry_icon(Username, "Username");
+    elm_app_set_default_user(Username);
+    elm_gtk_set_widget_size_from_conf(&Username, "Credentials", "Width", "Height");
+    elm_gtk_add_css_from_file(&Username, NULL, Style);
     gtk_entry_set_activates_default(GTK_ENTRY(Username), TRUE);
-    elm_gtk_conf_set_widget_size(&Username, "Credentials", "Width", "Height");
-    elm_gtk_set_widget_style(&Username, "Username", Style);
 
     gtk_widget_show(Username);
 
@@ -60,13 +59,13 @@ GtkWidget * new_password_widget(void)
     Password = gtk_entry_new();
 
     /* Setup widget */
-    set_entry_buffer(Password, "Password");
-    set_entry_icon(Password, "Password");
+    elm_app_set_entry_buffer(Password, "Password");
+    elm_app_set_entry_icon(Password, "Password");
     gtk_entry_set_visibility(GTK_ENTRY(Password), FALSE);
     gtk_entry_set_invisible_char(GTK_ENTRY(Password), '*');
     gtk_entry_set_activates_default(GTK_ENTRY(Password), TRUE);
-    elm_gtk_conf_set_widget_size(&Password, "Credentials", "Width", "Height");
-    elm_gtk_set_widget_style(&Password, "Password", Style);
+    elm_gtk_set_widget_size_from_conf(&Password, "Credentials", "Width", "Height");
+    elm_gtk_add_css_from_file(&Password, NULL, Style);
 
     gtk_widget_show(Password);
 
@@ -85,14 +84,14 @@ void set_credential_info(GtkWidget *widget, gpointer data)
 
     printf("Info : %s~\n", text);
 
-    set_entry_buffer(helper->widget, NULL);
+    elm_app_set_entry_buffer(helper->widget, NULL);
     memset(helper->data, 0, length);
     strncpy(helper->data, text, length);
 }
 
 /* ************************************************************************** */
 /* Set entry box text buffer */
-int set_entry_buffer(GtkWidget *widget, char *placeholder)
+int elm_app_set_entry_buffer(GtkWidget *widget, char *placeholder)
 {
     static const int  length = 32;
     GtkEntryBuffer   *buffer = gtk_entry_buffer_new(NULL, -1);
@@ -108,28 +107,13 @@ int set_entry_buffer(GtkWidget *widget, char *placeholder)
 }
 
 /* ************************************************************************** */
-/* Set default user, if specified in config file */
-int set_default_user(GtkWidget *widget)
-{
-    char *user;
-
-    if (!(user=elm_conf_read("Main", "DefaultUser"))) {
-        return -1;
-    }
-
-    gtk_entry_set_text(GTK_ENTRY(widget), user);
-
-    return 0;
-}
-
-/* ************************************************************************** */
 /* Set entry box icon, if specified in config file */
-int set_entry_icon(GtkWidget *widget, char *name)
+int elm_app_set_entry_icon(GtkWidget *widget, char *name)
 {
     char      *icon;
     GdkPixbuf *pixbuf;
 
-    if (!(icon=elm_conf_read("Icons", name))) {
+    if (!(icon=elm_conf_read("Images", name))) {
         return -1;
     }
 
@@ -137,6 +121,21 @@ int set_entry_icon(GtkWidget *widget, char *name)
 
     gtk_entry_set_icon_from_pixbuf(GTK_ENTRY(widget), GTK_ENTRY_ICON_PRIMARY,
                                    pixbuf);
+
+    return 0;
+}
+
+/* ************************************************************************** */
+/* Set default user, if specified in config file */
+int elm_app_set_default_user(GtkWidget *widget)
+{
+    char *user = NULL;
+
+    if (!(user=elm_conf_read("Main", "DefaultUser")) || !user[0]) {
+        return -1;
+    }
+
+    gtk_entry_set_text(GTK_ENTRY(widget), user);
 
     return 0;
 }

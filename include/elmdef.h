@@ -67,7 +67,9 @@
 #define ELM_XLOG    ELM_LOG_DIR "/Xorg.log"
 
 /* Sizes */
-#define ELM_MAX_CRED_SIZE 64
+
+#define ELM_MAX_OPT_SIZE   32
+#define ELM_MAX_CRED_SIZE  64
 #define ELM_MAX_CMD_SIZE  128
 #define ELM_MAX_CONF_SIZE 128
 #define ELM_MAX_PATH_SIZE 128
