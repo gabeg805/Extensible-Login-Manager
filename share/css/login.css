@@ -1,21 +1,33 @@
+@define-color fg_color  #ffa500;
+@define-color bg_color  #e5e5e5;
+@define-color brd_color #4a90d9;
+@define-color grd_color #e59400;
+
 .LoginButton
 {
     font             : 14px Arial;
     color            : white;
-    background-image : linear-gradient(to top, #ffa500, #e59400);
+    background-image : none;
+    background-color : @fg_color;
     border-color     : transparent;
-    border-radius    : 15px;
+    border-radius    : 16px;
     border-width     : 1px;
     box-shadow       : none;
-}
-
-.LoginButton:focus
-{
-    outline-style : none;
-    border-color  : #4a90d9;
+    outline-style    : none;
 }
 
 .LoginButton:hover
 {
-    background-image    : linear-gradient(to top, #ffb732, #ffa500);
+    background-color : shade(@fg_color, 1.15);
+}
+
+.LoginButton:focus
+{
+    border-color : @brd_color;
+}
+
+.LoginButton:active
+{
+    background-color : shade(@fg_color, 0.9);
+    border-color     : transparent;
 }

@@ -1,32 +1,26 @@
+@define-color bg_color         #ffa500;
+@define-color grd_color        #ffb732;
+@define-color grd_hover_color  #ffc966;
+@define-color grd_active_color #e59400;
+
 .PowerButton
 {
-    border-color     : transparent;
+    background-color : transparent;
     border-radius    : 16px;
-    border-width     : 0px;
-    padding          : 3px 0px 3px 0px;
-}
-
-.PowerButton:focus
-{
-    outline-style : none;
-    border-color  : #4a90d9;
-}
-
-.PowerButton:hover
-{
-    background-color : rgba(255, 255, 255, 0.6);
-    transition       : 225ms ease-in-out
+    outline-style    : none;
 }
 
 .ShutdownButton
 {
-    background-image : linear-gradient(to top, #ffa500, #e59400);
-    border-color     : transparent;
-    border-width     : 0px;
-    box-shadow       : rgba(0, 0, 0, 0.2) 0px 2px;
+    background-image : linear-gradient(to top, @bg_color, @grd_color);
 }
 
 .ShutdownButton:hover
 {
-    background-image : linear-gradient(to top, #ffb732, #ffa500);
+    background-image : linear-gradient(to top, @bg_color, @grd_hover_color);
+}
+
+.ShutdownButton:active
+{
+    background-image : linear-gradient(to top, @bg_color, @grd_active_color);
 }

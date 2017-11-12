@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 
         case 0:
             options.logout = 1;
-            elmprintf(LOG, "Logout needs to be implemented. Exiting.");
+            elmprintf(LOGWARN, "Logout needs to be implemented. Exiting.");
             exit(5);
             break;
 

@@ -60,10 +60,13 @@ static char * elm_x_get_localhost(void);
 static char * elm_x_get_vt(void);
 static char * elm_x_get_random_bytes(size_t size);
 static char * elm_x_get_tty(void);
+static char * elm_x_get_tty_from_sys(void);
 static char * elm_x_get_tty_from_pts(void);
 static char * elm_x_get_tty_from_proc(void);
-static char * elm_x_get_tty_from_sys(void);
+static char * elm_x_get_tty_open_from_proc(int *ignore, size_t size);
+static int    elm_x_get_tty_index_from_proc(char *dir, char *name, char *proc);
 static int    elm_x_is_running(void);
+
 
 /* Private variables */
 static Display *XDisplay = NULL;
@@ -153,7 +156,6 @@ int elm_x_init(void)
 {
     elmprintf(LOGINFO, "Preparing to open X server display.");
 
-    /* Set X display */
     char *display = getenv("DISPLAY");
 
     if (!(XDisplay=XOpenDisplay(display))) {
@@ -162,7 +164,6 @@ int elm_x_init(void)
         return -1;
     }
 
-    /* Set I/O error handler */
     XSetIOErrorHandler(elm_x_stop);
 
     return 0;
@@ -252,18 +253,18 @@ int elm_x_exec_xorg(void)
                         ELM_XLOG, "-auth", xauthority, "-seat", "seat0",
                         "-nolisten", "tcp", vt, NULL};
 
-    /* Start X server */
     switch ((XPid=fork()))
     {
     case 0:
         elmprintf(LOGINFO, "Preparing to run X server.");
 
-        signal(SIGTTIN, SIG_IGN);
-        signal(SIGTTOU, SIG_IGN);
-        signal(SIGUSR1, SIG_IGN);
+        /* signal(SIGTTIN, SIG_IGN); */
+        /* signal(SIGTTOU, SIG_IGN); */
+        /* signal(SIGUSR1, SIG_IGN); */
         setpgid(0, getpid());
 
         elm_sys_exec(argv[0], argv);
+
         exit(ELM_EXIT_X_EXEC);
     case -1:
         elmprintf(LOGERRNO, "%s '%s'", "Error during fork to start", argv[0]);
@@ -813,6 +814,15 @@ char * elm_x_get_tty(void)
 }
 
 /* ************************************************************************** */
+/* Return active tty from /sys/ directory */
+char * elm_x_get_tty_from_sys(void)
+{
+    char *activefile = "/sys/devices/virtual/tty/tty0/active";
+
+    return elm_sys_read_line(activefile);
+}
+
+/* ************************************************************************** */
 /* Return open pts acting as a tty */
 char * elm_x_get_tty_from_pts(void)
 {
@@ -845,11 +855,7 @@ char * elm_x_get_tty_from_proc(void)
 {
     DIR           *dhandle;
     struct dirent *entry;
-    char fullpath[ELM_MAX_PATH_SIZE];
     char          *dirpath;
-    char          *cmdpath;
-    char          *symlinkpath;
-    char          *tty;
 
     /* Iterate over current process ids */
     char **proc      = elm_sys_get_proc();
@@ -878,27 +884,11 @@ char * elm_x_get_tty_from_proc(void)
             }
 
             /* Determine full path */
-            symlinkpath = elm_sys_path("%s%s", dirpath, entry->d_name);
+            index = elm_x_get_tty_index_from_proc(dirpath, entry->d_name, proc[i]);
 
-            memset(fullpath, 0, sizeof(fullpath));
-            readlink(symlinkpath, fullpath, sizeof(fullpath)-1);
-
-            /* Ignore tty if running Xorg */
-            if (strstr(fullpath, "/dev/tty")) {
-                cmdpath = elm_sys_path("/proc/%s/cmdline", proc[i]);
-                tty     = elm_sys_read_line(cmdpath);
-                index   = (fullpath[8]-'0')-1;
-
-                if (tty && !ignore[index] && strstr(tty, "Xorg")) {
-                    ignore[index] = 1;
-                }
-
-                /* Clear memory */
-                elm_free(&cmdpath);
-                elm_free(&tty);
+            if ((index >= 0) && (!ignore[index])) {
+                ignore[index] = 1;
             }
-
-            elm_free(&symlinkpath);
         }
 
         /* Cleanup */
@@ -909,11 +899,19 @@ char * elm_x_get_tty_from_proc(void)
 
     elm_free(&proc);
 
-    /* Return open tty */
-    char   *open   = NULL;
-    size_t  length = 5;
+    return elm_x_get_tty_open_from_proc(ignore, sizeof ignore);
+}
 
-    for (i=0; i < sizeof(ignore); i++) {
+/* ************************************************************************** */
+/* Return open tty */
+char * elm_x_get_tty_open_from_proc(int *ignore, size_t size)
+{
+    char *open   = NULL;
+    int   length = 5;
+    int   i;
+
+    /* Iterate over tty ignore list */
+    for (i=0; i < size; i++) {
         if (!ignore[i]) {
             if (!elm_calloc(&open, length, sizeof *open)) {
                 continue;
@@ -932,72 +930,35 @@ char * elm_x_get_tty_from_proc(void)
     return open;
 }
 
-/* int elm_x_get_tty_index_from_proc(char *path); */
-/* char * elm_x_get_open_tty_from_proc(int *ignore, size_t size); */
-
-/* /\* ************************************************************************** *\/ */
-/* /\* Return tty in index form if it should be ignored because it is in use *\/ */
-/* int elm_x_get_tty_index_from_proc(char *path) */
-/* { */
-/*     static char fullpath[ELM_MAX_PATH_SIZE]; */
-/*     int         status = -1; */
-
-/*     memset(fullpath, 0, sizeof(fullpath)); */
-/*     readlink(path, fullpath, sizeof(fullpath)-1); */
-
-/*     /\* Ignore tty if running Xorg *\/ */
-/*     if (strstr(fullpath, "/dev/tty")) { */
-/*         char *cmdpath = elm_sys_path("/proc/%s/cmdline", proc[i]); */
-/*         char *tty     = elm_sys_read_line(cmdpath); */
-/*         int   index   = (fullpath[8]-'0')-1; */
-
-/*         if (tty && !ignore[index] && strstr(tty, "Xorg")) { */
-/*             status = index; */
-/*         } */
-
-/*         /\* Clear memory *\/ */
-/*         elm_free(&cmdpath); */
-/*         elm_free(&tty); */
-/*     } */
-
-/*     return status; */
-/* } */
-
-/* /\* ************************************************************************** *\/ */
-/* /\* Return open tty *\/ */
-/* char * elm_x_get_open_tty_from_proc(int *ignore, size_t size) */
-/* { */
-/*     char   *open   = NULL; */
-/*     size_t  length = 5; */
-/*     size_t  i; */
-
-/*     /\* Iterate over tty ignore list *\/ */
-/*     for (i=0; i < size; i++) { */
-/*         if (!ignore[i]) { */
-/*             if (!elmcalloc(&open, length, sizeof *open)) { */
-/*                 continue; */
-/*             } */
-
-/*             snprintf(open, length, "tty%d", i+1); */
-/*             break; */
-/*         } */
-/*     } */
-
-/*     if (!open) { */
-/*         elmprintf(LOGERR, "%s", */
-/*                   "Unable to find open tty by searching '/proc' directory."); */
-/*     } */
-
-/*     return open; */
-/* } */
-
 /* ************************************************************************** */
-/* Return active tty from /sys/ directory */
-char * elm_x_get_tty_from_sys(void)
+/* Return tty in index form if it should be ignored because it is in use */
+int elm_x_get_tty_index_from_proc(char *dir, char *name, char *proc)
 {
-    char *activefile              = "/sys/devices/virtual/tty/tty0/active";
+    int          status      = -1;
+    char        *symlinkpath = elm_sys_path("%s%s", dir, name);
+    static char  fullpath[ELM_MAX_PATH_SIZE];
 
-    return elm_sys_read_line(activefile);
+    memset(fullpath, 0, sizeof(fullpath));
+    readlink(symlinkpath, fullpath, sizeof(fullpath)-1);
+
+    /* Ignore tty if running Xorg */
+    if (strstr(fullpath, "/dev/tty")) {
+        char *cmdpath = elm_sys_path("/proc/%s/cmdline", proc);
+        char *tty     = elm_sys_read_line(cmdpath);
+        int   index   = (fullpath[8]-'0')-1;
+
+        if (tty && strstr(tty, "Xorg")) {
+            status = index;
+        }
+
+        /* Clear memory */
+        elm_free(&cmdpath);
+        elm_free(&tty);
+    }
+
+    elm_free(&symlinkpath);
+
+    return status;
 }
 
 /* ************************************************************************** */

@@ -1,20 +1,30 @@
+@define-color fg_color  #ffa500;
+@define-color bg_color  #e5e5e5;
+@define-color brd_color #4a90d9;
+
 .XSession
 {
-    color            : #ffa500;
-    background-color : #e5e5e5;
+    color            : @fg_color;
+    background-color : @bg_color;
     border-color     : transparent;
-    border-radius    : 10px;
+    border-radius    : 16px;
     border-width     : 1px;
     box-shadow       : none;
-}
-
-.XSession:focus
-{
-    outline-style : none;
-    border-color  : #4a90d9;
+    outline-style    : none;
 }
 
 .XSession:hover
 {
-    background-image : linear-gradient(to top, #ffffff, #e5e5e5);
+    background-color : shade(@bg_color, 1.0);
+}
+
+.XSession:focus
+{
+    border-color : @brd_color;
+}
+
+.XSession:active
+{
+    background-color : shade(@bg_color, 0.95);
+    border-color     : transparent;
 }

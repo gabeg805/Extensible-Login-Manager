@@ -23,16 +23,19 @@
 /* Typedefs */
 typedef enum
 {
-    NONE,
-    INFO,
-    WARN,
-    ERROR,
-    ERRNO,
-    LOG,
-    LOGINFO,
-    LOGWARN,
-    LOGERR,
-    LOGERRNO
+    NONE     = 0,
+    INFO     = (1 <<  0) * 1,
+    INFNO    = (1 <<  0) * 2,
+    WARN     = (1 <<  2) * 1,
+    WARNO    = (1 <<  2) * 2,
+    ERROR    = (1 <<  4) * 1,
+    ERRNO    = (1 <<  4) * 2,
+    LOGINFO  = (1 <<  6) * 1,
+    LOGINFNO = (1 <<  6) * 2,
+    LOGWARN  = (1 <<  8) * 1,
+    LOGWARNO = (1 <<  8) * 2,
+    LOGERR   = (1 << 10) * 1,
+    LOGERRNO = (1 << 10) * 2
 } ElmPrint;
 
 /* Public functions  */

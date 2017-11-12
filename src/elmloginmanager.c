@@ -218,7 +218,7 @@ int elm_login_manager_build_window(void)
 
     elm_x_screen_dimensions(&width, &height);
     elm_gtk_set_window_size(&Window, width, height);
-    elm_gtk_add_css_from_conf(&Window, "Images", "Background");
+    elm_gtk_add_css_from_conf(&Window, "Manager", "Images", "Background");
     elm_gtk_add_widget(&Window, Container);
 
     gtk_widget_show(Container);
@@ -293,7 +293,7 @@ int elm_login_manager_build_apps(void)
 int elm_login_manager_setup_dir(void)
 {
     if (access(ELM_RUN_DIR, F_OK)) {
-        elmprintf(LOGERRNO, "%s '%s'", "Unable to find directory", ELM_RUN_DIR);
+        elmprintf(LOGWARNO, "%s '%s'", "Unable to find directory", ELM_RUN_DIR);
         elmprintf(LOGINFO, "%s '%s'.", "Creating directory", ELM_RUN_DIR);
 
         if (mkdir(ELM_RUN_DIR, (S_IRWXU | S_IRWXG | S_IRWXO)) < 0) {
@@ -342,15 +342,22 @@ int elm_login_manager_setup_signal_catcher(void)
     }
 
     struct sigaction act;
+    struct sigaction ign;
+
     act.sa_flags     = SA_SIGINFO;
     act.sa_sigaction = &elm_login_manager_signal_catcher;
+    ign.sa_flags     = SA_SIGINFO;
+    ign.sa_handler   = SIG_IGN;
 
     sigaction(SIGQUIT, &act, NULL);
-    sigaction(SIGTERM, &act, NULL);
+    /* sigaction(SIGTERM, &act, NULL); */
     sigaction(SIGKILL, &act, NULL);
     sigaction(SIGINT,  &act, NULL);
     sigaction(SIGHUP,  &act, NULL);
     sigaction(SIGPIPE, &act, NULL);
+    sigaction(SIGTTIN, &ign, NULL);
+    sigaction(SIGTTOU, &ign, NULL);
+    sigaction(SIGUSR1, &ign, NULL);
 
     return 0;
 }
@@ -364,13 +371,13 @@ void elm_login_manager_signal_catcher(int sig, siginfo_t *info, void *context)
         exit(ELM_EXIT_MNGR_SIG);
     }
 
-    elmprintf(LOG, "Unexpected signal: %d.", sig);
-    elmprintf(LOG, "signo:  %d.", info->si_signo);
-    elmprintf(LOG, "code:   %d.", info->si_code);
-    elmprintf(LOG, "errno:  %d.", info->si_errno);
-    elmprintf(LOG, "pid:    %ld.", info->si_pid);
-    elmprintf(LOG, "uid:    %ld.", info->si_uid);
-    elmprintf(LOG, "status: %d.", info->si_status);
+    elmprintf(LOGWARN, "Unexpected signal: %d.", sig);
+    elmprintf(LOGWARN, "signo:  %d.", info->si_signo);
+    elmprintf(LOGWARN, "code:   %d.", info->si_code);
+    elmprintf(LOGWARN, "errno:  %d.", info->si_errno);
+    elmprintf(LOGWARN, "pid:    %ld.", info->si_pid);
+    elmprintf(LOGWARN, "uid:    %ld.", info->si_uid);
+    elmprintf(LOGWARN, "status: %d.", info->si_status);
 
     /* /\* Might not need this *\/ */
     /* int   signo = info->si_signo; */

@@ -177,7 +177,7 @@ char ** elm_conf_get_keys(const char *group)
 int elm_is_key_err(GError **err)
 {
     if (*err) {
-        elmprintf(LOGERR, (*err)->message);
+        elmprintf(LOGWARN, (*err)->message);
         g_error_free(*err);
         return 1;
     }

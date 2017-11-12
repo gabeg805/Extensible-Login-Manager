@@ -39,12 +39,13 @@ int elm_gtk_add_widget(GtkWidget **container, GtkWidget *widget)
 
 /* ************************************************************************** */
 /* Add a CSS rule defined in a configuration file */
-int elm_gtk_add_css_from_conf(GtkWidget **widget, char *group, char *key)
+int elm_gtk_add_css_from_conf(GtkWidget **widget, char *selector, char *group,
+                              char *key)
 {
     /* Determine css rule */
     char *value = elm_conf_read(group, key);
     char *line  = elm_gtk_get_css_decl_bg(value);
-    char *rule  = elm_gtk_get_css_rule(group, line);
+    char *rule  = elm_gtk_get_css_rule(selector, line);
 
     if (!value || !line || !rule) {
         return -1;
@@ -62,7 +63,7 @@ int elm_gtk_add_css_from_conf(GtkWidget **widget, char *group, char *key)
     }
 
     /* Add rule to widget */
-    gtk_style_context_add_class(context, group);
+    gtk_style_context_add_class(context, selector);
     gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(css),
                                    GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     g_object_unref(css);
@@ -72,7 +73,8 @@ int elm_gtk_add_css_from_conf(GtkWidget **widget, char *group, char *key)
 
 /* ************************************************************************** */
 /* Add CSS rules defined in a file */
-int elm_gtk_add_css_from_file(GtkWidget **widget, const char *name, const char *file)
+int elm_gtk_add_css_from_file(GtkWidget **widget, const char *selector,
+                              const char *file)
 {
     if (access(file, F_OK)) {
         return -1;
@@ -90,8 +92,8 @@ int elm_gtk_add_css_from_file(GtkWidget **widget, const char *name, const char *
     }
 
     /* Add rule to widget */
-    if (name) {
-        gtk_style_context_add_class(context, name);
+    if (selector) {
+        gtk_style_context_add_class(context, selector);
     }
 
     gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(css), 
@@ -218,7 +220,7 @@ char * elm_gtk_get_css_decl_bg(char *path)
     char  buffer[ELM_MAX_LINE_SIZE];
 
     snprintf(buffer, sizeof(buffer),
-             "  %s: url('%s');\n  background-repeat: no-repeat;\n",
+             "  %s: url('%s');\n  background-repeat: repeat;\n  background-position: center;\n",
              name, path);
 
     return elm_sys_strcpy(NULL, buffer);

@@ -17,8 +17,9 @@
 #include "elmdef.h"
 #include <errno.h>
 #include <stdarg.h>
-#include <stdio.h>
 #include <string.h>
+#include <stdio.h>
+#include <stdint.h>
 #include <time.h>
 
 /* Private functions */
@@ -32,10 +33,18 @@ static int    elm_io_is_mode_info(ElmPrint mode);
 static int    elm_io_is_mode_warn(ElmPrint mode);
 static int    elm_io_is_mode_err(ElmPrint mode);
 static int    elm_io_is_mode_log(ElmPrint mode);
+static int    elm_io_is_mode_errno(ElmPrint mode);
 static char * elm_io_mode_to_string(ElmPrint mode);
 
 /* Private variables */
-static int Verbose = 0;
+static int      Verbose      = 0;
+static uint32_t InfoMask     = 0x3;
+static uint32_t WarnMask     = 0xc;
+static uint32_t ErrorMask    = 0x30;
+static uint32_t LogThreshold = 0x40;
+static uint32_t LogIMask     = 0xc0;
+static uint32_t LogWMask     = 0x300;
+static uint32_t LogEMask     = 0xc00;
 
 /* ************************************************************************** */
 /* Print wrapper */
@@ -49,6 +58,7 @@ void elmprintf(ElmPrint mode, const char *vafmt, ...)
     va_start(ap, vafmt);
     va_copy(aq, ap);
 
+    /* Print to stdout/stderr */
     if (elm_io_is_mode_info(mode)) {
         elm_io_info(preamble, ap);
     }
@@ -61,6 +71,7 @@ void elmprintf(ElmPrint mode, const char *vafmt, ...)
     else {
     }
 
+    /* Print to log */
     if (elm_io_is_mode_log(mode)) {
         elm_io_log(preamble, aq);
     }
@@ -111,33 +122,32 @@ void elm_io_set_verbose(int flag)
 char * elm_io_get_preamble(ElmPrint mode, const char *vafmt)
 {
     static char preamble[ELM_MAX_MSG_SIZE];
+    int         available = sizeof(preamble);
+    int         length;
 
     /* Default preamble (excluding trailing newline) */
-    snprintf(preamble, sizeof(preamble), "[%s] %s %s",
+    snprintf(preamble, available, "[%s] %s %s",
              elm_io_get_time(), elm_io_mode_to_string(mode), vafmt);
 
-    /* Determine if more can be appended to message */
-    size_t length    = strlen(preamble)+1;        /* Includes newline */
-    size_t available = sizeof(preamble)-1-length; /* Includes null terminator */
+    length     = strlen(preamble)+1;
+    available -= (length+1);
 
-    if ((length < sizeof(preamble)) && (available > 0)) {
+    /* Add errno message to string */
+    if (elm_io_is_mode_errno(mode)) {
+        char   *errmsg = strerror(errno);
+        size_t  errlen = strlen(errmsg)+4;
 
-        /* Add errno message to string */
-        if ((mode == ERRNO) || (mode == LOGERRNO)) {
-            if (available >= 2) {
-                strncat(preamble, ": ", 2);
-                available -= 2;
-            }
+        if (available >= errlen) {
+            strncat(preamble, ": ", 2);
+            strncat(preamble, errmsg, errlen-1);
+            strncat(preamble, ".", 1);
 
-            char   *errmsg = strerror(errno);
-            size_t  errlen = strlen(errmsg)+1;
-
-            if (available >= errlen) {
-                strncat(preamble, errmsg, errlen);
-                strncat(preamble, ".", 1);
-            }
+            available -= errlen;
         }
+    }
 
+    /* Add newline */
+    if (available > 0) {
         strncat(preamble, "\n", 1);
     }
 
@@ -163,35 +173,40 @@ char * elm_io_get_time(void)
 /* Check if INFO mode */
 int elm_io_is_mode_info(ElmPrint mode)
 {
-    return ((mode == INFO) || (mode == LOGINFO)) ? 1 : 0;
+    return ((mode & InfoMask) || (mode & LogIMask));
 }
 
 /* ************************************************************************** */
 /* Check if WARNING mode */
 int elm_io_is_mode_warn(ElmPrint mode)
 {
-    return ((mode == WARN) || (mode == LOGWARN)) ? 1 : 0;
+    return ((mode & WarnMask) || (mode & LogWMask));
 }
 
 /* ************************************************************************** */
 /* Check if ERROR mode */
 int elm_io_is_mode_err(ElmPrint mode)
 {
-    return ((mode == ERROR) || (mode == ERRNO) \
-            || (mode == LOGERR) || (mode == LOGERRNO)) \
-        ? 1 : 0;
+    return ((mode & ErrorMask) || (mode & LogEMask));
 }
 
 /* ************************************************************************** */
 /* Check if LOG mode */
 int elm_io_is_mode_log(ElmPrint mode)
 {
-    return ((mode == LOG) \
-            || (mode == LOGINFO) \
-            || (mode == LOGWARN) \
-            || (mode == LOGERR) \
-            || (mode == LOGERRNO)) \
-        ? 1 : 0;
+    return (mode > LogThreshold);
+}
+
+/* ************************************************************************** */
+/* Check if errno mode (any variant that errno) */
+int elm_io_is_mode_errno(ElmPrint mode)
+{
+    return ((mode == INFNO)       \
+            || (mode == WARNO)    \
+            || (mode == ERRNO)    \
+            || (mode == LOGINFNO)  \
+            || (mode == LOGWARNO) \
+            || (mode == LOGERRNO));
 }
 
 /* ************************************************************************** */
@@ -199,11 +214,8 @@ int elm_io_is_mode_log(ElmPrint mode)
 char * elm_io_mode_to_string(ElmPrint mode)
 {
     static char str[10];
-    memset(str, 0, sizeof(str));
 
-    if (elm_io_is_mode_log(mode)) {
-        strncpy(str, "LOG  ", 6);
-    }
+    memset(str, 0, sizeof(str));
 
     if (elm_io_is_mode_info(mode)) {
         strncpy(str, "INFO ", 6);

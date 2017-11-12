@@ -38,8 +38,8 @@ GtkWidget * display_power_buttons(ElmCallback callback)
 
     /* Setup widget */
     gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+    elm_gtk_add_css_from_conf(&button, "PowerButton", "Images", "Power");
     elm_gtk_add_css_from_file(&button, "PowerButton", Style);
-    elm_gtk_add_css_from_conf(&button, "Images", "Power");
     elm_gtk_set_widget_size_from_conf(&button, "Powerbuttons", "Width", "Height");
 
     g_signal_connect(button, "clicked", G_CALLBACK(elm_app_system_prompt), NULL);

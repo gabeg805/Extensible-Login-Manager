@@ -20,6 +20,7 @@
 /* Includes */
 #include "elmapp.h"
 #include "elmgtk.h"
+#include "elmconf.h"
 
 /* Public functions */
 GtkWidget * display_power_buttons(ElmCallback callback);

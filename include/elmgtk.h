@@ -24,9 +24,9 @@
 
 /* Public functions */
 int         elm_gtk_add_widget(GtkWidget **container, GtkWidget *widget);
-int         elm_gtk_add_css_from_conf(GtkWidget **widget, char *group,
-                                      char *key);
-int         elm_gtk_add_css_from_file(GtkWidget **widget, const char *name,
+int         elm_gtk_add_css_from_conf(GtkWidget **widget, char *selector,
+                                      char *group, char *key);
+int         elm_gtk_add_css_from_file(GtkWidget **widget, const char *selector,
                                       const char *file);
 int         elm_gtk_default_widget(GtkWidget **window, GtkWidget **widget);
 int         elm_gtk_focus(GtkWidget **widget);
