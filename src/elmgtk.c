@@ -17,7 +17,7 @@
 #include "elmgtk.h"
 #include "elmconf.h"
 #include "elmdef.h"
-#include "elmsys.h"
+#include "elmstr.h"
 #include <stdlib.h>
 #include <strings.h>
 #include <unistd.h>
@@ -197,15 +197,11 @@ char * elm_gtk_get_css_decl(char *name, char *args)
         return NULL;
     }
 
-    char *line   = NULL;
-    char *format = "  %s: %s;\n";
-    char  buffer[ELM_MAX_LINE_SIZE];
+    size_t  size   = ELM_MAX_LINE_SIZE;
+    char   *format = "  %s: %s;\n";
 
-    snprintf(buffer, sizeof(buffer), format, name, args);
-
-    return elm_sys_strcpy(&line, buffer); /* can just make line NULL? */
+    return elm_str_vcopy(size, format, name, args);
 }
-
 
 /* ************************************************************************** */
 /* Return a background image declaration line for a CSS rule */
@@ -215,15 +211,13 @@ char * elm_gtk_get_css_decl_bg(char *path)
         return NULL;
     }
 
-    /* Determine css declaration */
-    char *name   = "background-image";
-    char  buffer[ELM_MAX_LINE_SIZE];
+    size_t  size   = ELM_MAX_LINE_SIZE;
+    char   *format = "  %s: url('%s');\n  %s: %s;\n  %s: %s;\n";
 
-    snprintf(buffer, sizeof(buffer),
-             "  %s: url('%s');\n  background-repeat: repeat;\n  background-position: center;\n",
-             name, path);
-
-    return elm_sys_strcpy(NULL, buffer);
+    return elm_str_vcopy(size, format,
+                         "background-image", path,
+                         "background-repeat", "repeat",
+                         "background-position", "center");
 }
 
 /* ************************************************************************** */
@@ -234,13 +228,10 @@ char * elm_gtk_get_css_rule(char *selector, char *declarations)
         return NULL;
     }
 
-    /* Determine css rule */
-    char *line = NULL;
-    char  buffer[ELM_MAX_LINE_SIZE];
+    size_t  size   = ELM_MAX_LINE_SIZE;
+    char   *format = ".%s {\n%s}\n";
 
-    snprintf(buffer, sizeof(buffer), ".%s {\n%s}\n", selector, declarations);
-
-    return elm_sys_strcpy(&line, buffer);
+    return elm_str_vcopy(size, format, selector, declarations);
 }
 
 /* ************************************************************************** */

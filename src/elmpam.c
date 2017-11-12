@@ -18,7 +18,7 @@
 #include "elmdef.h"
 #include "elmio.h"
 #include "elmsession.h"
-#include "elmsys.h"
+#include "elmstd.h"
 #include "elmx.h"
 #include <errno.h>
 #include <grp.h>
@@ -190,7 +190,7 @@ int elm_pam_exec_login(void)
             return -2;
         }
 
-        elm_sys_exec(argv[0], argv);
+        elm_std_execvp(argv[0], argv);
         exit(ELM_EXIT_PAM_LOGIN);
     case -1:
         elmprintf(LOGERRNO, "%s '%s'", "Error during fork to start", argv[0]);
@@ -367,11 +367,11 @@ int elm_pam_session_env(struct passwd *pw)
     elmprintf(LOGINFO, "%s", "Initializing environment variables.");
 
     /* Default environment variables */
-    elm_setenv("HOME", pw->pw_dir);
-    elm_setenv("PWD", pw->pw_dir);
-    elm_setenv("SHELL", pw->pw_shell);
-    elm_setenv("USER", pw->pw_name);
-    elm_setenv("LOGNAME", pw->pw_name);
+    elm_std_setenv("HOME", pw->pw_dir);
+    elm_std_setenv("PWD", pw->pw_dir);
+    elm_std_setenv("SHELL", pw->pw_shell);
+    elm_std_setenv("USER", pw->pw_name);
+    elm_std_setenv("LOGNAME", pw->pw_name);
 
     /* Missing environment variables that are set by pam */
     char **envvars = pam_getenvlist(PamHandle);
@@ -390,7 +390,7 @@ int elm_pam_session_env(struct passwd *pw)
         value = c+1;
 
         if (!getenv(name)) {
-            if (elm_setenv(name, value) < 0) {
+            if (elm_std_setenv(name, value) < 0) {
                 continue;
             }
         }
@@ -422,13 +422,13 @@ int elm_pam_session_env(struct passwd *pw)
 
     for (i=0; xdgvars[i][0]; i++) {
         if (!getenv(xdgvars[i][0])) {
-            if (elm_setenv(xdgvars[i][0], xdgvars[i][1])) {
+            if (elm_std_setenv(xdgvars[i][0], xdgvars[i][1])) {
             }
         }
     }
 
-     elm_setenv("XDG_SESSION_CLASS", "user");
-     elm_setenv("XDG_SESSION_TYPE", "x11");
+     elm_std_setenv("XDG_SESSION_CLASS", "user");
+     elm_std_setenv("XDG_SESSION_TYPE", "x11");
 
     return 0;
 }

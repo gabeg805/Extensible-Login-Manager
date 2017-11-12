@@ -14,10 +14,11 @@
 
 /* Includes */
 #include "elmx.h"
-#include "elmalloc.h"
 #include "elmconf.h"
 #include "elmdef.h"
 #include "elmio.h"
+#include "elmstd.h"
+#include "elmstr.h"
 #include "elmsys.h"
 #include <dirent.h>
 #include <fcntl.h>
@@ -263,7 +264,7 @@ int elm_x_exec_xorg(void)
         /* signal(SIGUSR1, SIG_IGN); */
         setpgid(0, getpid());
 
-        elm_sys_exec(argv[0], argv);
+        elm_std_execvp(argv[0], argv);
 
         exit(ELM_EXIT_X_EXEC);
     case -1:
@@ -289,7 +290,7 @@ int elm_x_exec_xcompmgr(void)
     switch ((pid=fork()))
     {
     case 0:
-        elm_sys_exec(argv[0], argv);
+        elm_std_execvp(argv[0], argv);
         return 1;
     case -1:
         elmprintf(LOGERRNO, "%s '%s'", "Error during fork to start", argv[0]);
@@ -459,7 +460,7 @@ int elm_x_set_display_env(void)
     /* Set display environment variable */
     char display[3] = {':', i+'0', 0};
 
-    if (elm_setenv("DISPLAY", display) < 0) {
+    if (elm_std_setenv("DISPLAY", display) < 0) {
         return -2;
     }
 
@@ -473,7 +474,7 @@ int elm_x_set_tty_env(void)
     char *tty    = elm_x_get_tty();
     int   status = 0;
 
-    if (elm_setenv("TTY", tty) < 0) {
+    if (elm_std_setenv("TTY", tty) < 0) {
         status = -1;
     }
 
@@ -508,7 +509,7 @@ int elm_x_set_ttyn_env(void)
     /* Set ttyn environment variable */
     char str[2] = {ttyn+'0', 0};
 
-    if (elm_setenv("TTYN", str) < 0) {
+    if (elm_std_setenv("TTYN", str) < 0) {
         return -2;
     }
 
@@ -539,7 +540,7 @@ int elm_x_set_xauthority_env(void)
         goto cleanup;
     }
 
-    if (elm_setenv("XAUTHORITY", xauthority) < 0) {
+    if (elm_std_setenv("XAUTHORITY", xauthority) < 0) {
         status = -4;
         goto cleanup;
     }
@@ -568,7 +569,7 @@ int  elm_x_set_xorgvt_env(void)
         goto cleanup;
     }
 
-    if (elm_setenv("XORGVT", vt) < 0) {
+    if (elm_std_setenv("XORGVT", vt) < 0) {
         status = -2;
         goto cleanup;
     }
@@ -702,8 +703,8 @@ int elm_x_screen_dimensions(int *width, int *height)
 /* Return the Xauthority file path */
 char * elm_x_get_xauth_file(void)
 {
-    /* Store file path in temp array */
-    char file[ELM_MAX_PATH_SIZE];
+    char *xauthority = NULL;
+    char  file[ELM_MAX_PATH_SIZE];
  
     if (access(ELM_RUN_DIR, W_OK) == 0) {
         snprintf(file, sizeof(file), "%s/.Xauthority", ELM_RUN_DIR);
@@ -712,10 +713,10 @@ char * elm_x_get_xauth_file(void)
         snprintf(file, sizeof(file), "/tmp/.Xauthority");
     }
 
-    /* Allocate memory for path and copy string */
-    size_t  size       = strlen(file)+1;
-    char   *xauthority = calloc(size, sizeof(char));
-    strncpy(xauthority, file, size);
+    if (!(xauthority=elm_str_copy(file))) {
+        elmprintf(LOGERRNO, "Unable to allocate Xauthority string");
+        return NULL;
+    }
 
     elmprintf(LOGINFO, "X authority file: '%s'.", xauthority);
 
@@ -727,11 +728,16 @@ char * elm_x_get_xauth_file(void)
 char * elm_x_get_localhost(void)
 {
     size_t  size      = HOST_NAME_MAX;
-    char   *localhost = calloc(size, sizeof(char));
+    char   *localhost = calloc(size, sizeof *localhost);
 
-    if (gethostname(localhost, size) < 0) {
+    if (!localhost) {
+        elmprintf(LOGERRNO, "Unable to allocate memory for localhost string");
+        return NULL;
+    }
+
+    if (gethostname(localhost, size-1) < 0) {
         elmprintf(LOGERR, "Unable to 'gethostname'.");
-        strncpy(localhost, "localhost", size);
+        strncpy(localhost, "localhost", size-1);
     }
 
     elmprintf(LOGINFO, "X authority localhost: %s.", localhost); 
@@ -744,7 +750,7 @@ char * elm_x_get_localhost(void)
 char * elm_x_get_vt(void)
 {
     size_t  size = 5;
-    char   *vt   = calloc(size, sizeof(char));
+    char   *vt   = calloc(size, sizeof *vt);
 
     snprintf(vt, size, "vt%s", getenv("TTYN"));
 
@@ -774,7 +780,7 @@ char * elm_x_get_random_bytes(size_t size)
     }
 
     /* Copy from urandom */
-    char *bytes = calloc(size+1, sizeof(char));
+    char *bytes = calloc(size+1, sizeof *bytes);
 
     if (!bytes) {
         elmprintf(LOGERRNO, "Unable to allocate memory to read random bytes.");
@@ -819,7 +825,7 @@ char * elm_x_get_tty_from_sys(void)
 {
     char *activefile = "/sys/devices/virtual/tty/tty0/active";
 
-    return elm_sys_read_line(activefile);
+    return elm_str_readline(activefile);
 }
 
 /* ************************************************************************** */
@@ -842,7 +848,7 @@ char * elm_x_get_tty_from_pts(void)
     /* Return pseudoterminal */
     ptr    = (strstr(name, "/dev/")) ? &name[5] : name;
     length = strlen(ptr)+1;
-    tty    = calloc(length, sizeof(*tty));
+    tty    = calloc(length, sizeof *tty);
 
     strncpy(tty, ptr, length);
 
@@ -866,13 +872,15 @@ char * elm_x_get_tty_from_proc(void)
     for (i=0; proc[i]; i++)
     {
         /* Unable to open directory */
-        dirpath = elm_sys_path("/proc/%s/fd/", proc);
+        dirpath = elm_str_path("/proc/%s/fd/", proc[i]);
+
+        elmprintf(LOGWARN, "Proc: '%s'", proc[i]);
 
         if (!(dhandle=opendir(dirpath))) {
             elmprintf(LOGERRNO, "%s '%s'",
                       "Unable to open directory", dirpath);
-            elm_free(&dirpath);
-            elm_free(&proc[i]);
+            elm_std_free(&dirpath);
+            elm_std_free(&proc[i]);
             continue;
         }
 
@@ -893,11 +901,11 @@ char * elm_x_get_tty_from_proc(void)
 
         /* Cleanup */
         closedir(dhandle);
-        elm_free(&dirpath);
-        elm_free(&proc[i]);
+        elm_std_free(&dirpath);
+        elm_std_free(&proc[i]);
     }
 
-    elm_free(&proc);
+    elm_std_free(&proc);
 
     return elm_x_get_tty_open_from_proc(ignore, sizeof ignore);
 }
@@ -913,7 +921,7 @@ char * elm_x_get_tty_open_from_proc(int *ignore, size_t size)
     /* Iterate over tty ignore list */
     for (i=0; i < size; i++) {
         if (!ignore[i]) {
-            if (!elm_calloc(&open, length, sizeof *open)) {
+            if (!(open=calloc(length, sizeof *open))) {
                 continue;
             }
 
@@ -935,7 +943,7 @@ char * elm_x_get_tty_open_from_proc(int *ignore, size_t size)
 int elm_x_get_tty_index_from_proc(char *dir, char *name, char *proc)
 {
     int          status      = -1;
-    char        *symlinkpath = elm_sys_path("%s%s", dir, name);
+    char        *symlinkpath = elm_str_path("%s%s", dir, name);
     static char  fullpath[ELM_MAX_PATH_SIZE];
 
     memset(fullpath, 0, sizeof(fullpath));
@@ -943,8 +951,8 @@ int elm_x_get_tty_index_from_proc(char *dir, char *name, char *proc)
 
     /* Ignore tty if running Xorg */
     if (strstr(fullpath, "/dev/tty")) {
-        char *cmdpath = elm_sys_path("/proc/%s/cmdline", proc);
-        char *tty     = elm_sys_read_line(cmdpath);
+        char *cmdpath = elm_str_path("/proc/%s/cmdline", proc);
+        char *tty     = elm_str_readline(cmdpath);
         int   index   = (fullpath[8]-'0')-1;
 
         if (tty && strstr(tty, "Xorg")) {
@@ -952,11 +960,11 @@ int elm_x_get_tty_index_from_proc(char *dir, char *name, char *proc)
         }
 
         /* Clear memory */
-        elm_free(&cmdpath);
-        elm_free(&tty);
+        elm_std_free(&cmdpath);
+        elm_std_free(&tty);
     }
 
-    elm_free(&symlinkpath);
+    elm_std_free(&symlinkpath);
 
     return status;
 }

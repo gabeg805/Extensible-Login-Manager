@@ -18,10 +18,10 @@
 
 /* Includes */
 #include "elmapp.h"
-#include "elmalloc.h"
 #include "elmgtk.h"
 #include "elmsession.h"
-#include "elmsys.h"
+#include "elmstd.h"
+#include "elmstr.h"
 
 /* Public functions */
 GtkWidget * new_xsession_widget(void);

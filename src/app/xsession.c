@@ -88,14 +88,14 @@ int elm_app_set_xsession_menu(GtkWidget **menu)
         gtk_menu_attach(GTK_MENU(*menu), menuitem, 0, 1, index, index+1);
         gtk_widget_show(menuitem);
 
-        elm_free(&xsessions[0][index]);
-        elm_free(&xsessions[1][index]);
+        elm_std_free(&xsessions[0][index]);
+        elm_std_free(&xsessions[1][index]);
     }
 
     /* Clear memory */
-    elm_free(&xsessions[0]);
-    elm_free(&xsessions[1]);
-    elm_free(&xsessions);
+    elm_std_free(&xsessions[0]);
+    elm_std_free(&xsessions[1]);
+    elm_std_free(&xsessions);
 
     return 0;
 }
@@ -121,7 +121,7 @@ char *** elm_app_get_available_xsessions(void)
     size_t    index     = 1;
     size_t    i;
 
-    if (!elm_calloc(&xsessions, 2, sizeof *xsessions)) {
+    if (!(xsessions=calloc(2, sizeof *xsessions))) {
         elmprintf(LOGERRNO, "Unable to allocate xsessions array");
         return NULL;
     }
@@ -130,13 +130,13 @@ char *** elm_app_get_available_xsessions(void)
         xsessions[1] = NULL;
     }
 
-    if (!elm_calloc(&xsessions[0], 1, sizeof *xsessions[0])) {
+    if (!(xsessions[0]=calloc(1, sizeof *xsessions[0]))) {
         elmprintf(LOGERRNO, "%s '%lu'",
                   "Unable to allocate xsessions array", 0);
         goto cleanup;
     }
 
-    if (!elm_calloc(&xsessions[1], 1, sizeof *xsessions[0])) {
+    if (!(xsessions[1]=calloc(1, sizeof *xsessions[0]))) {
         elmprintf(LOGERRNO, "%s '%lu'",
                   "Unable to allocate xsessions array", 1);
         goto cleanup;
@@ -147,15 +147,15 @@ char *** elm_app_get_available_xsessions(void)
     {
         /* Clear previously allocated memory */
         if (path) {
-            elm_free(&path);
+            elm_std_free(&path);
         }
 
         if (nameline) {
-            elm_free(&nameline);
+            elm_std_free(&nameline);
         }
 
         if (execline) {
-            elm_free(&execline);
+            elm_std_free(&execline);
         }
 
         /* Check extension of file is correct */
@@ -164,30 +164,34 @@ char *** elm_app_get_available_xsessions(void)
         }
 
         /* Read file */
-        path     = elm_sys_path("%s/%s", dir, entry->d_name);
-        nameline = elm_sys_find_line(path, "Name=");
-        execline = elm_sys_find_line(path, "Exec=");
+        path     = elm_str_path("%s/%s", dir, entry->d_name);
+        nameline = elm_str_findline(path, "Name=");
+        execline = elm_str_findline(path, "Exec=");
 
         if (!nameline || !execline) {
             continue;
         }
 
         /* Copy string to array */
-        if (!elm_sys_strcpy(&xsessions[0][index-1], &nameline[5])) {
+        if (!(xsessions[0][index-1]=elm_str_copy(&nameline[5]))) {
             goto cleanup;
         }
 
-        if (!elm_sys_strcpy(&xsessions[1][index-1], &execline[5])) {
+        if (!(xsessions[1][index-1]=elm_str_copy(&execline[5]))) {
             goto cleanup;
         }
 
         /* Resize allocated memory for next xsession */
-        if (!elm_realloc(&xsessions[0], index+1, sizeof *xsessions[0])) {
+        if (!(xsessions[0]=realloc(xsessions[0],
+                                   (index+1) * sizeof *xsessions[0])))
+        {
             elmprintf(LOGERRNO, "Unable to reallocate xsessions array");
             goto cleanup;
         }
 
-        if (!elm_realloc(&xsessions[1], index+1, sizeof *xsessions[0])) {
+        if (!(xsessions[1]=realloc(xsessions[1],
+                                   (index+1) * sizeof *xsessions[0])))
+        {
             elmprintf(LOGERRNO, "Unable to reallocate xsessions array");
             goto cleanup;
         }
@@ -203,30 +207,30 @@ char *** elm_app_get_available_xsessions(void)
 
 cleanup:
     if (path) {
-        elm_free(&path);
+        elm_std_free(&path);
     }
 
     if (nameline) {
-        elm_free(&nameline);
+        elm_std_free(&nameline);
     }
 
     if (execline) {
-        elm_free(&execline);
+        elm_std_free(&execline);
     }
 
     for (i=0; i < (index-1); i++) {
-        elm_free(&xsessions[0][i]);
-        elm_free(&xsessions[1][i]);
+        elm_std_free(&xsessions[0][i]);
+        elm_std_free(&xsessions[1][i]);
     }
 
     if (xsessions[0]) {
-        elm_free(&xsessions[0]);
+        elm_std_free(&xsessions[0]);
     }
     if (xsessions[1]) {
-        elm_free(&xsessions[1]);
+        elm_std_free(&xsessions[1]);
     }
 
-    elm_free(&xsessions);
+    elm_std_free(&xsessions);
 
     return NULL;
 }

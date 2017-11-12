@@ -16,14 +16,11 @@
 #include "elmconf.h"
 #include "elmdef.h"
 #include "elmio.h"
-#include "elmsys.h"
+#include "elmstr.h"
 #include <glib.h>
 #include <stdbool.h>
 
-#include <stdio.h>
-
 /* Private functions */
-/* To-do: static char -> malloc */
 int elm_conf_key_file(GKeyFile **keyfile, const char *configfile);
 
 /* Private variables */
@@ -47,7 +44,7 @@ char * elm_conf_read(const char *group, const char *key)
         return NULL;
     }
 
-    return elm_sys_strcpy(NULL, value);
+    return elm_str_copy(value);
 }
 
 /* ************************************************************************** */
@@ -58,7 +55,6 @@ char * elm_conf_read_str(const char *group, const char *key)
     GError      *err = NULL;
     GKeyFile    *keyfile;
     char        *value;
-    static char  read[ELM_MAX_CONF_SIZE];
 
     if (elm_conf_key_file(&keyfile, ConfigFile) < 0) {
         return NULL;
@@ -70,9 +66,7 @@ char * elm_conf_read_str(const char *group, const char *key)
         return NULL;
     }
 
-    strncpy(read, value, sizeof(read)-1);
-
-    return read;
+    return elm_str_copy(value);
 }
 
 /* ************************************************************************** */

@@ -40,7 +40,7 @@ make uninstall
 Note: The current directory containing all the Makefile, README, code, etc. will
 be the only remnants of this package.
 
-# Things to Implement
+## Things to Implement
 
 - [ ] Logout command line option.
 - [ ] Setup and connect to the org.freedesktop.DisplayManager bus.
@@ -48,8 +48,10 @@ be the only remnants of this package.
       ==== AUTHENTICATING FOR org.freedesktop.policykit.exec ====
       Authentication is needed to run `/usr/bin/mtunnel' as the super user
       polkit-agent-helper-1: error response to PolicyKit daemon: GDBus.Error:org.freedesktop.PolicyKit1.Error.Failed: No session for cookie
-- [ ] Reduce reliance on static globals and pass in variables instead.
-- [ ] To keep persistence of widgets, malloc and memcpy the memory.
 - [x] Print to stdout/stderr, in addition to logging everything.
 - [x] Add images to username/password entries.
 - [x] Add Name= and Exec= info to xsessions.c
+- [x] Reduce reliance on static globals and pass in variables instead.
+- [x] To keep persistence of widgets, malloc and memcpy the memory. Local
+  statics are better.
+- [x] Create a elm_sys_vstrcpy that takes variable arguments.
