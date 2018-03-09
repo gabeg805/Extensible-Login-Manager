@@ -6,11 +6,11 @@ The Extensible Login Manager (ELM) is a highly configurable login manager. Users
 are able to create their own widgets that could be easily added to the login
 manager.
 
-![elm](http://gabegonzalez.me/img/elm/elm.gif "Using ELM to Login")
-![elm login](http://gabegonzalez.me/img/elm/login.jpg "Main Login Screen")
-![elm xsession 1](http://gabegonzalez.me/img/elm/xsession1.jpg "Choosing X Session")
-![elm xsession 2](http://gabegonzalez.me/img/elm/xsession2.jpg "Displaying Path to X Session Executable")
-![elm shutdown](http://gabegonzalez.me/img/elm/powermenu.jpg "Power Menu")
+![elm](http://gabegonzalez.me/images/elm.gif "Using ELM to Login")
+![elm login](http://gabegonzalez.me/images/login.jpg "Main Login Screen")
+![elm xsession 1](http://gabegonzalez.me/images/xsession1.jpg "Choosing X Session")
+![elm xsession 2](http://gabegonzalez.me/images/xsession2.jpg "Displaying Path to X Session Executable")
+![elm shutdown](http://gabegonzalez.me/images/powermenu.jpg "Power Menu")
 
 ## Requirements
 
